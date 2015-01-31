@@ -1,0 +1,17 @@
+[
+{
+  "modid": "bbor",
+  "name": "Bounding Box Outline Reloaded",
+  "description": "Shows the bounding boxes of structures and features.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["irtimaled"],
+  "credits": "Thanks to 4poc & KaboPC.",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
+
