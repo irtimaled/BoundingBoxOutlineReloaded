@@ -5,7 +5,7 @@
   "description": "Shows the bounding boxes of structures and features.",
   "version": "${version}",
   "mcversion": "${mcversion}",
-  "url": "",
+  "url": "http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/2345401",
   "updateUrl": "",
   "authorList": ["irtimaled"],
   "credits": "Thanks to 4poc & KaboPC.",
