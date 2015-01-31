@@ -42,32 +42,26 @@ public class ClientProxy extends CommonProxy {
         ClientRegistry.registerKeyBinding(hotKey);
     }
 
-
     private double playerX;
     private double playerY;
     private double playerZ;
 
-
     @SubscribeEvent
     public void renderWorldLastEvent(RenderWorldLastEvent event) {
-        // determine current player location
         EntityPlayer entityPlayer = Minecraft.getMinecraft().thePlayer;
         playerX = entityPlayer.lastTickPosX + (entityPlayer.posX - entityPlayer.lastTickPosX) * (double) event.partialTicks;
         playerY = entityPlayer.lastTickPosY + (entityPlayer.posY - entityPlayer.lastTickPosY) * (double) event.partialTicks;
         playerZ = entityPlayer.lastTickPosZ + (entityPlayer.posZ - entityPlayer.lastTickPosZ) * (double) event.partialTicks;
 
-
         if (this.active) {
             int activeDimensionId = entityPlayer.worldObj.provider.getDimensionId();
             if (boundingBoxCacheMap.containsKey(activeDimensionId)) {
-                renderBBoxMap(boundingBoxCacheMap.get(activeDimensionId).getBoundingBoxes());
+                renderBoundingBoxes(boundingBoxCacheMap.get(activeDimensionId).getBoundingBoxes());
             }
         }
     }
 
-    private void renderBBoxMap(Map<BoundingBox, Set<BoundingBox>> map) {
-
-
+    private void renderBoundingBoxes(Map<BoundingBox, Set<BoundingBox>> map) {
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glLineWidth(3.0f);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
@@ -85,7 +79,6 @@ public class ClientProxy extends CommonProxy {
         GL11.glEnable(GL11.GL_CULL_FACE);
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glDisable(GL11.GL_BLEND);
-
 
         if (configManager.showDebugInfo.getBoolean()) {
             Minecraft mc = Minecraft.getMinecraft();
@@ -131,10 +124,16 @@ public class ClientProxy extends CommonProxy {
         }
     }
 
+    private void renderBoundingBox(BoundingBox bb) {
+        AxisAlignedBB aaBB = bb.toAxisAlignedBB();
+        Color color = bb.getColor();
+        renderCuboid(aaBB.addCoord(0, 1, 0), color, fill());
+    }
+
     private void renderSlimeChunk(BoundingBoxSlimeChunk bb) {
         AxisAlignedBB aaBB = bb.toAxisAlignedBB();
         Color color = bb.getColor();
-        renderCuboid(aaBB, color);
+        renderCuboid(aaBB.addCoord(0, 1, 0), color, fill());
 
         double maxY = configManager.slimeChunkMaxY.getInt();
         if ((maxY == 0) || (playerY < maxY)) {
@@ -143,8 +142,12 @@ public class ClientProxy extends CommonProxy {
 
         if (maxY > 39) {
             aaBB = new AxisAlignedBB(aaBB.minX, 39, aaBB.minZ, aaBB.maxX, maxY, aaBB.maxZ);
-            renderCuboid(aaBB, color, configManager.fill.getBoolean());
+            renderCuboid(aaBB, color, fill());
         }
+    }
+
+    private boolean fill() {
+        return configManager.fill.getBoolean();
     }
 
     private void renderIronGolemSpawnArea(BoundingBoxVillage villageBB) {
@@ -160,23 +163,6 @@ public class ClientProxy extends CommonProxy {
         GL11.glLineWidth(3.0f);
     }
 
-    private void renderCuboid(AxisAlignedBB aaBB, Color color) {
-        renderCuboid(aaBB.addCoord(0, 1, 0), color, configManager.fill.getBoolean());
-    }
-
-    private void renderBoundingBox(BoundingBox bb) {
-        AxisAlignedBB aaBB = bb.toAxisAlignedBB();
-        Color color = bb.getColor();
-        renderCuboid(aaBB, color);
-    }
-
-    private void renderBoundingBoxVillageAsSphere(BoundingBoxVillage bb) {
-        BlockPos center = bb.getCenter();
-        int radius = bb.getRadius();
-        Color color = bb.getColor();
-        renderSphere(center, radius, color);
-    }
-
     private void renderCuboid(AxisAlignedBB aaBB, Color color, boolean fill) {
         aaBB = offsetAxisAlignedBB(aaBB);
         if (fill) {
@@ -187,37 +173,6 @@ public class ClientProxy extends CommonProxy {
         }
         GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
         renderCuboid(aaBB, 255, color);
-    }
-
-    private void renderSphere(BlockPos center, int radius, Color color) {
-        int colorR = color.getRed();
-        int colorG = color.getGreen();
-        int colorB = color.getBlue();
-
-        double x = center.getX() - playerX;
-        double y = center.getY() - playerY;
-        double z = center.getZ() - playerZ;
-        GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_CONSTANT_COLOR);
-        GL11.glPointSize(2.5f);
-        GL11.glTranslated(x, y, z);
-        Sphere sphere = new Sphere();
-        sphere.setDrawStyle(GLU.GLU_POINT);
-        sphere.setNormals(GLU.GLU_FLAT);
-        sphere.setOrientation(GLU.GLU_OUTSIDE);
-        GL11.glColor3f(colorR / 255.0f, colorG / 255.0f, colorB / 255.0f);
-        GL11.glRotatef(90f, 0, 0, 0);
-        sphere.draw(radius, 48, 48);
-        GL11.glRotatef(-90f, 0, 0, 0);
-        GL11.glTranslated(-x, -y, -z);
-        GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ZERO);
-    }
-
-    private AxisAlignedBB offsetAxisAlignedBB(AxisAlignedBB axisAlignedBB) {
-        double expandBy = 0.005F;
-        return axisAlignedBB
-                .addCoord(1, 0, 1)
-                .expand(expandBy, expandBy, expandBy)
-                .offset(-playerX, -playerY, -playerZ);
     }
 
     private void renderCuboid(AxisAlignedBB bb, int alphaChannel, Color color) {
@@ -279,5 +234,43 @@ public class ClientProxy extends CommonProxy {
         worldRenderer.addVertex(bb.maxX, bb.maxY, bb.maxZ);
         worldRenderer.addVertex(bb.maxX, bb.maxY, bb.minZ);
         tessellator.draw();
+    }
+
+    private AxisAlignedBB offsetAxisAlignedBB(AxisAlignedBB axisAlignedBB) {
+        double expandBy = 0.005F;
+        return axisAlignedBB
+                .addCoord(1, 0, 1)
+                .expand(expandBy, expandBy, expandBy)
+                .offset(-playerX, -playerY, -playerZ);
+    }
+
+    private void renderBoundingBoxVillageAsSphere(BoundingBoxVillage bb) {
+        BlockPos center = bb.getCenter();
+        int radius = bb.getRadius();
+        Color color = bb.getColor();
+        renderSphere(center, radius, color);
+    }
+
+    private void renderSphere(BlockPos center, int radius, Color color) {
+        int colorR = color.getRed();
+        int colorG = color.getGreen();
+        int colorB = color.getBlue();
+
+        double x = center.getX() - playerX;
+        double y = center.getY() - playerY;
+        double z = center.getZ() - playerZ;
+        GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_CONSTANT_COLOR);
+        GL11.glPointSize(2.5f);
+        GL11.glTranslated(x, y, z);
+        Sphere sphere = new Sphere();
+        sphere.setDrawStyle(GLU.GLU_POINT);
+        sphere.setNormals(GLU.GLU_FLAT);
+        sphere.setOrientation(GLU.GLU_OUTSIDE);
+        GL11.glColor3f(colorR / 255.0f, colorG / 255.0f, colorB / 255.0f);
+        GL11.glRotatef(90f, 0, 0, 0);
+        sphere.draw(radius, 48, 48);
+        GL11.glRotatef(-90f, 0, 0, 0);
+        GL11.glTranslated(-x, -y, -z);
+        GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ZERO);
     }
 }
