@@ -24,7 +24,7 @@ public class BoundingBoxOutlineReloaded {
     @Mod.Instance()
     public static BoundingBoxOutlineReloaded instance;
 
-    @SidedProxy(clientSide = "com.irtimaled.bbor.ClientProxy", serverSide = "com.irtimaled.bbor.ServerProxy")
+    @SidedProxy(clientSide = "com.irtimaled.bbor.ClientProxy", serverSide = "com.irtimaled.bbor.CommonProxy")
     public static CommonProxy proxy;
 
 
