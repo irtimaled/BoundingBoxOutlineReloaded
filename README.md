@@ -57,6 +57,8 @@ Village spheres | Client | Render Villages as spheres instead of cuboids | rende
 Village Iron Golem Spawn Area | Client | Render Iron Golem Spawn Area within valid Villages | drawIronGolemSpawnArea | true/false | true
 Slime Chunks | Both | Process/Render Slime Chunks | drawSlimeChunks | true/false | true
 Slime Chunks Maximum Y | Client | Maximum Y value of the dynamic slime chunk boxes | slimeChunkMaxY | 0/40-255 (0 = no limit) | 0
+Fill | Client | Fill the bounding boxes (except village ones) | fill | true/false | false
+Always Visible | Client | Bounding boxes are visible through blocks - kinda messes with perspective tho! | alwaysVisible | true/false | false
 
 ### In game
 
