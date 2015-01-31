@@ -16,10 +16,9 @@ import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.glu.GLU;
-import org.lwjgl.util.glu.Sphere;
 
 import java.awt.*;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -251,26 +250,74 @@ public class ClientProxy extends CommonProxy {
         renderSphere(center, radius, color);
     }
 
-    private void renderSphere(BlockPos center, int radius, Color color) {
-        int colorR = color.getRed();
-        int colorG = color.getGreen();
-        int colorB = color.getBlue();
-
-        double x = center.getX() - playerX;
-        double y = center.getY() - playerY;
-        double z = center.getZ() - playerZ;
+    private void renderSphere(BlockPos center, double radius, Color color) {
+        GL11.glEnable(GL11.GL_POINT_SMOOTH);
         GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_CONSTANT_COLOR);
-        GL11.glPointSize(2.5f);
-        GL11.glTranslated(x, y, z);
-        Sphere sphere = new Sphere();
-        sphere.setDrawStyle(GLU.GLU_POINT);
-        sphere.setNormals(GLU.GLU_FLAT);
-        sphere.setOrientation(GLU.GLU_OUTSIDE);
-        GL11.glColor3f(colorR / 255.0f, colorG / 255.0f, colorB / 255.0f);
-        GL11.glRotatef(90f, 0, 0, 0);
-        sphere.draw(radius, 48, 48);
-        GL11.glRotatef(-90f, 0, 0, 0);
-        GL11.glTranslated(-x, -y, -z);
+        GL11.glPointSize(2f);
+
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer worldRenderer = tessellator.getWorldRenderer();
+
+        worldRenderer.startDrawing(GL11.GL_POINTS);
+        worldRenderer.setColorRGBA(color.getRed(), color.getGreen(), color.getBlue(), 255);
+        for (OffsetPoint point : buildPoints(center, radius)) {
+            worldRenderer.addVertex(point.getX(), point.getY(), point.getZ());
+        }
+        tessellator.draw();
+
         GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ZERO);
+    }
+
+    private class OffsetPoint {
+        private final double x;
+        private final double y;
+        private final double z;
+
+        public OffsetPoint(double x, double y, double z) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+
+        public OffsetPoint(BlockPos blockPos) {
+            x = blockPos.getX();
+            y = blockPos.getY();
+            z = blockPos.getZ();
+        }
+
+        public double getX() {
+            return x - playerX;
+        }
+
+        public double getY() {
+            return y - playerY;
+        }
+
+        public double getZ() {
+            return z - playerZ;
+        }
+
+        public OffsetPoint add(double x, double y, double z) {
+            return new OffsetPoint(this.x + x, this.y + y, this.z + z);
+        }
+    }
+
+    private Set<OffsetPoint> buildPoints(BlockPos center, double radius) {
+        Set<OffsetPoint> points = new HashSet<OffsetPoint>(1200);
+
+        double tau = 6.283185307179586D;
+        double pi = tau / 2D;
+        double segment = tau / 48D;
+        OffsetPoint centerPoint = new OffsetPoint(center);
+
+        for (double t = 0.0D; t < tau; t += segment)
+            for (double theta = 0.0D; theta < pi; theta += segment) {
+                double dx = radius * Math.sin(t) * Math.cos(theta);
+                double dz = radius * Math.sin(t) * Math.sin(theta);
+                double dy = radius * Math.cos(t);
+
+                points.add(centerPoint.add(dx, dy, dz));
+            }
+        return points;
     }
 }
