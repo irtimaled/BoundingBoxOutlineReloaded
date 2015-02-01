@@ -23,6 +23,7 @@ public class ConfigManager {
     public Property drawIronGolemSpawnArea;
     public Property drawSlimeChunks;
     public Property slimeChunkMaxY;
+    public Property keepCacheBetweenSessions;
 
     private Property SetupBooleanProperty(Configuration config, String category, String configName, Boolean defaultValue, String comment) {
         Property property = config.get(category, configName, defaultValue);
@@ -45,7 +46,7 @@ public class ConfigManager {
         showDebugInfo = SetupBooleanProperty(config, "general", "showDebugInfo", false, "If set to true debug information will be displayed. (default: false)");
         fill = SetupBooleanProperty(config, "general", "fill", false, "If set to true the bounding boxes are filled. (default: false)");
         alwaysVisible = SetupBooleanProperty(config, "general", "alwaysVisible", false, "If set to true boxes will be visible even through other blocks. (default: false)");
-
+        keepCacheBetweenSessions = SetupBooleanProperty(config, "general", "keepCacheBetweenSessions", false, "If set to true bounding box caches will be kept between sessions. (default: false)");
         drawVillages = SetupBooleanProperty(config, "features", "drawVillages", true, "If set to true village bounding boxes are drawn. (default: true)");
         renderVillageAsSphere = SetupBooleanProperty(config, "features", "renderVillageAsSphere", true, "If set to true villages will be drawn as a sphere. (default:true)");
         drawIronGolemSpawnArea = SetupBooleanProperty(config, "features", "drawIronGolemSpawnArea", true, "If set to true the iron golem spawn area of the village will be drawn. (default:true)");

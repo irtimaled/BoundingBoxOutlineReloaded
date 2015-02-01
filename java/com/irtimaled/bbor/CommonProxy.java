@@ -1,5 +1,6 @@
 package com.irtimaled.bbor;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.chunk.IChunkProvider;
@@ -8,6 +9,7 @@ import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
@@ -56,13 +58,37 @@ public class CommonProxy {
     }
 
     @SubscribeEvent
-    public void playerJoinedWorldEvent(net.minecraftforge.event.entity.EntityJoinWorldEvent evt) {
-        if (evt.entity instanceof EntityPlayerMP) {
-            EntityPlayerMP player = (EntityPlayerMP) evt.entity;
+    public void playerChangedDimensionEvent(PlayerEvent.PlayerChangedDimensionEvent evt) {
+        if (playerDimensions.containsKey(evt.player)) {
+            EntityPlayerMP player = (EntityPlayerMP) evt.player;
             int dimension = player.dimension;
             playerDimensions.put(player, dimension);
 
             sendToPlayer(player, boundingBoxCacheMap.get(dimension));
+        }
+    }
+
+    protected boolean isRemotePlayer(EntityPlayer player) {
+        return true;
+    }
+
+    @SubscribeEvent
+    public void playerLoggedInEvent(PlayerEvent.PlayerLoggedInEvent evt) {
+        if (evt.player instanceof EntityPlayerMP && isRemotePlayer(evt.player)) {
+
+            EntityPlayerMP player = (EntityPlayerMP) evt.player;
+            int dimension = player.dimension;
+            playerDimensions.put(player, dimension);
+
+            sendToPlayer(player, boundingBoxCacheMap.get(dimension));
+        }
+    }
+
+    @SubscribeEvent
+    public void playerLoggedOutEvent(PlayerEvent.PlayerLoggedOutEvent evt) {
+        if (playerDimensions.containsKey(evt.player)) {
+            playerDimensions.remove(evt.player);
+            playerBoundingBoxesCache.remove(evt.player);
         }
     }
 

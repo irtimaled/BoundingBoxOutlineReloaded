@@ -38,6 +38,16 @@ public class DimensionProcessor extends BoundingBoxCache {
     private IChunkProvider chunkProvider;
     private Set<BoundingBox> villageCache;
     private Set<BoundingBox> slimeChunkCache;
+    private boolean closed = false;
+
+    @Override
+    public void close() {
+        closed = true;
+        chunkProvider = null;
+        villageCache.clear();
+        slimeChunkCache.clear();
+        super.close();
+    }
 
     private static <T extends IChunkProvider> Collection<StructureStart> getStructures(T chunkProvider, int method) {
         Class<T> cpClass = (Class<T>) chunkProvider.getClass();
@@ -107,6 +117,8 @@ public class DimensionProcessor extends BoundingBoxCache {
 
     @Override
     public synchronized void refresh() {
+        if (closed) return;
+
         Map<Integer, Collection<StructureStart>> structureMap = getStructures();
         for (Integer structureType : structureMap.keySet()) {
             Color color = getStructureColor(structureType);

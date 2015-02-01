@@ -22,7 +22,7 @@ public class BoundingBoxMessage implements IMessage {
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        dimension = ByteBufUtils.readVarShort(buf);
+        dimension = ByteBufUtils.readVarInt(buf, 5);
         key = BoundingBoxDeserializer.deserialize(buf);
         boundingBoxes = new HashSet<BoundingBox>();
         while (buf.isReadable()) {
@@ -35,7 +35,7 @@ public class BoundingBoxMessage implements IMessage {
 
     @Override
     public void toBytes(ByteBuf buf) {
-        ByteBufUtils.writeVarShort(buf, dimension);
+        ByteBufUtils.writeVarInt(buf, dimension, 5);
         BoundingBoxSerializer.serialize(key, buf);
         if (boundingBoxes.size() > 1) {
             for (BoundingBox boundingBox : boundingBoxes) {

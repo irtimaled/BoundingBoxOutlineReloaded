@@ -13,6 +13,7 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
+import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
@@ -41,6 +42,17 @@ public class ClientProxy extends CommonProxy {
         ClientRegistry.registerKeyBinding(hotKey);
     }
 
+    @Override
+    protected boolean isRemotePlayer(EntityPlayer player) {
+        if (Minecraft.getMinecraft().isSingleplayer()) {
+            EntityPlayer singlePlayer = Minecraft.getMinecraft().thePlayer;
+            if (singlePlayer == null)
+                return false;
+            return player.getGameProfile() != singlePlayer.getGameProfile();
+        }
+        return true;
+    }
+
     private double playerX;
     private double playerY;
     private double playerZ;
@@ -58,6 +70,15 @@ public class ClientProxy extends CommonProxy {
                 renderBoundingBoxes(boundingBoxCacheMap.get(activeDimensionId).getBoundingBoxes());
             }
         }
+    }
+
+    @SubscribeEvent
+    public void clientDisconnectionFromServerEvent(FMLNetworkEvent.ClientDisconnectionFromServerEvent evt) {
+        if (configManager.keepCacheBetweenSessions.getBoolean()) return;
+        for (BoundingBoxCache cache : boundingBoxCacheMap.values()) {
+            cache.close();
+        }
+        boundingBoxCacheMap.clear();
     }
 
     private void renderBoundingBoxes(Map<BoundingBox, Set<BoundingBox>> map) {
