@@ -20,6 +20,7 @@ This mod highlights in a variety of colours and styles the different structures 
 - Mine Shafts; light gray boxes illustrate each of the mine shafts. Cobwebs... grrr!
 - Villages; multicoloured spheres encircle  the village, with boxes marking if and where iron golems will spawn. You should see the iron titan... CRAZY!
 - Slime chunks; bright green boxes highlight where slimes will spawn, with a dynamic box that rises to where the players feet are to help find them from the surface. Bouncy... bouncy...
+- World Spawn & spawn chunks; red boxes outline the world spawn and the spawn chunks.
 
 # How it works
 
@@ -56,10 +57,16 @@ Villages | Both | Process/Render Villages | drawVillages | true/false | true
 Village spheres | Client | Render Villages as spheres instead of cuboids | renderVillageAsSphere | true/false | true
 Village Iron Golem Spawn Area | Client | Render Iron Golem Spawn Area within valid Villages | drawIronGolemSpawnArea | true/false | true
 Slime Chunks | Both | Process/Render Slime Chunks | drawSlimeChunks | true/false | true
-Slime Chunks Maximum Y | Client | Maximum Y value of the dynamic slime chunk boxes | slimeChunkMaxY | 0/40-255 (0 = no limit) | 0
+Slime Chunks Maximum Y | Client | Maximum Y value of the dynamic slime chunk boxes | slimeChunkMaxY | -1-255 (see below) | 0
+World Spawn | Both | Process/Render World Spawn & Spawn Chunks | drawWorldSpawn | true/false | true
+World Spawn Maximum Y | Client | Maximum Y value of the world spawn & spawn chunk boxes | worldSpawnMaxY | -1-255 (see below) | 0
 Fill | Client | Fill the bounding boxes (except village ones) | fill | true/false | false
 Always Visible | Client | Bounding boxes are visible through blocks - kinda messes with perspective tho! | alwaysVisible | true/false | false
 Keep Cache Between Sessions | Client | Bounding box caches are not cleared when disconnecting from single or multiplayer worlds. | keepCacheBetweenSessions | true/false | false
+
+The Maximum Y value configuration options have some special values, these are:-
+* -1 = the Y value of the players feet when the bounding boxes were activated.
+* 0 = the current Y value of the players feet.
 
 ### In game
 
