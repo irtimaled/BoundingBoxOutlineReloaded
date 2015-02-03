@@ -18,4 +18,14 @@ public class BoundingBoxCache {
     public void close() {
         cache.clear();
     }
+
+    public void addBoundingBox(BoundingBox key, Set<BoundingBox> boundingBoxes) {
+        cache.put(key, boundingBoxes);
+    }
+
+    public void removeBoundingBox(BoundingBox key) {
+        if (cache.containsKey(key)) {
+            cache.remove(key);
+        }
+    }
 }

@@ -1,5 +1,6 @@
-package com.irtimaled.bbor;
+package com.irtimaled.bbor.messages;
 
+import com.irtimaled.bbor.*;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -9,11 +10,16 @@ import java.awt.*;
 public class BoundingBoxSerializer {
 
     public static void serialize(BoundingBox boundingBox, ByteBuf buf) {
+        if (boundingBox instanceof BoundingBoxWorldSpawn) {
+            serializeWorldSpawn((BoundingBoxWorldSpawn) boundingBox, buf);
+        }
         if (boundingBox instanceof BoundingBoxSlimeChunk) {
             serializeSlimeChunk((BoundingBoxSlimeChunk) boundingBox, buf);
-        } else if (boundingBox instanceof BoundingBoxVillage) {
+        }
+        if (boundingBox instanceof BoundingBoxVillage) {
             serializeVillage((BoundingBoxVillage) boundingBox, buf);
-        } else if (boundingBox instanceof BoundingBoxStructure) {
+        }
+        if (boundingBox instanceof BoundingBoxStructure) {
             serializeStructure((BoundingBoxStructure) boundingBox, buf);
         }
     }
@@ -35,6 +41,12 @@ public class BoundingBoxSerializer {
 
     private static void serializeSlimeChunk(BoundingBoxSlimeChunk boundingBox, ByteBuf buf) {
         ByteBufUtils.writeVarShort(buf, 'C');
+        serializeCuboid(boundingBox, buf);
+        serializeColor(boundingBox.getColor(), buf);
+    }
+
+    private static void serializeWorldSpawn(BoundingBoxWorldSpawn boundingBox, ByteBuf buf) {
+        ByteBufUtils.writeVarShort(buf, 'W');
         serializeCuboid(boundingBox, buf);
         serializeColor(boundingBox.getColor(), buf);
     }

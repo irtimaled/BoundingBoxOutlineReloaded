@@ -32,12 +32,15 @@ public class DimensionProcessor extends BoundingBoxCache {
         this.chunkProvider = chunkProvider;
         villageCache = new HashSet<BoundingBox>();
         slimeChunkCache = new HashSet<BoundingBox>();
+        worldSpawnCache = new HashSet<BoundingBox>();
     }
 
     private int dimensionId;
     private IChunkProvider chunkProvider;
     private Set<BoundingBox> villageCache;
     private Set<BoundingBox> slimeChunkCache;
+    private Set<BoundingBox> worldSpawnCache;
+
     private boolean closed = false;
 
     @Override
@@ -46,6 +49,7 @@ public class DimensionProcessor extends BoundingBoxCache {
         chunkProvider = null;
         villageCache.clear();
         slimeChunkCache.clear();
+        worldSpawnCache.clear();
         super.close();
     }
 
@@ -71,7 +75,6 @@ public class DimensionProcessor extends BoundingBoxCache {
 
         Map<Integer, Collection<StructureStart>> structureMap = new HashMap<Integer, Collection<StructureStart>>();
         if (chunkProvider instanceof ChunkProviderGenerate) {
-
             if (configManager.drawDesertTemples.getBoolean()) {
                 structureMap.put(DimensionProcessor.DESERT_TEMPLE, getStructuresWithComponent(getStructures(chunkProvider, 20), ComponentScatteredFeaturePieces.DesertPyramid.class));
             }
@@ -137,46 +140,81 @@ public class DimensionProcessor extends BoundingBoxCache {
             }
         }
 
-        if (configManager.drawSlimeChunks.getBoolean() &&
-                dimensionId == 0) {
-            Set<BoundingBox> slimeChunkBoundingBoxes = new HashSet<BoundingBox>();
-            Set<ChunkCoordIntPair> activeChunks = ReflectionHelper.getPrivateValue(World.class, world, 33);
-            for (ChunkCoordIntPair chunk : activeChunks) {
-                if (isSlimeChunk(chunk.chunkXPos, chunk.chunkZPos)) {
-                    slimeChunkBoundingBoxes.add(BoundingBoxSlimeChunk.from(chunk, Color.GREEN));
+        if (dimensionId == 0) {
+            if (configManager.drawWorldSpawn.getBoolean()) {
+                Set<BoundingBox> worldSpawnBoundingBoxes = new HashSet<BoundingBox>();
+                int spawnX = world.getWorldInfo().getSpawnX();
+                int spawnZ = world.getWorldInfo().getSpawnZ();
+                worldSpawnBoundingBoxes.add(getSpawnBoundingBox(spawnX, spawnZ));
+                worldSpawnBoundingBoxes.add(getSpawnChunksBoundingBox(spawnX, spawnZ));
+                processDelta(worldSpawnCache, worldSpawnBoundingBoxes);
+
+                worldSpawnCache = worldSpawnBoundingBoxes;
+            }
+
+
+            if (configManager.drawSlimeChunks.getBoolean()) {
+                Set<BoundingBox> slimeChunkBoundingBoxes = new HashSet<BoundingBox>();
+                Set<ChunkCoordIntPair> activeChunks = ReflectionHelper.getPrivateValue(World.class, world, 33);
+                for (ChunkCoordIntPair chunk : activeChunks) {
+                    if (isSlimeChunk(chunk.chunkXPos, chunk.chunkZPos)) {
+                        slimeChunkBoundingBoxes.add(BoundingBoxSlimeChunk.from(chunk, Color.GREEN));
+                    }
                 }
+
+                processDelta(slimeChunkCache, slimeChunkBoundingBoxes);
+
+                slimeChunkCache = slimeChunkBoundingBoxes;
             }
 
-            processDelta(slimeChunkCache, slimeChunkBoundingBoxes);
+            if (configManager.drawVillages.getBoolean() &&
+                    (world.villageCollectionObj != null)) {
 
-            slimeChunkCache = slimeChunkBoundingBoxes;
-        }
+                Set<BoundingBox> villageBoundingBoxes = new HashSet<BoundingBox>();
+                List<Village> villages = world.villageCollectionObj.getVillageList();
+                int c = 0;
+                for (Village village : villages) {
+                    BlockPos center = ReflectionHelper.getPrivateValue(Village.class, village, 3);
+                    Integer radius = ReflectionHelper.getPrivateValue(Village.class, village, 4);
+                    boolean spawnsIronGolems = village.getNumVillagers() >= 10 &&
+                            village.getNumVillageDoors() >= 21;
+                    Color color = getVillageColor(c % 6);
+                    villageBoundingBoxes.add(BoundingBoxVillage.from(center, radius, spawnsIronGolems, color));
+                    ++c;
+                }
+                processDelta(villageCache, villageBoundingBoxes);
 
-        if (configManager.drawVillages.getBoolean() &&
-                (world.villageCollectionObj != null)) {
-
-            Set<BoundingBox> villageBoundingBoxes = new HashSet<BoundingBox>();
-            List<Village> villages = world.villageCollectionObj.getVillageList();
-            int c = 0;
-            for (Village village : villages) {
-                BlockPos center = ReflectionHelper.getPrivateValue(Village.class, village, 3);
-                Integer radius = ReflectionHelper.getPrivateValue(Village.class, village, 4);
-                boolean spawnsIronGolems = village.getNumVillagers() >= 10 &&
-                        village.getNumVillageDoors() >= 21;
-                Color color = getVillageColor(c % 6);
-                villageBoundingBoxes.add(BoundingBoxVillage.from(center, radius, spawnsIronGolems, color));
-                ++c;
+                villageCache = villageBoundingBoxes;
             }
-            processDelta(villageCache, villageBoundingBoxes);
-
-            villageCache = villageBoundingBoxes;
         }
+    }
+
+    private BoundingBox getSpawnChunksBoundingBox(int spawnX, int spawnZ) {
+        double chunkSize = 16;
+        double midOffset = chunkSize * 6;
+        double midX = Math.round((float) (spawnX / chunkSize)) * chunkSize;
+        double midZ = Math.round((float) (spawnZ / chunkSize)) * chunkSize;
+        BlockPos minBlockPos = new BlockPos(midX - midOffset, 0, midZ - midOffset);
+        if (spawnX / chunkSize % 0.5D == 0.0D && spawnZ / chunkSize % 0.5D == 0.0D) {
+            midX += chunkSize;
+            midZ += chunkSize;
+        }
+        BlockPos maxBlockPos = new BlockPos(midX + midOffset, 0, midZ + midOffset);
+        return new BoundingBoxWorldSpawn(minBlockPos, maxBlockPos, Color.RED);
+    }
+
+    private BoundingBoxWorldSpawn getSpawnBoundingBox(int spawnX, int spawnZ) {
+        BlockPos minBlockPos = new BlockPos(spawnX - 10, 0, spawnZ - 10);
+        BlockPos maxBlockPos = new BlockPos(spawnX + 10, 0, spawnZ + 10);
+
+        return new BoundingBoxWorldSpawn(minBlockPos, maxBlockPos, Color.RED);
     }
 
     private void processDelta(Set<BoundingBox> oldBoundingBoxes, Set<BoundingBox> newBoundingBoxes) {
         for (BoundingBox bb : oldBoundingBoxes) {
             if (!newBoundingBoxes.contains(bb)) {
                 cache.remove(bb);
+                BoundingBoxOutlineReloaded.proxy.boundingBoxRemoved(bb);
             } else {
                 if (!cache.containsKey(bb)) {
                     Set<BoundingBox> boundingBoxes = new HashSet<BoundingBox>();

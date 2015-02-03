@@ -1,5 +1,6 @@
-package com.irtimaled.bbor;
+package com.irtimaled.bbor.messages;
 
+import com.irtimaled.bbor.*;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -16,8 +17,17 @@ public class BoundingBoxDeserializer {
                 return deserializeStructure(buf);
             case 'C':
                 return deserializeSlimeChunk(buf);
+            case 'W':
+                return deserializeWorldSpawn(buf);
         }
         return null;
+    }
+
+    private static BoundingBox deserializeWorldSpawn(ByteBuf buf) {
+        BlockPos minBlockPos = deserializeBlockPos(buf);
+        BlockPos maxBlockPos = deserializeBlockPos(buf);
+        Color color = new Color(ByteBufUtils.readVarInt(buf, 5));
+        return BoundingBoxWorldSpawn.from(minBlockPos, maxBlockPos, color);
     }
 
     private static BoundingBox deserializeSlimeChunk(ByteBuf buf) {

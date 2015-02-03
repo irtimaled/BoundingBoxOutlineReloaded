@@ -24,6 +24,8 @@ public class ConfigManager {
     public Property drawSlimeChunks;
     public Property slimeChunkMaxY;
     public Property keepCacheBetweenSessions;
+    public Property drawWorldSpawn;
+    public Property worldSpawnMaxY;
 
     private Property SetupBooleanProperty(Configuration config, String category, String configName, Boolean defaultValue, String comment) {
         Property property = config.get(category, configName, defaultValue);
@@ -58,8 +60,9 @@ public class ConfigManager {
         drawNetherFortresses = SetupBooleanProperty(config, "features", "drawNetherFortresses", true, "If set to true nether fortress bounding boxes are drawn. (default: true)");
         drawOceanMonuments = SetupBooleanProperty(config, "features", "drawOceanMonuments", true, "If set to true ocean monument bounding boxes are drawn. (default: true)");
         drawSlimeChunks = SetupBooleanProperty(config, "features", "drawSlimeChunks", true, "If set to true slime chunks bounding boxes are drawn. (default: true)");
-        slimeChunkMaxY = SetupIntegerProperty(config, "features", "slimeChunkMaxY", 0, "The maximum top of the slime chunk bounding box. If set to 0 it will always track the player's feet. (default: 0)");
-
+        slimeChunkMaxY = SetupIntegerProperty(config, "features", "slimeChunkMaxY", 0, "The maximum top of the slime chunk bounding box. If set to -1 it will use the value when activated, if set to 0 it will always track the player's feet. (default: 0)");
+        drawWorldSpawn = SetupBooleanProperty(config, "features", "drawWorldSpawn", true, "If set to true world spawn and spawn chunks bounding boxes are drawn. (default: true)");
+        worldSpawnMaxY = SetupIntegerProperty(config, "features", "worldSpawnMaxY", 0, "The maximum top of the world spawn bounding boxes. If set to -1 it will use the value when activated, if set to 0 it will always track the players feet. (default: 0)");
         config.save();
     }
 }

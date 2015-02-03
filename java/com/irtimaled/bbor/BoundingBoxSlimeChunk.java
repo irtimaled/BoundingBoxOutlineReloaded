@@ -20,3 +20,4 @@ public class BoundingBoxSlimeChunk extends BoundingBox {
         return new BoundingBoxSlimeChunk(minBlockPos, maxBlockPos, color);
     }
 }
+

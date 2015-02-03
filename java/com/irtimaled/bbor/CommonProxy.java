@@ -1,5 +1,9 @@
 package com.irtimaled.bbor;
 
+import com.irtimaled.bbor.messages.AddBoundingBoxMessage;
+import com.irtimaled.bbor.messages.AddBoundingBoxMessageHandler;
+import com.irtimaled.bbor.messages.RemoveBoundingBoxMessage;
+import com.irtimaled.bbor.messages.RemoveBoundingBoxMessageHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
@@ -34,7 +38,8 @@ public class CommonProxy {
 
     public void init() {
         network = NetworkRegistry.INSTANCE.newSimpleChannel("bbor");
-        network.registerMessage(BoundingBoxMessageHandler.class, BoundingBoxMessage.class, 0, Side.CLIENT);
+        network.registerMessage(AddBoundingBoxMessageHandler.class, AddBoundingBoxMessage.class, 0, Side.CLIENT);
+        network.registerMessage(RemoveBoundingBoxMessageHandler.class, RemoveBoundingBoxMessage.class, 1, Side.CLIENT);
     }
 
     @SubscribeEvent
@@ -118,7 +123,7 @@ public class CommonProxy {
 
         for (BoundingBox key : cacheSubset.keySet()) {
             Set<BoundingBox> boundingBoxes = cacheSubset.get(key);
-            network.sendTo(BoundingBoxMessage.from(dimension, key, boundingBoxes), player);
+            network.sendTo(AddBoundingBoxMessage.from(dimension, key, boundingBoxes), player);
 
             if (!playerBoundingBoxesCache.containsKey(player)) {
                 playerBoundingBoxesCache.put(player, new HashSet<BoundingBox>());
@@ -135,5 +140,22 @@ public class CommonProxy {
             }
         }
         return cacheSubset;
+    }
+
+    public void boundingBoxRemoved(BoundingBox bb) {
+        // the only bounding boxes that can change are spawn or villages - both of these are in overworld so I guess
+        // hard coding dimension 0 is okay.
+        RemoveBoundingBoxMessage message = RemoveBoundingBoxMessage.from(0, bb);
+        for (EntityPlayerMP player : playerDimensions.keySet()) {
+            if (player.dimension == 0) {
+                FMLLog.info("remove 1 entry from %s (0)", player.getDisplayNameString());
+                network.sendTo(message, player);
+
+                if (playerBoundingBoxesCache.containsKey(player) &&
+                        playerBoundingBoxesCache.get(player).contains(bb)) {
+                    playerBoundingBoxesCache.get(player).remove(bb);
+                }
+            }
+        }
     }
 }

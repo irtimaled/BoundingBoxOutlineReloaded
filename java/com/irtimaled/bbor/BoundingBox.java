@@ -47,12 +47,19 @@ public abstract class BoundingBox {
     }
 
     public AxisAlignedBB toAxisAlignedBB() {
-        return AxisAlignedBB.fromBounds(minBlockPos.getX(),
+        return toAxisAlignedBB(true);
+    }
+
+    public AxisAlignedBB toAxisAlignedBB(boolean extendMaxByOne) {
+        AxisAlignedBB axisAlignedBB = AxisAlignedBB.fromBounds(minBlockPos.getX(),
                 minBlockPos.getY(),
                 minBlockPos.getZ(),
                 maxBlockPos.getX(),
                 maxBlockPos.getY(),
                 maxBlockPos.getZ());
+        if (extendMaxByOne)
+            return axisAlignedBB.addCoord(1, 1, 1);
+        return axisAlignedBB;
     }
 
     public BlockPos getMinBlockPos() {

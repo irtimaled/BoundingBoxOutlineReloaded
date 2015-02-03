@@ -1,5 +1,6 @@
-package com.irtimaled.bbor;
+package com.irtimaled.bbor.messages;
 
+import com.irtimaled.bbor.BoundingBox;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -7,13 +8,13 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import java.util.HashSet;
 import java.util.Set;
 
-public class BoundingBoxMessage implements IMessage {
+public class AddBoundingBoxMessage implements IMessage {
     private int dimension;
     private BoundingBox key;
     private Set<BoundingBox> boundingBoxes;
 
-    public static BoundingBoxMessage from(int dimension, BoundingBox key, Set<BoundingBox> boundingBoxes) {
-        BoundingBoxMessage message = new BoundingBoxMessage();
+    public static AddBoundingBoxMessage from(int dimension, BoundingBox key, Set<BoundingBox> boundingBoxes) {
+        AddBoundingBoxMessage message = new AddBoundingBoxMessage();
         message.dimension = dimension;
         message.key = key;
         message.boundingBoxes = boundingBoxes;
@@ -37,7 +38,8 @@ public class BoundingBoxMessage implements IMessage {
     public void toBytes(ByteBuf buf) {
         ByteBufUtils.writeVarInt(buf, dimension, 5);
         BoundingBoxSerializer.serialize(key, buf);
-        if (boundingBoxes.size() > 1) {
+        if (boundingBoxes != null &&
+                boundingBoxes.size() > 1) {
             for (BoundingBox boundingBox : boundingBoxes) {
                 BoundingBoxSerializer.serialize(boundingBox, buf);
             }

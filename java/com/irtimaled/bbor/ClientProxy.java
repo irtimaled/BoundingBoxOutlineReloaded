@@ -25,10 +25,14 @@ import java.util.Set;
 
 public class ClientProxy extends CommonProxy {
 
+    private double activeY;
+
     @SubscribeEvent
     public void onKeyInputEvent(InputEvent.KeyInputEvent evt) {
         if (hotKey.isPressed()) {
             active = !active;
+            if (active)
+                activeY = playerY;
         }
     }
 
@@ -74,6 +78,7 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public void clientDisconnectionFromServerEvent(FMLNetworkEvent.ClientDisconnectionFromServerEvent evt) {
+        active = false;
         if (configManager.keepCacheBetweenSessions.getBoolean()) return;
         for (BoundingBoxCache cache : boundingBoxCacheMap.values()) {
             cache.close();
@@ -137,6 +142,8 @@ public class ClientProxy extends CommonProxy {
                     }
                 } else if (bb instanceof BoundingBoxSlimeChunk) {
                     renderSlimeChunk((BoundingBoxSlimeChunk) bb);
+                } else if (bb instanceof BoundingBoxWorldSpawn) {
+                    renderWorldSpawn((BoundingBoxWorldSpawn) bb);
                 } else {
                     renderBoundingBox(bb);
                 }
@@ -147,23 +154,38 @@ public class ClientProxy extends CommonProxy {
     private void renderBoundingBox(BoundingBox bb) {
         AxisAlignedBB aaBB = bb.toAxisAlignedBB();
         Color color = bb.getColor();
-        renderCuboid(aaBB.addCoord(0, 1, 0), color, fill());
+        renderCuboid(aaBB, color, fill());
+    }
+
+    private void renderWorldSpawn(BoundingBoxWorldSpawn bb) {
+        AxisAlignedBB aaBB = bb.toAxisAlignedBB(false);
+        double maxY = getMaxY(configManager.worldSpawnMaxY.getInt());
+        aaBB = new AxisAlignedBB(aaBB.minX, maxY, aaBB.minZ, aaBB.maxX, maxY, aaBB.maxZ);
+        Color color = bb.getColor();
+        renderCuboid(aaBB, color, fill());
+
     }
 
     private void renderSlimeChunk(BoundingBoxSlimeChunk bb) {
         AxisAlignedBB aaBB = bb.toAxisAlignedBB();
         Color color = bb.getColor();
-        renderCuboid(aaBB.addCoord(0, 1, 0), color, fill());
+        renderCuboid(aaBB, color, fill());
 
-        double maxY = configManager.slimeChunkMaxY.getInt();
-        if ((maxY == 0) || (playerY < maxY)) {
-            maxY = playerY;
-        }
-
+        double maxY = getMaxY(configManager.slimeChunkMaxY.getInt());
         if (maxY > 39) {
             aaBB = new AxisAlignedBB(aaBB.minX, 39, aaBB.minZ, aaBB.maxX, maxY, aaBB.maxZ);
             renderCuboid(aaBB, color, fill());
         }
+    }
+
+    private double getMaxY(double configMaxY) {
+
+        if (configMaxY == -1) {
+            return activeY;
+        } else if ((configMaxY == 0) || (playerY < configMaxY)) {
+            return playerY;
+        }
+        return configMaxY;
     }
 
     private boolean fill() {
@@ -176,10 +198,10 @@ public class ClientProxy extends CommonProxy {
                 center.getY() - 3,
                 center.getZ() - 8),
                 new BlockPos(center.getX() + 8,
-                        center.getY() + 4,
+                        center.getY() + 3,
                         center.getZ() + 8));
         GL11.glLineWidth(2.0f);
-        renderCuboid(abb, villageBB.getColor(), false);
+        renderCuboid(abb.addCoord(1, 1, 1), villageBB.getColor(), false);
         GL11.glLineWidth(3.0f);
     }
 
@@ -259,7 +281,6 @@ public class ClientProxy extends CommonProxy {
     private AxisAlignedBB offsetAxisAlignedBB(AxisAlignedBB axisAlignedBB) {
         double expandBy = 0.005F;
         return axisAlignedBB
-                .addCoord(1, 0, 1)
                 .expand(expandBy, expandBy, expandBy)
                 .offset(-playerX, -playerY, -playerZ);
     }
