@@ -6,12 +6,15 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.*;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
@@ -20,6 +23,9 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
+import java.io.*;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
@@ -74,6 +80,152 @@ public class ClientProxy extends CommonProxy {
                 renderBoundingBoxes(boundingBoxCacheMap.get(activeDimensionId).getBoundingBoxes());
             }
         }
+    }
+
+    @SubscribeEvent
+    public void clientConnectionToServerEvent(FMLNetworkEvent.ClientConnectedToServerEvent evt) {
+        if (!evt.isLocal) {
+            SocketAddress remoteAddress = evt.manager.getRemoteAddress();
+            if (remoteAddress instanceof InetSocketAddress) {
+                InetSocketAddress socketAddress = (InetSocketAddress) remoteAddress;
+                loadLocalStructures(socketAddress.getHostString(), socketAddress.getPort());
+            }
+        }
+    }
+
+    private void loadLocalStructures(String host, int port) {
+        String path = String.format("BBOutlineReloaded%s%s", File.separator, host);
+        File localStructuresFolder = new File(configManager.configDir, path);
+        if (!localStructuresFolder.exists()) {
+            path = String.format("%s,%d", path, port);
+            localStructuresFolder = new File(configManager.configDir, path);
+        }
+        if (!localStructuresFolder.exists())
+            return;
+        loadLevelDat(localStructuresFolder);
+        loadNetherStructures(localStructuresFolder);
+        loadOverworldStructures(localStructuresFolder);
+        loadEndStructures(localStructuresFolder);
+    }
+
+    private void loadOverworldStructures(File localStructuresFolder) {
+        BoundingBoxCache cache = new BoundingBoxCache();
+        if (configManager.drawDesertTemples.getBoolean()) {
+            loadStructureNbtFile(localStructuresFolder, cache, "Temple.dat", StructureType.DesertTemple.getColor(), "TeDP");
+        }
+        if (configManager.drawJungleTemples.getBoolean()) {
+            loadStructureNbtFile(localStructuresFolder, cache, "Temple.dat", StructureType.JungleTemple.getColor(), "TeJP");
+        }
+        if (configManager.drawWitchHuts.getBoolean()) {
+            loadStructureNbtFile(localStructuresFolder, cache, "Temple.dat", StructureType.WitchHut.getColor(), "TeSH");
+        }
+        if(configManager.drawOceanMonuments.getBoolean()){
+            loadStructureNbtFile(localStructuresFolder, cache, "Monument.dat", StructureType.OceanMonument.getColor(), "*");
+        }
+        if(configManager.drawMineShafts.getBoolean()){
+            loadStructureNbtFile(localStructuresFolder, cache, "Mineshaft.dat", StructureType.MineShaft.getColor(), "*");
+        }
+        if(configManager.drawStrongholds.getBoolean()){
+            loadStructureNbtFile(localStructuresFolder, cache, "Stronghold.dat", StructureType.Stronghold.getColor(), "*");
+        }
+        if(configManager.drawVillages.getBoolean()){
+            loadVillageNbtFile(localStructuresFolder, cache, "Villages.dat");
+        }
+
+        boundingBoxCacheMap.put(0, cache);
+    }
+
+    private void loadNetherStructures(File localStructuresFolder) {
+        BoundingBoxCache cache = new BoundingBoxCache();
+        if(configManager.drawNetherFortresses.getBoolean())
+            loadStructureNbtFile(localStructuresFolder, cache, "Fortress.dat", StructureType.NetherFortress.getColor(), "*");
+        if(configManager.drawVillages.getBoolean()){
+            loadVillageNbtFile(localStructuresFolder, cache, "villages_nether.dat");
+        }
+        boundingBoxCacheMap.put(-1, cache);
+    }
+
+    private void loadEndStructures(File localStructuresFolder) {
+        BoundingBoxCache cache = new BoundingBoxCache();
+        if(configManager.drawVillages.getBoolean()){
+            loadVillageNbtFile(localStructuresFolder, cache, "Villages_end.dat");
+        }
+        boundingBoxCacheMap.put(1, cache);
+    }
+
+    private void loadVillageNbtFile(File localStructuresFolder, BoundingBoxCache cache, String fileName) {
+        File file = new File(localStructuresFolder, fileName);
+        NBTTagCompound nbt = loadNbtFile(file);
+        if (nbt == null)
+            return;
+
+        NBTTagCompound[] villages = getChildCompoundTags(nbt.getCompoundTag("data"), "Villages");
+        for (NBTTagCompound village : villages) {
+            BlockPos center = new BlockPos(village.getInteger("CX"), village.getInteger("CY"), village.getInteger("CZ"));
+            int radius = village.getInteger("Radius");
+            int numVillagers = village.getInteger("PopSize");
+            int numVillageDoors = village.getTagList("Doors", Constants.NBT.TAG_COMPOUND).tagCount();
+            BoundingBox boundingBox = BoundingBoxVillage.from(center, radius, numVillagers, numVillageDoors);
+            cache.addBoundingBox(boundingBox);
+        }
+
+        FMLLog.info("Loaded %s (%d villages)", fileName, villages.length);
+    }
+
+    private void loadStructureNbtFile(File localStructuresFolder, BoundingBoxCache cache, String fileName, Color color, String id) {
+        File file = new File(localStructuresFolder, fileName);
+        NBTTagCompound nbt = loadNbtFile(file);
+        if (nbt == null)
+            return;
+
+        NBTTagCompound features = nbt.getCompoundTag("data")
+                .getCompoundTag("Features");
+        int loadedStructureCount=0;
+        for (Object key : features.getKeySet()) {
+            NBTTagCompound feature = features.getCompoundTag((String) key);
+            BoundingBox structure = BoundingBoxStructure.from(feature.getIntArray("BB"), color);
+            Set<BoundingBox> boundingBoxes = new HashSet<BoundingBox>();
+            NBTTagCompound[] children = getChildCompoundTags(feature, "Children");
+            for (NBTTagCompound child : children) {
+                if (id.equals(child.getString("id")) || id.equals("*"))
+                    boundingBoxes.add(BoundingBoxStructure.from(child.getIntArray("BB"), color));
+            }
+            if(boundingBoxes.size()>0)
+                ++loadedStructureCount;
+                cache.addBoundingBox(structure, boundingBoxes);
+        }
+
+        FMLLog.info("Loaded %s (%d structures with type %s)", fileName, loadedStructureCount, id);
+    }
+
+    private NBTTagCompound[] getChildCompoundTags(NBTTagCompound parent, String key) {
+        NBTTagList tagList = parent.getTagList(key, Constants.NBT.TAG_COMPOUND);
+        NBTTagCompound[] result = new NBTTagCompound[tagList.tagCount()];
+        for (int index = 0; index < tagList.tagCount(); index++) {
+            result[index] = tagList.getCompoundTagAt(index);
+        }
+        return result;
+    }
+
+    private void loadLevelDat(File localStructuresFolder) {
+        File file = new File(localStructuresFolder, "level.dat");
+        NBTTagCompound nbt = loadNbtFile(file);
+        if (nbt == null)
+            return;
+
+        NBTTagCompound data = nbt.getCompoundTag("Data");
+        setWorldData(data.getLong("RandomSeed"), data.getInteger("SpawnX"), data.getInteger("SpawnZ"));
+        FMLLog.info("Loaded level.dat (seed: %d, spawn: %d,%d)", seed, spawnX, spawnZ);
+    }
+
+    private NBTTagCompound loadNbtFile(File file) {
+        if (!file.exists())
+            return null;
+        try {
+            return CompressedStreamTools.readCompressed(new FileInputStream(file));
+        } catch (IOException e) {
+        }
+        return null;
     }
 
     @SubscribeEvent

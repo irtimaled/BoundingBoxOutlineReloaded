@@ -6,7 +6,7 @@ import net.minecraftforge.common.config.Property;
 import java.io.File;
 
 public class ConfigManager {
-    public Configuration config;
+    public final File configDir;
 
     public Property showDebugInfo;
     public Property fill;
@@ -27,21 +27,10 @@ public class ConfigManager {
     public Property drawWorldSpawn;
     public Property worldSpawnMaxY;
 
-    private Property SetupBooleanProperty(Configuration config, String category, String configName, Boolean defaultValue, String comment) {
-        Property property = config.get(category, configName, defaultValue);
-        property.comment = comment;
-        property.set(property.getBoolean(defaultValue));
-        return property;
-    }
-
-    private Property SetupIntegerProperty(Configuration config, String category, String configName, int defaultValue, String comment) {
-        Property property = config.get(category, configName, defaultValue);
-        property.comment = comment;
-        property.set(property.getInt(defaultValue));
-        return property;
-    }
+    private Configuration config;
 
     public ConfigManager(File configDir) {
+        this.configDir = configDir;
         config = new Configuration(new File(configDir, "BBOutlineReloaded.cfg"));
         config.load();
 
@@ -64,5 +53,19 @@ public class ConfigManager {
         drawWorldSpawn = SetupBooleanProperty(config, "features", "drawWorldSpawn", true, "If set to true world spawn and spawn chunks bounding boxes are drawn. (default: true)");
         worldSpawnMaxY = SetupIntegerProperty(config, "features", "worldSpawnMaxY", 0, "The maximum top of the world spawn bounding boxes. If set to -1 it will use the value when activated, if set to 0 it will always track the players feet. (default: 0)");
         config.save();
+    }
+
+    private Property SetupBooleanProperty(Configuration config, String category, String configName, Boolean defaultValue, String comment) {
+        Property property = config.get(category, configName, defaultValue);
+        property.comment = comment;
+        property.set(property.getBoolean(defaultValue));
+        return property;
+    }
+
+    private Property SetupIntegerProperty(Configuration config, String category, String configName, int defaultValue, String comment) {
+        Property property = config.get(category, configName, defaultValue);
+        property.comment = comment;
+        property.set(property.getInt(defaultValue));
+        return property;
     }
 }

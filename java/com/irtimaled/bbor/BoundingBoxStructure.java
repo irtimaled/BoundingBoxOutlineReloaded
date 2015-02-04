@@ -16,6 +16,12 @@ public class BoundingBoxStructure extends BoundingBox {
         return new BoundingBoxStructure(minBlockPos, maxBlockPos, color);
     }
 
+    public static BoundingBoxStructure from(int[] bb, Color color) {
+        BlockPos minBlockPos = new BlockPos(bb[0], bb[1], bb[2]);
+        BlockPos maxBlockPos = new BlockPos(bb[3], bb[4], bb[5]);
+        return new BoundingBoxStructure(minBlockPos, maxBlockPos, color);
+    }
+
     public static BoundingBoxStructure from(BlockPos minBlockPos, BlockPos maxBlockPos, Color color) {
         return new BoundingBoxStructure(minBlockPos, maxBlockPos, color);
     }
