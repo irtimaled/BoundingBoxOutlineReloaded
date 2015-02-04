@@ -40,7 +40,7 @@ The following options are available for configuration
 
 Option | Client/Server | Description | Cfg File Key | Cfg File Values | Default
 --- | --- | --- | --- | --- | ---
-Nether Fortresses | Both | Process/Render Nether Fortresses | drawDesertTemples | true/false | true
+Nether Fortresses | Both | Process/Render Nether Fortresses | drawNetherFortresses | true/false | true
 Witch Huts | Both | Process/Render Witch Huts | drawWitchHuts | true/false | true
 Desert Temples | Both | Process/Render Desert Temples | drawDesertTemples | true/false | true
 Jungle Temples | Both | Process/Render Jungle Temples | drawJungleTemples | true/false | true
