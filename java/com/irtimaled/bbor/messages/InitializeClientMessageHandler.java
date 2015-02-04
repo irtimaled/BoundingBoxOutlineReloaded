@@ -8,7 +8,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 public class InitializeClientMessageHandler implements IMessageHandler<InitializeClientMessage, IMessage> {
     @Override
     public IMessage onMessage(InitializeClientMessage message, MessageContext ctx) {
-        BoundingBoxOutlineReloaded.proxy.setSeed(message.getSeed());
+        BoundingBoxOutlineReloaded.proxy.setWorldData(message);
         return null;
     }
 }

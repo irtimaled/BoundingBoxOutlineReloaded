@@ -372,23 +372,24 @@ public class ClientProxy extends CommonProxy {
 
     private Set<BoundingBox> getClientBoundingBoxes() {
         Set<BoundingBox> boundingBoxes = new HashSet<BoundingBox>();
-        World world = Minecraft.getMinecraft().theWorld;
-        int dimensionId = world.provider.getDimensionId();
-        if (dimensionId == 0) {
-            if (configManager.drawWorldSpawn.getBoolean()) {
-                int spawnX = world.getWorldInfo().getSpawnX();
-                int spawnZ = world.getWorldInfo().getSpawnZ();
-                boundingBoxes.add(getSpawnBoundingBox(spawnX, spawnZ));
-                boundingBoxes.add(getSpawnChunksBoundingBox(spawnX, spawnZ));
+        if (initialized) {
+            World world = Minecraft.getMinecraft().theWorld;
+            int dimensionId = world.provider.getDimensionId();
+            if (dimensionId == 0) {
+                if (configManager.drawWorldSpawn.getBoolean()) {
+                    int spawnX = world.getWorldInfo().getSpawnX();
+                    int spawnZ = world.getWorldInfo().getSpawnZ();
+                    boundingBoxes.add(getSpawnBoundingBox(spawnX, spawnZ));
+                    boundingBoxes.add(getSpawnChunksBoundingBox(spawnX, spawnZ));
 
-            }
+                }
 
-            if (initialized &&
-                    configManager.drawSlimeChunks.getBoolean()) {
-                Set<ChunkCoordIntPair> activeChunks = getActiveChunks(world);
-                for (ChunkCoordIntPair chunk : activeChunks) {
-                    if (isSlimeChunk(chunk.chunkXPos, chunk.chunkZPos)) {
-                        boundingBoxes.add(BoundingBoxSlimeChunk.from(chunk, Color.GREEN));
+                if (configManager.drawSlimeChunks.getBoolean()) {
+                    Set<ChunkCoordIntPair> activeChunks = getActiveChunks(world);
+                    for (ChunkCoordIntPair chunk : activeChunks) {
+                        if (isSlimeChunk(chunk.chunkXPos, chunk.chunkZPos)) {
+                            boundingBoxes.add(BoundingBoxSlimeChunk.from(chunk, Color.GREEN));
+                        }
                     }
                 }
             }

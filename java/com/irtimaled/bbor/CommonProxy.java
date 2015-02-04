@@ -32,6 +32,8 @@ public class CommonProxy {
     public ConfigManager configManager;
     protected SimpleNetworkWrapper network;
     protected long seed;
+    protected int spawnX;
+    protected int spawnZ;
     protected boolean initialized;
 
     public void init() {
@@ -46,7 +48,7 @@ public class CommonProxy {
         IChunkProvider chunkProvider = event.world.getChunkProvider();
         if (chunkProvider instanceof ChunkProviderServer) {
             chunkProvider = ((ChunkProviderServer) chunkProvider).serverChunkGenerator;
-            setSeed(event.world.getSeed());
+            setWorldData(event.world.getSeed(), event.world.getWorldInfo().getSpawnX(), event.world.getWorldInfo().getSpawnZ());
             int dimensionId = event.world.provider.getDimensionId();
             FMLLog.info("create world dimension: %d, %s (chunkprovider: %s) (seed: %d)", dimensionId, event.world.getClass().toString(), chunkProvider.getClass().toString(), seed);
             boundingBoxCacheMap.put(dimensionId, new DimensionProcessor(configManager, event.world, dimensionId, chunkProvider));
@@ -113,7 +115,7 @@ public class CommonProxy {
     }
 
     private void initializeClient(EntityPlayerMP player) {
-        network.sendTo(InitializeClientMessage.from(seed), player);
+        network.sendTo(InitializeClientMessage.from(seed, spawnX, spawnZ), player);
     }
 
     private void sendToPlayer(EntityPlayerMP player, BoundingBoxCache boundingBoxCache) {
@@ -162,8 +164,14 @@ public class CommonProxy {
         }
     }
 
-    public void setSeed(long seed) {
+    public void setWorldData(long seed, int spawnX, int spawnZ) {
         this.seed = seed;
+        this.spawnX = spawnX;
+        this.spawnZ = spawnZ;
         this.initialized = true;
+    }
+
+    public void setWorldData(IWorldData worldData) {
+        setWorldData(worldData.getSeed(), worldData.getSpawnX(), worldData.getSpawnZ());
     }
 }
