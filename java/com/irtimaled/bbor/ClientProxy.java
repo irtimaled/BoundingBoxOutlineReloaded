@@ -8,6 +8,7 @@ import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
+import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -21,11 +22,17 @@ import org.lwjgl.opengl.GL11;
 import java.awt.*;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 public class ClientProxy extends CommonProxy {
 
     private double activeY;
+    private boolean active;
+    private KeyBinding hotKey;
+    private double playerX;
+    private double playerY;
+    private double playerZ;
 
     @SubscribeEvent
     public void onKeyInputEvent(InputEvent.KeyInputEvent evt) {
@@ -35,9 +42,6 @@ public class ClientProxy extends CommonProxy {
                 activeY = playerY;
         }
     }
-
-    private boolean active;
-    private KeyBinding hotKey;
 
     @Override
     public void init() {
@@ -56,10 +60,6 @@ public class ClientProxy extends CommonProxy {
         }
         return true;
     }
-
-    private double playerX;
-    private double playerY;
-    private double playerZ;
 
     @SubscribeEvent
     public void renderWorldLastEvent(RenderWorldLastEvent event) {
@@ -80,6 +80,7 @@ public class ClientProxy extends CommonProxy {
     public void clientDisconnectionFromServerEvent(FMLNetworkEvent.ClientDisconnectionFromServerEvent evt) {
         active = false;
         if (configManager.keepCacheBetweenSessions.getBoolean()) return;
+        initialized = false;
         for (BoundingBoxCache cache : boundingBoxCacheMap.values()) {
             cache.close();
         }
@@ -99,6 +100,8 @@ public class ClientProxy extends CommonProxy {
         for (BoundingBox bb : map.keySet()) {
             renderBoundingBoxes(map.get(bb));
         }
+
+        renderBoundingBoxes(getClientBoundingBoxes());
 
         GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
         GL11.glEnable(GL11.GL_CULL_FACE);
@@ -123,7 +126,7 @@ public class ClientProxy extends CommonProxy {
 
     private void renderBoundingBoxes(Set<BoundingBox> bbList) {
         World world = Minecraft.getMinecraft().theWorld;
-        Set activeChunks = ReflectionHelper.getPrivateValue(World.class, world, 33);
+        Set activeChunks = getActiveChunks(world);
         for (BoundingBox bb : bbList) {
 
             if (activeChunks.contains(world.getChunkFromBlockCoords(bb.getMinBlockPos()).getChunkCoordIntPair()) ||
@@ -149,6 +152,10 @@ public class ClientProxy extends CommonProxy {
                 }
             }
         }
+    }
+
+    private Set getActiveChunks(World world) {
+        return ReflectionHelper.getPrivateValue(World.class, world, 33);
     }
 
     private void renderBoundingBox(BoundingBox bb) {
@@ -361,5 +368,61 @@ public class ClientProxy extends CommonProxy {
                 points.add(centerPoint.add(dx, dy, dz));
             }
         return points;
+    }
+
+    private Set<BoundingBox> getClientBoundingBoxes() {
+        Set<BoundingBox> boundingBoxes = new HashSet<BoundingBox>();
+        World world = Minecraft.getMinecraft().theWorld;
+        int dimensionId = world.provider.getDimensionId();
+        if (dimensionId == 0) {
+            if (configManager.drawWorldSpawn.getBoolean()) {
+                int spawnX = world.getWorldInfo().getSpawnX();
+                int spawnZ = world.getWorldInfo().getSpawnZ();
+                boundingBoxes.add(getSpawnBoundingBox(spawnX, spawnZ));
+                boundingBoxes.add(getSpawnChunksBoundingBox(spawnX, spawnZ));
+
+            }
+
+            if (initialized &&
+                    configManager.drawSlimeChunks.getBoolean()) {
+                Set<ChunkCoordIntPair> activeChunks = getActiveChunks(world);
+                for (ChunkCoordIntPair chunk : activeChunks) {
+                    if (isSlimeChunk(chunk.chunkXPos, chunk.chunkZPos)) {
+                        boundingBoxes.add(BoundingBoxSlimeChunk.from(chunk, Color.GREEN));
+                    }
+                }
+            }
+        }
+        return boundingBoxes;
+    }
+
+    private boolean isSlimeChunk(int chunkX, int chunkZ) {
+        Random r = new Random(seed +
+                (long) (chunkX * chunkX * 4987142) +
+                (long) (chunkX * 5947611) +
+                (long) (chunkZ * chunkZ) * 4392871L +
+                (long) (chunkZ * 389711) ^ 987234911L);
+        return r.nextInt(10) == 0;
+    }
+
+    private BoundingBox getSpawnChunksBoundingBox(int spawnX, int spawnZ) {
+        double chunkSize = 16;
+        double midOffset = chunkSize * 6;
+        double midX = Math.round((float) (spawnX / chunkSize)) * chunkSize;
+        double midZ = Math.round((float) (spawnZ / chunkSize)) * chunkSize;
+        BlockPos minBlockPos = new BlockPos(midX - midOffset, 0, midZ - midOffset);
+        if (spawnX / chunkSize % 0.5D == 0.0D && spawnZ / chunkSize % 0.5D == 0.0D) {
+            midX += chunkSize;
+            midZ += chunkSize;
+        }
+        BlockPos maxBlockPos = new BlockPos(midX + midOffset, 0, midZ + midOffset);
+        return new BoundingBoxWorldSpawn(minBlockPos, maxBlockPos, Color.RED);
+    }
+
+    private BoundingBoxWorldSpawn getSpawnBoundingBox(int spawnX, int spawnZ) {
+        BlockPos minBlockPos = new BlockPos(spawnX - 10, 0, spawnZ - 10);
+        BlockPos maxBlockPos = new BlockPos(spawnX + 10, 0, spawnZ + 10);
+
+        return new BoundingBoxWorldSpawn(minBlockPos, maxBlockPos, Color.RED);
     }
 }

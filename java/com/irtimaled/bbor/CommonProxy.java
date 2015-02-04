@@ -1,9 +1,6 @@
 package com.irtimaled.bbor;
 
-import com.irtimaled.bbor.messages.AddBoundingBoxMessage;
-import com.irtimaled.bbor.messages.AddBoundingBoxMessageHandler;
-import com.irtimaled.bbor.messages.RemoveBoundingBoxMessage;
-import com.irtimaled.bbor.messages.RemoveBoundingBoxMessageHandler;
+import com.irtimaled.bbor.messages.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
@@ -32,14 +29,16 @@ public class CommonProxy {
 
     private Map<EntityPlayerMP, Set<BoundingBox>> playerBoundingBoxesCache = new HashMap<EntityPlayerMP, Set<BoundingBox>>();
 
-
     public ConfigManager configManager;
     protected SimpleNetworkWrapper network;
+    protected long seed;
+    protected boolean initialized;
 
     public void init() {
         network = NetworkRegistry.INSTANCE.newSimpleChannel("bbor");
         network.registerMessage(AddBoundingBoxMessageHandler.class, AddBoundingBoxMessage.class, 0, Side.CLIENT);
         network.registerMessage(RemoveBoundingBoxMessageHandler.class, RemoveBoundingBoxMessage.class, 1, Side.CLIENT);
+        network.registerMessage(InitializeClientMessageHandler.class, InitializeClientMessage.class, 2, Side.CLIENT);
     }
 
     @SubscribeEvent
@@ -47,10 +46,10 @@ public class CommonProxy {
         IChunkProvider chunkProvider = event.world.getChunkProvider();
         if (chunkProvider instanceof ChunkProviderServer) {
             chunkProvider = ((ChunkProviderServer) chunkProvider).serverChunkGenerator;
-            long seed = event.world.getSeed();
+            setSeed(event.world.getSeed());
             int dimensionId = event.world.provider.getDimensionId();
             FMLLog.info("create world dimension: %d, %s (chunkprovider: %s) (seed: %d)", dimensionId, event.world.getClass().toString(), chunkProvider.getClass().toString(), seed);
-            boundingBoxCacheMap.put(dimensionId, new DimensionProcessor(configManager, event.world, seed, dimensionId, chunkProvider));
+            boundingBoxCacheMap.put(dimensionId, new DimensionProcessor(configManager, event.world, dimensionId, chunkProvider));
         }
     }
 
@@ -79,12 +78,12 @@ public class CommonProxy {
 
     @SubscribeEvent
     public void playerLoggedInEvent(PlayerEvent.PlayerLoggedInEvent evt) {
-        if (evt.player instanceof EntityPlayerMP && isRemotePlayer(evt.player)) {
-
+        if (evt.player instanceof EntityPlayerMP &&
+                isRemotePlayer(evt.player)) {
             EntityPlayerMP player = (EntityPlayerMP) evt.player;
+            initializeClient(player);
             int dimension = player.dimension;
             playerDimensions.put(player, dimension);
-
             sendToPlayer(player, boundingBoxCacheMap.get(dimension));
         }
     }
@@ -111,6 +110,10 @@ public class CommonProxy {
                 }
             }
         }
+    }
+
+    private void initializeClient(EntityPlayerMP player) {
+        network.sendTo(InitializeClientMessage.from(seed), player);
     }
 
     private void sendToPlayer(EntityPlayerMP player, BoundingBoxCache boundingBoxCache) {
@@ -157,5 +160,10 @@ public class CommonProxy {
                 }
             }
         }
+    }
+
+    public void setSeed(long seed) {
+        this.seed = seed;
+        this.initialized = true;
     }
 }

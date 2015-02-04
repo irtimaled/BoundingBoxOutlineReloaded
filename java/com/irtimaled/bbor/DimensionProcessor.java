@@ -22,12 +22,10 @@ public class DimensionProcessor extends BoundingBoxCache {
 
     private ConfigManager configManager;
     private World world;
-    private long seed;
 
-    public DimensionProcessor(ConfigManager configManager, World world, long seed, int dimensionId, IChunkProvider chunkProvider) {
+    public DimensionProcessor(ConfigManager configManager, World world, int dimensionId, IChunkProvider chunkProvider) {
         this.configManager = configManager;
         this.world = world;
-        this.seed = seed;
         this.dimensionId = dimensionId;
         this.chunkProvider = chunkProvider;
         villageCache = new HashSet<BoundingBox>();
@@ -140,74 +138,25 @@ public class DimensionProcessor extends BoundingBoxCache {
             }
         }
 
-        if (dimensionId == 0) {
-            if (configManager.drawWorldSpawn.getBoolean()) {
-                Set<BoundingBox> worldSpawnBoundingBoxes = new HashSet<BoundingBox>();
-                int spawnX = world.getWorldInfo().getSpawnX();
-                int spawnZ = world.getWorldInfo().getSpawnZ();
-                worldSpawnBoundingBoxes.add(getSpawnBoundingBox(spawnX, spawnZ));
-                worldSpawnBoundingBoxes.add(getSpawnChunksBoundingBox(spawnX, spawnZ));
-                processDelta(worldSpawnCache, worldSpawnBoundingBoxes);
+        if (configManager.drawVillages.getBoolean() &&
+                (world.villageCollectionObj != null)) {
 
-                worldSpawnCache = worldSpawnBoundingBoxes;
+            Set<BoundingBox> villageBoundingBoxes = new HashSet<BoundingBox>();
+            List<Village> villages = world.villageCollectionObj.getVillageList();
+            int c = 0;
+            for (Village village : villages) {
+                BlockPos center = ReflectionHelper.getPrivateValue(Village.class, village, 3);
+                Integer radius = ReflectionHelper.getPrivateValue(Village.class, village, 4);
+                boolean spawnsIronGolems = village.getNumVillagers() >= 10 &&
+                        village.getNumVillageDoors() >= 21;
+                Color color = getVillageColor(c % 6);
+                villageBoundingBoxes.add(BoundingBoxVillage.from(center, radius, spawnsIronGolems, color));
+                ++c;
             }
+            processDelta(villageCache, villageBoundingBoxes);
 
-
-            if (configManager.drawSlimeChunks.getBoolean()) {
-                Set<BoundingBox> slimeChunkBoundingBoxes = new HashSet<BoundingBox>();
-                Set<ChunkCoordIntPair> activeChunks = ReflectionHelper.getPrivateValue(World.class, world, 33);
-                for (ChunkCoordIntPair chunk : activeChunks) {
-                    if (isSlimeChunk(chunk.chunkXPos, chunk.chunkZPos)) {
-                        slimeChunkBoundingBoxes.add(BoundingBoxSlimeChunk.from(chunk, Color.GREEN));
-                    }
-                }
-
-                processDelta(slimeChunkCache, slimeChunkBoundingBoxes);
-
-                slimeChunkCache = slimeChunkBoundingBoxes;
-            }
-
-            if (configManager.drawVillages.getBoolean() &&
-                    (world.villageCollectionObj != null)) {
-
-                Set<BoundingBox> villageBoundingBoxes = new HashSet<BoundingBox>();
-                List<Village> villages = world.villageCollectionObj.getVillageList();
-                int c = 0;
-                for (Village village : villages) {
-                    BlockPos center = ReflectionHelper.getPrivateValue(Village.class, village, 3);
-                    Integer radius = ReflectionHelper.getPrivateValue(Village.class, village, 4);
-                    boolean spawnsIronGolems = village.getNumVillagers() >= 10 &&
-                            village.getNumVillageDoors() >= 21;
-                    Color color = getVillageColor(c % 6);
-                    villageBoundingBoxes.add(BoundingBoxVillage.from(center, radius, spawnsIronGolems, color));
-                    ++c;
-                }
-                processDelta(villageCache, villageBoundingBoxes);
-
-                villageCache = villageBoundingBoxes;
-            }
+            villageCache = villageBoundingBoxes;
         }
-    }
-
-    private BoundingBox getSpawnChunksBoundingBox(int spawnX, int spawnZ) {
-        double chunkSize = 16;
-        double midOffset = chunkSize * 6;
-        double midX = Math.round((float) (spawnX / chunkSize)) * chunkSize;
-        double midZ = Math.round((float) (spawnZ / chunkSize)) * chunkSize;
-        BlockPos minBlockPos = new BlockPos(midX - midOffset, 0, midZ - midOffset);
-        if (spawnX / chunkSize % 0.5D == 0.0D && spawnZ / chunkSize % 0.5D == 0.0D) {
-            midX += chunkSize;
-            midZ += chunkSize;
-        }
-        BlockPos maxBlockPos = new BlockPos(midX + midOffset, 0, midZ + midOffset);
-        return new BoundingBoxWorldSpawn(minBlockPos, maxBlockPos, Color.RED);
-    }
-
-    private BoundingBoxWorldSpawn getSpawnBoundingBox(int spawnX, int spawnZ) {
-        BlockPos minBlockPos = new BlockPos(spawnX - 10, 0, spawnZ - 10);
-        BlockPos maxBlockPos = new BlockPos(spawnX + 10, 0, spawnZ + 10);
-
-        return new BoundingBoxWorldSpawn(minBlockPos, maxBlockPos, Color.RED);
     }
 
     private void processDelta(Set<BoundingBox> oldBoundingBoxes, Set<BoundingBox> newBoundingBoxes) {
@@ -223,15 +172,6 @@ public class DimensionProcessor extends BoundingBoxCache {
                 }
             }
         }
-    }
-
-    private boolean isSlimeChunk(int chunkX, int chunkZ) {
-        Random r = new Random(seed +
-                (long) (chunkX * chunkX * 4987142) +
-                (long) (chunkX * 5947611) +
-                (long) (chunkZ * chunkZ) * 4392871L +
-                (long) (chunkZ * 389711) ^ 987234911L);
-        return r.nextInt(10) == 0;
     }
 
     private Color getVillageColor(int c) {
