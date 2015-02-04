@@ -26,15 +26,9 @@ This mod highlights in a variety of colours and styles the different structures 
 
 As chunks are loaded the game provides metadata about all the different structures & features in those chunks.  The mod interprets this meta data, caches the results, and renders the bounding boxes to the screen.  In an SMP environment this data is not present on the clients so the mod needs to run on the server where the processing happens and then the relevant metadata is sent to the clients for them to render.
 
-To toggle the rendering of the bounding boxes press B.
-
 # Installing
 
 Make sure you have Forge 1.8 installed then drop the jar file into the mods/1.8 folder.  Remember this will need to be installed on client and server in an SMP scenario.
-
-# Using
-
-Press B, sit back and enjoy the goodness flowing onto your screen.
 
 # Configuring
 
@@ -77,6 +71,25 @@ Forge provides a UI to edit configuration of mods - this mod provides the abilit
 ### Cfg file editing
 
 Open the config/BBOutlineReloaded.cfg file with your text editor of choice and change the settings.  Simples!  Minecraft (including servers) will need to be restarted for the settings to take effect.
+
+# Using
+
+Press B, sit back and enjoy the goodness flowing onto your screen.
+
+# Using with vanilla servers
+
+There are two options when you want bounding boxes to show when accessing vanilla servers:-
+
+1. Keep cache - With the "Keep Cache Between Sessions" config setting enabled, Open a copy of the world in single player and move around to capture all the structures you want in the cache. Once you are happy with the structures you have cached, quit the single player game and connect to the server.  You will see all the structures from the cache.
+2. Load dat files - Copy the dat files listed below into config/BBOutlineReloaded/{host},{port} and these will be loaded when you connect to the vanilla server.  {host} will be the name or ip you use to connect to the server; {port} is the port you specify when connecting.  The any/all of following files can be used:-
+  - level.dat; include this for world spawn, spawn and slime chunks to be rendered.
+  - Fortress.dat; include this for Nether Fortresses to be rendered.
+  - Mineshaft.dat; include this for Mineshafts to be rendered.
+  - Monument.dat; include this for Ocean Monuments to be rendered.
+  - Stronghold.dat; include this for Strongholds to be rendered.
+  - Temple.dat; include this for Desert & Jungle Temples and witch huts to be rendered.
+
+It is also possible to include the villages.dat, villages_end.dat & villages_nether.dat files and it will render villages however these files only contain the villages loaded when copied and will not handle the dynamic changes that occur with villages when doors are added/removed or all villagers are removed.
 
 # Links
 - Forge 1.8 - [Download](http://files.minecraftforge.net/minecraftforge/1.8)
