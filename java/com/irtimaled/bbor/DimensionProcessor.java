@@ -61,45 +61,37 @@ public class DimensionProcessor extends BoundingBoxCache {
         return Collections.emptyList();
     }
 
-    private static final int JUNGLE_TEMPLE = 1;
-    private static final int DESERT_TEMPLE = 2;
-    private static final int WITCH_HUT = 3;
-    private static final int OCEAN_MONUMENT = 4;
-    private static final int STRONGHOLD = 5;
-    private static final int MINE_SHAFT = 6;
-    private static final int NETHER_FORTRESS = 7;
+    private Map<StructureType, Collection<StructureStart>> getStructures() {
 
-    private Map<Integer, Collection<StructureStart>> getStructures() {
-
-        Map<Integer, Collection<StructureStart>> structureMap = new HashMap<Integer, Collection<StructureStart>>();
+        Map<StructureType, Collection<StructureStart>> structureMap = new HashMap<StructureType, Collection<StructureStart>>();
         if (chunkProvider instanceof ChunkProviderGenerate) {
             if (configManager.drawDesertTemples.getBoolean()) {
-                structureMap.put(DimensionProcessor.DESERT_TEMPLE, getStructuresWithComponent(getStructures(chunkProvider, 20), ComponentScatteredFeaturePieces.DesertPyramid.class));
+                structureMap.put(StructureType.DesertTemple, getStructuresWithComponent(getStructures(chunkProvider, 20), ComponentScatteredFeaturePieces.DesertPyramid.class));
             }
 
             if (configManager.drawJungleTemples.getBoolean()) {
-                structureMap.put(DimensionProcessor.JUNGLE_TEMPLE, getStructuresWithComponent(getStructures(chunkProvider, 20), ComponentScatteredFeaturePieces.JunglePyramid.class));
+                structureMap.put(StructureType.JungleTemple, getStructuresWithComponent(getStructures(chunkProvider, 20), ComponentScatteredFeaturePieces.JunglePyramid.class));
             }
 
             if (configManager.drawWitchHuts.getBoolean()) {
-                structureMap.put(DimensionProcessor.WITCH_HUT, getStructuresWithComponent(getStructures(chunkProvider, 20), ComponentScatteredFeaturePieces.SwampHut.class));
+                structureMap.put(StructureType.WitchHut, getStructuresWithComponent(getStructures(chunkProvider, 20), ComponentScatteredFeaturePieces.SwampHut.class));
             }
 
             if (configManager.drawOceanMonuments.getBoolean()) {
-                structureMap.put(DimensionProcessor.OCEAN_MONUMENT, getStructures(chunkProvider, 22));
+                structureMap.put(StructureType.OceanMonument, getStructures(chunkProvider, 22));
             }
 
             if (configManager.drawStrongholds.getBoolean()) {
-                structureMap.put(DimensionProcessor.STRONGHOLD, getStructures(chunkProvider, 17));
+                structureMap.put(StructureType.Stronghold, getStructures(chunkProvider, 17));
             }
 
             if (configManager.drawMineShafts.getBoolean()) {
-                structureMap.put(DimensionProcessor.MINE_SHAFT, getStructures(chunkProvider, 19));
+                structureMap.put(StructureType.MineShaft, getStructures(chunkProvider, 19));
             }
         } else if (chunkProvider instanceof ChunkProviderHell) {
 
             if (configManager.drawNetherFortresses.getBoolean()) {
-                structureMap.put(DimensionProcessor.NETHER_FORTRESS, getStructures(chunkProvider, 22));
+                structureMap.put(StructureType.NetherFortress, getStructures(chunkProvider, 22));
             }
         }
 
@@ -120,9 +112,9 @@ public class DimensionProcessor extends BoundingBoxCache {
     public synchronized void refresh() {
         if (closed) return;
 
-        Map<Integer, Collection<StructureStart>> structureMap = getStructures();
-        for (Integer structureType : structureMap.keySet()) {
-            Color color = getStructureColor(structureType);
+        Map<StructureType, Collection<StructureStart>> structureMap = getStructures();
+        for (StructureType structureType : structureMap.keySet()) {
+            Color color = structureType.getColor();
             for (StructureStart structureStart : structureMap.get(structureType)) {
                 BoundingBox boundingBox = BoundingBoxStructure.from(structureStart.getBoundingBox(), color);
                 if (!cache.containsKey(boundingBox)) {
@@ -147,11 +139,7 @@ public class DimensionProcessor extends BoundingBoxCache {
             for (Village village : villages) {
                 BlockPos center = ReflectionHelper.getPrivateValue(Village.class, village, 3);
                 Integer radius = ReflectionHelper.getPrivateValue(Village.class, village, 4);
-                boolean spawnsIronGolems = village.getNumVillagers() >= 10 &&
-                        village.getNumVillageDoors() >= 21;
-                Color color = getVillageColor(c % 6);
-                villageBoundingBoxes.add(BoundingBoxVillage.from(center, radius, spawnsIronGolems, color));
-                ++c;
+                villageBoundingBoxes.add(BoundingBoxVillage.from(center, radius, village.getNumVillagers(), village.getNumVillageDoors()));
             }
             processDelta(villageCache, villageBoundingBoxes);
 
@@ -172,43 +160,5 @@ public class DimensionProcessor extends BoundingBoxCache {
                 }
             }
         }
-    }
-
-    private Color getVillageColor(int c) {
-        switch (c) {
-            case 0:
-                return Color.RED;
-            case 1:
-                return Color.MAGENTA;
-            case 2:
-                return Color.BLUE;
-            case 3:
-                return Color.CYAN;
-            case 4:
-                return Color.GREEN;
-            case 5:
-                return Color.YELLOW;
-        }
-        return Color.WHITE;
-    }
-
-    private Color getStructureColor(Integer structureType) {
-        switch (structureType) {
-            case DimensionProcessor.DESERT_TEMPLE:
-                return Color.ORANGE;
-            case DimensionProcessor.JUNGLE_TEMPLE:
-                return Color.GREEN;
-            case DimensionProcessor.WITCH_HUT:
-                return Color.BLUE;
-            case DimensionProcessor.MINE_SHAFT:
-                return Color.LIGHT_GRAY;
-            case DimensionProcessor.NETHER_FORTRESS:
-                return Color.RED;
-            case DimensionProcessor.OCEAN_MONUMENT:
-                return Color.CYAN;
-            case DimensionProcessor.STRONGHOLD:
-                return Color.YELLOW;
-        }
-        return Color.WHITE;
     }
 }
