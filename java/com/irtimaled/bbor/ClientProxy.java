@@ -482,7 +482,7 @@ public class ClientProxy extends CommonProxy {
         }
         tessellator.draw();
 
-        GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ZERO);
+        GL11.glBlendFunc(GL11.GL_DST_COLOR, GL11.GL_SRC_COLOR);
     }
 
     private class OffsetPoint {
