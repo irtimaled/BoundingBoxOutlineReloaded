@@ -6,7 +6,9 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.*;
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.ChunkCoordIntPair;
@@ -23,7 +25,9 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.HashSet;
@@ -130,16 +134,16 @@ public class ClientProxy extends CommonProxy {
         if (configManager.drawWitchHuts.getBoolean()) {
             loadStructureNbtFile(localStructuresFolder, cache, "Temple.dat", StructureType.WitchHut.getColor(), "TeSH");
         }
-        if(configManager.drawOceanMonuments.getBoolean()){
+        if (configManager.drawOceanMonuments.getBoolean()) {
             loadStructureNbtFile(localStructuresFolder, cache, "Monument.dat", StructureType.OceanMonument.getColor(), "*");
         }
-        if(configManager.drawMineShafts.getBoolean()){
+        if (configManager.drawMineShafts.getBoolean()) {
             loadStructureNbtFile(localStructuresFolder, cache, "Mineshaft.dat", StructureType.MineShaft.getColor(), "*");
         }
-        if(configManager.drawStrongholds.getBoolean()){
+        if (configManager.drawStrongholds.getBoolean()) {
             loadStructureNbtFile(localStructuresFolder, cache, "Stronghold.dat", StructureType.Stronghold.getColor(), "*");
         }
-        if(configManager.drawVillages.getBoolean()){
+        if (configManager.drawVillages.getBoolean()) {
             loadVillageNbtFile(localStructuresFolder, cache, "Villages.dat");
         }
 
@@ -148,9 +152,9 @@ public class ClientProxy extends CommonProxy {
 
     private void loadNetherStructures(File localStructuresFolder) {
         BoundingBoxCache cache = new BoundingBoxCache();
-        if(configManager.drawNetherFortresses.getBoolean())
+        if (configManager.drawNetherFortresses.getBoolean())
             loadStructureNbtFile(localStructuresFolder, cache, "Fortress.dat", StructureType.NetherFortress.getColor(), "*");
-        if(configManager.drawVillages.getBoolean()){
+        if (configManager.drawVillages.getBoolean()) {
             loadVillageNbtFile(localStructuresFolder, cache, "villages_nether.dat");
         }
         boundingBoxCacheMap.put(-1, cache);
@@ -158,7 +162,7 @@ public class ClientProxy extends CommonProxy {
 
     private void loadEndStructures(File localStructuresFolder) {
         BoundingBoxCache cache = new BoundingBoxCache();
-        if(configManager.drawVillages.getBoolean()){
+        if (configManager.drawVillages.getBoolean()) {
             loadVillageNbtFile(localStructuresFolder, cache, "Villages_end.dat");
         }
         boundingBoxCacheMap.put(1, cache);
@@ -191,7 +195,7 @@ public class ClientProxy extends CommonProxy {
 
         NBTTagCompound features = nbt.getCompoundTag("data")
                 .getCompoundTag("Features");
-        int loadedStructureCount=0;
+        int loadedStructureCount = 0;
         for (Object key : features.getKeySet()) {
             NBTTagCompound feature = features.getCompoundTag((String) key);
             BoundingBox structure = BoundingBoxStructure.from(feature.getIntArray("BB"), color);
@@ -201,9 +205,9 @@ public class ClientProxy extends CommonProxy {
                 if (id.equals(child.getString("id")) || id.equals("*"))
                     boundingBoxes.add(BoundingBoxStructure.from(child.getIntArray("BB"), color));
             }
-            if(boundingBoxes.size()>0)
+            if (boundingBoxes.size() > 0)
                 ++loadedStructureCount;
-                cache.addBoundingBox(structure, boundingBoxes);
+            cache.addBoundingBox(structure, boundingBoxes);
         }
 
         FMLLog.info("Loaded %s (%d structures with type %s)", fileName, loadedStructureCount, id);
@@ -574,7 +578,7 @@ public class ClientProxy extends CommonProxy {
     }
 
     private BoundingBox getSpawnChunksBoundingBox(int spawnX, int spawnZ) {
-        if(spawnChunksBoundingBox != null)
+        if (spawnChunksBoundingBox != null) {
             return spawnChunksBoundingBox;
         }
         BoundingBox boundingBox = getSpawnChunksBoundingBox(spawnX, spawnZ, 12, Color.RED);
@@ -606,7 +610,7 @@ public class ClientProxy extends CommonProxy {
     }
 
     private BoundingBox getWorldSpawnBoundingBox(int spawnX, int spawnZ) {
-        if(worldSpawnBoundingBox != null)
+        if (worldSpawnBoundingBox != null)
             return worldSpawnBoundingBox;
 
         BlockPos minBlockPos = new BlockPos(spawnX - 10, 0, spawnZ - 10);
