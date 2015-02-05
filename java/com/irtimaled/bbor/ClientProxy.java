@@ -41,6 +41,7 @@ public class ClientProxy extends CommonProxy {
     private double playerZ;
     private BoundingBox worldSpawnBoundingBox;
     private BoundingBox spawnChunksBoundingBox;
+    private BoundingBox lazySpawnChunksBoundingBox;
 
     @SubscribeEvent
     public void onKeyInputEvent(InputEvent.KeyInputEvent evt) {
@@ -73,6 +74,7 @@ public class ClientProxy extends CommonProxy {
     public void setWorldData(long seed, int spawnX, int spawnZ) {
         worldSpawnBoundingBox = null;
         spawnChunksBoundingBox = null;
+        lazySpawnChunksBoundingBox = null;
         super.setWorldData(seed, spawnX, spawnZ);
     }
 
@@ -545,8 +547,9 @@ public class ClientProxy extends CommonProxy {
                 if (configManager.drawWorldSpawn.getBoolean()) {
                     boundingBoxes.add(getWorldSpawnBoundingBox(spawnX, spawnZ));
                     boundingBoxes.add(getSpawnChunksBoundingBox(spawnX, spawnZ));
-
                 }
+                if (configManager.drawLazySpawnChunks.getBoolean()) ;
+                boundingBoxes.add(getLazySpawnChunksBoundingBox(spawnX, spawnZ));
 
                 if (configManager.drawSlimeChunks.getBoolean()) {
                     Set<ChunkCoordIntPair> activeChunks = getActiveChunks(world);
@@ -573,9 +576,24 @@ public class ClientProxy extends CommonProxy {
     private BoundingBox getSpawnChunksBoundingBox(int spawnX, int spawnZ) {
         if(spawnChunksBoundingBox != null)
             return spawnChunksBoundingBox;
+        }
+        BoundingBox boundingBox = getSpawnChunksBoundingBox(spawnX, spawnZ, 12, Color.RED);
+        spawnChunksBoundingBox = boundingBox;
+        return boundingBox;
+    }
 
+    private BoundingBox getLazySpawnChunksBoundingBox(int spawnX, int spawnZ) {
+        if (lazySpawnChunksBoundingBox != null)
+            return lazySpawnChunksBoundingBox;
+
+        BoundingBox boundingBox = getSpawnChunksBoundingBox(spawnX, spawnZ, 16, Color.RED);
+        lazySpawnChunksBoundingBox = boundingBox;
+        return boundingBox;
+    }
+
+    private BoundingBox getSpawnChunksBoundingBox(int spawnX, int spawnZ, int size, Color color) {
         double chunkSize = 16;
-        double midOffset = chunkSize * 6;
+        double midOffset = chunkSize * (size / 2);
         double midX = Math.round((float) (spawnX / chunkSize)) * chunkSize;
         double midZ = Math.round((float) (spawnZ / chunkSize)) * chunkSize;
         BlockPos minBlockPos = new BlockPos(midX - midOffset, 0, midZ - midOffset);
@@ -584,9 +602,7 @@ public class ClientProxy extends CommonProxy {
             midZ += chunkSize;
         }
         BlockPos maxBlockPos = new BlockPos(midX + midOffset, 0, midZ + midOffset);
-        BoundingBox boundingBox =  BoundingBoxWorldSpawn.from(minBlockPos, maxBlockPos, Color.RED);
-        spawnChunksBoundingBox = boundingBox;
-        return boundingBox;
+        return BoundingBoxWorldSpawn.from(minBlockPos, maxBlockPos, color);
     }
 
     private BoundingBox getWorldSpawnBoundingBox(int spawnX, int spawnZ) {
