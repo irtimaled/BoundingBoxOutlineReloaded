@@ -25,8 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CommonProxy {
 
     public Map<Integer, BoundingBoxCache> boundingBoxCacheMap = new ConcurrentHashMap<Integer, BoundingBoxCache>();
-    public ConcurrentHashMap<EntityPlayerMP, Integer> playerDimensions = new ConcurrentHashMap<EntityPlayerMP, Integer>();
-
+    public Map<EntityPlayerMP, Integer> playerDimensions = new ConcurrentHashMap<EntityPlayerMP, Integer>();
     private Map<EntityPlayerMP, Set<BoundingBox>> playerBoundingBoxesCache = new HashMap<EntityPlayerMP, Set<BoundingBox>>();
 
     public ConfigManager configManager;
