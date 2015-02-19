@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class BoundingBoxCache {
 
-    protected ConcurrentHashMap<BoundingBox, Set<BoundingBox>> cache = new ConcurrentHashMap<BoundingBox, Set<BoundingBox>>();
+    private Map<BoundingBox, Set<BoundingBox>> cache = new ConcurrentHashMap<BoundingBox, Set<BoundingBox>>();
 
     public Map<BoundingBox, Set<BoundingBox>> getBoundingBoxes() {
         return cache;
@@ -20,14 +20,18 @@ public class BoundingBoxCache {
         cache.clear();
     }
 
-    public void addBoundingBox(BoundingBox key, Set<BoundingBox> boundingBoxes) {
+    public boolean isCached(BoundingBox key) {
+        return cache.containsKey(key);
+    }
+
+    public void addBoundingBoxes(BoundingBox key, Set<BoundingBox> boundingBoxes) {
         cache.put(key, boundingBoxes);
     }
 
     public void addBoundingBox(BoundingBox key) {
         Set<BoundingBox> boundingBoxes = new HashSet<BoundingBox>();
         boundingBoxes.add(key);
-        addBoundingBox(key, boundingBoxes);
+        addBoundingBoxes(key, boundingBoxes);
     }
 
     public void removeBoundingBox(BoundingBox key) {

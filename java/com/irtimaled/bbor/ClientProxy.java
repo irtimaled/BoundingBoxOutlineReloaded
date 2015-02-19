@@ -1,7 +1,6 @@
 package com.irtimaled.bbor;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.settings.KeyBinding;
@@ -9,18 +8,12 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.NetworkManager;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.InputEvent;
-import net.minecraftforge.fml.common.network.FMLNetworkEvent;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import org.apache.commons.lang3.ArrayUtils;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
@@ -47,8 +40,7 @@ public class ClientProxy extends CommonProxy {
     private BoundingBox spawnChunksBoundingBox;
     private BoundingBox lazySpawnChunksBoundingBox;
 
-    @SubscribeEvent
-    public void onKeyInputEvent(InputEvent.KeyInputEvent evt) {
+    public void keyPressed() {
         if (hotKey.isPressed()) {
             active = !active;
             if (active)
@@ -57,37 +49,25 @@ public class ClientProxy extends CommonProxy {
     }
 
     @Override
-    public void init() {
-        super.init();
-        hotKey = new KeyBinding("key.bbor.hotKey", Keyboard.KEY_B, "key.categories.bbor");
-        ClientRegistry.registerKeyBinding(hotKey);
+    public void init(ConfigManager configManager) {
+        super.init(configManager);
+        hotKey = new KeyBinding("Toggle On/Off", Keyboard.KEY_B, "Bounding Box Outline Reloaded");
+        Minecraft.getMinecraft().gameSettings.keyBindings = ArrayUtils.add(Minecraft.getMinecraft().gameSettings.keyBindings, hotKey);
     }
 
     @Override
-    protected boolean isRemotePlayer(EntityPlayer player) {
-        if (Minecraft.getMinecraft().isSingleplayer()) {
-            EntityPlayer singlePlayer = Minecraft.getMinecraft().thePlayer;
-            if (singlePlayer == null)
-                return false;
-            return player.getGameProfile() != singlePlayer.getGameProfile();
-        }
-        return true;
-    }
-
-    @Override
-    public void setWorldData(long seed, int spawnX, int spawnZ) {
+    public void setWorldData(WorldData worldData) {
         worldSpawnBoundingBox = null;
         spawnChunksBoundingBox = null;
         lazySpawnChunksBoundingBox = null;
-        super.setWorldData(seed, spawnX, spawnZ);
+        super.setWorldData(worldData);
     }
 
-    @SubscribeEvent
-    public void renderWorldLastEvent(RenderWorldLastEvent event) {
+    public void render(float partialTicks) {
         EntityPlayer entityPlayer = Minecraft.getMinecraft().thePlayer;
-        playerX = entityPlayer.lastTickPosX + (entityPlayer.posX - entityPlayer.lastTickPosX) * (double) event.partialTicks;
-        playerY = entityPlayer.lastTickPosY + (entityPlayer.posY - entityPlayer.lastTickPosY) * (double) event.partialTicks;
-        playerZ = entityPlayer.lastTickPosZ + (entityPlayer.posZ - entityPlayer.lastTickPosZ) * (double) event.partialTicks;
+        playerX = entityPlayer.lastTickPosX + (entityPlayer.posX - entityPlayer.lastTickPosX) * (double) partialTicks;
+        playerY = entityPlayer.lastTickPosY + (entityPlayer.posY - entityPlayer.lastTickPosY) * (double) partialTicks;
+        playerZ = entityPlayer.lastTickPosZ + (entityPlayer.posZ - entityPlayer.lastTickPosZ) * (double) partialTicks;
 
         if (this.active) {
             int activeDimensionId = entityPlayer.worldObj.provider.getDimensionId();
@@ -97,23 +77,23 @@ public class ClientProxy extends CommonProxy {
         }
     }
 
-    @SubscribeEvent
-    public void clientConnectionToServerEvent(FMLNetworkEvent.ClientConnectedToServerEvent evt) {
-        if (!evt.isLocal) {
-            SocketAddress remoteAddress = evt.manager.getRemoteAddress();
-            if (remoteAddress instanceof InetSocketAddress) {
-                InetSocketAddress socketAddress = (InetSocketAddress) remoteAddress;
-                loadLocalStructures(socketAddress.getHostString(), socketAddress.getPort());
-            }
+    public void playerConnectedToServer(NetworkManager networkManager) {
+        SocketAddress remoteAddress = networkManager.getRemoteAddress();
+        if (remoteAddress instanceof InetSocketAddress) {
+            InetSocketAddress socketAddress = (InetSocketAddress) remoteAddress;
+            loadLocalStructures(socketAddress.getHostName(), socketAddress.getPort());
         }
     }
 
     private void loadLocalStructures(String host, int port) {
+        Logger.info("Looking for local structures (host:port=%s:%d)", host, port);
         String path = String.format("BBOutlineReloaded%s%s", File.separator, host);
         File localStructuresFolder = new File(configManager.configDir, path);
+        Logger.info("Looking for local structures (folder=%s)", localStructuresFolder.getAbsolutePath());
         if (!localStructuresFolder.exists()) {
             path = String.format("%s,%d", path, port);
             localStructuresFolder = new File(configManager.configDir, path);
+            Logger.info("Looking for local structures (folder=%s)", localStructuresFolder.getAbsolutePath());
         }
         if (!localStructuresFolder.exists())
             return;
@@ -179,12 +159,12 @@ public class ClientProxy extends CommonProxy {
             BlockPos center = new BlockPos(village.getInteger("CX"), village.getInteger("CY"), village.getInteger("CZ"));
             int radius = village.getInteger("Radius");
             int numVillagers = village.getInteger("PopSize");
-            int numVillageDoors = village.getTagList("Doors", Constants.NBT.TAG_COMPOUND).tagCount();
+            int numVillageDoors = village.getTagList("Doors", 10).tagCount();
             BoundingBox boundingBox = BoundingBoxVillage.from(center, radius, numVillagers, numVillageDoors);
             cache.addBoundingBox(boundingBox);
         }
 
-        FMLLog.info("Loaded %s (%d villages)", fileName, villages.length);
+        Logger.info("Loaded %s (%d villages)", fileName, villages.length);
     }
 
     private void loadStructureNbtFile(File localStructuresFolder, BoundingBoxCache cache, String fileName, Color color, String id) {
@@ -207,14 +187,14 @@ public class ClientProxy extends CommonProxy {
             }
             if (boundingBoxes.size() > 0)
                 ++loadedStructureCount;
-            cache.addBoundingBox(structure, boundingBoxes);
+            cache.addBoundingBoxes(structure, boundingBoxes);
         }
 
-        FMLLog.info("Loaded %s (%d structures with type %s)", fileName, loadedStructureCount, id);
+        Logger.info("Loaded %s (%d structures with type %s)", fileName, loadedStructureCount, id);
     }
 
     private NBTTagCompound[] getChildCompoundTags(NBTTagCompound parent, String key) {
-        NBTTagList tagList = parent.getTagList(key, Constants.NBT.TAG_COMPOUND);
+        NBTTagList tagList = parent.getTagList(key, 10);
         NBTTagCompound[] result = new NBTTagCompound[tagList.tagCount()];
         for (int index = 0; index < tagList.tagCount(); index++) {
             result[index] = tagList.getCompoundTagAt(index);
@@ -229,8 +209,11 @@ public class ClientProxy extends CommonProxy {
             return;
 
         NBTTagCompound data = nbt.getCompoundTag("Data");
-        setWorldData(data.getLong("RandomSeed"), data.getInteger("SpawnX"), data.getInteger("SpawnZ"));
-        FMLLog.info("Loaded level.dat (seed: %d, spawn: %d,%d)", seed, spawnX, spawnZ);
+        long seed = data.getLong("RandomSeed");
+        int spawnX = data.getInteger("SpawnX");
+        int spawnZ = data.getInteger("SpawnZ");
+        setWorldData(new WorldData(seed, spawnX, spawnZ));
+        Logger.info("Loaded level.dat (seed: %d, spawn: %d,%d)", worldData.getSeed(), worldData.getSpawnX(), worldData.getSpawnZ());
     }
 
     private NBTTagCompound loadNbtFile(File file) {
@@ -243,11 +226,10 @@ public class ClientProxy extends CommonProxy {
         return null;
     }
 
-    @SubscribeEvent
-    public void clientDisconnectionFromServerEvent(FMLNetworkEvent.ClientDisconnectionFromServerEvent evt) {
+    public void playerDisconnectedFromServer() {
         active = false;
         if (configManager.keepCacheBetweenSessions.getBoolean()) return;
-        initialized = false;
+        worldData = null;
         worldSpawnBoundingBox = null;
         spawnChunksBoundingBox = null;
         for (BoundingBoxCache cache : boundingBoxCacheMap.values()) {
@@ -276,21 +258,6 @@ public class ClientProxy extends CommonProxy {
         GL11.glEnable(GL11.GL_CULL_FACE);
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glDisable(GL11.GL_BLEND);
-
-        if (configManager.showDebugInfo.getBoolean()) {
-            Minecraft mc = Minecraft.getMinecraft();
-            ScaledResolution var5 = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
-            int screenWidth = var5.getScaledWidth();
-            mc.entityRenderer.setupOverlayRendering();
-            int count = 0;
-            for (BoundingBox bb : map.keySet()) {
-                count += map.get(bb).size();
-            }
-            String debug = String.format("%d/%d", map.keySet().size(), count);
-            int width = screenWidth - mc.fontRendererObj.getStringWidth(debug);
-
-            mc.fontRendererObj.drawStringWithShadow(debug, width - 2, 2, 16777215);
-        }
     }
 
     private void renderBoundingBoxes(Set<BoundingBox> bbList) {
@@ -325,7 +292,11 @@ public class ClientProxy extends CommonProxy {
     }
 
     private Set getActiveChunks(World world) {
-        return ReflectionHelper.getPrivateValue(World.class, world, 33);
+        Set result = ReflectionHelper.getPrivateValue(World.class, world, 32, Set.class);
+        if (result == null) {
+            result = ReflectionHelper.getPrivateValue(World.class, world, 33, Set.class);
+        }
+        return result;
     }
 
     private void renderBoundingBox(BoundingBox bb) {
@@ -544,16 +515,16 @@ public class ClientProxy extends CommonProxy {
 
     private Set<BoundingBox> getClientBoundingBoxes() {
         Set<BoundingBox> boundingBoxes = new HashSet<BoundingBox>();
-        if (initialized) {
+        if (worldData != null) {
             World world = Minecraft.getMinecraft().theWorld;
             int dimensionId = world.provider.getDimensionId();
             if (dimensionId == 0) {
                 if (configManager.drawWorldSpawn.getBoolean()) {
-                    boundingBoxes.add(getWorldSpawnBoundingBox(spawnX, spawnZ));
-                    boundingBoxes.add(getSpawnChunksBoundingBox(spawnX, spawnZ));
+                    boundingBoxes.add(getWorldSpawnBoundingBox(worldData.getSpawnX(), worldData.getSpawnZ()));
+                    boundingBoxes.add(getSpawnChunksBoundingBox(worldData.getSpawnX(), worldData.getSpawnZ()));
                 }
                 if (configManager.drawLazySpawnChunks.getBoolean()) ;
-                boundingBoxes.add(getLazySpawnChunksBoundingBox(spawnX, spawnZ));
+                boundingBoxes.add(getLazySpawnChunksBoundingBox(worldData.getSpawnX(), worldData.getSpawnZ()));
 
                 if (configManager.drawSlimeChunks.getBoolean()) {
                     Set<ChunkCoordIntPair> activeChunks = getActiveChunks(world);
@@ -569,7 +540,7 @@ public class ClientProxy extends CommonProxy {
     }
 
     private boolean isSlimeChunk(int chunkX, int chunkZ) {
-        Random r = new Random(seed +
+        Random r = new Random(worldData.getSeed() +
                 (long) (chunkX * chunkX * 4987142) +
                 (long) (chunkX * 5947611) +
                 (long) (chunkZ * chunkZ) * 4392871L +

@@ -1,4 +1,4 @@
-package com.irtimaled.bbor.messages;
+package com.irtimaled.bbor.forge.messages;
 
 import com.irtimaled.bbor.BoundingBox;
 import io.netty.buffer.ByteBuf;
