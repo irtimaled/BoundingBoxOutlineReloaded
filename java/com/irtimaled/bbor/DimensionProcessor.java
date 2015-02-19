@@ -11,8 +11,6 @@ import net.minecraft.world.gen.structure.ComponentScatteredFeaturePieces;
 import net.minecraft.world.gen.structure.MapGenStructure;
 import net.minecraft.world.gen.structure.StructureComponent;
 import net.minecraft.world.gen.structure.StructureStart;
-import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import java.awt.*;
 import java.util.*;
@@ -22,8 +20,10 @@ public class DimensionProcessor extends BoundingBoxCache {
 
     private ConfigManager configManager;
     private World world;
+    private IEventHandler eventHandler;
 
-    public DimensionProcessor(ConfigManager configManager, World world, int dimensionId, IChunkProvider chunkProvider) {
+    public DimensionProcessor(IEventHandler eventHandler, ConfigManager configManager, World world, int dimensionId, IChunkProvider chunkProvider) {
+        this.eventHandler = eventHandler;
         this.configManager = configManager;
         this.world = world;
         this.dimensionId = dimensionId;
@@ -52,10 +52,10 @@ public class DimensionProcessor extends BoundingBoxCache {
     }
 
     private static <T extends IChunkProvider> Collection<StructureStart> getStructures(T chunkProvider, int method) {
-        Class<T> cpClass = (Class<T>) chunkProvider.getClass();
-        Object structureGenerator = ReflectionHelper.getPrivateValue(cpClass, chunkProvider, method);
-        if (structureGenerator instanceof MapGenStructure) {
-            Map<ChunkCoordIntPair, StructureStart> structureMap = ReflectionHelper.getPrivateValue(MapGenStructure.class, (MapGenStructure) structureGenerator, 1);
+        Class<T> chunkProviderClass = (Class<T>) chunkProvider.getClass();
+        MapGenStructure structureGenerator = ReflectionHelper.getPrivateValue(chunkProviderClass, chunkProvider, method, MapGenStructure.class);
+        if (structureGenerator != null) {
+            Map<ChunkCoordIntPair, StructureStart> structureMap = ReflectionHelper.getPrivateValue(MapGenStructure.class, structureGenerator, 1);
             return structureMap.values();
         }
         return Collections.emptyList();
@@ -117,29 +117,31 @@ public class DimensionProcessor extends BoundingBoxCache {
             Color color = structureType.getColor();
             for (StructureStart structureStart : structureMap.get(structureType)) {
                 BoundingBox boundingBox = BoundingBoxStructure.from(structureStart.getBoundingBox(), color);
-                if (!cache.containsKey(boundingBox)) {
+                if (!isCached(boundingBox)) {
                     Set<BoundingBox> structureBoundingBoxes = new HashSet<BoundingBox>();
                     Iterator structureComponents = structureStart.getComponents().iterator();
                     while (structureComponents.hasNext()) {
                         StructureComponent structureComponent = (StructureComponent) structureComponents.next();
                         structureBoundingBoxes.add(BoundingBoxStructure.from(structureComponent.getBoundingBox(), color));
                     }
-                    cache.put(boundingBox, structureBoundingBoxes);
-                    FMLLog.info("[%d] new boundingBoxCacheMap entries: %d", dimensionId, structureBoundingBoxes.size());
+                    addBoundingBoxes(boundingBox, structureBoundingBoxes);
+                    Logger.info("[%d] new boundingBoxCacheMap entries: %d", dimensionId, structureBoundingBoxes.size());
                 }
             }
         }
 
         if (configManager.drawVillages.getBoolean() &&
-                (world.villageCollectionObj != null)) {
+                (world.getVillageCollection() != null)) {
 
             Set<BoundingBox> villageBoundingBoxes = new HashSet<BoundingBox>();
-            List<Village> villages = world.villageCollectionObj.getVillageList();
+            List<Village> villages = world.getVillageCollection().getVillageList();
             int c = 0;
             for (Village village : villages) {
-                BlockPos center = ReflectionHelper.getPrivateValue(Village.class, village, 3);
-                Integer radius = ReflectionHelper.getPrivateValue(Village.class, village, 4);
-                villageBoundingBoxes.add(BoundingBoxVillage.from(center, radius, village.getNumVillagers(), village.getNumVillageDoors()));
+                BlockPos center = village.getCenter();
+                Integer radius = village.getVillageRadius();
+                int numVillagers = village.getNumVillagers();
+                int numVillageDoors = village.getNumVillageDoors();
+                villageBoundingBoxes.add(BoundingBoxVillage.from(center, radius, numVillagers, numVillageDoors));
             }
             processDelta(villageCache, villageBoundingBoxes);
 
@@ -150,13 +152,11 @@ public class DimensionProcessor extends BoundingBoxCache {
     private void processDelta(Set<BoundingBox> oldBoundingBoxes, Set<BoundingBox> newBoundingBoxes) {
         for (BoundingBox bb : oldBoundingBoxes) {
             if (!newBoundingBoxes.contains(bb)) {
-                cache.remove(bb);
-                BoundingBoxOutlineReloaded.proxy.boundingBoxRemoved(bb);
+                removeBoundingBox(bb);
+                eventHandler.boundingBoxRemoved(bb);
             } else {
-                if (!cache.containsKey(bb)) {
-                    Set<BoundingBox> boundingBoxes = new HashSet<BoundingBox>();
-                    boundingBoxes.add(bb);
-                    cache.put(bb, boundingBoxes);
+                if (!isCached(bb)) {
+                    addBoundingBox(bb);
                 }
             }
         }

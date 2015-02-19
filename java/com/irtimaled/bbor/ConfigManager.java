@@ -1,32 +1,31 @@
 package com.irtimaled.bbor;
 
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.config.Property;
+import com.irtimaled.bbor.config.Configuration;
+import com.irtimaled.bbor.config.Setting;
 
 import java.io.File;
 
 public class ConfigManager {
     public final File configDir;
 
-    public Property showDebugInfo;
-    public Property fill;
-    public Property drawVillages;
-    public Property drawDesertTemples;
-    public Property drawJungleTemples;
-    public Property drawWitchHuts;
-    public Property drawStrongholds;
-    public Property drawMineShafts;
-    public Property drawNetherFortresses;
-    public Property drawOceanMonuments;
-    public Property alwaysVisible;
-    public Property renderVillageAsSphere;
-    public Property drawIronGolemSpawnArea;
-    public Property drawSlimeChunks;
-    public Property slimeChunkMaxY;
-    public Property keepCacheBetweenSessions;
-    public Property drawWorldSpawn;
-    public Property worldSpawnMaxY;
-    public Property drawLazySpawnChunks;
+    public Setting fill;
+    public Setting drawVillages;
+    public Setting drawDesertTemples;
+    public Setting drawJungleTemples;
+    public Setting drawWitchHuts;
+    public Setting drawStrongholds;
+    public Setting drawMineShafts;
+    public Setting drawNetherFortresses;
+    public Setting drawOceanMonuments;
+    public Setting alwaysVisible;
+    public Setting renderVillageAsSphere;
+    public Setting drawIronGolemSpawnArea;
+    public Setting drawSlimeChunks;
+    public Setting slimeChunkMaxY;
+    public Setting keepCacheBetweenSessions;
+    public Setting drawWorldSpawn;
+    public Setting worldSpawnMaxY;
+    public Setting drawLazySpawnChunks;
 
     private Configuration config;
 
@@ -35,7 +34,6 @@ public class ConfigManager {
         config = new Configuration(new File(configDir, "BBOutlineReloaded.cfg"));
         config.load();
 
-        showDebugInfo = SetupBooleanProperty(config, "general", "showDebugInfo", false, "If set to true debug information will be displayed. (default: false)");
         fill = SetupBooleanProperty(config, "general", "fill", false, "If set to true the bounding boxes are filled. (default: false)");
         alwaysVisible = SetupBooleanProperty(config, "general", "alwaysVisible", false, "If set to true boxes will be visible even through other blocks. (default: false)");
         keepCacheBetweenSessions = SetupBooleanProperty(config, "general", "keepCacheBetweenSessions", false, "If set to true bounding box caches will be kept between sessions. (default: false)");
@@ -57,15 +55,15 @@ public class ConfigManager {
         config.save();
     }
 
-    private Property SetupBooleanProperty(Configuration config, String category, String configName, Boolean defaultValue, String comment) {
-        Property property = config.get(category, configName, defaultValue);
+    private Setting SetupBooleanProperty(Configuration config, String category, String settingName, Boolean defaultValue, String comment) {
+        Setting property = config.get(category, settingName, defaultValue);
         property.comment = comment;
         property.set(property.getBoolean(defaultValue));
         return property;
     }
 
-    private Property SetupIntegerProperty(Configuration config, String category, String configName, int defaultValue, String comment) {
-        Property property = config.get(category, configName, defaultValue);
+    private Setting SetupIntegerProperty(Configuration config, String category, String settingName, int defaultValue, String comment) {
+        Setting property = config.get(category, settingName, defaultValue);
         property.comment = comment;
         property.set(property.getInt(defaultValue));
         return property;

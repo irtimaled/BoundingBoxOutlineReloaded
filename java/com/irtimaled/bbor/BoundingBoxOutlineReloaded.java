@@ -1,45 +1,44 @@
 package com.irtimaled.bbor;
 
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 
+import java.io.File;
 
-@Mod(modid = BoundingBoxOutlineReloaded.MODID, name = BoundingBoxOutlineReloaded.NAME, version = BoundingBoxOutlineReloaded.VERSION)
 public class BoundingBoxOutlineReloaded {
 
-    public static final String MODID = "bbor";
-    public static final String NAME = "Bounding Box Outline Reloaded";
-    public static final String VERSION = "1.0.0-beta7";
+    public static ClientProxy proxy;
 
-    private ConfigManager configManager;
-
-    public SimpleNetworkWrapper network;
-
-    @Mod.Instance()
-    public static BoundingBoxOutlineReloaded instance;
-
-    @SidedProxy(clientSide = "com.irtimaled.bbor.ClientProxy", serverSide = "com.irtimaled.bbor.CommonProxy")
-    public static CommonProxy proxy;
-
-
-    @EventHandler
-    public void preInit(FMLPreInitializationEvent evt) {
-        configManager = new ConfigManager(evt.getModConfigurationDirectory());
+    public static void init() {
+        proxy = new ClientProxy();
+        proxy.init(new ConfigManager(new File(Minecraft.getMinecraft().mcDataDir, "config")));
     }
 
-    @EventHandler
-    public void load(FMLInitializationEvent evt) {
-        MinecraftForge.EVENT_BUS.register(proxy);
-        FMLCommonHandler.instance().bus().register(proxy);
+    public static void chunkLoaded(Chunk chunk) {
+        proxy.chunkLoaded(chunk);
+    }
 
-        proxy.configManager = configManager;
-        proxy.init();
+    public static void worldLoaded(World world) {
+        proxy.worldLoaded(world);
+    }
+
+    public static void keyPressed() {
+        proxy.keyPressed();
+    }
+
+    public static void render(float partialTicks) {
+        proxy.render(partialTicks);
+    }
+
+    public static void playerConnectedToServer(NetworkManager networkManager) {
+        proxy.playerConnectedToServer(networkManager);
+    }
+
+    public static void playerDisconnectedFromServer() {
+        proxy.playerDisconnectedFromServer();
     }
 }
+
 
