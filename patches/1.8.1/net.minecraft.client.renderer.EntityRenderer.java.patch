@@ -1,0 +1,11 @@
+diff -r -U 3 src/minecraft/net/minecraft/client/renderer/EntityRenderer.java src 2/minecraft/net/minecraft/client/renderer/EntityRenderer.java
+--- src/minecraft/net/minecraft/client/renderer/EntityRenderer.java 2015-02-20 10:21:35.000000000 +0000
++++ src 2/minecraft/net/minecraft/client/renderer/EntityRenderer.java 2015-02-19 21:35:39.000000000 +0000
+@@ -1469,6 +1469,7 @@
+             this.func_180437_a(var5, p_175068_2_, p_175068_1_);
+         }
+ 
++        com.irtimaled.bbor.BoundingBoxOutlineReloaded.render(p_175068_2_);
+         this.mc.mcProfiler.endStartSection("hand");
+ 
+         if (this.field_175074_C)

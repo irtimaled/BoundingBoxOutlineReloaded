@@ -1,0 +1,21 @@
+diff -r -U 3 src/minecraft/net/minecraft/client/Minecraft.java src 2/minecraft/net/minecraft/client/Minecraft.java
+--- src/minecraft/net/minecraft/client/Minecraft.java 2015-02-20 10:21:35.000000000 +0000
++++ src 2/minecraft/net/minecraft/client/Minecraft.java 2015-02-19 21:44:51.000000000 +0000
+@@ -584,6 +584,8 @@
+         }
+ 
+         this.renderGlobal.func_174966_b();
++
++        com.irtimaled.bbor.BoundingBoxOutlineReloaded.init();
+     }
+ 
+     private void func_175608_ak()
+@@ -2051,6 +2053,8 @@
+                 }
+             }
+ 
++            com.irtimaled.bbor.BoundingBoxOutlineReloaded.keyPressed();
++
+             for (var1 = 0; var1 < 9; ++var1)
+             {
+                 if (this.gameSettings.keyBindsHotbar[var1].isPressed())

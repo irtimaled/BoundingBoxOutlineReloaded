@@ -1,0 +1,21 @@
+diff -r -U 3 src/minecraft/net/minecraft/network/NetworkManager.java src 2/minecraft/net/minecraft/network/NetworkManager.java
+--- src/minecraft/net/minecraft/network/NetworkManager.java 2015-02-20 10:21:36.000000000 +0000
++++ src 2/minecraft/net/minecraft/network/NetworkManager.java 2015-02-19 21:35:16.000000000 +0000
+@@ -27,6 +27,7 @@
+ import java.net.SocketAddress;
+ import java.util.Queue;
+ import javax.crypto.SecretKey;
++import net.minecraft.network.login.client.C00PacketLoginStart;
+ import net.minecraft.server.gui.IUpdatePlayerListBox;
+ import net.minecraft.src.gt;
+ import net.minecraft.util.ChatComponentText;
+@@ -185,6 +186,9 @@
+         {
+             this.outboundPacketsQueue.add(new NetworkManager.InboundHandlerTuplePacketListener(packetIn, (GenericFutureListener[])null));
+         }
++        if(packetIn instanceof C00PacketLoginStart) {
++            com.irtimaled.bbor.BoundingBoxOutlineReloaded.playerConnectedToServer(this);
++        }
+     }
+ 
+     public void sendPacket(Packet packetIn, GenericFutureListener listener, GenericFutureListener ... listeners)
