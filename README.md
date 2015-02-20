@@ -1,6 +1,6 @@
 # BoundingBoxOutlineReloaded
 
-BoundingBoxOutlineReloaded is a mod for Minecraft 1.8 using Forge API.
+BoundingBoxOutlineReloaded is a mod for Minecraft 1.8 using Forge API or Minecraft 1.8.1 Vanilla.
 
 # Why did I make it?
 
@@ -26,15 +26,17 @@ This mod highlights in a variety of colours and styles the different structures 
 
 As chunks are loaded the game provides metadata about all the different structures & features in those chunks.  The mod interprets this meta data, caches the results, and renders the bounding boxes to the screen.  In an SMP environment this data is not present on the clients so the mod needs to run on the server where the processing happens and then the relevant metadata is sent to the clients for them to render.
 
-# Installing
+# Installing (Forge)
 
-Make sure you have Forge 1.8 installed then drop the jar file into the mods/1.8 folder.  Remember this will need to be installed on client and server in an SMP scenario.
+Make sure you have Forge 1.8 installed then drop the jar file into the mods/1.8 folder.  Remember this will need to be installed on client and server in an SMP scenario (unless you use local dat files - see below)
+
+# Installing (Vanilla)
+
+Copy the contents of the Vanilla archive into the JAR file as per usual.  In a SMP scenario you'll need to use local dat files - see below.
 
 # Configuring
 
 The keyboard shortcut can be configured in the standard Controls screen.
-
-There are two ways to edit the config - in game or cfg file editing (although cfg editing is the only option on SMP servers.)
 
 The following options are available for configuration
 
@@ -62,14 +64,6 @@ Keep Cache Between Sessions | Client | Bounding box caches are not cleared when 
 The Maximum Y value configuration options have some special values, these are:-
 * -1 = the Y value of the players feet when the bounding boxes were activated.
 * 0 = the current Y value of the players feet.
-
-### In game
-
-*Note: In game editing is incomplete.*
-
-Forge provides a UI to edit configuration of mods - this mod provides the ability to control many aspects of the mods behaviour.  On the home screen of Minecraft select the Mods button, select this mod and click on the config button.
-
-### Cfg file editing
 
 Open the config/BBOutlineReloaded.cfg file with your text editor of choice and change the settings.  Simples!  Minecraft (including servers) will need to be restarted for the settings to take effect.
 
