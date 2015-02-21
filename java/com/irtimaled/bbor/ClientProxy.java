@@ -239,8 +239,7 @@ public class ClientProxy extends CommonProxy {
     }
 
     private void renderBoundingBoxes(Map<BoundingBox, Set<BoundingBox>> map) {
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glLineWidth(3.0f);
+        GL11.glLineWidth(2.0f);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glDisable(GL11.GL_CULL_FACE);
 
@@ -257,7 +256,6 @@ public class ClientProxy extends CommonProxy {
         GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
         GL11.glEnable(GL11.GL_CULL_FACE);
         GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glDisable(GL11.GL_BLEND);
     }
 
     private void renderBoundingBoxes(Set<BoundingBox> bbList) {
@@ -350,19 +348,27 @@ public class ClientProxy extends CommonProxy {
                 new BlockPos(center.getX() + 8,
                         center.getY() + 3,
                         center.getZ() + 8));
-        GL11.glLineWidth(2.0f);
         renderCuboid(abb.addCoord(1, 1, 1), villageBB.getColor(), false);
-        GL11.glLineWidth(3.0f);
     }
 
     private void renderCuboid(AxisAlignedBB aaBB, Color color, boolean fill) {
         aaBB = offsetAxisAlignedBB(aaBB);
         if (fill) {
-            GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
-            renderCuboid(aaBB, 30, color);
-            GL11.glEnable(GL11.GL_POLYGON_OFFSET_LINE);
-            GL11.glPolygonOffset(-1.f, -1.f);
+            renderFilledCuboid(aaBB, color);
         }
+        renderUnfilledCuboid(aaBB, color);
+    }
+
+    private void renderFilledCuboid(AxisAlignedBB aaBB, Color color) {
+        GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
+        GL11.glEnable(GL11.GL_BLEND);
+        renderCuboid(aaBB, 30, color);
+        GL11.glDisable(GL11.GL_BLEND);
+        GL11.glEnable(GL11.GL_POLYGON_OFFSET_LINE);
+        GL11.glPolygonOffset(-1.f, -1.f);
+    }
+
+    private void renderUnfilledCuboid(AxisAlignedBB aaBB, Color color) {
         GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
         renderCuboid(aaBB, 255, color);
     }
