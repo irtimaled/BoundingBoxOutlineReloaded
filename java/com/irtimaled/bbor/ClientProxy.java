@@ -239,6 +239,7 @@ public class ClientProxy extends CommonProxy {
     }
 
     private void renderBoundingBoxes(Map<BoundingBox, Set<BoundingBox>> map) {
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GL11.glLineWidth(2.0f);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glDisable(GL11.GL_CULL_FACE);
@@ -450,20 +451,16 @@ public class ClientProxy extends CommonProxy {
 
     private void renderSphere(BlockPos center, double radius, Color color) {
         GL11.glEnable(GL11.GL_POINT_SMOOTH);
-        GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_CONSTANT_COLOR);
         GL11.glPointSize(2f);
 
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldRenderer = tessellator.getWorldRenderer();
-
         worldRenderer.startDrawing(GL11.GL_POINTS);
         worldRenderer.setColorRGBA(color.getRed(), color.getGreen(), color.getBlue(), 255);
         for (OffsetPoint point : buildPoints(center, radius)) {
             worldRenderer.addVertex(point.getX(), point.getY(), point.getZ());
         }
         tessellator.draw();
-
-        GL11.glBlendFunc(GL11.GL_DST_COLOR, GL11.GL_SRC_COLOR);
     }
 
     private class OffsetPoint {
