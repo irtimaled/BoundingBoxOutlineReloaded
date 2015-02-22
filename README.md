@@ -1,6 +1,6 @@
 # BoundingBoxOutlineReloaded
 
-BoundingBoxOutlineReloaded is a mod for Minecraft 1.8 using Forge API or Minecraft 1.8.1 Vanilla.
+BoundingBoxOutlineReloaded is a mod for Minecraft Forge 1.8 and Vanilla 1.8.1, 1.8 & 1.7.10.
 
 # Why did I make it?
 
@@ -53,11 +53,11 @@ Villages | Both | Process/Render Villages | drawVillages | true/false | true
 Village spheres | Client | Render Villages as spheres instead of cuboids | renderVillageAsSphere | true/false | true
 Village Iron Golem Spawn Area | Client | Render Iron Golem Spawn Area within valid Villages | drawIronGolemSpawnArea | true/false | true
 Slime Chunks | Client | Process/Render Slime Chunks | drawSlimeChunks | true/false | true
-Slime Chunks Maximum Y | Client | Maximum Y value of the dynamic slime chunk boxes | slimeChunkMaxY | -1-255 (see below) | 0
+Slime Chunks Maximum Y | Client | Maximum Y value of the dynamic slime chunk boxes | slimeChunkMaxY | -1-255 (see below) | -1
 World Spawn | Client | Process/Render World Spawn & Spawn Active Chunks | drawWorldSpawn | true/false | true
-World Spawn Maximum Y | Client | Maximum Y value of the world spawn & spawn chunk boxes | worldSpawnMaxY | -1-255 (see below) | 0
+World Spawn Maximum Y | Client | Maximum Y value of the world spawn & spawn chunk boxes | worldSpawnMaxY | -1-255 (see below) | -1
 Lazy Spawn Chunks | Client | Process/Render Lazy Spawn Chunks | drawLazySpawnChunks | true/false | false
-Fill | Client | Fill the bounding boxes (except village ones) | fill | true/false | false
+Fill | Client | Fill the bounding boxes (except village ones) | fill | true/false | true
 Always Visible | Client | Bounding boxes are visible through blocks - kinda messes with perspective tho! | alwaysVisible | true/false | false
 Keep Cache Between Sessions | Client | Bounding box caches are not cleared when disconnecting from single or multiplayer worlds. | keepCacheBetweenSessions | true/false | false
 
