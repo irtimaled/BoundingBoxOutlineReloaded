@@ -27,7 +27,7 @@ public class Configuration {
                 Map<String, Setting> settings = settingsGroup.get(category);
                 Boolean first = true;
                 for (String settingName : settings.keySet()) {
-                    if(!first)
+                    if (!first)
                         writer.write("\n");
                     first = false;
                     Setting setting = settings.get(settingName);
