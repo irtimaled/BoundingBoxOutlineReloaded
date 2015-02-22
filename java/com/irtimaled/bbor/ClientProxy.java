@@ -308,7 +308,7 @@ public class ClientProxy extends CommonProxy {
         AxisAlignedBB aaBB = bb.toAxisAlignedBB(false);
         Color color = bb.getColor();
         double y = getMaxY(configManager.worldSpawnMaxY.getInt());
-        renderRectangle(aaBB, y, y, color);
+        renderRectangle(aaBB, y, y, color, false);
     }
 
     private void renderSlimeChunk(BoundingBoxSlimeChunk bb) {
@@ -318,7 +318,7 @@ public class ClientProxy extends CommonProxy {
 
         double maxY = getMaxY(configManager.slimeChunkMaxY.getInt());
         if (maxY > 39) {
-            renderRectangle(aaBB, 39, maxY, color);
+            renderRectangle(aaBB, 39, maxY, color, fill());
         }
     }
 
@@ -332,9 +332,9 @@ public class ClientProxy extends CommonProxy {
         return configMaxY;
     }
 
-    private void renderRectangle(AxisAlignedBB aaBB, double minY, double maxY, Color color) {
+    private void renderRectangle(AxisAlignedBB aaBB, double minY, double maxY, Color color, Boolean fill) {
         aaBB = new AxisAlignedBB(aaBB.minX, minY, aaBB.minZ, aaBB.maxX, maxY, aaBB.maxZ);
-        renderCuboid(aaBB, color, fill());
+        renderCuboid(aaBB, color, fill);
     }
 
     private boolean fill() {
