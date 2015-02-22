@@ -526,9 +526,9 @@ public class ClientProxy extends CommonProxy {
                     boundingBoxes.add(getWorldSpawnBoundingBox(worldData.getSpawnX(), worldData.getSpawnZ()));
                     boundingBoxes.add(getSpawnChunksBoundingBox(worldData.getSpawnX(), worldData.getSpawnZ()));
                 }
-                if (configManager.drawLazySpawnChunks.getBoolean()) ;
-                boundingBoxes.add(getLazySpawnChunksBoundingBox(worldData.getSpawnX(), worldData.getSpawnZ()));
-
+                if (configManager.drawLazySpawnChunks.getBoolean()) {
+                    boundingBoxes.add(getLazySpawnChunksBoundingBox(worldData.getSpawnX(), worldData.getSpawnZ()));
+                }
                 if (configManager.drawSlimeChunks.getBoolean()) {
                     Set<ChunkCoordIntPair> activeChunks = getActiveChunks(world);
                     for (ChunkCoordIntPair chunk : activeChunks) {
