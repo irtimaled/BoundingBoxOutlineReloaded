@@ -3,37 +3,41 @@ package com.irtimaled.bbor;
 import net.minecraft.util.BlockPos;
 
 import java.awt.*;
+import java.util.Set;
 
 public class BoundingBoxVillage extends BoundingBox {
     private final BlockPos center;
     private final Integer radius;
     private final boolean spawnsIronGolems;
+    private Set<BlockPos> doors;
 
-    private static int colorIndex = 0;
-
-    protected BoundingBoxVillage(BlockPos center, Integer radius, Color color, boolean spawnsIronGolems, BlockPos minBlockPos, BlockPos maxBlockPos) {
+    protected BoundingBoxVillage(BlockPos center, Integer radius, Color color, boolean spawnsIronGolems, Set<BlockPos> doors, BlockPos minBlockPos, BlockPos maxBlockPos) {
         super(minBlockPos, maxBlockPos, color);
         this.center = center;
         this.radius = radius;
         this.spawnsIronGolems = spawnsIronGolems;
+        this.doors = doors;
     }
 
-
-    public static BoundingBox from(BlockPos center, Integer radius, int numVillagers, int numVillageDoors) {
-        Color color = getVillageColor(colorIndex % 6);
-        ++colorIndex;
-        Boolean spawnsIronGolems = numVillagers >= 10 && numVillageDoors >= 21;
-        return from(center, radius, spawnsIronGolems, color);
+    public static BoundingBoxVillage from(BlockPos center, Integer radius, int population, Set<BlockPos> doors) {
+        return from(center, radius, null, population, doors);
     }
 
-    public static BoundingBox from(BlockPos center, Integer radius, boolean spawnsIronGolems, Color color) {
+    public static BoundingBoxVillage from(BlockPos center, Integer radius, Color color, int population, Set<BlockPos> doors) {
+        Boolean spawnsIronGolems = population >= 10 && doors.size() >= 21;
+        return from(center, radius, color, spawnsIronGolems, doors);
+    }
+
+    public static BoundingBoxVillage from(BlockPos center, Integer radius, Color color, boolean spawnsIronGolems, Set<BlockPos> doors) {
         BlockPos minBlockPos = new BlockPos(center.getX() - radius,
                 center.getY() - 4,
                 center.getZ() - radius);
         BlockPos maxBlockPos = new BlockPos(center.getX() + radius,
                 center.getY() + 4,
                 center.getZ() + radius);
-        return new BoundingBoxVillage(center, radius, color, spawnsIronGolems, minBlockPos, maxBlockPos);
+        if (color == null)
+            color = getNextColor();
+        return new BoundingBoxVillage(center, radius, color, spawnsIronGolems, doors, minBlockPos, maxBlockPos);
     }
 
     @Override
@@ -49,25 +53,37 @@ public class BoundingBoxVillage extends BoundingBox {
         return center;
     }
 
+    @Override
+    public int hashCode() {
+        return center.hashCode();
+    }
+
     public boolean getSpawnsIronGolems() {
         return spawnsIronGolems;
     }
 
-    private static Color getVillageColor(int c) {
-        switch (c) {
+    private static int colorIndex = -1;
+
+    public static Color getNextColor() {
+        ++colorIndex;
+        switch (colorIndex % 6) {
             case 0:
                 return Color.RED;
             case 1:
-                return Color.MAGENTA;
+                return Color.GREEN;
             case 2:
                 return Color.BLUE;
             case 3:
-                return Color.CYAN;
+                return Color.MAGENTA;
             case 4:
-                return Color.GREEN;
-            case 5:
                 return Color.YELLOW;
+            case 5:
+                return Color.CYAN;
         }
         return Color.WHITE;
+    }
+
+    public Set<BlockPos> getDoors() {
+        return doors;
     }
 }

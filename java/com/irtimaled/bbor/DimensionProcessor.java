@@ -2,6 +2,7 @@ package com.irtimaled.bbor;
 
 import net.minecraft.util.BlockPos;
 import net.minecraft.village.Village;
+import net.minecraft.village.VillageDoorInfo;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
@@ -28,14 +29,14 @@ public class DimensionProcessor extends BoundingBoxCache {
         this.world = world;
         this.dimensionId = dimensionId;
         this.chunkProvider = chunkProvider;
-        villageCache = new HashSet<BoundingBox>();
+        villageCache = new HashMap<Integer, BoundingBoxVillage>();
         slimeChunkCache = new HashSet<BoundingBox>();
         worldSpawnCache = new HashSet<BoundingBox>();
     }
 
     private int dimensionId;
     private IChunkProvider chunkProvider;
-    private Set<BoundingBox> villageCache;
+    private Map<Integer, BoundingBoxVillage> villageCache;
     private Set<BoundingBox> slimeChunkCache;
     private Set<BoundingBox> worldSpawnCache;
 
@@ -133,32 +134,67 @@ public class DimensionProcessor extends BoundingBoxCache {
         if (configManager.drawVillages.getBoolean() &&
                 (world.getVillageCollection() != null)) {
 
-            Set<BoundingBox> villageBoundingBoxes = new HashSet<BoundingBox>();
+            Map<Integer, BoundingBoxVillage> villageBoundingBoxes = new HashMap<Integer, BoundingBoxVillage>();
             List<Village> villages = world.getVillageCollection().getVillageList();
-            int c = 0;
             for (Village village : villages) {
+                int villageId = village.hashCode();
                 BlockPos center = village.getCenter();
+                Color color = null;
+                if (villageCache.containsKey(villageId)) {
+                    BoundingBoxVillage boundingBoxVillage = villageCache.get(villageId);
+                    if (boundingBoxVillage.getCenter() == center) {
+                        villageBoundingBoxes.put(villageId, boundingBoxVillage);
+                        villageCache.remove(villageId);
+                        continue;
+                    }
+                    color = boundingBoxVillage.getColor();
+                }
+
                 Integer radius = village.getVillageRadius();
-                int numVillagers = village.getNumVillagers();
-                int numVillageDoors = village.getNumVillageDoors();
-                villageBoundingBoxes.add(BoundingBoxVillage.from(center, radius, numVillagers, numVillageDoors));
+                int population = village.getNumVillagers();
+                Set<BlockPos> doors = getDoorsFromVillage(village);
+
+                if (color == null) {
+                    //this should never happen but falls back to finding village by doors
+                    BoundingBoxVillage oldBB = matchVillageByDoors(doors);
+                    if (oldBB != null) {
+                        color = oldBB.getColor();
+                    }
+                }
+                villageBoundingBoxes.put(villageId, BoundingBoxVillage.from(center, radius, color, population, doors));
             }
             processDelta(villageCache, villageBoundingBoxes);
-
             villageCache = villageBoundingBoxes;
         }
     }
 
-    private void processDelta(Set<BoundingBox> oldBoundingBoxes, Set<BoundingBox> newBoundingBoxes) {
-        for (BoundingBox bb : oldBoundingBoxes) {
-            if (!newBoundingBoxes.contains(bb)) {
-                removeBoundingBox(bb);
-                eventHandler.boundingBoxRemoved(bb);
-            } else {
-                if (!isCached(bb)) {
-                    addBoundingBox(bb);
-                }
+    protected BoundingBoxVillage matchVillageByDoors(Set<BlockPos> villageDoors) {
+        for (BoundingBoxVillage bb : villageCache.values()) {
+            Set<BlockPos> doors = bb.getDoors();
+            for (BlockPos door : villageDoors) {
+                if (doors.contains(door))
+                    return bb;
             }
+        }
+        return null;
+    }
+
+    private Set<BlockPos> getDoorsFromVillage(Village village) {
+        Set<BlockPos> doors = new HashSet<BlockPos>();
+        for (Object doorInfo : village.getVillageDoorInfoList()) {
+            doors.add(((VillageDoorInfo) doorInfo).getDoorBlockPos());
+        }
+        return doors;
+    }
+
+    private void processDelta(Map<Integer, BoundingBoxVillage> oldVillages, Map<Integer, BoundingBoxVillage> newVillages) {
+        for (BoundingBox village : oldVillages.values()) {
+            removeBoundingBox(village);
+            eventHandler.boundingBoxRemoved(village);
+        }
+        for (BoundingBox village : newVillages.values()) {
+            if (!isCached(village))
+                addBoundingBox(village);
         }
     }
 }

@@ -158,13 +158,21 @@ public class ClientProxy extends CommonProxy {
         for (NBTTagCompound village : villages) {
             BlockPos center = new BlockPos(village.getInteger("CX"), village.getInteger("CY"), village.getInteger("CZ"));
             int radius = village.getInteger("Radius");
-            int numVillagers = village.getInteger("PopSize");
-            int numVillageDoors = village.getTagList("Doors", 10).tagCount();
-            BoundingBox boundingBox = BoundingBoxVillage.from(center, radius, numVillagers, numVillageDoors);
+            int population = village.getInteger("PopSize");
+            Set<BlockPos> doors = getDoors(village);
+            BoundingBox boundingBox = BoundingBoxVillage.from(center, radius, population, doors);
             cache.addBoundingBox(boundingBox);
         }
 
         Logger.info("Loaded %s (%d villages)", fileName, villages.length);
+    }
+
+    private Set<BlockPos> getDoors(NBTTagCompound village) {
+        Set<BlockPos> doors = new HashSet<BlockPos>();
+        for (NBTTagCompound door : getChildCompoundTags(village, "Doors")) {
+            doors.add(new BlockPos(door.getInteger("X"), door.getInteger("Y"), door.getInteger("Z")));
+        }
+        return doors;
     }
 
     private void loadStructureNbtFile(File localStructuresFolder, BoundingBoxCache cache, String fileName, Color color, String id) {

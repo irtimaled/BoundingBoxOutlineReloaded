@@ -33,7 +33,7 @@ public class BoundingBoxDeserializer {
         int radius = ByteBufUtils.readVarInt(buf, 5);
         boolean spawnsIronGolems = ByteBufUtils.readVarShort(buf) == 1;
         Color color = new Color(ByteBufUtils.readVarInt(buf, 5));
-        return BoundingBoxVillage.from(center, radius, spawnsIronGolems, color);
+        return BoundingBoxVillage.from(center, radius, color, spawnsIronGolems, null);
     }
 
     private static BlockPos deserializeBlockPos(ByteBuf buf) {
