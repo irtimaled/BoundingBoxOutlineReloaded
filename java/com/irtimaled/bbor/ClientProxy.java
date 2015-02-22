@@ -307,7 +307,7 @@ public class ClientProxy extends CommonProxy {
     private void renderWorldSpawn(BoundingBoxWorldSpawn bb) {
         AxisAlignedBB aaBB = bb.toAxisAlignedBB(false);
         Color color = bb.getColor();
-        double y = getMaxY(configManager.worldSpawnMaxY.getInt());
+        double y = getMaxY(configManager.worldSpawnMaxY.getInt()) + 0.001F;
         renderRectangle(aaBB, y, y, color, false);
     }
 
@@ -436,9 +436,13 @@ public class ClientProxy extends CommonProxy {
     }
 
     private AxisAlignedBB offsetAxisAlignedBB(AxisAlignedBB axisAlignedBB) {
-        double expandBy = 0.005F;
+        double expandXZ = 0.001F;
+        double expandY = 0;
+        if (axisAlignedBB.minY != axisAlignedBB.maxY) {
+            expandY = expandXZ;
+        }
         return axisAlignedBB
-                .expand(expandBy, expandBy, expandBy)
+                .expand(expandXZ, expandY, expandXZ)
                 .offset(-playerX, -playerY, -playerZ);
     }
 
