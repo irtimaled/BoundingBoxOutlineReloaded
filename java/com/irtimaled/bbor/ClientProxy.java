@@ -286,6 +286,8 @@ public class ClientProxy extends CommonProxy {
                             villageBB.getSpawnsIronGolems()) {
                         renderIronGolemSpawnArea(villageBB);
                     }
+                    if(configManager.drawVillageDoors.getBoolean())
+                        renderVillageDoors(villageBB);
                 } else if (bb instanceof BoundingBoxSlimeChunk) {
                     renderSlimeChunk((BoundingBoxSlimeChunk) bb);
                 } else if (bb instanceof BoundingBoxWorldSpawn) {
@@ -354,6 +356,29 @@ public class ClientProxy extends CommonProxy {
                         center.getY() + 3,
                         center.getZ() + 8));
         renderCuboid(abb.addCoord(1, 1, 1), villageBB.getColor(), false);
+    }
+
+    private void renderVillageDoors(BoundingBoxVillage villageBB) {
+        OffsetPoint center = new OffsetPoint(villageBB.getCenter());
+        Color color = villageBB.getColor();
+        GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer worldRenderer = tessellator.getWorldRenderer();
+
+        int colorR = color.getRed();
+        int colorG = color.getGreen();
+        int colorB = color.getBlue();
+
+        worldRenderer.startDrawing(GL11.GL_LINES);
+        worldRenderer.setColorRGBA(colorR, colorG, colorB, 255);
+        for (BlockPos door : villageBB.getDoors()) {
+            OffsetPoint point = new OffsetPoint(door);
+
+
+            worldRenderer.addVertex(point.getX(), point.getY(), point.getZ());
+            worldRenderer.addVertex(center.getX(), center.getY(), center.getZ());
+        }
+        tessellator.draw();
     }
 
     private void renderCuboid(AxisAlignedBB aaBB, Color color, boolean fill) {

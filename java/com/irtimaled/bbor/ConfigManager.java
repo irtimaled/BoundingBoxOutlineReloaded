@@ -20,6 +20,7 @@ public class ConfigManager {
     public Setting alwaysVisible;
     public Setting renderVillageAsSphere;
     public Setting drawIronGolemSpawnArea;
+    public Setting drawVillageDoors;
     public Setting drawSlimeChunks;
     public Setting slimeChunkMaxY;
     public Setting keepCacheBetweenSessions;
@@ -40,6 +41,7 @@ public class ConfigManager {
         drawVillages = SetupBooleanProperty(config, "features", "drawVillages", true, "If set to true village bounding boxes are drawn. (default: true)");
         renderVillageAsSphere = SetupBooleanProperty(config, "features", "renderVillageAsSphere", true, "If set to true villages will be drawn as a sphere. (default:true)");
         drawIronGolemSpawnArea = SetupBooleanProperty(config, "features", "drawIronGolemSpawnArea", true, "If set to true the iron golem spawn area of the village will be drawn. (default:true)");
+        drawVillageDoors = SetupBooleanProperty(config, "features", "drawVillageDoors", false, "If set to true lines between the village centre and doors will be drawn. (default:false)");
         drawDesertTemples = SetupBooleanProperty(config, "features", "drawDesertTemples", true, "If set to true desert temple bounding boxes are drawn. (default: true)");
         drawJungleTemples = SetupBooleanProperty(config, "features", "drawJungleTemples", true, "If set to true jungle temple bounding boxes are drawn. (default: true)");
         drawWitchHuts = SetupBooleanProperty(config, "features", "drawWitchHuts", true, "If set to true witch hut bounding boxes are drawn. (default: true)");
