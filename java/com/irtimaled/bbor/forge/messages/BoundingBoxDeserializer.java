@@ -8,6 +8,9 @@ import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import java.awt.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 public class BoundingBoxDeserializer {
     public static BoundingBox deserialize(ByteBuf buf) {
@@ -33,7 +36,12 @@ public class BoundingBoxDeserializer {
         int radius = ByteBufUtils.readVarInt(buf, 5);
         boolean spawnsIronGolems = ByteBufUtils.readVarShort(buf) == 1;
         Color color = new Color(ByteBufUtils.readVarInt(buf, 5));
-        return BoundingBoxVillage.from(center, radius, color, spawnsIronGolems, null);
+        Set<BlockPos> doors = new HashSet<BlockPos>();
+        while (buf.isReadable()) {
+            BlockPos door = deserializeBlockPos(buf);
+            doors.add(door);
+        }
+        return BoundingBoxVillage.from(center, radius, color, spawnsIronGolems, doors);
     }
 
     private static BlockPos deserializeBlockPos(ByteBuf buf) {

@@ -27,6 +27,10 @@ public class BoundingBoxSerializer {
         ByteBufUtils.writeVarInt(buf, boundingBox.getRadius(), 5);
         ByteBufUtils.writeVarShort(buf, boundingBox.getSpawnsIronGolems() ? 1 : 0);
         serializeColor(boundingBox.getColor(), buf);
+        for(BlockPos door : boundingBox.getDoors())
+        {
+            serializeBlockPos(door, buf);
+        }
     }
 
     private static void serializeStructure(BoundingBoxStructure boundingBox, ByteBuf buf) {
