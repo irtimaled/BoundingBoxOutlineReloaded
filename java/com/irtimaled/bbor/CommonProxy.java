@@ -8,12 +8,13 @@ import net.minecraft.world.gen.ChunkProviderServer;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class CommonProxy implements IEventHandler {
+public class CommonProxy {
 
     public Map<Integer, BoundingBoxCache> boundingBoxCacheMap = new ConcurrentHashMap<Integer, BoundingBoxCache>();
 
     public ConfigManager configManager;
     protected WorldData worldData;
+    private IEventHandler eventHandler = null;
 
     public void init(ConfigManager configManager) {
         this.configManager = configManager;
@@ -26,7 +27,7 @@ public class CommonProxy implements IEventHandler {
             setWorldData(new WorldData(world.getSeed(), world.getWorldInfo().getSpawnX(), world.getWorldInfo().getSpawnZ()));
             int dimensionId = world.provider.getDimensionId();
             Logger.info("create world dimension: %d, %s (chunkprovider: %s) (seed: %d)", dimensionId, world.getClass().toString(), chunkProvider.getClass().toString(), worldData.getSeed());
-            boundingBoxCacheMap.put(dimensionId, new DimensionProcessor(this, configManager, world, dimensionId, chunkProvider));
+            boundingBoxCacheMap.put(dimensionId, new DimensionProcessor(eventHandler, configManager, world, dimensionId, chunkProvider));
         }
     }
 
@@ -37,14 +38,15 @@ public class CommonProxy implements IEventHandler {
         }
     }
 
-    public void boundingBoxRemoved(BoundingBox bb) {
-    }
-
     public WorldData getWorldData() {
         return worldData;
     }
 
     public void setWorldData(WorldData worldData) {
         this.worldData = worldData;
+    }
+
+    public void setEventHandler(IEventHandler eventHandler) {
+        this.eventHandler = eventHandler;
     }
 }

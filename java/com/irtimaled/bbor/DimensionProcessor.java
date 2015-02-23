@@ -187,7 +187,9 @@ public class DimensionProcessor extends BoundingBoxCache {
     private void processDelta(Map<Integer, BoundingBoxVillage> oldVillages, Map<Integer, BoundingBoxVillage> newVillages) {
         for (BoundingBox village : oldVillages.values()) {
             removeBoundingBox(village);
-            eventHandler.boundingBoxRemoved(village);
+            if(eventHandler!=null) {
+                eventHandler.boundingBoxRemoved(village);
+            }
         }
         for (BoundingBox village : newVillages.values()) {
             if (!isCached(village))

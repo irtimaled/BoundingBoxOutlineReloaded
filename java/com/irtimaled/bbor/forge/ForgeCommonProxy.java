@@ -35,7 +35,9 @@ public class ForgeCommonProxy implements IEventHandler {
     private CommonProxy commonProxy;
 
     public void init(ConfigManager configManager) {
-        getProxy().init(configManager);
+        CommonProxy proxy = getProxy();
+        proxy.setEventHandler(this);
+        proxy.init(configManager);
         network = NetworkRegistry.INSTANCE.newSimpleChannel("bbor");
         network.registerMessage(AddBoundingBoxMessageHandler.class, AddBoundingBoxMessage.class, 0, Side.CLIENT);
         network.registerMessage(RemoveBoundingBoxMessageHandler.class, RemoveBoundingBoxMessage.class, 1, Side.CLIENT);
@@ -155,10 +157,6 @@ public class ForgeCommonProxy implements IEventHandler {
 
     public void setWorldData(WorldData worldData) {
         getProxy().setWorldData(worldData);
-    }
-
-    public void setConfigManager(ConfigManager configManager) {
-        getProxy().configManager = configManager;
     }
 
     public void addBoundingBox(int dimension, BoundingBox key, Set<BoundingBox> boundingBoxes) {
