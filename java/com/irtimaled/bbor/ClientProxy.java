@@ -299,11 +299,7 @@ public class ClientProxy extends CommonProxy {
     }
 
     private Set getActiveChunks(World world) {
-        Set result = ReflectionHelper.getPrivateValue(World.class, world, 32, Set.class);
-        if (result == null) {
-            result = ReflectionHelper.getPrivateValue(World.class, world, 33, Set.class);
-        }
-        return result;
+        return ReflectionHelper.getPrivateValue(World.class, world, Set.class);
     }
 
     private void renderBoundingBox(BoundingBox bb) {

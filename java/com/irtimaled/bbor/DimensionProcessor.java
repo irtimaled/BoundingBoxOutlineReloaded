@@ -8,10 +8,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.ChunkProviderGenerate;
 import net.minecraft.world.gen.ChunkProviderHell;
-import net.minecraft.world.gen.structure.ComponentScatteredFeaturePieces;
-import net.minecraft.world.gen.structure.MapGenStructure;
-import net.minecraft.world.gen.structure.StructureComponent;
-import net.minecraft.world.gen.structure.StructureStart;
+import net.minecraft.world.gen.structure.*;
 
 import java.awt.*;
 import java.util.*;
@@ -52,11 +49,11 @@ public class DimensionProcessor extends BoundingBoxCache {
         super.close();
     }
 
-    private static <T extends IChunkProvider> Collection<StructureStart> getStructures(T chunkProvider, int method) {
+    private static <T extends IChunkProvider, R extends MapGenStructure> Collection<StructureStart> getStructures(T chunkProvider, Class<R> providerClass) {
         Class<T> chunkProviderClass = (Class<T>) chunkProvider.getClass();
-        MapGenStructure structureGenerator = ReflectionHelper.getPrivateValue(chunkProviderClass, chunkProvider, method, MapGenStructure.class);
+        R structureGenerator = ReflectionHelper.getPrivateValue(chunkProviderClass, chunkProvider, providerClass);
         if (structureGenerator != null) {
-            Map<ChunkCoordIntPair, StructureStart> structureMap = ReflectionHelper.getPrivateValue(MapGenStructure.class, structureGenerator, 1);
+            Map<ChunkCoordIntPair, StructureStart> structureMap = ReflectionHelper.getPrivateValue(MapGenStructure.class, structureGenerator, Map.class);
             return structureMap.values();
         }
         return Collections.emptyList();
@@ -67,32 +64,32 @@ public class DimensionProcessor extends BoundingBoxCache {
         Map<StructureType, Collection<StructureStart>> structureMap = new HashMap<StructureType, Collection<StructureStart>>();
         if (chunkProvider instanceof ChunkProviderGenerate) {
             if (configManager.drawDesertTemples.getBoolean()) {
-                structureMap.put(StructureType.DesertTemple, getStructuresWithComponent(getStructures(chunkProvider, 20), ComponentScatteredFeaturePieces.DesertPyramid.class));
+                structureMap.put(StructureType.DesertTemple, getStructuresWithComponent(getStructures(chunkProvider, MapGenScatteredFeature.class), ComponentScatteredFeaturePieces.DesertPyramid.class));
             }
 
             if (configManager.drawJungleTemples.getBoolean()) {
-                structureMap.put(StructureType.JungleTemple, getStructuresWithComponent(getStructures(chunkProvider, 20), ComponentScatteredFeaturePieces.JunglePyramid.class));
+                structureMap.put(StructureType.JungleTemple, getStructuresWithComponent(getStructures(chunkProvider, MapGenScatteredFeature.class), ComponentScatteredFeaturePieces.JunglePyramid.class));
             }
 
             if (configManager.drawWitchHuts.getBoolean()) {
-                structureMap.put(StructureType.WitchHut, getStructuresWithComponent(getStructures(chunkProvider, 20), ComponentScatteredFeaturePieces.SwampHut.class));
+                structureMap.put(StructureType.WitchHut, getStructuresWithComponent(getStructures(chunkProvider, MapGenScatteredFeature.class), ComponentScatteredFeaturePieces.SwampHut.class));
             }
 
             if (configManager.drawOceanMonuments.getBoolean()) {
-                structureMap.put(StructureType.OceanMonument, getStructures(chunkProvider, 22));
+                structureMap.put(StructureType.OceanMonument, getStructures(chunkProvider, StructureOceanMonument.class));
             }
 
             if (configManager.drawStrongholds.getBoolean()) {
-                structureMap.put(StructureType.Stronghold, getStructures(chunkProvider, 17));
+                structureMap.put(StructureType.Stronghold, getStructures(chunkProvider, MapGenStronghold.class));
             }
 
             if (configManager.drawMineShafts.getBoolean()) {
-                structureMap.put(StructureType.MineShaft, getStructures(chunkProvider, 19));
+                structureMap.put(StructureType.MineShaft, getStructures(chunkProvider, MapGenMineshaft.class));
             }
         } else if (chunkProvider instanceof ChunkProviderHell) {
 
             if (configManager.drawNetherFortresses.getBoolean()) {
-                structureMap.put(StructureType.NetherFortress, getStructures(chunkProvider, 22));
+                structureMap.put(StructureType.NetherFortress, getStructures(chunkProvider, MapGenNetherBridge.class));
             }
         }
 
