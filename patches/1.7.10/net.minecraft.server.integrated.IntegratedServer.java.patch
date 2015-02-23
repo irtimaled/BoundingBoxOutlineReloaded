@@ -1,0 +1,11 @@
+diff -r -U 3 src/minecraft/net/minecraft/server/integrated/IntegratedServer.java src copy/minecraft/net/minecraft/server/integrated/IntegratedServer.java
+--- src/minecraft/net/minecraft/server/integrated/IntegratedServer.java 2015-02-23 16:20:20.000000000 +0000
++++ src copy/minecraft/net/minecraft/server/integrated/IntegratedServer.java  2015-02-22 21:21:45.000000000 +0000
+@@ -86,6 +86,7 @@
+                 this.worldServers[var8] = new WorldServerMulti(this, var7, p_71247_2_, var9, this.theWorldSettings, this.worldServers[0], this.theProfiler);
+             }
+ 
++            com.irtimaled.bbor.BoundingBoxOutlineReloaded.worldLoaded(this.worldServers[var8]);
+             this.worldServers[var8].addWorldAccess(new WorldManager(this, this.worldServers[var8]));
+             this.getConfigurationManager().setPlayerManager(this.worldServers);
+         }

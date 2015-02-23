@@ -1,0 +1,241 @@
+diff -r -U 3 src/minecraft/com/irtimaled/bbor/ClientProxy.java src copy/minecraft/com/irtimaled/bbor/ClientProxy.java
+--- src/minecraft/com/irtimaled/bbor/ClientProxy.java 2015-02-23 15:36:23.000000000 +0000
++++ src copy/minecraft/com/irtimaled/bbor/ClientProxy.java  2015-02-23 16:16:23.000000000 +0000
+@@ -70,7 +70,7 @@
+         playerZ = entityPlayer.lastTickPosZ + (entityPlayer.posZ - entityPlayer.lastTickPosZ) * (double) partialTicks;
+ 
+         if (this.active) {
+-            int activeDimensionId = entityPlayer.worldObj.provider.getDimensionId();
++            int activeDimensionId = entityPlayer.worldObj.provider.dimensionId;
+             if (boundingBoxCacheMap.containsKey(activeDimensionId)) {
+                 renderBoundingBoxes(boundingBoxCacheMap.get(activeDimensionId).getBoundingBoxes());
+             }
+@@ -114,9 +114,6 @@
+         if (configManager.drawWitchHuts.getBoolean()) {
+             loadStructureNbtFile(localStructuresFolder, cache, "Temple.dat", StructureType.WitchHut.getColor(), "TeSH");
+         }
+-        if (configManager.drawOceanMonuments.getBoolean()) {
+-            loadStructureNbtFile(localStructuresFolder, cache, "Monument.dat", StructureType.OceanMonument.getColor(), "*");
+-        }
+         if (configManager.drawMineShafts.getBoolean()) {
+             loadStructureNbtFile(localStructuresFolder, cache, "Mineshaft.dat", StructureType.MineShaft.getColor(), "*");
+         }
+@@ -274,8 +271,8 @@
+         Set activeChunks = getActiveChunks(world);
+         for (BoundingBox bb : bbList) {
+ 
+-            if (activeChunks.contains(world.getChunkFromBlockCoords(bb.getMinBlockPos()).getChunkCoordIntPair()) ||
+-                    activeChunks.contains(world.getChunkFromBlockCoords(bb.getMaxBlockPos()).getChunkCoordIntPair())) {
++            if (activeChunks.contains(world.getChunkFromBlockCoords(bb.getMinBlockPos().posX, bb.getMinBlockPos().posZ).getChunkCoordIntPair()) ||
++                    activeChunks.contains(world.getChunkFromBlockCoords(bb.getMaxBlockPos().posX, bb.getMaxBlockPos().posZ).getChunkCoordIntPair())) {
+ 
+                 if (bb instanceof BoundingBoxVillage) {
+                     BoundingBoxVillage villageBB = (BoundingBoxVillage) bb;
+@@ -341,7 +338,7 @@
+     }
+ 
+     private void renderRectangle(AxisAlignedBB aaBB, double minY, double maxY, Color color, Boolean fill) {
+-        aaBB = new AxisAlignedBB(aaBB.minX, minY, aaBB.minZ, aaBB.maxX, maxY, aaBB.maxZ);
++        aaBB = AxisAlignedBB.getBoundingBox(aaBB.minX, minY, aaBB.minZ, aaBB.maxX, maxY, aaBB.maxZ);
+         renderCuboid(aaBB, color, fill);
+     }
+ 
+@@ -351,12 +348,12 @@
+ 
+     private void renderIronGolemSpawnArea(BoundingBoxVillage villageBB) {
+         BlockPos center = villageBB.getCenter();
+-        AxisAlignedBB abb = new AxisAlignedBB(new BlockPos(center.getX() - 8,
+-                center.getY() - 3,
+-                center.getZ() - 8),
+-                new BlockPos(center.getX() + 8,
+-                        center.getY() + 3,
+-                        center.getZ() + 8));
++        AxisAlignedBB abb = AxisAlignedBB.getBoundingBox(center.posX - 8,
++                center.posY - 3,
++                center.posZ - 8,
++                center.posX + 8,
++                center.posY + 3,
++                center.posZ + 8);
+         renderCuboid(abb.addCoord(1, 1, 1), villageBB.getColor(), false);
+     }
+ 
+@@ -364,21 +361,20 @@
+         OffsetPoint center = new OffsetPoint(villageBB.getCenter());
+         Color color = villageBB.getColor();
+         GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+-        Tessellator tessellator = Tessellator.getInstance();
+-        WorldRenderer worldRenderer = tessellator.getWorldRenderer();
++        Tessellator tessellator = Tessellator.instance;
+ 
+         int colorR = color.getRed();
+         int colorG = color.getGreen();
+         int colorB = color.getBlue();
+ 
+-        worldRenderer.startDrawing(GL11.GL_LINES);
+-        worldRenderer.setColorRGBA(colorR, colorG, colorB, 255);
++        tessellator.startDrawing(GL11.GL_LINES);
++        tessellator.setColorRGBA(colorR, colorG, colorB, 255);
+         for (BlockPos door : villageBB.getDoors()) {
+             OffsetPoint point = new OffsetPoint(door);
+ 
+ 
+-            worldRenderer.addVertex(point.getX(), point.getY(), point.getZ());
+-            worldRenderer.addVertex(center.getX(), center.getY(), center.getZ());
++            tessellator.addVertex(point.getX(), point.getY(), point.getZ());
++            tessellator.addVertex(center.getX(), center.getY(), center.getZ());
+         }
+         tessellator.draw();
+     }
+@@ -406,63 +402,62 @@
+     }
+ 
+     private void renderCuboid(AxisAlignedBB bb, int alphaChannel, Color color) {
+-        Tessellator tessellator = Tessellator.getInstance();
+-        WorldRenderer worldRenderer = tessellator.getWorldRenderer();
++        Tessellator tessellator = Tessellator.instance;
+ 
+         int colorR = color.getRed();
+         int colorG = color.getGreen();
+         int colorB = color.getBlue();
+ 
+-        worldRenderer.startDrawing(GL11.GL_QUADS);
+-        worldRenderer.setColorRGBA(colorR, colorG, colorB, alphaChannel);
+-        worldRenderer.addVertex(bb.minX, bb.minY, bb.minZ);
+-        worldRenderer.addVertex(bb.maxX, bb.minY, bb.minZ);
+-        worldRenderer.addVertex(bb.maxX, bb.minY, bb.maxZ);
+-        worldRenderer.addVertex(bb.minX, bb.minY, bb.maxZ);
++        tessellator.startDrawing(GL11.GL_QUADS);
++        tessellator.setColorRGBA(colorR, colorG, colorB, alphaChannel);
++        tessellator.addVertex(bb.minX, bb.minY, bb.minZ);
++        tessellator.addVertex(bb.maxX, bb.minY, bb.minZ);
++        tessellator.addVertex(bb.maxX, bb.minY, bb.maxZ);
++        tessellator.addVertex(bb.minX, bb.minY, bb.maxZ);
+         tessellator.draw();
+ 
+         if (bb.minY == bb.maxY) {
+             return;
+         }
+ 
+-        worldRenderer.startDrawing(GL11.GL_QUADS);
+-        worldRenderer.setColorRGBA(colorR, colorG, colorB, alphaChannel);
+-        worldRenderer.addVertex(bb.minX, bb.maxY, bb.minZ);
+-        worldRenderer.addVertex(bb.maxX, bb.maxY, bb.minZ);
+-        worldRenderer.addVertex(bb.maxX, bb.maxY, bb.maxZ);
+-        worldRenderer.addVertex(bb.minX, bb.maxY, bb.maxZ);
++        tessellator.startDrawing(GL11.GL_QUADS);
++        tessellator.setColorRGBA(colorR, colorG, colorB, alphaChannel);
++        tessellator.addVertex(bb.minX, bb.maxY, bb.minZ);
++        tessellator.addVertex(bb.maxX, bb.maxY, bb.minZ);
++        tessellator.addVertex(bb.maxX, bb.maxY, bb.maxZ);
++        tessellator.addVertex(bb.minX, bb.maxY, bb.maxZ);
+         tessellator.draw();
+ 
+-        worldRenderer.startDrawing(GL11.GL_QUADS);
+-        worldRenderer.setColorRGBA(colorR, colorG, colorB, alphaChannel);
+-        worldRenderer.addVertex(bb.minX, bb.minY, bb.maxZ);
+-        worldRenderer.addVertex(bb.minX, bb.maxY, bb.maxZ);
+-        worldRenderer.addVertex(bb.maxX, bb.maxY, bb.maxZ);
+-        worldRenderer.addVertex(bb.maxX, bb.minY, bb.maxZ);
++        tessellator.startDrawing(GL11.GL_QUADS);
++        tessellator.setColorRGBA(colorR, colorG, colorB, alphaChannel);
++        tessellator.addVertex(bb.minX, bb.minY, bb.maxZ);
++        tessellator.addVertex(bb.minX, bb.maxY, bb.maxZ);
++        tessellator.addVertex(bb.maxX, bb.maxY, bb.maxZ);
++        tessellator.addVertex(bb.maxX, bb.minY, bb.maxZ);
+         tessellator.draw();
+ 
+-        worldRenderer.startDrawing(GL11.GL_QUADS);
+-        worldRenderer.setColorRGBA(colorR, colorG, colorB, alphaChannel);
+-        worldRenderer.addVertex(bb.minX, bb.minY, bb.minZ);
+-        worldRenderer.addVertex(bb.minX, bb.maxY, bb.minZ);
+-        worldRenderer.addVertex(bb.maxX, bb.maxY, bb.minZ);
+-        worldRenderer.addVertex(bb.maxX, bb.minY, bb.minZ);
++        tessellator.startDrawing(GL11.GL_QUADS);
++        tessellator.setColorRGBA(colorR, colorG, colorB, alphaChannel);
++        tessellator.addVertex(bb.minX, bb.minY, bb.minZ);
++        tessellator.addVertex(bb.minX, bb.maxY, bb.minZ);
++        tessellator.addVertex(bb.maxX, bb.maxY, bb.minZ);
++        tessellator.addVertex(bb.maxX, bb.minY, bb.minZ);
+         tessellator.draw();
+ 
+-        worldRenderer.startDrawing(GL11.GL_QUADS);
+-        worldRenderer.setColorRGBA(colorR, colorG, colorB, alphaChannel);
+-        worldRenderer.addVertex(bb.minX, bb.minY, bb.minZ);
+-        worldRenderer.addVertex(bb.minX, bb.minY, bb.maxZ);
+-        worldRenderer.addVertex(bb.minX, bb.maxY, bb.maxZ);
+-        worldRenderer.addVertex(bb.minX, bb.maxY, bb.minZ);
++        tessellator.startDrawing(GL11.GL_QUADS);
++        tessellator.setColorRGBA(colorR, colorG, colorB, alphaChannel);
++        tessellator.addVertex(bb.minX, bb.minY, bb.minZ);
++        tessellator.addVertex(bb.minX, bb.minY, bb.maxZ);
++        tessellator.addVertex(bb.minX, bb.maxY, bb.maxZ);
++        tessellator.addVertex(bb.minX, bb.maxY, bb.minZ);
+         tessellator.draw();
+ 
+-        worldRenderer.startDrawing(GL11.GL_QUADS);
+-        worldRenderer.setColorRGBA(colorR, colorG, colorB, alphaChannel);
+-        worldRenderer.addVertex(bb.maxX, bb.minY, bb.minZ);
+-        worldRenderer.addVertex(bb.maxX, bb.minY, bb.maxZ);
+-        worldRenderer.addVertex(bb.maxX, bb.maxY, bb.maxZ);
+-        worldRenderer.addVertex(bb.maxX, bb.maxY, bb.minZ);
++        tessellator.startDrawing(GL11.GL_QUADS);
++        tessellator.setColorRGBA(colorR, colorG, colorB, alphaChannel);
++        tessellator.addVertex(bb.maxX, bb.minY, bb.minZ);
++        tessellator.addVertex(bb.maxX, bb.minY, bb.maxZ);
++        tessellator.addVertex(bb.maxX, bb.maxY, bb.maxZ);
++        tessellator.addVertex(bb.maxX, bb.maxY, bb.minZ);
+         tessellator.draw();
+     }
+ 
+@@ -488,12 +483,11 @@
+         GL11.glEnable(GL11.GL_POINT_SMOOTH);
+         GL11.glPointSize(2f);
+ 
+-        Tessellator tessellator = Tessellator.getInstance();
+-        WorldRenderer worldRenderer = tessellator.getWorldRenderer();
+-        worldRenderer.startDrawing(GL11.GL_POINTS);
+-        worldRenderer.setColorRGBA(color.getRed(), color.getGreen(), color.getBlue(), 255);
++        Tessellator tessellator = Tessellator.instance;
++        tessellator.startDrawing(GL11.GL_POINTS);
++        tessellator.setColorRGBA(color.getRed(), color.getGreen(), color.getBlue(), 255);
+         for (OffsetPoint point : buildPoints(center, radius)) {
+-            worldRenderer.addVertex(point.getX(), point.getY(), point.getZ());
++            tessellator.addVertex(point.getX(), point.getY(), point.getZ());
+         }
+         tessellator.draw();
+     }
+@@ -510,9 +504,9 @@
+         }
+ 
+         public OffsetPoint(BlockPos blockPos) {
+-            x = blockPos.getX();
+-            y = blockPos.getY();
+-            z = blockPos.getZ();
++            x = blockPos.posX;
++            y = blockPos.posY;
++            z = blockPos.posZ;
+         }
+ 
+         public double getX() {
+@@ -555,7 +549,7 @@
+         Set<BoundingBox> boundingBoxes = new HashSet<BoundingBox>();
+         if (worldData != null) {
+             World world = Minecraft.getMinecraft().theWorld;
+-            int dimensionId = world.provider.getDimensionId();
++            int dimensionId = world.provider.dimensionId;
+             if (dimensionId == 0) {
+                 if (configManager.drawWorldSpawn.getBoolean()) {
+                     boundingBoxes.add(getWorldSpawnBoundingBox(worldData.getSpawnX(), worldData.getSpawnZ()));
+@@ -606,9 +600,9 @@
+ 
+     private BoundingBox getSpawnChunksBoundingBox(int spawnX, int spawnZ, int size, Color color) {
+         double chunkSize = 16;
+-        double midOffset = chunkSize * (size / 2);
+-        double midX = Math.round((float) (spawnX / chunkSize)) * chunkSize;
+-        double midZ = Math.round((float) (spawnZ / chunkSize)) * chunkSize;
++        int midOffset = (int) chunkSize * (size / 2);
++        int midX = Math.round((float) (spawnX / chunkSize)) * (int) chunkSize;
++        int midZ = Math.round((float) (spawnZ / chunkSize)) * (int) chunkSize;
+         BlockPos minBlockPos = new BlockPos(midX - midOffset, 0, midZ - midOffset);
+         if (spawnX / chunkSize % 0.5D == 0.0D && spawnZ / chunkSize % 0.5D == 0.0D) {
+             midX += chunkSize;

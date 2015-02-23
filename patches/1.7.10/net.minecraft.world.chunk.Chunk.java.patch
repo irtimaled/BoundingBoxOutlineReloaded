@@ -1,0 +1,11 @@
+diff -r -U 3 src/minecraft/net/minecraft/world/chunk/Chunk.java src copy/minecraft/net/minecraft/world/chunk/Chunk.java
+--- src/minecraft/net/minecraft/world/chunk/Chunk.java  2015-02-23 16:20:20.000000000 +0000
++++ src copy/minecraft/net/minecraft/world/chunk/Chunk.java 2015-02-22 21:21:06.000000000 +0000
+@@ -1029,6 +1029,7 @@
+ 
+             this.worldObj.addLoadedEntities(this.entityLists[var1]);
+         }
++        com.irtimaled.bbor.BoundingBoxOutlineReloaded.chunkLoaded(this);
+     }
+ 
+     /**

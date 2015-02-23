@@ -1,0 +1,16 @@
+diff -r -U 3 src/minecraft/com/irtimaled/bbor/BoundingBoxSlimeChunk.java src copy/minecraft/com/irtimaled/bbor/BoundingBoxSlimeChunk.java
+--- src/minecraft/com/irtimaled/bbor/BoundingBoxSlimeChunk.java 2015-02-05 22:46:15.000000000 +0000
++++ src copy/minecraft/com/irtimaled/bbor/BoundingBoxSlimeChunk.java  2015-02-23 16:05:40.000000000 +0000
+@@ -11,8 +11,10 @@
+     }
+ 
+     public static BoundingBoxSlimeChunk from(ChunkCoordIntPair chunkCoordIntPair, Color color) {
+-        BlockPos minBlockPos = new BlockPos(chunkCoordIntPair.getXStart(), 1, chunkCoordIntPair.getZStart());
+-        BlockPos maxBlockPos = new BlockPos(chunkCoordIntPair.getXEnd(), 38, chunkCoordIntPair.getZEnd());
++        int chunkXStart = chunkCoordIntPair.chunkXPos << 4;
++        int chunkZStart = chunkCoordIntPair.chunkZPos << 4;
++        BlockPos minBlockPos = new BlockPos(chunkXStart, 1, chunkZStart);
++        BlockPos maxBlockPos = new BlockPos(chunkXStart + 15, 38, chunkZStart + 15);
+         return new BoundingBoxSlimeChunk(minBlockPos, maxBlockPos, color);
+     }
+ 

@@ -160,7 +160,8 @@ public class DimensionProcessor extends BoundingBoxCache {
     private Set<BlockPos> getDoorsFromVillage(Village village) {
         Set<BlockPos> doors = new HashSet<BlockPos>();
         for (Object doorInfo : village.getVillageDoorInfoList()) {
-            doors.add(((VillageDoorInfo) doorInfo).getDoorBlockPos());
+            VillageDoorInfo villageDoorInfo = (VillageDoorInfo) doorInfo;
+            doors.add(villageDoorInfo.getDoorBlockPos());
         }
         return doors;
     }

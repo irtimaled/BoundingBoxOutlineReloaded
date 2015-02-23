@@ -1,0 +1,11 @@
+diff -r -U 3 src/minecraft/net/minecraft/client/multiplayer/WorldClient.java src copy/minecraft/net/minecraft/client/multiplayer/WorldClient.java
+--- src/minecraft/net/minecraft/client/multiplayer/WorldClient.java 2015-02-23 16:20:20.000000000 +0000
++++ src copy/minecraft/net/minecraft/client/multiplayer/WorldClient.java  2015-02-22 21:24:01.000000000 +0000
+@@ -293,6 +293,7 @@
+     public void sendQuittingDisconnectingPacket()
+     {
+         this.sendQueue.getNetworkManager().closeChannel(new ChatComponentText("Quitting"));
++        com.irtimaled.bbor.BoundingBoxOutlineReloaded.playerDisconnectedFromServer();
+     }
+ 
+     /**
