@@ -52,6 +52,7 @@ Mine Shafts | Both | Process/Render Mine Shafts | drawMineShafts | true/false | 
 Villages | Both | Process/Render Villages | drawVillages | true/false | true
 Village spheres | Client | Render Villages as spheres instead of cuboids | renderVillageAsSphere | true/false | true
 Village Iron Golem Spawn Area | Client | Render Iron Golem Spawn Area within valid Villages | drawIronGolemSpawnArea | true/false | true
+Village doors | Client | Render lines between village centre and doors | drawVillageDoors | true/false | false
 Slime Chunks | Client | Process/Render Slime Chunks | drawSlimeChunks | true/false | true
 Slime Chunks Maximum Y | Client | Maximum Y value of the dynamic slime chunk boxes | slimeChunkMaxY | -1-255 (see below) | -1
 World Spawn | Client | Process/Render World Spawn & Spawn Active Chunks | drawWorldSpawn | true/false | true
