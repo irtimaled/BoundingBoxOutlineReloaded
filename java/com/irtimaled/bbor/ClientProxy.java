@@ -268,6 +268,8 @@ public class ClientProxy extends CommonProxy {
     }
 
     private void renderBoundingBoxes(Set<BoundingBox> bbList) {
+        if(bbList == null)
+            return;
         World world = Minecraft.getMinecraft().theWorld;
         Set activeChunks = getActiveChunks(world);
         for (BoundingBox bb : bbList) {

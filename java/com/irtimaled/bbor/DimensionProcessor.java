@@ -150,30 +150,11 @@ public class DimensionProcessor extends BoundingBoxCache {
                 Integer radius = village.getVillageRadius();
                 int population = village.getNumVillagers();
                 Set<BlockPos> doors = getDoorsFromVillage(village);
-
-                if (color == null) {
-                    //this should never happen but falls back to finding village by doors
-                    BoundingBoxVillage oldBB = matchVillageByDoors(doors);
-                    if (oldBB != null) {
-                        color = oldBB.getColor();
-                    }
-                }
                 villageBoundingBoxes.put(villageId, BoundingBoxVillage.from(center, radius, color, population, doors));
             }
             processDelta(villageCache, villageBoundingBoxes);
             villageCache = villageBoundingBoxes;
         }
-    }
-
-    protected BoundingBoxVillage matchVillageByDoors(Set<BlockPos> villageDoors) {
-        for (BoundingBoxVillage bb : villageCache.values()) {
-            Set<BlockPos> doors = bb.getDoors();
-            for (BlockPos door : villageDoors) {
-                if (doors.contains(door))
-                    return bb;
-            }
-        }
-        return null;
     }
 
     private Set<BlockPos> getDoorsFromVillage(Village village) {

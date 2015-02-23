@@ -54,8 +54,13 @@ public class BoundingBoxVillage extends BoundingBox {
     }
 
     @Override
-    public int hashCode() {
-        return center.hashCode();
+    public int hashCode()
+    { final int prime = 31;
+        int result = super.hashCode();
+        for(BlockPos door : doors) {
+            result = prime * result + door.hashCode();
+        }
+        return result;
     }
 
     public boolean getSpawnsIronGolems() {
