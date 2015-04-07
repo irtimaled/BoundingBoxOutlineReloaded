@@ -91,12 +91,19 @@ public class ClientProxy extends CommonProxy {
         File localStructuresFolder = new File(configManager.configDir, path);
         Logger.info("Looking for local structures (folder=%s)", localStructuresFolder.getAbsolutePath());
         if (!localStructuresFolder.exists()) {
-            path = String.format("%s,%d", path, port);
+            path = String.format("BBOutlineReloaded%s%s,%d", File.separator, host, port);
             localStructuresFolder = new File(configManager.configDir, path);
             Logger.info("Looking for local structures (folder=%s)", localStructuresFolder.getAbsolutePath());
         }
-        if (!localStructuresFolder.exists())
+        if (!localStructuresFolder.exists()) {
+            path = String.format("BBOutlineReloaded%s%s%s%d", File.separator, host, File.separator, port);
+            localStructuresFolder = new File(configManager.configDir, path);
+            Logger.info("Looking for local structures (folder=%s)", localStructuresFolder.getAbsolutePath());
+        }
+        if (!localStructuresFolder.exists())        {
+            Logger.info("No local structures folders found");
             return;
+        }
         loadLevelDat(localStructuresFolder);
         loadNetherStructures(localStructuresFolder);
         loadOverworldStructures(localStructuresFolder);
