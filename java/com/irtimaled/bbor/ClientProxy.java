@@ -383,7 +383,6 @@ public class ClientProxy extends CommonProxy {
         for (BlockPos door : villageBB.getDoors()) {
             OffsetPoint point = new OffsetPoint(door);
 
-
             worldRenderer.addVertex(point.getX(), point.getY(), point.getZ());
             worldRenderer.addVertex(center.getX(), center.getY(), center.getZ());
         }
@@ -426,50 +425,34 @@ public class ClientProxy extends CommonProxy {
         worldRenderer.addVertex(bb.maxX, bb.minY, bb.minZ);
         worldRenderer.addVertex(bb.maxX, bb.minY, bb.maxZ);
         worldRenderer.addVertex(bb.minX, bb.minY, bb.maxZ);
-        tessellator.draw();
 
-        if (bb.minY == bb.maxY) {
-            return;
+        if (bb.minY != bb.maxY) {
+
+            worldRenderer.addVertex(bb.minX, bb.maxY, bb.minZ);
+            worldRenderer.addVertex(bb.maxX, bb.maxY, bb.minZ);
+            worldRenderer.addVertex(bb.maxX, bb.maxY, bb.maxZ);
+            worldRenderer.addVertex(bb.minX, bb.maxY, bb.maxZ);
+
+            worldRenderer.addVertex(bb.minX, bb.minY, bb.maxZ);
+            worldRenderer.addVertex(bb.minX, bb.maxY, bb.maxZ);
+            worldRenderer.addVertex(bb.maxX, bb.maxY, bb.maxZ);
+            worldRenderer.addVertex(bb.maxX, bb.minY, bb.maxZ);
+
+            worldRenderer.addVertex(bb.minX, bb.minY, bb.minZ);
+            worldRenderer.addVertex(bb.minX, bb.maxY, bb.minZ);
+            worldRenderer.addVertex(bb.maxX, bb.maxY, bb.minZ);
+            worldRenderer.addVertex(bb.maxX, bb.minY, bb.minZ);
+
+            worldRenderer.addVertex(bb.minX, bb.minY, bb.minZ);
+            worldRenderer.addVertex(bb.minX, bb.minY, bb.maxZ);
+            worldRenderer.addVertex(bb.minX, bb.maxY, bb.maxZ);
+            worldRenderer.addVertex(bb.minX, bb.maxY, bb.minZ);
+
+            worldRenderer.addVertex(bb.maxX, bb.minY, bb.minZ);
+            worldRenderer.addVertex(bb.maxX, bb.minY, bb.maxZ);
+            worldRenderer.addVertex(bb.maxX, bb.maxY, bb.maxZ);
+            worldRenderer.addVertex(bb.maxX, bb.maxY, bb.minZ);
         }
-
-        worldRenderer.startDrawing(GL11.GL_QUADS);
-        worldRenderer.setColorRGBA(colorR, colorG, colorB, alphaChannel);
-        worldRenderer.addVertex(bb.minX, bb.maxY, bb.minZ);
-        worldRenderer.addVertex(bb.maxX, bb.maxY, bb.minZ);
-        worldRenderer.addVertex(bb.maxX, bb.maxY, bb.maxZ);
-        worldRenderer.addVertex(bb.minX, bb.maxY, bb.maxZ);
-        tessellator.draw();
-
-        worldRenderer.startDrawing(GL11.GL_QUADS);
-        worldRenderer.setColorRGBA(colorR, colorG, colorB, alphaChannel);
-        worldRenderer.addVertex(bb.minX, bb.minY, bb.maxZ);
-        worldRenderer.addVertex(bb.minX, bb.maxY, bb.maxZ);
-        worldRenderer.addVertex(bb.maxX, bb.maxY, bb.maxZ);
-        worldRenderer.addVertex(bb.maxX, bb.minY, bb.maxZ);
-        tessellator.draw();
-
-        worldRenderer.startDrawing(GL11.GL_QUADS);
-        worldRenderer.setColorRGBA(colorR, colorG, colorB, alphaChannel);
-        worldRenderer.addVertex(bb.minX, bb.minY, bb.minZ);
-        worldRenderer.addVertex(bb.minX, bb.maxY, bb.minZ);
-        worldRenderer.addVertex(bb.maxX, bb.maxY, bb.minZ);
-        worldRenderer.addVertex(bb.maxX, bb.minY, bb.minZ);
-        tessellator.draw();
-
-        worldRenderer.startDrawing(GL11.GL_QUADS);
-        worldRenderer.setColorRGBA(colorR, colorG, colorB, alphaChannel);
-        worldRenderer.addVertex(bb.minX, bb.minY, bb.minZ);
-        worldRenderer.addVertex(bb.minX, bb.minY, bb.maxZ);
-        worldRenderer.addVertex(bb.minX, bb.maxY, bb.maxZ);
-        worldRenderer.addVertex(bb.minX, bb.maxY, bb.minZ);
-        tessellator.draw();
-
-        worldRenderer.startDrawing(GL11.GL_QUADS);
-        worldRenderer.setColorRGBA(colorR, colorG, colorB, alphaChannel);
-        worldRenderer.addVertex(bb.maxX, bb.minY, bb.minZ);
-        worldRenderer.addVertex(bb.maxX, bb.minY, bb.maxZ);
-        worldRenderer.addVertex(bb.maxX, bb.maxY, bb.maxZ);
-        worldRenderer.addVertex(bb.maxX, bb.maxY, bb.minZ);
         tessellator.draw();
     }
 
