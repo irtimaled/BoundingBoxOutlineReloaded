@@ -9,12 +9,13 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 
-@Mod(modid = ForgeMod.MODID, name = ForgeMod.NAME, version = ForgeMod.VERSION)
+@Mod(modid = ForgeMod.MODID, name = ForgeMod.NAME, version = ForgeMod.VERSION, acceptedMinecraftVersions = ForgeMod.MCVERSION)
 public class ForgeMod {
 
     public static final String MODID = "bbor";
     public static final String NAME = "Bounding Box Outline Reloaded";
     public static final String VERSION = "1.0.0-beta11";
+    public static final String MCVERSION = "[1.8,1.8.9)";
 
     private ConfigManager configManager;
 
@@ -25,7 +26,6 @@ public class ForgeMod {
 
     @SidedProxy(clientSide = "com.irtimaled.bbor.forge.ForgeClientProxy", serverSide = "com.irtimaled.bbor.forge.ForgeCommonProxy")
     public static ForgeCommonProxy proxy;
-
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent evt) {
