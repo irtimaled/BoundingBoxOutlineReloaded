@@ -1,6 +1,6 @@
-package com.irtimaled.bbor.forge.messages;
+package com.ostlerdev.bbreloaded.forge.messages;
 
-import com.irtimaled.bbor.WorldData;
+import com.ostlerdev.bbreloaded.WorldData;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 

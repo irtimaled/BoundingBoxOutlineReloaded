@@ -1,6 +1,6 @@
-package com.irtimaled.bbor.forge;
+package com.ostlerdev.bbreloaded.forge;
 
-import com.irtimaled.bbor.ConfigManager;
+import com.ostlerdev.bbreloaded.ConfigManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
@@ -23,7 +23,7 @@ public class ForgeMod {
     @Mod.Instance()
     public static ForgeMod instance;
 
-    @SidedProxy(clientSide = "com.irtimaled.bbor.forge.ForgeClientProxy", serverSide = "com.irtimaled.bbor.forge.ForgeCommonProxy")
+    @SidedProxy(clientSide = "com.ostlerdev.bbreloaded.forge.ForgeClientProxy", serverSide = "com.ostlerdev.bbreloaded.forge.ForgeCommonProxy")
     public static ForgeCommonProxy proxy;
 
 

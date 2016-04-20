@@ -1,4 +1,4 @@
-package com.irtimaled.bbor;
+package com.ostlerdev.bbreloaded;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.NetworkManager;

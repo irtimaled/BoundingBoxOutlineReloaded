@@ -1,4 +1,4 @@
-package com.irtimaled.bbor;
+package com.ostlerdev.bbreloaded;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -12,8 +12,7 @@ public class ReflectionHelper {
             if (f != null) {
                 return (R) f.get(instance);
             }
-        } catch (Exception e) {
-        }
+        } catch (Exception e) { }
         return null;
     }
 

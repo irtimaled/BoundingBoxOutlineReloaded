@@ -1,4 +1,4 @@
-package com.irtimaled.bbor.config;
+package com.ostlerdev.bbreloaded.config;
 
 public class Setting {
 

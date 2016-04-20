@@ -1,12 +1,14 @@
-package com.irtimaled.bbor.forge;
+package com.ostlerdev.bbreloaded.forge;
 
-import com.irtimaled.bbor.*;
-import com.irtimaled.bbor.forge.messages.*;
+import com.ostlerdev.bbreloaded.*;
+import com.ostlerdev.bbreloaded.forge.messages.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -46,7 +48,7 @@ public class ForgeCommonProxy implements IEventHandler {
 
     @SubscribeEvent
     public void worldEvent(WorldEvent.Load event) {
-        getProxy().worldLoaded(event.world);
+        getProxy().worldLoaded(event.getWorld());
     }
 
     @SubscribeEvent
@@ -92,9 +94,10 @@ public class ForgeCommonProxy implements IEventHandler {
     @SubscribeEvent
     public void tickEvent(TickEvent event) {
         for (EntityPlayerMP player : playerDimensions.keySet()) {
-
-            MinecraftServer mc = MinecraftServer.getServer();
-            if (!mc.getConfigurationManager().playerEntityList.contains(player)) {
+        	
+            MinecraftServer mc = FMLCommonHandler.instance().getMinecraftServerInstance();
+            
+            if (!mc.getPlayerList().getPlayerList().contains(player)) {
                 playerDimensions.remove(player);
             } else {
                 int dimension = playerDimensions.get(player);

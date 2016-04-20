@@ -1,4 +1,4 @@
-package com.irtimaled.bbor;
+package com.ostlerdev.bbreloaded;
 
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -25,14 +25,18 @@ public class CommonProxy {
         if (chunkProvider instanceof ChunkProviderServer) {
             chunkProvider = ReflectionHelper.getPrivateValue(ChunkProviderServer.class, (ChunkProviderServer) chunkProvider, IChunkProvider.class);
             setWorldData(new WorldData(world.getSeed(), world.getWorldInfo().getSpawnX(), world.getWorldInfo().getSpawnZ()));
-            int dimensionId = world.provider.getDimensionId();
-            Logger.info("create world dimension: %d, %s (chunkprovider: %s) (seed: %d)", dimensionId, world.getClass().toString(), chunkProvider.getClass().toString(), worldData.getSeed());
+            int dimensionId = world.provider.getDimension();
+            Logger.info("create world dimension: %d", dimensionId);
+            Logger.info("%s", world.getClass().toString());
+            //Logger.info("%s", chunkProvider.getClass().toString());
+            Logger.info("%d", worldData.getSeed());
+            //Logger.info("create world dimension: %d, %s (chunkprovider: %s) (seed: %d)", dimensionId, world.getClass().toString(), chunkProvider.getClass().toString(), worldData.getSeed());
             boundingBoxCacheMap.put(dimensionId, new DimensionProcessor(eventHandler, configManager, world, dimensionId, chunkProvider));
         }
     }
 
     public void chunkLoaded(Chunk chunk) {
-        int dimensionId = chunk.getWorld().provider.getDimensionId();
+        int dimensionId = chunk.getWorld().provider.getDimension();
         if (boundingBoxCacheMap.containsKey(dimensionId)) {
             boundingBoxCacheMap.get(dimensionId).refresh();
         }

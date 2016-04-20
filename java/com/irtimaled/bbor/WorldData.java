@@ -1,4 +1,4 @@
-package com.irtimaled.bbor;
+package com.ostlerdev.bbreloaded;
 
 public class WorldData {
     private long seed;

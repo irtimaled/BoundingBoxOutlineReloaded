@@ -1,7 +1,7 @@
-package com.irtimaled.bbor;
+package com.ostlerdev.bbreloaded;
 
-import com.irtimaled.bbor.config.Configuration;
-import com.irtimaled.bbor.config.Setting;
+import com.ostlerdev.bbreloaded.config.Configuration;
+import com.ostlerdev.bbreloaded.config.Setting;
 
 import java.io.File;
 

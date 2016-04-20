@@ -1,10 +1,10 @@
-package com.irtimaled.bbor.forge.messages;
+package com.ostlerdev.bbreloaded.forge.messages;
 
-import com.irtimaled.bbor.BoundingBox;
-import com.irtimaled.bbor.BoundingBoxStructure;
-import com.irtimaled.bbor.BoundingBoxVillage;
+import com.ostlerdev.bbreloaded.BoundingBox;
+import com.ostlerdev.bbreloaded.BoundingBoxStructure;
+import com.ostlerdev.bbreloaded.BoundingBoxVillage;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import java.awt.*;

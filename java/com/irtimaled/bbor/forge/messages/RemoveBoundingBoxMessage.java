@@ -1,6 +1,6 @@
-package com.irtimaled.bbor.forge.messages;
+package com.ostlerdev.bbreloaded.forge.messages;
 
-import com.irtimaled.bbor.BoundingBox;
+import com.ostlerdev.bbreloaded.BoundingBox;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;

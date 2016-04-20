@@ -1,6 +1,6 @@
-package com.irtimaled.bbor.forge;
+package com.ostlerdev.bbreloaded.forge;
 
-import com.irtimaled.bbor.ClientProxy;
+import com.ostlerdev.bbreloaded.ClientProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -38,13 +38,13 @@ public class ForgeClientProxy extends ForgeCommonProxy {
 
     @SubscribeEvent
     public void renderWorldLastEvent(RenderWorldLastEvent event) {
-        getProxy().render(event.partialTicks);
+        getProxy().render(event.getPartialTicks());
     }
 
     @SubscribeEvent
     public void clientConnectionToServerEvent(FMLNetworkEvent.ClientConnectedToServerEvent evt) {
-        if (!evt.isLocal) {
-            getProxy().playerConnectedToServer(evt.manager);
+        if (!evt.isLocal()) {
+            getProxy().playerConnectedToServer(evt.getManager());
         }
     }
 

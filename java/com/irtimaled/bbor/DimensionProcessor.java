@@ -1,12 +1,12 @@
-package com.irtimaled.bbor;
+package com.ostlerdev.bbreloaded;
 
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.village.Village;
 import net.minecraft.village.VillageDoorInfo;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraft.world.gen.ChunkProviderGenerate;
+import net.minecraft.world.gen.ChunkProviderDebug;
 import net.minecraft.world.gen.ChunkProviderHell;
 import net.minecraft.world.gen.structure.*;
 
@@ -62,7 +62,7 @@ public class DimensionProcessor extends BoundingBoxCache {
     private Map<StructureType, Collection<StructureStart>> getStructures() {
 
         Map<StructureType, Collection<StructureStart>> structureMap = new HashMap<StructureType, Collection<StructureStart>>();
-        if (chunkProvider instanceof ChunkProviderGenerate) {
+        if (chunkProvider instanceof ChunkProviderDebug) {
             if (configManager.drawDesertTemples.getBoolean()) {
                 structureMap.put(StructureType.DesertTemple, getStructuresWithComponent(getStructures(chunkProvider, MapGenScatteredFeature.class), ComponentScatteredFeaturePieces.DesertPyramid.class));
             }
@@ -99,7 +99,7 @@ public class DimensionProcessor extends BoundingBoxCache {
     private Collection<StructureStart> getStructuresWithComponent(Collection<StructureStart> structures, Class structureComponent) {
         Collection<StructureStart> validStructures = new HashSet<StructureStart>();
         for (StructureStart structure : structures) {
-            if (structure.getComponents().getFirst().getClass().equals(structureComponent)) {
+            if (structure.func_186161_c().get(0).getClass().equals(structureComponent)) {
                 validStructures.add(structure);
             }
         }
@@ -117,7 +117,7 @@ public class DimensionProcessor extends BoundingBoxCache {
                 BoundingBox boundingBox = BoundingBoxStructure.from(structureStart.getBoundingBox(), color);
                 if (!isCached(boundingBox)) {
                     Set<BoundingBox> structureBoundingBoxes = new HashSet<BoundingBox>();
-                    Iterator structureComponents = structureStart.getComponents().iterator();
+                    Iterator structureComponents = structureStart.func_186161_c().iterator();
                     while (structureComponents.hasNext()) {
                         StructureComponent structureComponent = (StructureComponent) structureComponents.next();
                         structureBoundingBoxes.add(BoundingBoxStructure.from(structureComponent.getBoundingBox(), color));

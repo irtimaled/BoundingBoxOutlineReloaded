@@ -1,6 +1,6 @@
-package com.irtimaled.bbor.forge.messages;
+package com.ostlerdev.bbreloaded.forge.messages;
 
-import com.irtimaled.bbor.forge.ForgeMod;
+import com.ostlerdev.bbreloaded.forge.ForgeMod;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;

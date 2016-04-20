@@ -1,7 +1,7 @@
-package com.irtimaled.bbor;
+package com.ostlerdev.bbreloaded;
 
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 
 import java.awt.*;
 
@@ -51,7 +51,7 @@ public abstract class BoundingBox {
     }
 
     public AxisAlignedBB toAxisAlignedBB(boolean extendMaxByOne) {
-        AxisAlignedBB axisAlignedBB = AxisAlignedBB.fromBounds(minBlockPos.getX(),
+        AxisAlignedBB axisAlignedBB = new AxisAlignedBB(minBlockPos.getX(), // ToDo: Changed this
                 minBlockPos.getY(),
                 minBlockPos.getZ(),
                 maxBlockPos.getX(),

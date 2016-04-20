@@ -1,6 +1,6 @@
-package com.irtimaled.bbor;
+package com.ostlerdev.bbreloaded;
 
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ChunkCoordIntPair;
 
 import java.awt.*;
