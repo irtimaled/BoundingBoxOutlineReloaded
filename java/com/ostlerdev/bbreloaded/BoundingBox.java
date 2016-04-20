@@ -51,7 +51,7 @@ public abstract class BoundingBox {
     }
 
     public AxisAlignedBB toAxisAlignedBB(boolean extendMaxByOne) {
-        AxisAlignedBB axisAlignedBB = new AxisAlignedBB(minBlockPos.getX(), // ToDo: Changed this
+        AxisAlignedBB axisAlignedBB = new AxisAlignedBB(minBlockPos.getX(),
                 minBlockPos.getY(),
                 minBlockPos.getZ(),
                 maxBlockPos.getX(),

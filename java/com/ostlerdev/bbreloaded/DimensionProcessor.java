@@ -6,7 +6,7 @@ import net.minecraft.village.VillageDoorInfo;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraft.world.gen.ChunkProviderDebug;
+import net.minecraft.world.gen.ChunkProviderServer;
 import net.minecraft.world.gen.ChunkProviderHell;
 import net.minecraft.world.gen.structure.*;
 
@@ -62,7 +62,7 @@ public class DimensionProcessor extends BoundingBoxCache {
     private Map<StructureType, Collection<StructureStart>> getStructures() {
 
         Map<StructureType, Collection<StructureStart>> structureMap = new HashMap<StructureType, Collection<StructureStart>>();
-        if (chunkProvider instanceof ChunkProviderDebug) {
+        if (chunkProvider instanceof ChunkProviderServer) {
             if (configManager.drawDesertTemples.getBoolean()) {
                 structureMap.put(StructureType.DesertTemple, getStructuresWithComponent(getStructures(chunkProvider, MapGenScatteredFeature.class), ComponentScatteredFeaturePieces.DesertPyramid.class));
             }
