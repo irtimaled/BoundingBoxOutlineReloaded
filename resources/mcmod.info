@@ -7,8 +7,8 @@
   "mcversion": "${mcversion}",
   "url": "http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/2345401",
   "updateUrl": "",
-  "authorList": ["irtimaled"],
-  "credits": "Thanks to 4poc & KaboPC.",
+  "authorList": ["irtimaled","OstlerDev"],
+  "credits": "Thanks to 4poc, KaboPC and irtimaled.",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []
