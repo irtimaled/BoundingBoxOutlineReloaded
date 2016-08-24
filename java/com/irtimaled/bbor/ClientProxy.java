@@ -1,18 +1,20 @@
 package com.irtimaled.bbor;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.world.ChunkCoordIntPair;
-import net.minecraft.world.World;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.DimensionType;
 import org.apache.commons.lang3.ArrayUtils;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
@@ -32,7 +34,9 @@ public class ClientProxy extends CommonProxy {
 
     private double activeY;
     private boolean active;
-    private KeyBinding hotKey;
+    private boolean outerBoxOnly;
+    private KeyBinding activeHotKey;
+    private KeyBinding outerBoxOnlyHotKey;
     private double playerX;
     private double playerY;
     private double playerZ;
@@ -41,18 +45,23 @@ public class ClientProxy extends CommonProxy {
     private BoundingBox lazySpawnChunksBoundingBox;
 
     public void keyPressed() {
-        if (hotKey.isPressed()) {
+        if (activeHotKey.isPressed()) {
             active = !active;
             if (active)
                 activeY = playerY;
+        } else
+        if(outerBoxOnlyHotKey.isPressed()){
+            outerBoxOnly = !outerBoxOnly;
         }
     }
 
     @Override
     public void init(ConfigManager configManager) {
         super.init(configManager);
-        hotKey = new KeyBinding("Toggle On/Off", Keyboard.KEY_B, "Bounding Box Outline Reloaded");
-        Minecraft.getMinecraft().gameSettings.keyBindings = ArrayUtils.add(Minecraft.getMinecraft().gameSettings.keyBindings, hotKey);
+        String category = "Bounding Box Outline Reloaded";
+        activeHotKey = new KeyBinding("Toggle On/Off", Keyboard.KEY_B, category);
+        outerBoxOnlyHotKey = new KeyBinding("Toggle Display Outer Box Only", Keyboard.KEY_O, category);
+        Minecraft.getMinecraft().gameSettings.keyBindings = ArrayUtils.addAll(Minecraft.getMinecraft().gameSettings.keyBindings, activeHotKey, outerBoxOnlyHotKey);
     }
 
     @Override
@@ -70,9 +79,9 @@ public class ClientProxy extends CommonProxy {
         playerZ = entityPlayer.lastTickPosZ + (entityPlayer.posZ - entityPlayer.lastTickPosZ) * (double) partialTicks;
 
         if (this.active) {
-            int activeDimensionId = entityPlayer.worldObj.provider.getDimensionId();
-            if (boundingBoxCacheMap.containsKey(activeDimensionId)) {
-                renderBoundingBoxes(boundingBoxCacheMap.get(activeDimensionId).getBoundingBoxes());
+            DimensionType dimensionType = entityPlayer.worldObj.provider.getDimensionType();
+            if (boundingBoxCacheMap.containsKey(dimensionType)) {
+                renderBoundingBoxes(boundingBoxCacheMap.get(dimensionType).getBoundingBoxes());
             }
         }
     }
@@ -87,16 +96,16 @@ public class ClientProxy extends CommonProxy {
 
     private void loadLocalStructures(String host, int port) {
         Logger.info("Looking for local structures (host:port=%s:%d)", host, port);
-        String path = String.format("BBOutlineReloaded%s%s", File.separator, host);
+        String path = String.format("BBOutlineReloaded%s%s%s%d", File.separator, host, File.separator, port);
         File localStructuresFolder = new File(configManager.configDir, path);
         Logger.info("Looking for local structures (folder=%s)", localStructuresFolder.getAbsolutePath());
         if (!localStructuresFolder.exists()) {
-            path = String.format("BBOutlineReloaded%s%s,%d", File.separator, host, port);
+            path = String.format("BBOutlineReloaded%s%s", File.separator, host);
             localStructuresFolder = new File(configManager.configDir, path);
             Logger.info("Looking for local structures (folder=%s)", localStructuresFolder.getAbsolutePath());
         }
         if (!localStructuresFolder.exists()) {
-            path = String.format("BBOutlineReloaded%s%s%s%d", File.separator, host, File.separator, port);
+            path = String.format("BBOutlineReloaded%s%s,%d", File.separator, host, port);
             localStructuresFolder = new File(configManager.configDir, path);
             Logger.info("Looking for local structures (folder=%s)", localStructuresFolder.getAbsolutePath());
         }
@@ -134,7 +143,7 @@ public class ClientProxy extends CommonProxy {
             loadVillageNbtFile(localStructuresFolder, cache, "Villages.dat");
         }
 
-        boundingBoxCacheMap.put(0, cache);
+        boundingBoxCacheMap.put(DimensionType.OVERWORLD, cache);
     }
 
     private void loadNetherStructures(File localStructuresFolder) {
@@ -144,7 +153,7 @@ public class ClientProxy extends CommonProxy {
         if (configManager.drawVillages.getBoolean()) {
             loadVillageNbtFile(localStructuresFolder, cache, "villages_nether.dat");
         }
-        boundingBoxCacheMap.put(-1, cache);
+        boundingBoxCacheMap.put(DimensionType.NETHER, cache);
     }
 
     private void loadEndStructures(File localStructuresFolder) {
@@ -152,7 +161,10 @@ public class ClientProxy extends CommonProxy {
         if (configManager.drawVillages.getBoolean()) {
             loadVillageNbtFile(localStructuresFolder, cache, "Villages_end.dat");
         }
-        boundingBoxCacheMap.put(1, cache);
+        if (configManager.drawEndCities.getBoolean()) {
+            loadStructureNbtFile(localStructuresFolder, cache, "EndCity.dat", StructureType.EndCity.getColor(), "*");
+        }
+        boundingBoxCacheMap.put(DimensionType.THE_END, cache);
     }
 
     private void loadVillageNbtFile(File localStructuresFolder, BoundingBoxCache cache, String fileName) {
@@ -264,53 +276,55 @@ public class ClientProxy extends CommonProxy {
         }
 
         for (BoundingBox bb : map.keySet()) {
-            renderBoundingBoxes(map.get(bb));
+            if (outerBoxOnly) {
+                renderBoundingBoxSet(map.get(bb));
+            } else {
+                renderBoundingBoxByType(bb);
+            }
         }
 
-        renderBoundingBoxes(getClientBoundingBoxes());
+        renderBoundingBoxSet(getClientBoundingBoxes());
 
         GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
         GL11.glEnable(GL11.GL_CULL_FACE);
         GL11.glEnable(GL11.GL_TEXTURE_2D);
     }
 
-    private void renderBoundingBoxes(Set<BoundingBox> bbList) {
-        if(bbList == null)
-            return;
-        World world = Minecraft.getMinecraft().theWorld;
-        Set activeChunks = getActiveChunks(world);
+    private void renderBoundingBoxSet(Set<BoundingBox> bbList) {
+        if(bbList != null)
         for (BoundingBox bb : bbList) {
-
-            if (activeChunks.contains(world.getChunkFromBlockCoords(bb.getMinBlockPos()).getChunkCoordIntPair()) ||
-                    activeChunks.contains(world.getChunkFromBlockCoords(bb.getMaxBlockPos()).getChunkCoordIntPair())) {
-
-                if (bb instanceof BoundingBoxVillage) {
-                    BoundingBoxVillage villageBB = (BoundingBoxVillage) bb;
-                    if (configManager.renderVillageAsSphere.getBoolean()) {
-                        renderBoundingBoxVillageAsSphere(villageBB);
-                    } else {
-                        renderBoundingBox(villageBB);
-                    }
-                    if (configManager.drawIronGolemSpawnArea.getBoolean() &&
-                            villageBB.getSpawnsIronGolems()) {
-                        renderIronGolemSpawnArea(villageBB);
-                    }
-                    if(configManager.drawVillageDoors.getBoolean())
-                        renderVillageDoors(villageBB);
-                } else if (bb instanceof BoundingBoxSlimeChunk) {
-                    renderSlimeChunk((BoundingBoxSlimeChunk) bb);
-                } else if (bb instanceof BoundingBoxWorldSpawn) {
-                    renderWorldSpawn((BoundingBoxWorldSpawn) bb);
-
-                } else {
-                    renderBoundingBox(bb);
-                }
-            }
+            renderBoundingBoxByType(bb);
         }
     }
 
-    private Set getActiveChunks(World world) {
-        return ReflectionHelper.getPrivateValue(World.class, world, Set.class);
+    private void renderBoundingBoxByType(BoundingBox bb) {
+        WorldClient world = Minecraft.getMinecraft().theWorld;
+        Set<ChunkPos> viewableChunks = world.getViewableChunks();
+        if (!viewableChunks.contains(world.getChunkFromBlockCoords(bb.getMinBlockPos()).getChunkCoordIntPair()) &&
+            !viewableChunks.contains(world.getChunkFromBlockCoords(bb.getMaxBlockPos()).getChunkCoordIntPair())) {
+            return;
+        }
+
+        if (bb instanceof BoundingBoxVillage) {
+            BoundingBoxVillage villageBB = (BoundingBoxVillage) bb;
+            if (configManager.renderVillageAsSphere.getBoolean()) {
+                renderBoundingBoxVillageAsSphere(villageBB);
+            } else {
+                renderBoundingBox(villageBB);
+            }
+            if (configManager.drawIronGolemSpawnArea.getBoolean() &&
+                    villageBB.getSpawnsIronGolems()) {
+                renderIronGolemSpawnArea(villageBB);
+            }
+            if(configManager.drawVillageDoors.getBoolean())
+                renderVillageDoors(villageBB);
+        } else if (bb instanceof BoundingBoxSlimeChunk) {
+            renderSlimeChunk((BoundingBoxSlimeChunk) bb);
+        } else if (bb instanceof BoundingBoxWorldSpawn) {
+            renderWorldSpawn((BoundingBoxWorldSpawn) bb);
+        } else {
+            renderBoundingBox(bb);
+        }
     }
 
     private void renderBoundingBox(BoundingBox bb) {
@@ -372,19 +386,18 @@ public class ClientProxy extends CommonProxy {
         Color color = villageBB.getColor();
         GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
         Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer worldRenderer = tessellator.getWorldRenderer();
+        VertexBuffer worldRenderer = tessellator.getBuffer();
 
         int colorR = color.getRed();
         int colorG = color.getGreen();
         int colorB = color.getBlue();
 
-        worldRenderer.startDrawing(GL11.GL_LINES);
-        worldRenderer.setColorRGBA(colorR, colorG, colorB, 255);
+        worldRenderer.begin(GL11.GL_LINES, worldRenderer.getVertexFormat());
         for (BlockPos door : villageBB.getDoors()) {
             OffsetPoint point = new OffsetPoint(door);
 
-            worldRenderer.addVertex(point.getX(), point.getY(), point.getZ());
-            worldRenderer.addVertex(center.getX(), center.getY(), center.getZ());
+            worldRenderer.pos(point.getX(), point.getY(), point.getZ()).color(colorR, colorG, colorB, 255).endVertex();
+            worldRenderer.pos(center.getX(), center.getY(), center.getZ()).color(colorR, colorG, colorB, 255).endVertex();
         }
         tessellator.draw();
     }
@@ -413,45 +426,92 @@ public class ClientProxy extends CommonProxy {
 
     private void renderCuboid(AxisAlignedBB bb, int alphaChannel, Color color) {
         Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer worldRenderer = tessellator.getWorldRenderer();
+        VertexBuffer worldRenderer = tessellator.getBuffer();
 
         int colorR = color.getRed();
         int colorG = color.getGreen();
         int colorB = color.getBlue();
 
-        worldRenderer.startDrawing(GL11.GL_QUADS);
-        worldRenderer.setColorRGBA(colorR, colorG, colorB, alphaChannel);
-        worldRenderer.addVertex(bb.minX, bb.minY, bb.minZ);
-        worldRenderer.addVertex(bb.maxX, bb.minY, bb.minZ);
-        worldRenderer.addVertex(bb.maxX, bb.minY, bb.maxZ);
-        worldRenderer.addVertex(bb.minX, bb.minY, bb.maxZ);
+        worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+        worldRenderer.pos(bb.minX, bb.minY, bb.minZ)
+                .color(colorR, colorG, colorB, alphaChannel)
+                .endVertex();
+        worldRenderer.pos(bb.maxX, bb.minY, bb.minZ)
+                .color(colorR, colorG, colorB, alphaChannel)
+                .endVertex();
+        worldRenderer.pos(bb.maxX, bb.minY, bb.maxZ)
+                .color(colorR, colorG, colorB, alphaChannel)
+                .endVertex();
+        worldRenderer.pos(bb.minX, bb.minY, bb.maxZ)
+                .color(colorR, colorG, colorB, alphaChannel)
+                .endVertex();
 
         if (bb.minY != bb.maxY) {
 
-            worldRenderer.addVertex(bb.minX, bb.maxY, bb.minZ);
-            worldRenderer.addVertex(bb.maxX, bb.maxY, bb.minZ);
-            worldRenderer.addVertex(bb.maxX, bb.maxY, bb.maxZ);
-            worldRenderer.addVertex(bb.minX, bb.maxY, bb.maxZ);
+            worldRenderer.pos(bb.minX, bb.maxY, bb.minZ)
+                    .color(colorR, colorG, colorB, alphaChannel)
+                    .endVertex();
+            worldRenderer.pos(bb.maxX, bb.maxY, bb.minZ)
+                    .color(colorR, colorG, colorB, alphaChannel)
+                    .endVertex();
+            worldRenderer.pos(bb.maxX, bb.maxY, bb.maxZ)
+                    .color(colorR, colorG, colorB, alphaChannel)
+                    .endVertex();
+            worldRenderer.pos(bb.minX, bb.maxY, bb.maxZ)
+                    .color(colorR, colorG, colorB, alphaChannel)
+                    .endVertex();
 
-            worldRenderer.addVertex(bb.minX, bb.minY, bb.maxZ);
-            worldRenderer.addVertex(bb.minX, bb.maxY, bb.maxZ);
-            worldRenderer.addVertex(bb.maxX, bb.maxY, bb.maxZ);
-            worldRenderer.addVertex(bb.maxX, bb.minY, bb.maxZ);
+            worldRenderer.pos(bb.minX, bb.minY, bb.maxZ)
+                    .color(colorR, colorG, colorB, alphaChannel)
+                    .endVertex();
+            worldRenderer.pos(bb.minX, bb.maxY, bb.maxZ)
+                    .color(colorR, colorG, colorB, alphaChannel)
+                    .endVertex();
+            worldRenderer.pos(bb.maxX, bb.maxY, bb.maxZ)
+                    .color(colorR, colorG, colorB, alphaChannel)
+                    .endVertex();
+            worldRenderer.pos(bb.maxX, bb.minY, bb.maxZ)
+                    .color(colorR, colorG, colorB, alphaChannel)
+                    .endVertex();
 
-            worldRenderer.addVertex(bb.minX, bb.minY, bb.minZ);
-            worldRenderer.addVertex(bb.minX, bb.maxY, bb.minZ);
-            worldRenderer.addVertex(bb.maxX, bb.maxY, bb.minZ);
-            worldRenderer.addVertex(bb.maxX, bb.minY, bb.minZ);
+            worldRenderer.pos(bb.minX, bb.minY, bb.minZ)
+                    .color(colorR, colorG, colorB, alphaChannel)
+                    .endVertex();
+            worldRenderer.pos(bb.minX, bb.maxY, bb.minZ)
+                    .color(colorR, colorG, colorB, alphaChannel)
+                    .endVertex();
+            worldRenderer.pos(bb.maxX, bb.maxY, bb.minZ)
+                    .color(colorR, colorG, colorB, alphaChannel)
+                    .endVertex();
+            worldRenderer.pos(bb.maxX, bb.minY, bb.minZ)
+                    .color(colorR, colorG, colorB, alphaChannel)
+                    .endVertex();
 
-            worldRenderer.addVertex(bb.minX, bb.minY, bb.minZ);
-            worldRenderer.addVertex(bb.minX, bb.minY, bb.maxZ);
-            worldRenderer.addVertex(bb.minX, bb.maxY, bb.maxZ);
-            worldRenderer.addVertex(bb.minX, bb.maxY, bb.minZ);
+            worldRenderer.pos(bb.minX, bb.minY, bb.minZ)
+                    .color(colorR, colorG, colorB, alphaChannel)
+                    .endVertex();
+            worldRenderer.pos(bb.minX, bb.minY, bb.maxZ)
+                    .color(colorR, colorG, colorB, alphaChannel)
+                    .endVertex();
+            worldRenderer.pos(bb.minX, bb.maxY, bb.maxZ)
+                    .color(colorR, colorG, colorB, alphaChannel)
+                    .endVertex();
+            worldRenderer.pos(bb.minX, bb.maxY, bb.minZ)
+                    .color(colorR, colorG, colorB, alphaChannel)
+                    .endVertex();
 
-            worldRenderer.addVertex(bb.maxX, bb.minY, bb.minZ);
-            worldRenderer.addVertex(bb.maxX, bb.minY, bb.maxZ);
-            worldRenderer.addVertex(bb.maxX, bb.maxY, bb.maxZ);
-            worldRenderer.addVertex(bb.maxX, bb.maxY, bb.minZ);
+            worldRenderer.pos(bb.maxX, bb.minY, bb.minZ)
+                    .color(colorR, colorG, colorB, alphaChannel)
+                    .endVertex();
+            worldRenderer.pos(bb.maxX, bb.minY, bb.maxZ)
+                    .color(colorR, colorG, colorB, alphaChannel)
+                    .endVertex();
+            worldRenderer.pos(bb.maxX, bb.maxY, bb.maxZ)
+                    .color(colorR, colorG, colorB, alphaChannel)
+                    .endVertex();
+            worldRenderer.pos(bb.maxX, bb.maxY, bb.minZ)
+                    .color(colorR, colorG, colorB, alphaChannel)
+                    .endVertex();
         }
         tessellator.draw();
     }
@@ -479,11 +539,12 @@ public class ClientProxy extends CommonProxy {
         GL11.glPointSize(2f);
 
         Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer worldRenderer = tessellator.getWorldRenderer();
-        worldRenderer.startDrawing(GL11.GL_POINTS);
-        worldRenderer.setColorRGBA(color.getRed(), color.getGreen(), color.getBlue(), 255);
+        VertexBuffer worldRenderer = tessellator.getBuffer();
+        worldRenderer.begin(GL11.GL_POINTS, DefaultVertexFormats.POSITION_COLOR);
         for (OffsetPoint point : buildPoints(center, radius)) {
-            worldRenderer.addVertex(point.getX(), point.getY(), point.getZ());
+            worldRenderer.pos(point.getX(), point.getY(), point.getZ())
+                    .color(color.getRed(), color.getGreen(), color.getBlue(), 255)
+                    .endVertex();
         }
         tessellator.draw();
     }
@@ -544,9 +605,9 @@ public class ClientProxy extends CommonProxy {
     private Set<BoundingBox> getClientBoundingBoxes() {
         Set<BoundingBox> boundingBoxes = new HashSet<BoundingBox>();
         if (worldData != null) {
-            World world = Minecraft.getMinecraft().theWorld;
-            int dimensionId = world.provider.getDimensionId();
-            if (dimensionId == 0) {
+            WorldClient world = Minecraft.getMinecraft().theWorld;
+            DimensionType dimensionType = world.provider.getDimensionType();
+            if (dimensionType == DimensionType.OVERWORLD) {
                 if (configManager.drawWorldSpawn.getBoolean()) {
                     boundingBoxes.add(getWorldSpawnBoundingBox(worldData.getSpawnX(), worldData.getSpawnZ()));
                     boundingBoxes.add(getSpawnChunksBoundingBox(worldData.getSpawnX(), worldData.getSpawnZ()));
@@ -555,8 +616,8 @@ public class ClientProxy extends CommonProxy {
                     boundingBoxes.add(getLazySpawnChunksBoundingBox(worldData.getSpawnX(), worldData.getSpawnZ()));
                 }
                 if (configManager.drawSlimeChunks.getBoolean()) {
-                    Set<ChunkCoordIntPair> activeChunks = getActiveChunks(world);
-                    for (ChunkCoordIntPair chunk : activeChunks) {
+                    Set<ChunkPos> activeChunks = world.getViewableChunks();
+                    for (ChunkPos chunk : activeChunks) {
                         if (isSlimeChunk(chunk.chunkXPos, chunk.chunkZPos)) {
                             boundingBoxes.add(BoundingBoxSlimeChunk.from(chunk, Color.GREEN));
                         }

@@ -1,7 +1,9 @@
 package com.irtimaled.bbor;
 
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.ChunkProviderServer;
 
@@ -10,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class CommonProxy {
 
-    public Map<Integer, BoundingBoxCache> boundingBoxCacheMap = new ConcurrentHashMap<Integer, BoundingBoxCache>();
+    public Map<DimensionType, BoundingBoxCache> boundingBoxCacheMap = new ConcurrentHashMap<DimensionType, BoundingBoxCache>();
 
     public ConfigManager configManager;
     protected WorldData worldData;
@@ -23,18 +25,18 @@ public class CommonProxy {
     public void worldLoaded(World world) {
         IChunkProvider chunkProvider = world.getChunkProvider();
         if (chunkProvider instanceof ChunkProviderServer) {
-            chunkProvider = ReflectionHelper.getPrivateValue(ChunkProviderServer.class, (ChunkProviderServer) chunkProvider, IChunkProvider.class);
+            IChunkGenerator chunkGenerator = ReflectionHelper.getPrivateValue(ChunkProviderServer.class, (ChunkProviderServer) chunkProvider, IChunkGenerator.class);
             setWorldData(new WorldData(world.getSeed(), world.getWorldInfo().getSpawnX(), world.getWorldInfo().getSpawnZ()));
-            int dimensionId = world.provider.getDimensionId();
-            Logger.info("create world dimension: %d, %s (chunkprovider: %s) (seed: %d)", dimensionId, world.getClass().toString(), chunkProvider.getClass().toString(), worldData.getSeed());
-            boundingBoxCacheMap.put(dimensionId, new DimensionProcessor(eventHandler, configManager, world, dimensionId, chunkProvider));
+            DimensionType dimensionType = world.provider.getDimensionType();
+            Logger.info("create world dimension: %s, %s (chunkprovider: %s) (seed: %d)", dimensionType, world.getClass().toString(), chunkGenerator.getClass().toString(), worldData.getSeed());
+            boundingBoxCacheMap.put(dimensionType, new DimensionProcessor(eventHandler, configManager, world, dimensionType, chunkGenerator));
         }
     }
 
     public void chunkLoaded(Chunk chunk) {
-        int dimensionId = chunk.getWorld().provider.getDimensionId();
-        if (boundingBoxCacheMap.containsKey(dimensionId)) {
-            boundingBoxCacheMap.get(dimensionId).refresh();
+        DimensionType dimensionType = chunk.getWorld().provider.getDimensionType();
+        if (boundingBoxCacheMap.containsKey(dimensionType)) {
+            boundingBoxCacheMap.get(dimensionType).refresh();
         }
     }
 

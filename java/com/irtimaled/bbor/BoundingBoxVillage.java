@@ -1,6 +1,6 @@
 package com.irtimaled.bbor;
 
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 
 import java.awt.*;
 import java.util.Set;

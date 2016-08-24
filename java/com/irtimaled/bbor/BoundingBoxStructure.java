@@ -1,6 +1,6 @@
 package com.irtimaled.bbor;
 
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 
 import java.awt.*;

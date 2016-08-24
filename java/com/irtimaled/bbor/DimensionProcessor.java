@@ -1,13 +1,15 @@
 package com.irtimaled.bbor;
 
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.village.Village;
 import net.minecraft.village.VillageDoorInfo;
-import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraft.world.gen.ChunkProviderGenerate;
+import net.minecraft.world.chunk.IChunkGenerator;
+import net.minecraft.world.gen.ChunkProviderEnd;
 import net.minecraft.world.gen.ChunkProviderHell;
+import net.minecraft.world.gen.ChunkProviderOverworld;
 import net.minecraft.world.gen.structure.*;
 
 import java.awt.*;
@@ -20,19 +22,19 @@ public class DimensionProcessor extends BoundingBoxCache {
     private World world;
     private IEventHandler eventHandler;
 
-    public DimensionProcessor(IEventHandler eventHandler, ConfigManager configManager, World world, int dimensionId, IChunkProvider chunkProvider) {
+    public DimensionProcessor(IEventHandler eventHandler, ConfigManager configManager, World world, DimensionType dimensionType, IChunkGenerator chunkProvider) {
         this.eventHandler = eventHandler;
         this.configManager = configManager;
         this.world = world;
-        this.dimensionId = dimensionId;
+        this.dimensionType = dimensionType;
         this.chunkProvider = chunkProvider;
         villageCache = new HashMap<Integer, BoundingBoxVillage>();
         slimeChunkCache = new HashSet<BoundingBox>();
         worldSpawnCache = new HashSet<BoundingBox>();
     }
 
-    private int dimensionId;
-    private IChunkProvider chunkProvider;
+    private DimensionType dimensionType;
+    private IChunkGenerator chunkProvider;
     private Map<Integer, BoundingBoxVillage> villageCache;
     private Set<BoundingBox> slimeChunkCache;
     private Set<BoundingBox> worldSpawnCache;
@@ -49,11 +51,11 @@ public class DimensionProcessor extends BoundingBoxCache {
         super.close();
     }
 
-    private static <T extends IChunkProvider, R extends MapGenStructure> Collection<StructureStart> getStructures(T chunkProvider, Class<R> providerClass) {
+    private static <T extends IChunkGenerator, R extends MapGenStructure> Collection<StructureStart> getStructures(T chunkProvider, Class<R> providerClass) {
         Class<T> chunkProviderClass = (Class<T>) chunkProvider.getClass();
         R structureGenerator = ReflectionHelper.getPrivateValue(chunkProviderClass, chunkProvider, providerClass);
         if (structureGenerator != null) {
-            Map<ChunkCoordIntPair, StructureStart> structureMap = ReflectionHelper.getPrivateValue(MapGenStructure.class, structureGenerator, Map.class);
+            Map<ChunkPos, StructureStart> structureMap = ReflectionHelper.getPrivateValue(MapGenStructure.class, structureGenerator, Map.class);
             return structureMap.values();
         }
         return Collections.emptyList();
@@ -62,7 +64,7 @@ public class DimensionProcessor extends BoundingBoxCache {
     private Map<StructureType, Collection<StructureStart>> getStructures() {
 
         Map<StructureType, Collection<StructureStart>> structureMap = new HashMap<StructureType, Collection<StructureStart>>();
-        if (chunkProvider instanceof ChunkProviderGenerate) {
+        if (chunkProvider instanceof ChunkProviderOverworld) {
             if (configManager.drawDesertTemples.getBoolean()) {
                 structureMap.put(StructureType.DesertTemple, getStructuresWithComponent(getStructures(chunkProvider, MapGenScatteredFeature.class), ComponentScatteredFeaturePieces.DesertPyramid.class));
             }
@@ -91,6 +93,10 @@ public class DimensionProcessor extends BoundingBoxCache {
             if (configManager.drawNetherFortresses.getBoolean()) {
                 structureMap.put(StructureType.NetherFortress, getStructures(chunkProvider, MapGenNetherBridge.class));
             }
+        } else if(chunkProvider instanceof ChunkProviderEnd) {
+            if (configManager.drawEndCities.getBoolean()) {
+                structureMap.put(StructureType.EndCity, getStructures(chunkProvider, MapGenEndCity.class));
+            }
         }
 
         return structureMap;
@@ -99,7 +105,7 @@ public class DimensionProcessor extends BoundingBoxCache {
     private Collection<StructureStart> getStructuresWithComponent(Collection<StructureStart> structures, Class structureComponent) {
         Collection<StructureStart> validStructures = new HashSet<StructureStart>();
         for (StructureStart structure : structures) {
-            if (structure.getComponents().getFirst().getClass().equals(structureComponent)) {
+            if (structure.getComponents().get(0).getClass().equals(structureComponent)) {
                 validStructures.add(structure);
             }
         }
@@ -114,16 +120,18 @@ public class DimensionProcessor extends BoundingBoxCache {
         for (StructureType structureType : structureMap.keySet()) {
             Color color = structureType.getColor();
             for (StructureStart structureStart : structureMap.get(structureType)) {
-                BoundingBox boundingBox = BoundingBoxStructure.from(structureStart.getBoundingBox(), color);
-                if (!isCached(boundingBox)) {
-                    Set<BoundingBox> structureBoundingBoxes = new HashSet<BoundingBox>();
-                    Iterator structureComponents = structureStart.getComponents().iterator();
-                    while (structureComponents.hasNext()) {
-                        StructureComponent structureComponent = (StructureComponent) structureComponents.next();
-                        structureBoundingBoxes.add(BoundingBoxStructure.from(structureComponent.getBoundingBox(), color));
+                if (structureStart.getBoundingBox() != null) {
+                    BoundingBox boundingBox = BoundingBoxStructure.from(structureStart.getBoundingBox(), color);
+                    if (!isCached(boundingBox)) {
+                        Set<BoundingBox> structureBoundingBoxes = new HashSet<BoundingBox>();
+                        Iterator structureComponents = structureStart.getComponents().iterator();
+                        while (structureComponents.hasNext()) {
+                            StructureComponent structureComponent = (StructureComponent) structureComponents.next();
+                            structureBoundingBoxes.add(BoundingBoxStructure.from(structureComponent.getBoundingBox(), color));
+                        }
+                        addBoundingBoxes(boundingBox, structureBoundingBoxes);
+                        Logger.info("[%s] new boundingBoxCacheMap entries: %d", dimensionType, structureBoundingBoxes.size());
                     }
-                    addBoundingBoxes(boundingBox, structureBoundingBoxes);
-                    Logger.info("[%d] new boundingBoxCacheMap entries: %d", dimensionId, structureBoundingBoxes.size());
                 }
             }
         }
