@@ -1,6 +1,6 @@
 # BoundingBoxOutlineReloaded
 
-BoundingBoxOutlineReloaded is a mod for Minecraft Forge 1.10 and Vanilla 1.10
+BoundingBoxOutlineReloaded is a mod for Minecraft Forge 1.10.2 and Vanilla 1.10.2 & 1.10
 
 # Why did I make it?
 
@@ -29,7 +29,7 @@ As chunks are loaded the game provides metadata about all the different structur
 
 # Installing (Forge Version)
 
-Make sure you have Forge 1.10 installed then drop the jar file into the mods/1.10 folder. Remember this will need to be installed on client and server in an SMP scenario (unless you use local dat files - see below)
+Make sure you have Forge 1.10.2 installed then drop the jar file into the mods/1.10 folder. Remember this will need to be installed on client and server in an SMP scenario (unless you use local dat files - see below)
 
 # Installing (Vanilla)
 
@@ -92,6 +92,6 @@ There are two options when you want bounding boxes to show whilst accessing vani
   It is also possible to include the villages.dat, villages_end.dat & villages_nether.dat files and it will render villages however these files only contain the villages that were loaded when the files were copied and will not handle any changes that occur with villages such as when doors are added/removed or villager population changes.
 
 # Links
-- Forge 1.10 - [Download](http://files.minecraftforge.net/maven/net/minecraftforge/forge/index_1.10.html)
+- Forge - [1.10.2](http://files.minecraftforge.net/maven/net/minecraftforge/forge/index_1.10.2.html)
 - 4poc's BBOutline mod - [Forum](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1286555-bounding-box-outline) | [Source](http://www.github.com/4poc/bboutline)
 - KaboPC's VillageMarker mod - [Forum](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1288327-village-marker-mod)
