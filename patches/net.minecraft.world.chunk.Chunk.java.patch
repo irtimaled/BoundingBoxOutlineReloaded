@@ -1,0 +1,11 @@
+diff -r -U 3 mcp931/src/minecraft/net/minecraft/world/chunk/Chunk.java mcp931 2/src/minecraft/net/minecraft/world/chunk/Chunk.java
+--- mcp931/src/minecraft/net/minecraft/world/chunk/Chunk.java 2016-08-17 23:49:04.000000000 +0100
++++ mcp931 2/src/minecraft/net/minecraft/world/chunk/Chunk.java 2016-08-27 18:56:56.000000000 +0100
+@@ -922,7 +922,6 @@
+         {
+             this.worldObj.loadEntities(classinheritancemultimap);
+         }
+-        com.irtimaled.bbor.BoundingBoxOutlineReloaded.chunkLoaded(this);
+     }
+ 
+     /**

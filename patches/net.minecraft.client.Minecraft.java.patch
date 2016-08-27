@@ -1,0 +1,21 @@
+diff -r -U 3 mcp931/src/minecraft/net/minecraft/client/Minecraft.java mcp931 2/src/minecraft/net/minecraft/client/Minecraft.java
+--- mcp931/src/minecraft/net/minecraft/client/Minecraft.java  2016-08-23 00:14:23.000000000 +0100
++++ mcp931 2/src/minecraft/net/minecraft/client/Minecraft.java  2016-08-27 18:56:55.000000000 +0100
+@@ -621,8 +621,6 @@
+         }
+ 
+         this.renderGlobal.makeEntityOutlineShader();
+-
+-        com.irtimaled.bbor.BoundingBoxOutlineReloaded.init();
+     }
+ 
+     private void registerMetadataSerializers()
+@@ -2195,8 +2193,6 @@
+             this.gameSettings.smoothCamera = !this.gameSettings.smoothCamera;
+         }
+ 
+-        com.irtimaled.bbor.BoundingBoxOutlineReloaded.keyPressed();
+-
+         for (int i = 0; i < 9; ++i)
+         {
+             if (this.gameSettings.keyBindsHotbar[i].isPressed())

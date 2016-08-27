@@ -1,0 +1,12 @@
+diff -r -U 3 mcp931/src/minecraft/net/minecraft/client/renderer/EntityRenderer.java mcp931 2/src/minecraft/net/minecraft/client/renderer/EntityRenderer.java
+--- mcp931/src/minecraft/net/minecraft/client/renderer/EntityRenderer.java  2016-08-17 23:44:17.000000000 +0100
++++ mcp931 2/src/minecraft/net/minecraft/client/renderer/EntityRenderer.java  2016-08-27 18:56:55.000000000 +0100
+@@ -1466,8 +1466,6 @@
+             this.renderCloudsCheck(renderglobal, partialTicks, pass);
+         }
+ 
+-        com.irtimaled.bbor.BoundingBoxOutlineReloaded.render(partialTicks);
+-
+         this.mc.mcProfiler.endStartSection("hand");
+ 
+         if (this.renderHand)
