@@ -178,7 +178,7 @@ public class DimensionProcessor extends BoundingBoxCache {
         for (BoundingBox village : oldVillages.values()) {
             removeBoundingBox(village);
             if(eventHandler!=null) {
-                eventHandler.boundingBoxRemoved(village);
+                eventHandler.boundingBoxRemoved(this.dimensionType, village);
             }
         }
         for (BoundingBox village : newVillages.values()) {

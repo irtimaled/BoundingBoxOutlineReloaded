@@ -14,6 +14,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.DimensionType;
 import org.apache.commons.lang3.ArrayUtils;
 import org.lwjgl.input.Keyboard;
@@ -299,9 +300,7 @@ public class ClientProxy extends CommonProxy {
 
     private void renderBoundingBoxByType(BoundingBox bb) {
         WorldClient world = Minecraft.getMinecraft().theWorld;
-        Set<ChunkPos> viewableChunks = world.getViewableChunks();
-        if (!viewableChunks.contains(world.getChunkFromBlockCoords(bb.getMinBlockPos()).getChunkCoordIntPair()) &&
-            !viewableChunks.contains(world.getChunkFromBlockCoords(bb.getMaxBlockPos()).getChunkCoordIntPair())) {
+        if (!world.isAreaLoaded(bb.getMinBlockPos(), bb.getMaxBlockPos())) {
             return;
         }
 
@@ -616,16 +615,32 @@ public class ClientProxy extends CommonProxy {
                     boundingBoxes.add(getLazySpawnChunksBoundingBox(worldData.getSpawnX(), worldData.getSpawnZ()));
                 }
                 if (configManager.drawSlimeChunks.getBoolean()) {
-                    Set<ChunkPos> activeChunks = world.getViewableChunks();
-                    for (ChunkPos chunk : activeChunks) {
-                        if (isSlimeChunk(chunk.chunkXPos, chunk.chunkZPos)) {
-                            boundingBoxes.add(BoundingBoxSlimeChunk.from(chunk, Color.GREEN));
-                        }
-                    }
+                    boundingBoxes.addAll(this.getSlimeChunks());
                 }
             }
         }
         return boundingBoxes;
+    }
+
+    private Set<BoundingBoxSlimeChunk> getSlimeChunks() {
+        Minecraft minecraft = Minecraft.getMinecraft();
+        int renderDistanceChunks = minecraft.gameSettings.renderDistanceChunks;
+        int playerChunkX = MathHelper.floor_double(minecraft.thePlayer.posX / 16.0D);
+        int playerChunkZ = MathHelper.floor_double(minecraft.thePlayer.posZ / 16.0D);
+        Set<BoundingBoxSlimeChunk> slimeChunks = new HashSet<BoundingBoxSlimeChunk>();
+        for (int chunkX = playerChunkX-renderDistanceChunks; chunkX <= playerChunkX+renderDistanceChunks; ++chunkX) {
+            for (int chunkZ = playerChunkZ - renderDistanceChunks; chunkZ <= playerChunkZ + renderDistanceChunks; ++chunkZ) {
+                if (isSlimeChunk(chunkX, chunkZ)) {
+                    ChunkPos chunk = new ChunkPos(chunkX, chunkZ);
+                    BlockPos minBlockPos = new BlockPos(chunk.getXStart(), 1, chunk.getZStart());
+                    BlockPos maxBlockPos = new BlockPos(chunk.getXEnd(), 38, chunk.getZEnd());
+                    if (minecraft.theWorld.isAreaLoaded(minBlockPos, maxBlockPos)) {
+                        slimeChunks.add(BoundingBoxSlimeChunk.from(minBlockPos, maxBlockPos, Color.GREEN));
+                    }
+                }
+            }
+        }
+        return slimeChunks;
     }
 
     private boolean isSlimeChunk(int chunkX, int chunkZ) {
