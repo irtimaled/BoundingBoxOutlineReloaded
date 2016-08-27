@@ -5,8 +5,10 @@ import com.irtimaled.bbor.forge.messages.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.DimensionType;
 import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -46,7 +48,7 @@ public class ForgeCommonProxy implements IEventHandler {
 
     @SubscribeEvent
     public void worldEvent(WorldEvent.Load event) {
-        getProxy().worldLoaded(event.world);
+        getProxy().worldLoaded(event.getWorld());
     }
 
     @SubscribeEvent
@@ -92,9 +94,8 @@ public class ForgeCommonProxy implements IEventHandler {
     @SubscribeEvent
     public void tickEvent(TickEvent event) {
         for (EntityPlayerMP player : playerDimensions.keySet()) {
-
-            MinecraftServer mc = MinecraftServer.getServer();
-            if (!mc.getConfigurationManager().playerEntityList.contains(player)) {
+            MinecraftServer mc = FMLCommonHandler.instance().getMinecraftServerInstance();
+            if(!mc.getPlayerList().getPlayerList().contains(player)) {
                 playerDimensions.remove(player);
             } else {
                 int dimension = playerDimensions.get(player);
@@ -112,14 +113,14 @@ public class ForgeCommonProxy implements IEventHandler {
     private void sendToPlayer(EntityPlayerMP player, BoundingBoxCache boundingBoxCache) {
         Map<BoundingBox, Set<BoundingBox>> cacheSubset = getBoundingBoxMap(player, boundingBoxCache.getBoundingBoxes());
 
-        int dimension = player.dimension;
+        DimensionType dimensionType = DimensionType.getById(player.dimension);
         if (cacheSubset.keySet().size() > 0) {
-            Logger.info("send %d entries to %s (%d)", cacheSubset.keySet().size(), player.getDisplayNameString(), dimension);
+            Logger.info("send %d entries to %s (%s)", cacheSubset.keySet().size(), player.getDisplayNameString(), dimensionType);
         }
 
         for (BoundingBox key : cacheSubset.keySet()) {
             Set<BoundingBox> boundingBoxes = cacheSubset.get(key);
-            network.sendTo(AddBoundingBoxMessage.from(dimension, key, boundingBoxes), player);
+            network.sendTo(AddBoundingBoxMessage.from(dimensionType, key, boundingBoxes), player);
 
             if (!playerBoundingBoxesCache.containsKey(player)) {
                 playerBoundingBoxesCache.put(player, new HashSet<BoundingBox>());
@@ -138,12 +139,10 @@ public class ForgeCommonProxy implements IEventHandler {
         return cacheSubset;
     }
 
-    public void boundingBoxRemoved(BoundingBox bb) {
-        // the only bounding boxes that can change are spawn or villages - both of these are in overworld so I guess
-        // hard coding dimension 0 is okay.
-        RemoveBoundingBoxMessage message = RemoveBoundingBoxMessage.from(0, bb);
+    public void boundingBoxRemoved(DimensionType dimensionType, BoundingBox bb) {
+        RemoveBoundingBoxMessage message = RemoveBoundingBoxMessage.from(dimensionType, bb);
         for (EntityPlayerMP player : playerDimensions.keySet()) {
-            if (player.dimension == 0) {
+            if (DimensionType.getById(player.dimension) == dimensionType) {
                 Logger.info("remove 1 entry from %s (0)", player.getDisplayNameString());
                 network.sendTo(message, player);
 
@@ -159,20 +158,20 @@ public class ForgeCommonProxy implements IEventHandler {
         getProxy().setWorldData(worldData);
     }
 
-    public void addBoundingBox(int dimension, BoundingBox key, Set<BoundingBox> boundingBoxes) {
-        Map<Integer, BoundingBoxCache> boundingBoxCacheMap = getProxy().boundingBoxCacheMap;
-        if (!boundingBoxCacheMap.containsKey(dimension)) {
-            boundingBoxCacheMap.put(dimension, new BoundingBoxCache());
+    public void addBoundingBox(DimensionType dimensionType, BoundingBox key, Set<BoundingBox> boundingBoxes) {
+        Map<DimensionType, BoundingBoxCache> boundingBoxCacheMap = getProxy().boundingBoxCacheMap;
+        if (!boundingBoxCacheMap.containsKey(dimensionType)) {
+            boundingBoxCacheMap.put(dimensionType, new BoundingBoxCache());
         }
 
-        boundingBoxCacheMap.get(dimension).addBoundingBoxes(key, boundingBoxes);
+        boundingBoxCacheMap.get(dimensionType).addBoundingBoxes(key, boundingBoxes);
     }
 
-    public void removeBoundingBox(int dimension, BoundingBox key) {
-        Map<Integer, BoundingBoxCache> boundingBoxCacheMap = getProxy().boundingBoxCacheMap;
+    public void removeBoundingBox(DimensionType dimensionType, BoundingBox key) {
+        Map<DimensionType, BoundingBoxCache> boundingBoxCacheMap = getProxy().boundingBoxCacheMap;
 
-        if (boundingBoxCacheMap.containsKey(dimension)) {
-            boundingBoxCacheMap.get(dimension).removeBoundingBox(key);
+        if (boundingBoxCacheMap.containsKey(dimensionType)) {
+            boundingBoxCacheMap.get(dimensionType).removeBoundingBox(key);
         }
     }
 }

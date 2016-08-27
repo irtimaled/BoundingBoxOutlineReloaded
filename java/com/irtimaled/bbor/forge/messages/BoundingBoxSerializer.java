@@ -4,7 +4,7 @@ import com.irtimaled.bbor.BoundingBox;
 import com.irtimaled.bbor.BoundingBoxStructure;
 import com.irtimaled.bbor.BoundingBoxVillage;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import java.awt.*;

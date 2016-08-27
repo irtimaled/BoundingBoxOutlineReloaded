@@ -2,6 +2,7 @@ package com.irtimaled.bbor.forge.messages;
 
 import com.irtimaled.bbor.BoundingBox;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.world.DimensionType;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
@@ -9,13 +10,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class AddBoundingBoxMessage implements IMessage {
-    private int dimension;
+    private DimensionType dimensionType;
     private BoundingBox key;
     private Set<BoundingBox> boundingBoxes;
 
-    public static AddBoundingBoxMessage from(int dimension, BoundingBox key, Set<BoundingBox> boundingBoxes) {
+    public static AddBoundingBoxMessage from(DimensionType dimensionType, BoundingBox key, Set<BoundingBox> boundingBoxes) {
         AddBoundingBoxMessage message = new AddBoundingBoxMessage();
-        message.dimension = dimension;
+        message.dimensionType = dimensionType;
         message.key = key;
         message.boundingBoxes = boundingBoxes;
         return message;
@@ -23,7 +24,7 @@ public class AddBoundingBoxMessage implements IMessage {
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        dimension = ByteBufUtils.readVarInt(buf, 5);
+        dimensionType = DimensionType.getById(ByteBufUtils.readVarInt(buf, 5));
         key = BoundingBoxDeserializer.deserialize(buf);
         boundingBoxes = new HashSet<BoundingBox>();
         while (buf.isReadable()) {
@@ -36,7 +37,7 @@ public class AddBoundingBoxMessage implements IMessage {
 
     @Override
     public void toBytes(ByteBuf buf) {
-        ByteBufUtils.writeVarInt(buf, dimension, 5);
+        ByteBufUtils.writeVarInt(buf, dimensionType.getId(), 5);
         BoundingBoxSerializer.serialize(key, buf);
         if (boundingBoxes != null &&
                 boundingBoxes.size() > 1) {
@@ -46,8 +47,8 @@ public class AddBoundingBoxMessage implements IMessage {
         }
     }
 
-    public int getDimension() {
-        return dimension;
+    public DimensionType getDimensionType() {
+        return dimensionType;
     }
 
     public BoundingBox getKey() {

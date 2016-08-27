@@ -14,8 +14,8 @@ public class ForgeMod {
 
     public static final String MODID = "bbor";
     public static final String NAME = "Bounding Box Outline Reloaded";
-    public static final String VERSION = "1.0.0-beta11";
-    public static final String MCVERSION = "[1.8,1.8.9)";
+    public static final String VERSION = "1.0.0-beta12";
+    public static final String MCVERSION = "[1.10]";
 
     private ConfigManager configManager;
 

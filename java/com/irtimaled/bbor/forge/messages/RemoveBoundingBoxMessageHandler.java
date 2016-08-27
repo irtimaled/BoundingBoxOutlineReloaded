@@ -9,7 +9,7 @@ public class RemoveBoundingBoxMessageHandler implements IMessageHandler<RemoveBo
     @Override
     public IMessage onMessage(RemoveBoundingBoxMessage message, MessageContext ctx) {
 
-        ForgeMod.proxy.removeBoundingBox(message.getDimension(), message.getKey());
+        ForgeMod.proxy.removeBoundingBox(message.getDimensionType(), message.getKey());
         return null;
     }
 }

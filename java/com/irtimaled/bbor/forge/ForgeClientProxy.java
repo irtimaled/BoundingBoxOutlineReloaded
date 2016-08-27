@@ -38,13 +38,13 @@ public class ForgeClientProxy extends ForgeCommonProxy {
 
     @SubscribeEvent
     public void renderWorldLastEvent(RenderWorldLastEvent event) {
-        getProxy().render(event.partialTicks);
+        getProxy().render(event.getPartialTicks());
     }
 
     @SubscribeEvent
     public void clientConnectionToServerEvent(FMLNetworkEvent.ClientConnectedToServerEvent evt) {
-        if (!evt.isLocal) {
-            getProxy().playerConnectedToServer(evt.manager);
+        if (!evt.isLocal()) {
+            getProxy().playerConnectedToServer(evt.getManager());
         }
     }
 
