@@ -1,6 +1,6 @@
 # BoundingBoxOutlineReloaded
 
-BoundingBoxOutlineReloaded is a mod for Minecraft Forge 1.10.2 and Vanilla 1.10.2 & 1.10
+BoundingBoxOutlineReloaded is a mod for Minecraft Forge 1.11 and Vanilla 1.11
 
 # Why did I make it?
 
@@ -18,6 +18,7 @@ This mod highlights in a variety of colours and styles the different structures 
 - Ocean Monuments; cyan boxes indicate where guardians spawn. New sea lantern and prismarine block types FTW.
 - End Cities; magenta boxes show the rooms, corridors and air ships in the End. Time to fall with style!
 - Strongholds; yellow boxes show each room in the stronghold. Does anyone make anything with silverfish spawners?
+- Woodland Mansions; brown boxes show each room in the woodland mansion. Here's Johnny!
 - Mine Shafts; light gray boxes illustrate each of the mine shafts. Cobwebs... grrr!
 - Villages; multicoloured spheres encircle  the village, with boxes marking if and where iron golems will spawn. You should see the iron titan... CRAZY!
 - Slime chunks; bright green boxes highlight where slimes will spawn, with a dynamic box that rises to where the players feet are to help find them from the surface. Bouncy... bouncy...
@@ -50,6 +51,7 @@ Jungle Temples | Both | Process/Render Jungle Temples | drawJungleTemples | true
 Ocean Monuments | Both | Process/Render Ocean Monuments | drawOceanMonuments | true/false | true
 End Cities | Both | Process/Render End Cities | drawEndCities | true/false | true
 Strongholds | Both | Process/Render Strongholds | drawStrongholds | true/false | false
+Woodland Mansions | Both | Process/Render Mansions | drawMansions | true/false | true
 Mine Shafts | Both | Process/Render Mine Shafts | drawMineShafts | true/false | false
 Villages | Both | Process/Render Villages | drawVillages | true/false | true
 Village spheres | Client | Render Villages as spheres instead of cuboids | renderVillageAsSphere | true/false | true
@@ -87,11 +89,12 @@ There are two options when you want bounding boxes to show whilst accessing vani
   - Mineshaft.dat; include this for Mineshafts to be rendered.
   - Monument.dat; include this for Ocean Monuments to be rendered.
   - Stronghold.dat; include this for Strongholds to be rendered.
+  - Mansion.dat; include this for Mansions to be rendered.
   - Temple.dat; include this for Desert & Jungle Temples and witch huts to be rendered.
 
   It is also possible to include the villages.dat, villages_end.dat & villages_nether.dat files and it will render villages however these files only contain the villages that were loaded when the files were copied and will not handle any changes that occur with villages such as when doors are added/removed or villager population changes.
 
 # Links
-- Forge - [1.10.2](http://files.minecraftforge.net/maven/net/minecraftforge/forge/index_1.10.2.html)
+- Forge - [1.11](http://files.minecraftforge.net/maven/net/minecraftforge/forge/index_1.11.html)
 - 4poc's BBOutline mod - [Forum](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1286555-bounding-box-outline) | [Source](http://www.github.com/4poc/bboutline)
 - KaboPC's VillageMarker mod - [Forum](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1288327-village-marker-mod)
