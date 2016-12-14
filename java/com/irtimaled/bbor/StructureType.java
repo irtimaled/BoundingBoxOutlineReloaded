@@ -11,6 +11,7 @@ public class StructureType {
     private static final int MINE_SHAFT = 6;
     private static final int NETHER_FORTRESS = 7;
     private static final int END_CITY = 8;
+    private static final int MANSION = 9;
 
     public final static StructureType JungleTemple = new StructureType(JUNGLE_TEMPLE);
     public final static StructureType DesertTemple = new StructureType(DESERT_TEMPLE);
@@ -20,6 +21,7 @@ public class StructureType {
     public final static StructureType MineShaft = new StructureType(MINE_SHAFT);
     public final static StructureType NetherFortress = new StructureType(NETHER_FORTRESS);
     public final static StructureType EndCity = new StructureType(END_CITY);
+    public final static StructureType Mansion = new StructureType(MANSION);
 
 
     private final int type;
@@ -47,6 +49,8 @@ public class StructureType {
                 return Color.YELLOW;
             case END_CITY:
                 return Color.MAGENTA;
+            case MANSION:
+                return new Color(139,69,19);
         }
         return Color.WHITE;
     }

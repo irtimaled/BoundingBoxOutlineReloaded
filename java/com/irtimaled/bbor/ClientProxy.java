@@ -74,13 +74,13 @@ public class ClientProxy extends CommonProxy {
     }
 
     public void render(float partialTicks) {
-        EntityPlayer entityPlayer = Minecraft.getMinecraft().thePlayer;
+        EntityPlayer entityPlayer = Minecraft.getMinecraft().player;
         playerX = entityPlayer.lastTickPosX + (entityPlayer.posX - entityPlayer.lastTickPosX) * (double) partialTicks;
         playerY = entityPlayer.lastTickPosY + (entityPlayer.posY - entityPlayer.lastTickPosY) * (double) partialTicks;
         playerZ = entityPlayer.lastTickPosZ + (entityPlayer.posZ - entityPlayer.lastTickPosZ) * (double) partialTicks;
 
         if (this.active) {
-            DimensionType dimensionType = entityPlayer.worldObj.provider.getDimensionType();
+            DimensionType dimensionType = entityPlayer.world.provider.getDimensionType();
             Map<BoundingBox, Set<BoundingBox>> boundingBoxes = null;
             if (boundingBoxCacheMap.containsKey(dimensionType)) {
                 boundingBoxes = boundingBoxCacheMap.get(dimensionType).getBoundingBoxes();
@@ -136,11 +136,14 @@ public class ClientProxy extends CommonProxy {
         if (configManager.drawOceanMonuments.getBoolean()) {
             loadStructureNbtFile(localStructuresFolder, cache, "Monument.dat", StructureType.OceanMonument.getColor(), "*");
         }
-        if (configManager.drawMineShafts.getBoolean()) {
-            loadStructureNbtFile(localStructuresFolder, cache, "Mineshaft.dat", StructureType.MineShaft.getColor(), "*");
-        }
         if (configManager.drawStrongholds.getBoolean()) {
             loadStructureNbtFile(localStructuresFolder, cache, "Stronghold.dat", StructureType.Stronghold.getColor(), "*");
+        }
+        if (configManager.drawMansions.getBoolean()){
+            loadStructureNbtFile(localStructuresFolder, cache, "Mansion.dat", StructureType.Mansion.getColor(), "*");
+        }
+        if (configManager.drawMineShafts.getBoolean()) {
+            loadStructureNbtFile(localStructuresFolder, cache, "Mineshaft.dat", StructureType.MineShaft.getColor(), "*");
         }
         if (configManager.drawVillages.getBoolean()) {
             loadVillageNbtFile(localStructuresFolder, cache, "Villages.dat");
@@ -302,7 +305,7 @@ public class ClientProxy extends CommonProxy {
     }
 
     private void renderBoundingBoxByType(BoundingBox bb) {
-        WorldClient world = Minecraft.getMinecraft().theWorld;
+        WorldClient world = Minecraft.getMinecraft().world;
         if (!world.isAreaLoaded(bb.getMinBlockPos(), bb.getMaxBlockPos())) {
             return;
         }
@@ -607,7 +610,7 @@ public class ClientProxy extends CommonProxy {
     private Set<BoundingBox> getClientBoundingBoxes() {
         Set<BoundingBox> boundingBoxes = new HashSet<BoundingBox>();
         if (worldData != null) {
-            WorldClient world = Minecraft.getMinecraft().theWorld;
+            WorldClient world = Minecraft.getMinecraft().world;
             DimensionType dimensionType = world.provider.getDimensionType();
             if (dimensionType == DimensionType.OVERWORLD) {
                 if (configManager.drawWorldSpawn.getBoolean()) {
@@ -628,8 +631,8 @@ public class ClientProxy extends CommonProxy {
     private Set<BoundingBoxSlimeChunk> getSlimeChunks() {
         Minecraft minecraft = Minecraft.getMinecraft();
         int renderDistanceChunks = minecraft.gameSettings.renderDistanceChunks;
-        int playerChunkX = MathHelper.floor_double(minecraft.thePlayer.posX / 16.0D);
-        int playerChunkZ = MathHelper.floor_double(minecraft.thePlayer.posZ / 16.0D);
+        int playerChunkX = MathHelper.floor(minecraft.player.posX / 16.0D);
+        int playerChunkZ = MathHelper.floor(minecraft.player.posZ / 16.0D);
         Set<BoundingBoxSlimeChunk> slimeChunks = new HashSet<BoundingBoxSlimeChunk>();
         for (int chunkX = playerChunkX-renderDistanceChunks; chunkX <= playerChunkX+renderDistanceChunks; ++chunkX) {
             for (int chunkZ = playerChunkZ - renderDistanceChunks; chunkZ <= playerChunkZ + renderDistanceChunks; ++chunkZ) {
@@ -637,7 +640,7 @@ public class ClientProxy extends CommonProxy {
                     ChunkPos chunk = new ChunkPos(chunkX, chunkZ);
                     BlockPos minBlockPos = new BlockPos(chunk.getXStart(), 1, chunk.getZStart());
                     BlockPos maxBlockPos = new BlockPos(chunk.getXEnd(), 38, chunk.getZEnd());
-                    if (minecraft.theWorld.isAreaLoaded(minBlockPos, maxBlockPos)) {
+                    if (minecraft.world.isAreaLoaded(minBlockPos, maxBlockPos)) {
                         slimeChunks.add(BoundingBoxSlimeChunk.from(minBlockPos, maxBlockPos, Color.GREEN));
                     }
                 }

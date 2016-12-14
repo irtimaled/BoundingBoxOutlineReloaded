@@ -85,6 +85,10 @@ public class DimensionProcessor extends BoundingBoxCache {
                 structureMap.put(StructureType.Stronghold, getStructures(chunkProvider, MapGenStronghold.class));
             }
 
+            if (configManager.drawMansions.getBoolean()) {
+                structureMap.put(StructureType.Mansion, getStructures(chunkProvider, WoodlandMansion.class));
+            }
+
             if (configManager.drawMineShafts.getBoolean()) {
                 structureMap.put(StructureType.MineShaft, getStructures(chunkProvider, MapGenMineshaft.class));
             }

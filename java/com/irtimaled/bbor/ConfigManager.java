@@ -28,6 +28,7 @@ public class ConfigManager {
     public Setting worldSpawnMaxY;
     public Setting drawLazySpawnChunks;
     public Setting drawEndCities;
+    public Setting drawMansions;
 
     private Configuration config;
 
@@ -56,6 +57,7 @@ public class ConfigManager {
         worldSpawnMaxY = SetupIntegerProperty(config, "features", "worldSpawnMaxY", -1, "The maximum top of the world spawn bounding boxes. If set to -1 it will use the value when activated, if set to 0 it will always track the players feet. (default: -1)");
         drawLazySpawnChunks = SetupBooleanProperty(config, "features", "drawLazySpawnChunks", false, "If set to true the lazy spawn chunks bounding boxes will be drawn. (default: false)");
         drawEndCities = SetupBooleanProperty(config, "features", "drawEndCities", true, "If set to true end city bounding boxes will be drawn. (default: true)");
+        drawMansions = SetupBooleanProperty(config, "features", "drawMansions", true, "If set to true woodland mansions will be drawn. (default: true)");
         config.save();
     }
 
