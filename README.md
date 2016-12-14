@@ -30,7 +30,7 @@ As chunks are loaded the game provides metadata about all the different structur
 
 # Installing (Forge Version)
 
-Make sure you have Forge 1.10.2 installed then drop the jar file into the mods/1.10 folder. Remember this will need to be installed on client and server in an SMP scenario (unless you use local dat files - see below)
+Make sure you have Forge 1.11 installed then drop the jar file into the mods/1.11 folder. Remember this will need to be installed on client and server in an SMP scenario (unless you use local dat files - see below)
 
 # Installing (Vanilla)
 
