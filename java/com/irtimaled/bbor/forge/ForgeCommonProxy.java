@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ForgeCommonProxy implements IEventHandler {
 
-    public Map<EntityPlayerMP, Integer> playerDimensions = new ConcurrentHashMap<EntityPlayerMP, Integer>();
+    public Map<EntityPlayerMP, DimensionType> playerDimensions = new ConcurrentHashMap<EntityPlayerMP, DimensionType>();
     private Map<EntityPlayerMP, Set<BoundingBox>> playerBoundingBoxesCache = new HashMap<EntityPlayerMP, Set<BoundingBox>>();
 
     protected CommonProxy getProxy() {
@@ -60,10 +60,10 @@ public class ForgeCommonProxy implements IEventHandler {
     public void playerChangedDimensionEvent(PlayerEvent.PlayerChangedDimensionEvent evt) {
         if (playerDimensions.containsKey(evt.player)) {
             EntityPlayerMP player = (EntityPlayerMP) evt.player;
-            int dimension = player.dimension;
-            playerDimensions.put(player, dimension);
+            DimensionType dimensionType = DimensionType.getById(player.dimension);
+            playerDimensions.put(player, dimensionType);
 
-            sendToPlayer(player, getProxy().boundingBoxCacheMap.get(dimension));
+            sendToPlayer(player, getProxy().boundingBoxCacheMap.get(dimensionType));
         }
     }
 
@@ -77,9 +77,9 @@ public class ForgeCommonProxy implements IEventHandler {
                 isRemotePlayer(evt.player)) {
             EntityPlayerMP player = (EntityPlayerMP) evt.player;
             initializeClient(player);
-            int dimension = player.dimension;
-            playerDimensions.put(player, dimension);
-            sendToPlayer(player, getProxy().boundingBoxCacheMap.get(dimension));
+            DimensionType dimensionType = DimensionType.getById(player.dimension);
+            playerDimensions.put(player, dimensionType);
+            sendToPlayer(player, getProxy().boundingBoxCacheMap.get(dimensionType));
         }
     }
 
@@ -98,9 +98,9 @@ public class ForgeCommonProxy implements IEventHandler {
             if(!mc.getPlayerList().getPlayerList().contains(player)) {
                 playerDimensions.remove(player);
             } else {
-                int dimension = playerDimensions.get(player);
-                if (getProxy().boundingBoxCacheMap.containsKey(dimension)) {
-                    sendToPlayer(player, getProxy().boundingBoxCacheMap.get(dimension));
+                DimensionType dimensionType = playerDimensions.get(player);
+                if (getProxy().boundingBoxCacheMap.containsKey(dimensionType)) {
+                    sendToPlayer(player, getProxy().boundingBoxCacheMap.get(dimensionType));
                 }
             }
         }

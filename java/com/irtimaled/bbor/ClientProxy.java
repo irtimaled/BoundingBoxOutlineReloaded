@@ -81,9 +81,11 @@ public class ClientProxy extends CommonProxy {
 
         if (this.active) {
             DimensionType dimensionType = entityPlayer.worldObj.provider.getDimensionType();
+            Map<BoundingBox, Set<BoundingBox>> boundingBoxes = null;
             if (boundingBoxCacheMap.containsKey(dimensionType)) {
-                renderBoundingBoxes(boundingBoxCacheMap.get(dimensionType).getBoundingBoxes());
+                boundingBoxes = boundingBoxCacheMap.get(dimensionType).getBoundingBoxes();
             }
+            renderBoundingBoxes(boundingBoxes);
         }
     }
 
@@ -276,6 +278,7 @@ public class ClientProxy extends CommonProxy {
             GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
         }
 
+        if(map != null)
         for (BoundingBox bb : map.keySet()) {
             if (outerBoxOnly) {
                 renderBoundingBoxSet(map.get(bb));
