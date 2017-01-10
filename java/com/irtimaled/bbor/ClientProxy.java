@@ -80,12 +80,12 @@ public class ClientProxy extends CommonProxy {
         playerZ = entityPlayer.lastTickPosZ + (entityPlayer.posZ - entityPlayer.lastTickPosZ) * (double) partialTicks;
 
         if (this.active) {
-            DimensionType dimensionType = entityPlayer.world.provider.getDimensionType();
+            DimensionType dimensionType = DimensionType.getById(entityPlayer.dimension);
             Map<BoundingBox, Set<BoundingBox>> boundingBoxes = null;
             if (boundingBoxCacheMap.containsKey(dimensionType)) {
                 boundingBoxes = boundingBoxCacheMap.get(dimensionType).getBoundingBoxes();
             }
-            renderBoundingBoxes(boundingBoxes);
+            renderBoundingBoxes(boundingBoxes, getClientBoundingBoxes(dimensionType));
         }
     }
 
@@ -271,7 +271,10 @@ public class ClientProxy extends CommonProxy {
         boundingBoxCacheMap.clear();
     }
 
-    private void renderBoundingBoxes(Map<BoundingBox, Set<BoundingBox>> map) {
+    private void renderBoundingBoxes(Map<BoundingBox, Set<BoundingBox>> map, Set<BoundingBox> clientBoundingBoxes) {
+        if(map == null && clientBoundingBoxes == null)
+            return;
+
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GL11.glLineWidth(2.0f);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
@@ -290,7 +293,8 @@ public class ClientProxy extends CommonProxy {
             }
         }
 
-        renderBoundingBoxSet(getClientBoundingBoxes());
+        if(clientBoundingBoxes != null)
+            renderBoundingBoxSet(clientBoundingBoxes);
 
         GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
         GL11.glEnable(GL11.GL_CULL_FACE);
@@ -607,23 +611,21 @@ public class ClientProxy extends CommonProxy {
         return points;
     }
 
-    private Set<BoundingBox> getClientBoundingBoxes() {
+    private Set<BoundingBox> getClientBoundingBoxes(DimensionType dimensionType) {
+        if (worldData == null || dimensionType != DimensionType.OVERWORLD) {
+            return null;
+        }
+
         Set<BoundingBox> boundingBoxes = new HashSet<BoundingBox>();
-        if (worldData != null) {
-            WorldClient world = Minecraft.getMinecraft().world;
-            DimensionType dimensionType = world.provider.getDimensionType();
-            if (dimensionType == DimensionType.OVERWORLD) {
-                if (configManager.drawWorldSpawn.getBoolean()) {
-                    boundingBoxes.add(getWorldSpawnBoundingBox(worldData.getSpawnX(), worldData.getSpawnZ()));
-                    boundingBoxes.add(getSpawnChunksBoundingBox(worldData.getSpawnX(), worldData.getSpawnZ()));
-                }
-                if (configManager.drawLazySpawnChunks.getBoolean()) {
-                    boundingBoxes.add(getLazySpawnChunksBoundingBox(worldData.getSpawnX(), worldData.getSpawnZ()));
-                }
-                if (configManager.drawSlimeChunks.getBoolean()) {
-                    boundingBoxes.addAll(this.getSlimeChunks());
-                }
-            }
+        if (configManager.drawWorldSpawn.getBoolean()) {
+            boundingBoxes.add(getWorldSpawnBoundingBox(worldData.getSpawnX(), worldData.getSpawnZ()));
+            boundingBoxes.add(getSpawnChunksBoundingBox(worldData.getSpawnX(), worldData.getSpawnZ()));
+        }
+        if (configManager.drawLazySpawnChunks.getBoolean()) {
+            boundingBoxes.add(getLazySpawnChunksBoundingBox(worldData.getSpawnX(), worldData.getSpawnZ()));
+        }
+        if (configManager.drawSlimeChunks.getBoolean()) {
+            boundingBoxes.addAll(this.getSlimeChunks());
         }
         return boundingBoxes;
     }
