@@ -95,7 +95,7 @@ public class ForgeCommonProxy implements IEventHandler {
     public void tickEvent(TickEvent event) {
         for (EntityPlayerMP player : playerDimensions.keySet()) {
             MinecraftServer mc = FMLCommonHandler.instance().getMinecraftServerInstance();
-            if(!mc.getPlayerList().getPlayerList().contains(player)) {
+            if(!mc.getPlayerList().getPlayers().contains(player)) {
                 playerDimensions.remove(player);
             } else {
                 DimensionType dimensionType = playerDimensions.get(player);
