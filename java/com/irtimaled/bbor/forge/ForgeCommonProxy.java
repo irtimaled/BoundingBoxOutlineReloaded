@@ -111,6 +111,8 @@ public class ForgeCommonProxy implements IEventHandler {
     }
 
     private void sendToPlayer(EntityPlayerMP player, BoundingBoxCache boundingBoxCache) {
+        if(boundingBoxCache == null)
+            return;
         Map<BoundingBox, Set<BoundingBox>> cacheSubset = getBoundingBoxMap(player, boundingBoxCache.getBoundingBoxes());
 
         DimensionType dimensionType = DimensionType.getById(player.dimension);
