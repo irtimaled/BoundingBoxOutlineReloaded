@@ -386,12 +386,15 @@ public class ClientProxy extends CommonProxy {
                 center.getZ() - 8),
                 new BlockPos(center.getX() + 8,
                         center.getY() + 3,
-                        center.getZ() + 8));
-        renderCuboid(abb.addCoord(1, 1, 1), villageBB.getColor(), false);
+                        center.getZ() + 8))
+                .offset(villageBB.getCenterOffsetX(), 0.0, villageBB.getCenterOffsetZ());
+
+        renderCuboid(abb, villageBB.getColor(), false);
     }
 
     private void renderVillageDoors(BoundingBoxVillage villageBB) {
-        OffsetPoint center = new OffsetPoint(villageBB.getCenter());
+        OffsetPoint center = new OffsetPoint(villageBB.getCenter())
+                .add(villageBB.getCenterOffsetX(), 0.0, villageBB.getCenterOffsetZ());
         Color color = villageBB.getColor();
         GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
         Tessellator tessellator = Tessellator.getInstance();
@@ -403,7 +406,7 @@ public class ClientProxy extends CommonProxy {
 
         worldRenderer.begin(GL11.GL_LINES, worldRenderer.getVertexFormat());
         for (BlockPos door : villageBB.getDoors()) {
-            OffsetPoint point = new OffsetPoint(door);
+            OffsetPoint point = new OffsetPoint(door).add(0.5, 0, 0.5);
 
             worldRenderer.pos(point.getX(), point.getY(), point.getZ()).color(colorR, colorG, colorB, 255).endVertex();
             worldRenderer.pos(center.getX(), center.getY(), center.getZ()).color(colorR, colorG, colorB, 255).endVertex();
@@ -537,13 +540,14 @@ public class ClientProxy extends CommonProxy {
     }
 
     private void renderBoundingBoxVillageAsSphere(BoundingBoxVillage bb) {
-        BlockPos center = bb.getCenter();
+        OffsetPoint center = new OffsetPoint(bb.getCenter())
+                .add(bb.getCenterOffsetX(), 0.0, bb.getCenterOffsetZ());;
         int radius = bb.getRadius();
         Color color = bb.getColor();
         renderSphere(center, radius, color);
     }
 
-    private void renderSphere(BlockPos center, double radius, Color color) {
+    private void renderSphere(OffsetPoint center, double radius, Color color) {
         GL11.glEnable(GL11.GL_POINT_SMOOTH);
         GL11.glPointSize(2f);
 
@@ -592,13 +596,12 @@ public class ClientProxy extends CommonProxy {
         }
     }
 
-    private Set<OffsetPoint> buildPoints(BlockPos center, double radius) {
+    private Set<OffsetPoint> buildPoints(OffsetPoint center, double radius) {
         Set<OffsetPoint> points = new HashSet<OffsetPoint>(1200);
 
         double tau = 6.283185307179586D;
         double pi = tau / 2D;
         double segment = tau / 48D;
-        OffsetPoint centerPoint = new OffsetPoint(center);
 
         for (double t = 0.0D; t < tau; t += segment)
             for (double theta = 0.0D; theta < pi; theta += segment) {
@@ -606,7 +609,7 @@ public class ClientProxy extends CommonProxy {
                 double dz = radius * Math.sin(t) * Math.sin(theta);
                 double dy = radius * Math.cos(t);
 
-                points.add(centerPoint.add(dx, dy, dz));
+                points.add(center.add(dx, dy, dz));
             }
         return points;
     }

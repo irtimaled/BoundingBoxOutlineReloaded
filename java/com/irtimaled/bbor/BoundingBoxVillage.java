@@ -10,6 +10,8 @@ public class BoundingBoxVillage extends BoundingBox {
     private final Integer radius;
     private final boolean spawnsIronGolems;
     private Set<BlockPos> doors;
+    private Double centerOffsetX;
+    private Double centerOffsetZ;
 
     protected BoundingBoxVillage(BlockPos center, Integer radius, Color color, boolean spawnsIronGolems, Set<BlockPos> doors, BlockPos minBlockPos, BlockPos maxBlockPos) {
         super(minBlockPos, maxBlockPos, color);
@@ -17,6 +19,7 @@ public class BoundingBoxVillage extends BoundingBox {
         this.radius = radius;
         this.spawnsIronGolems = spawnsIronGolems;
         this.doors = doors;
+        calculateCenterOffsets(doors);
     }
 
     public static BoundingBoxVillage from(BlockPos center, Integer radius, int population, Set<BlockPos> doors) {
@@ -40,6 +43,33 @@ public class BoundingBoxVillage extends BoundingBox {
         return new BoundingBoxVillage(center, radius, color, spawnsIronGolems, doors, minBlockPos, maxBlockPos);
     }
 
+    private void calculateCenterOffsets(Set<BlockPos> doors)
+    {
+        boolean processedFirstDoor = false;
+        int minX = 0;
+        int maxX = 0;
+        int minZ = 0;
+        int maxZ = 0;
+        for (BlockPos door : doors) {
+            if (!processedFirstDoor ||
+                    (minX > door.getX()))
+                minX = door.getX();
+            if (!processedFirstDoor ||
+                    maxX < door.getX())
+                maxX = door.getX();
+            if (!processedFirstDoor ||
+                    minZ > door.getZ())
+                minZ = door.getZ();
+            if (!processedFirstDoor ||
+                    maxZ < door.getZ())
+                maxZ = door.getZ();
+
+            processedFirstDoor = true;
+        }
+        centerOffsetX = Math.abs(maxX-minX) % 2 == 0 ? 0.5 : (minX < 0 ? 0 : 1);
+        centerOffsetZ = Math.abs(maxZ-minZ) % 2 == 0 ? 0.5 : (minZ < 0 ? 0 : 1);
+    }
+
     @Override
     public String toString() {
         return "(" + center.toString() + "; " + radius.toString() + ")";
@@ -51,6 +81,14 @@ public class BoundingBoxVillage extends BoundingBox {
 
     public BlockPos getCenter() {
         return center;
+    }
+
+    public Double getCenterOffsetX() {
+        return centerOffsetX;
+    }
+
+    public Double getCenterOffsetZ() {
+        return centerOffsetZ;
     }
 
     @Override
