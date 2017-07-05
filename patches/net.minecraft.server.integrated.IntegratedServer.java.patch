@@ -1,10 +1,11 @@
-diff -r -U 3 mcp931/src/minecraft/net/minecraft/server/integrated/IntegratedServer.java mcp931 2/src/minecraft/net/minecraft/server/integrated/IntegratedServer.java
---- mcp931/src/minecraft/net/minecraft/server/integrated/IntegratedServer.java	2016-08-17 23:48:14.000000000 +0100
-+++ mcp931 2/src/minecraft/net/minecraft/server/integrated/IntegratedServer.java	2016-08-27 18:56:56.000000000 +0100
-@@ -115,7 +115,6 @@
+diff -r -U 3 mcp940-pre1/src/minecraft/net/minecraft/server/integrated/IntegratedServer.java mcp940-pre1_1.12/src/minecraft/net/minecraft/server/integrated/IntegratedServer.java
+--- mcp940-pre1/src/minecraft/net/minecraft/server/integrated/IntegratedServer.java 2017-07-04 17:36:38.000000000 -0700
++++ mcp940-pre1_1.12/src/minecraft/net/minecraft/server/integrated/IntegratedServer.java  2017-07-04 16:07:03.000000000 -0700
+@@ -114,6 +114,7 @@
                  this.worldServers[i] = (WorldServer)(new WorldServerMulti(this, isavehandler, j, this.worldServers[0], this.theProfiler)).init();
              }
  
--            com.irtimaled.bbor.BoundingBoxOutlineReloaded.worldLoaded(this.worldServers[i]);
++            com.irtimaled.bbor.BoundingBoxOutlineReloaded.worldLoaded(this.worldServers[i]);
              this.worldServers[i].addEventListener(new ServerWorldEventHandler(this, this.worldServers[i]));
          }
+ 

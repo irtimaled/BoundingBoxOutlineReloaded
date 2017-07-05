@@ -53,7 +53,7 @@ public abstract class BoundingBox {
     public AxisAlignedBB toAxisAlignedBB(boolean extendMaxByOne) {
         AxisAlignedBB axisAlignedBB = new AxisAlignedBB(minBlockPos, maxBlockPos);
         if (extendMaxByOne)
-            return axisAlignedBB.addCoord(1, 1, 1);
+            return axisAlignedBB.expand(1, 1, 1);
         return axisAlignedBB;
     }
 

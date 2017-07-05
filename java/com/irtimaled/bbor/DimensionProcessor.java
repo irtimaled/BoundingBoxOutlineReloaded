@@ -6,10 +6,10 @@ import net.minecraft.village.Village;
 import net.minecraft.village.VillageDoorInfo;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.IChunkGenerator;
-import net.minecraft.world.gen.ChunkProviderEnd;
-import net.minecraft.world.gen.ChunkProviderHell;
-import net.minecraft.world.gen.ChunkProviderOverworld;
+import net.minecraft.world.gen.ChunkGeneratorEnd;
+import net.minecraft.world.gen.ChunkGeneratorHell;
+import net.minecraft.world.gen.ChunkGeneratorOverworld;
+import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.gen.structure.*;
 
 import java.awt.*;
@@ -22,19 +22,19 @@ public class DimensionProcessor extends BoundingBoxCache {
     private World world;
     private IEventHandler eventHandler;
 
-    public DimensionProcessor(IEventHandler eventHandler, ConfigManager configManager, World world, DimensionType dimensionType, IChunkGenerator chunkProvider) {
+    public DimensionProcessor(IEventHandler eventHandler, ConfigManager configManager, World world, DimensionType dimensionType, IChunkGenerator chunkGenerator) {
         this.eventHandler = eventHandler;
         this.configManager = configManager;
         this.world = world;
         this.dimensionType = dimensionType;
-        this.chunkProvider = chunkProvider;
+        this.chunkGenerator = chunkGenerator;
         villageCache = new HashMap<Integer, BoundingBoxVillage>();
         slimeChunkCache = new HashSet<BoundingBox>();
         worldSpawnCache = new HashSet<BoundingBox>();
     }
 
     private DimensionType dimensionType;
-    private IChunkGenerator chunkProvider;
+    private IChunkGenerator chunkGenerator;
     private Map<Integer, BoundingBoxVillage> villageCache;
     private Set<BoundingBox> slimeChunkCache;
     private Set<BoundingBox> worldSpawnCache;
@@ -44,16 +44,16 @@ public class DimensionProcessor extends BoundingBoxCache {
     @Override
     public void close() {
         closed = true;
-        chunkProvider = null;
+        chunkGenerator = null;
         villageCache.clear();
         slimeChunkCache.clear();
         worldSpawnCache.clear();
         super.close();
     }
 
-    private static <T extends IChunkGenerator, R extends MapGenStructure> Collection<StructureStart> getStructures(T chunkProvider, Class<R> providerClass) {
-        Class<T> chunkProviderClass = (Class<T>) chunkProvider.getClass();
-        R structureGenerator = ReflectionHelper.getPrivateValue(chunkProviderClass, chunkProvider, providerClass);
+    private static <T extends IChunkGenerator, R extends MapGenStructure> Collection<StructureStart> getStructures(T chunkGenerator, Class<R> generatorClass) {
+        Class<T> chunkGeneratorClass = (Class<T>) chunkGenerator.getClass();
+        R structureGenerator = ReflectionHelper.getPrivateValue(chunkGeneratorClass, chunkGenerator, generatorClass);
         if (structureGenerator != null) {
             Map<ChunkPos, StructureStart> structureMap = ReflectionHelper.getPrivateValue(MapGenStructure.class, structureGenerator, Map.class);
             return structureMap.values();
@@ -64,42 +64,42 @@ public class DimensionProcessor extends BoundingBoxCache {
     private Map<StructureType, Collection<StructureStart>> getStructures() {
 
         Map<StructureType, Collection<StructureStart>> structureMap = new HashMap<StructureType, Collection<StructureStart>>();
-        if (chunkProvider instanceof ChunkProviderOverworld) {
+        if (chunkGenerator instanceof ChunkGeneratorOverworld) {
             if (configManager.drawDesertTemples.getBoolean()) {
-                structureMap.put(StructureType.DesertTemple, getStructuresWithComponent(getStructures(chunkProvider, MapGenScatteredFeature.class), ComponentScatteredFeaturePieces.DesertPyramid.class));
+                structureMap.put(StructureType.DesertTemple, getStructuresWithComponent(getStructures(chunkGenerator, MapGenScatteredFeature.class), ComponentScatteredFeaturePieces.DesertPyramid.class));
             }
 
             if (configManager.drawJungleTemples.getBoolean()) {
-                structureMap.put(StructureType.JungleTemple, getStructuresWithComponent(getStructures(chunkProvider, MapGenScatteredFeature.class), ComponentScatteredFeaturePieces.JunglePyramid.class));
+                structureMap.put(StructureType.JungleTemple, getStructuresWithComponent(getStructures(chunkGenerator, MapGenScatteredFeature.class), ComponentScatteredFeaturePieces.JunglePyramid.class));
             }
 
             if (configManager.drawWitchHuts.getBoolean()) {
-                structureMap.put(StructureType.WitchHut, getStructuresWithComponent(getStructures(chunkProvider, MapGenScatteredFeature.class), ComponentScatteredFeaturePieces.SwampHut.class));
+                structureMap.put(StructureType.WitchHut, getStructuresWithComponent(getStructures(chunkGenerator, MapGenScatteredFeature.class), ComponentScatteredFeaturePieces.SwampHut.class));
             }
 
             if (configManager.drawOceanMonuments.getBoolean()) {
-                structureMap.put(StructureType.OceanMonument, getStructures(chunkProvider, StructureOceanMonument.class));
+                structureMap.put(StructureType.OceanMonument, getStructures(chunkGenerator, StructureOceanMonument.class));
             }
 
             if (configManager.drawStrongholds.getBoolean()) {
-                structureMap.put(StructureType.Stronghold, getStructures(chunkProvider, MapGenStronghold.class));
+                structureMap.put(StructureType.Stronghold, getStructures(chunkGenerator, MapGenStronghold.class));
             }
 
             if (configManager.drawMansions.getBoolean()) {
-                structureMap.put(StructureType.Mansion, getStructures(chunkProvider, WoodlandMansion.class));
+                structureMap.put(StructureType.Mansion, getStructures(chunkGenerator, WoodlandMansion.class));
             }
 
             if (configManager.drawMineShafts.getBoolean()) {
-                structureMap.put(StructureType.MineShaft, getStructures(chunkProvider, MapGenMineshaft.class));
+                structureMap.put(StructureType.MineShaft, getStructures(chunkGenerator, MapGenMineshaft.class));
             }
-        } else if (chunkProvider instanceof ChunkProviderHell) {
+        } else if (chunkGenerator instanceof ChunkGeneratorHell) {
 
             if (configManager.drawNetherFortresses.getBoolean()) {
-                structureMap.put(StructureType.NetherFortress, getStructures(chunkProvider, MapGenNetherBridge.class));
+                structureMap.put(StructureType.NetherFortress, getStructures(chunkGenerator, MapGenNetherBridge.class));
             }
-        } else if(chunkProvider instanceof ChunkProviderEnd) {
+        } else if(chunkGenerator instanceof ChunkGeneratorEnd) {
             if (configManager.drawEndCities.getBoolean()) {
-                structureMap.put(StructureType.EndCity, getStructures(chunkProvider, MapGenEndCity.class));
+                structureMap.put(StructureType.EndCity, getStructures(chunkGenerator, MapGenEndCity.class));
             }
         }
 

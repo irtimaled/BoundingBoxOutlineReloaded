@@ -1,12 +1,12 @@
-diff -r -U 3 mcp931/src/minecraft/net/minecraft/client/renderer/EntityRenderer.java mcp931 2/src/minecraft/net/minecraft/client/renderer/EntityRenderer.java
---- mcp931/src/minecraft/net/minecraft/client/renderer/EntityRenderer.java  2016-08-17 23:44:17.000000000 +0100
-+++ mcp931 2/src/minecraft/net/minecraft/client/renderer/EntityRenderer.java  2016-08-27 18:56:55.000000000 +0100
-@@ -1466,8 +1466,6 @@
-             this.renderCloudsCheck(renderglobal, partialTicks, pass);
+diff -r -U 3 mcp940-pre1/src/minecraft/net/minecraft/client/renderer/EntityRenderer.java mcp940-pre1_1.12/src/minecraft/net/minecraft/client/renderer/EntityRenderer.java
+--- mcp940-pre1/src/minecraft/net/minecraft/client/renderer/EntityRenderer.java 2017-07-04 17:36:38.000000000 -0700
++++ mcp940-pre1_1.12/src/minecraft/net/minecraft/client/renderer/EntityRenderer.java  2017-07-04 16:04:15.000000000 -0700
+@@ -1483,6 +1483,8 @@
+             this.renderCloudsCheck(renderglobal, partialTicks, pass, d0, d1, d2);
          }
  
--        com.irtimaled.bbor.BoundingBoxOutlineReloaded.render(partialTicks);
--
++        com.irtimaled.bbor.BoundingBoxOutlineReloaded.render(partialTicks);
++
          this.mc.mcProfiler.endStartSection("hand");
  
          if (this.renderHand)

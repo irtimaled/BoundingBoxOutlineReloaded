@@ -2,8 +2,8 @@ package com.irtimaled.bbor;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
@@ -398,7 +398,7 @@ public class ClientProxy extends CommonProxy {
         Color color = villageBB.getColor();
         GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
         Tessellator tessellator = Tessellator.getInstance();
-        VertexBuffer worldRenderer = tessellator.getBuffer();
+        BufferBuilder worldRenderer = tessellator.getBuffer();
 
         int colorR = color.getRed();
         int colorG = color.getGreen();
@@ -438,7 +438,7 @@ public class ClientProxy extends CommonProxy {
 
     private void renderCuboid(AxisAlignedBB bb, int alphaChannel, Color color) {
         Tessellator tessellator = Tessellator.getInstance();
-        VertexBuffer worldRenderer = tessellator.getBuffer();
+        BufferBuilder worldRenderer = tessellator.getBuffer();
 
         int colorR = color.getRed();
         int colorG = color.getGreen();
@@ -552,7 +552,7 @@ public class ClientProxy extends CommonProxy {
         GL11.glPointSize(2f);
 
         Tessellator tessellator = Tessellator.getInstance();
-        VertexBuffer worldRenderer = tessellator.getBuffer();
+        BufferBuilder worldRenderer = tessellator.getBuffer();
         worldRenderer.begin(GL11.GL_POINTS, DefaultVertexFormats.POSITION_COLOR);
         for (OffsetPoint point : buildPoints(center, radius)) {
             worldRenderer.pos(point.getX(), point.getY(), point.getZ())

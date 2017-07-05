@@ -3,7 +3,7 @@ package com.irtimaled.bbor;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.IChunkGenerator;
+import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.ChunkProviderServer;
 
