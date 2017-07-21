@@ -4,6 +4,7 @@ import com.irtimaled.bbor.*;
 import com.irtimaled.bbor.forge.messages.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.DimensionType;
 import net.minecraftforge.event.world.ChunkEvent;
@@ -12,6 +13,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
@@ -26,11 +28,21 @@ public class ForgeCommonProxy implements IEventHandler {
 
     public Map<EntityPlayerMP, DimensionType> playerDimensions = new ConcurrentHashMap<EntityPlayerMP, DimensionType>();
     private Map<EntityPlayerMP, Set<BoundingBox>> playerBoundingBoxesCache = new HashMap<EntityPlayerMP, Set<BoundingBox>>();
+    public HashSet<EntityPlayerMP> registeredPlayers = new HashSet<EntityPlayerMP>();
 
     protected CommonProxy getProxy() {
         if (commonProxy == null)
             commonProxy = new CommonProxy();
         return commonProxy;
+    }
+
+    @SubscribeEvent
+    public void packetRegistrationEvent(FMLNetworkEvent.CustomPacketRegistrationEvent event) {
+        if (event.getOperation().equals("REGISTER") &&
+                event.getRegistrations().contains("bbor") &&
+                event.getHandler() instanceof NetHandlerPlayServer) {
+            registeredPlayers.add(((NetHandlerPlayServer) event.getHandler()).player);
+        }
     }
 
     protected SimpleNetworkWrapper network;
@@ -68,7 +80,7 @@ public class ForgeCommonProxy implements IEventHandler {
     }
 
     protected boolean isRemotePlayer(EntityPlayer player) {
-        return true;
+        return registeredPlayers.contains(player);
     }
 
     @SubscribeEvent
@@ -88,6 +100,7 @@ public class ForgeCommonProxy implements IEventHandler {
         if (playerDimensions.containsKey(evt.player)) {
             playerDimensions.remove(evt.player);
             playerBoundingBoxesCache.remove(evt.player);
+            registeredPlayers.remove(evt.player);
         }
     }
 
