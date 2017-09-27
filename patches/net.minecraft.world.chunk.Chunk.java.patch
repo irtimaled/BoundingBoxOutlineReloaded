@@ -1,10 +1,9 @@
-Only in mcp940-pre1_1.12/src/minecraft/net/minecraft/util: .DS_Store
-diff -r -U 3 mcp940-pre1/src/minecraft/net/minecraft/world/chunk/Chunk.java mcp940-pre1_1.12/src/minecraft/net/minecraft/world/chunk/Chunk.java
---- mcp940-pre1/src/minecraft/net/minecraft/world/chunk/Chunk.java  2017-07-04 17:36:38.000000000 -0700
-+++ mcp940-pre1_1.12/src/minecraft/net/minecraft/world/chunk/Chunk.java 2017-07-04 16:07:38.000000000 -0700
+diff -r -u a/net/minecraft/world/chunk/Chunk.java b/net/minecraft/world/chunk/Chunk.java
+--- a/net/minecraft/world/chunk/Chunk.java  2017-09-27 12:01:41.000000000 -0700
++++ b/net/minecraft/world/chunk/Chunk.java  2017-09-27 11:34:42.000000000 -0700
 @@ -935,6 +935,7 @@
          {
-             this.worldObj.loadEntities(classinheritancemultimap);
+             this.world.loadEntities(classinheritancemultimap);
          }
 +        com.irtimaled.bbor.BoundingBoxOutlineReloaded.chunkLoaded(this);
      }

@@ -1,6 +1,6 @@
-diff -r -U 3 mcp940-pre1/src/minecraft/net/minecraft/client/multiplayer/WorldClient.java mcp940-pre1_1.12/src/minecraft/net/minecraft/client/multiplayer/WorldClient.java
---- mcp940-pre1/src/minecraft/net/minecraft/client/multiplayer/WorldClient.java 2017-07-04 17:36:38.000000000 -0700
-+++ mcp940-pre1_1.12/src/minecraft/net/minecraft/client/multiplayer/WorldClient.java  2017-07-04 16:04:51.000000000 -0700
+diff -r -u a/net/minecraft/client/multiplayer/WorldClient.java b/net/minecraft/client/multiplayer/WorldClient.java
+--- a/net/minecraft/client/multiplayer/WorldClient.java 2017-09-27 12:01:40.000000000 -0700
++++ b/net/minecraft/client/multiplayer/WorldClient.java 2017-09-27 11:53:37.000000000 -0700
 @@ -320,6 +320,7 @@
      public void sendQuittingDisconnectingPacket()
      {

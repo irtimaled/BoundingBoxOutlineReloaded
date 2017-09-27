@@ -1,6 +1,6 @@
-diff -r -U 3 mcp940-pre1/src/minecraft/net/minecraft/network/NetworkManager.java mcp940-pre1_1.12/src/minecraft/net/minecraft/network/NetworkManager.java
---- mcp940-pre1/src/minecraft/net/minecraft/network/NetworkManager.java 2017-07-04 17:36:38.000000000 -0700
-+++ mcp940-pre1_1.12/src/minecraft/net/minecraft/network/NetworkManager.java  2017-07-04 17:54:02.000000000 -0700
+diff -r -u a/net/minecraft/network/NetworkManager.java b/net/minecraft/network/NetworkManager.java
+--- a/net/minecraft/network/NetworkManager.java 2017-09-27 12:01:41.000000000 -0700
++++ b/net/minecraft/network/NetworkManager.java 2017-09-27 11:53:38.000000000 -0700
 @@ -32,6 +32,7 @@
  import java.util.concurrent.locks.ReentrantReadWriteLock;
  import javax.annotation.Nullable;

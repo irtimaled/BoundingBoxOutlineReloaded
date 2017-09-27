@@ -1,6 +1,6 @@
-diff -r -U 3 mcp940-pre1/src/minecraft/net/minecraft/client/renderer/EntityRenderer.java mcp940-pre1_1.12/src/minecraft/net/minecraft/client/renderer/EntityRenderer.java
---- mcp940-pre1/src/minecraft/net/minecraft/client/renderer/EntityRenderer.java 2017-07-04 17:36:38.000000000 -0700
-+++ mcp940-pre1_1.12/src/minecraft/net/minecraft/client/renderer/EntityRenderer.java  2017-07-04 16:04:15.000000000 -0700
+diff -r -u a/net/minecraft/client/renderer/EntityRenderer.java b/net/minecraft/client/renderer/EntityRenderer.java
+--- a/net/minecraft/client/renderer/EntityRenderer.java 2017-09-27 12:01:40.000000000 -0700
++++ b/net/minecraft/client/renderer/EntityRenderer.java 2017-09-27 11:53:37.000000000 -0700
 @@ -1483,6 +1483,8 @@
              this.renderCloudsCheck(renderglobal, partialTicks, pass, d0, d1, d2);
          }

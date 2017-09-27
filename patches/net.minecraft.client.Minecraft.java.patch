@@ -1,7 +1,7 @@
-diff -r -U 3 mcp940-pre1/src/minecraft/net/minecraft/client/Minecraft.java mcp940-pre1_1.12/src/minecraft/net/minecraft/client/Minecraft.java
---- mcp940-pre1/src/minecraft/net/minecraft/client/Minecraft.java 2017-07-04 17:36:37.000000000 -0700
-+++ mcp940-pre1_1.12/src/minecraft/net/minecraft/client/Minecraft.java  2017-07-04 16:03:22.000000000 -0700
-@@ -633,6 +633,8 @@
+diff -r -u a/net/minecraft/client/Minecraft.java b/net/minecraft/client/Minecraft.java
+--- a/net/minecraft/client/Minecraft.java 2017-09-27 12:01:40.000000000 -0700
++++ b/net/minecraft/client/Minecraft.java 2017-09-27 11:30:01.000000000 -0700
+@@ -643,6 +643,8 @@
          }
  
          this.renderGlobal.makeEntityOutlineShader();
@@ -9,8 +9,8 @@ diff -r -U 3 mcp940-pre1/src/minecraft/net/minecraft/client/Minecraft.java mcp94
 +        com.irtimaled.bbor.BoundingBoxOutlineReloaded.init();
      }
  
-     private void func_193986_ar()
-@@ -2242,6 +2244,8 @@
+     /**
+@@ -2276,6 +2278,8 @@
              this.gameSettings.smoothCamera = !this.gameSettings.smoothCamera;
          }
  
@@ -18,4 +18,4 @@ diff -r -U 3 mcp940-pre1/src/minecraft/net/minecraft/client/Minecraft.java mcp94
 +
          for (int i = 0; i < 9; ++i)
          {
-             boolean flag = this.gameSettings.field_193629_ap.isKeyDown();
+             boolean flag = this.gameSettings.keyBindSaveToolbar.isKeyDown();

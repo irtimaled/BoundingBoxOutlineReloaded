@@ -529,13 +529,13 @@ public class ClientProxy extends CommonProxy {
     }
 
     private AxisAlignedBB offsetAxisAlignedBB(AxisAlignedBB axisAlignedBB) {
-        double expandXZ = 0.001F;
-        double expandY = 0;
+        double growXZ = 0.001F;
+        double growY = 0;
         if (axisAlignedBB.minY != axisAlignedBB.maxY) {
-            expandY = expandXZ;
+            growY = growXZ;
         }
         return axisAlignedBB
-                .expand(expandXZ, expandY, expandXZ)
+                .grow(growXZ, growY, growXZ)
                 .offset(-playerX, -playerY, -playerZ);
     }
 
