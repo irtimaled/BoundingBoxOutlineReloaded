@@ -3,6 +3,7 @@ package com.irtimaled.bbor.forge;
 import com.irtimaled.bbor.Logger;
 import com.irtimaled.bbor.common.BoundingBoxCache;
 import com.irtimaled.bbor.common.CommonProxy;
+import com.irtimaled.bbor.common.DimensionCache;
 import com.irtimaled.bbor.common.IEventHandler;
 import com.irtimaled.bbor.common.models.BoundingBox;
 import com.irtimaled.bbor.common.models.WorldData;
@@ -80,7 +81,7 @@ public class ForgeCommonProxy implements IEventHandler {
             DimensionType dimensionType = DimensionType.getById(player.dimension);
             playerDimensions.put(player, dimensionType);
 
-            sendToPlayer(player, getProxy().boundingBoxCacheMap.get(dimensionType));
+            sendToPlayer(player, getDimensionCache().getBoundingBoxes(dimensionType));
         }
     }
 
@@ -96,7 +97,7 @@ public class ForgeCommonProxy implements IEventHandler {
             initializeClient(player);
             DimensionType dimensionType = DimensionType.getById(player.dimension);
             playerDimensions.put(player, dimensionType);
-            sendToPlayer(player, getProxy().boundingBoxCacheMap.get(dimensionType));
+            sendToPlayer(player, getDimensionCache().getBoundingBoxes(dimensionType));
         }
     }
 
@@ -117,15 +118,13 @@ public class ForgeCommonProxy implements IEventHandler {
                 playerDimensions.remove(player);
             } else {
                 DimensionType dimensionType = playerDimensions.get(player);
-                if (getProxy().boundingBoxCacheMap.containsKey(dimensionType)) {
-                    sendToPlayer(player, getProxy().boundingBoxCacheMap.get(dimensionType));
-                }
+                sendToPlayer(player, getDimensionCache().getBoundingBoxes(dimensionType));
             }
         }
     }
 
     private void initializeClient(EntityPlayerMP player) {
-        network.sendTo(InitializeClientMessage.from(getProxy().getWorldData()), player);
+        network.sendTo(InitializeClientMessage.from(getDimensionCache().getWorldData()), player);
     }
 
     private void sendToPlayer(EntityPlayerMP player, BoundingBoxCache boundingBoxCache) {
@@ -175,23 +174,26 @@ public class ForgeCommonProxy implements IEventHandler {
     }
 
     public void setWorldData(WorldData worldData) {
-        getProxy().setWorldData(worldData);
+        getDimensionCache().setWorldData(worldData.getSeed(), worldData.getSpawnX(), worldData.getSpawnZ());
     }
 
     public void addBoundingBox(DimensionType dimensionType, BoundingBox key, Set<BoundingBox> boundingBoxes) {
-        Map<DimensionType, BoundingBoxCache> boundingBoxCacheMap = getProxy().boundingBoxCacheMap;
-        if (!boundingBoxCacheMap.containsKey(dimensionType)) {
-            boundingBoxCacheMap.put(dimensionType, new BoundingBoxCache());
+        DimensionCache dimensionCache = getDimensionCache();
+        BoundingBoxCache cache = dimensionCache.getBoundingBoxes(dimensionType);
+        if (cache == null) {
+            dimensionCache.put(dimensionType, cache = new BoundingBoxCache());
         }
-
-        boundingBoxCacheMap.get(dimensionType).addBoundingBoxes(key, boundingBoxes);
+        cache.addBoundingBoxes(key, boundingBoxes);
     }
 
     public void removeBoundingBox(DimensionType dimensionType, BoundingBox key) {
-        Map<DimensionType, BoundingBoxCache> boundingBoxCacheMap = getProxy().boundingBoxCacheMap;
-
-        if (boundingBoxCacheMap.containsKey(dimensionType)) {
-            boundingBoxCacheMap.get(dimensionType).removeBoundingBox(key);
+        BoundingBoxCache cache = getDimensionCache().getBoundingBoxes(dimensionType);
+        if (cache != null) {
+            cache.removeBoundingBox(key);
         }
+    }
+
+    private DimensionCache getDimensionCache() {
+        return getProxy().getDimensionCache();
     }
 }

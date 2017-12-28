@@ -65,14 +65,6 @@ public class ClientProxy extends CommonProxy {
         Minecraft.getMinecraft().gameSettings.keyBindings = ArrayUtils.addAll(Minecraft.getMinecraft().gameSettings.keyBindings, activeHotKey, outerBoxOnlyHotKey);
     }
 
-    @Override
-    public void setWorldData(WorldData worldData) {
-        worldSpawnBoundingBox = null;
-        spawnChunksBoundingBox = null;
-        lazySpawnChunksBoundingBox = null;
-        super.setWorldData(worldData);
-    }
-
     public void render(float partialTicks) {
         EntityPlayer entityPlayer = Minecraft.getMinecraft().player;
         PlayerData.setPlayerPosition(partialTicks, entityPlayer);
@@ -80,8 +72,9 @@ public class ClientProxy extends CommonProxy {
         if (this.active) {
             DimensionType dimensionType = DimensionType.getById(entityPlayer.dimension);
             Map<BoundingBox, Set<BoundingBox>> boundingBoxes = null;
-            if (boundingBoxCacheMap.containsKey(dimensionType)) {
-                boundingBoxes = boundingBoxCacheMap.get(dimensionType).getBoundingBoxes();
+            BoundingBoxCache boundingBoxCache = dimensionCache.getBoundingBoxes(dimensionType);
+            if (boundingBoxCache != null) {
+                boundingBoxes = boundingBoxCache.getBoundingBoxes();
             }
             renderBoundingBoxes(boundingBoxes, getClientBoundingBoxes(dimensionType));
         }
@@ -147,7 +140,7 @@ public class ClientProxy extends CommonProxy {
             loadVillageNbtFile(localStructuresFolder, cache, "Villages.dat");
         }
 
-        boundingBoxCacheMap.put(DimensionType.OVERWORLD, cache);
+        dimensionCache.put(DimensionType.OVERWORLD, cache);
     }
 
     private void loadNetherStructures(File localStructuresFolder) {
@@ -157,7 +150,7 @@ public class ClientProxy extends CommonProxy {
         if (ConfigManager.drawVillages.getBoolean()) {
             loadVillageNbtFile(localStructuresFolder, cache, "villages_nether.dat");
         }
-        boundingBoxCacheMap.put(DimensionType.NETHER, cache);
+        dimensionCache.put(DimensionType.NETHER, cache);
     }
 
     private void loadEndStructures(File localStructuresFolder) {
@@ -168,7 +161,7 @@ public class ClientProxy extends CommonProxy {
         if (ConfigManager.drawEndCities.getBoolean()) {
             loadStructureNbtFile(localStructuresFolder, cache, "EndCity.dat", StructureType.EndCity.getColor(), "*");
         }
-        boundingBoxCacheMap.put(DimensionType.THE_END, cache);
+        dimensionCache.put(DimensionType.THE_END, cache);
     }
 
     private void loadVillageNbtFile(File localStructuresFolder, BoundingBoxCache cache, String fileName) {
@@ -243,8 +236,8 @@ public class ClientProxy extends CommonProxy {
         long seed = data.getLong("RandomSeed");
         int spawnX = data.getInteger("SpawnX");
         int spawnZ = data.getInteger("SpawnZ");
-        setWorldData(new WorldData(seed, spawnX, spawnZ));
-        Logger.info("Loaded level.dat (seed: %d, spawn: %d,%d)", worldData.getSeed(), worldData.getSpawnX(), worldData.getSpawnZ());
+        dimensionCache.setWorldData(seed, spawnX, spawnZ);
+        Logger.info("Loaded level.dat (seed: %d, spawn: %d,%d)", seed, spawnX, spawnZ);
     }
 
     private NBTTagCompound loadNbtFile(File file) {
@@ -260,13 +253,10 @@ public class ClientProxy extends CommonProxy {
     public void playerDisconnectedFromServer() {
         active = false;
         if (ConfigManager.keepCacheBetweenSessions.getBoolean()) return;
-        worldData = null;
         worldSpawnBoundingBox = null;
         spawnChunksBoundingBox = null;
-        for (BoundingBoxCache cache : boundingBoxCacheMap.values()) {
-            cache.close();
-        }
-        boundingBoxCacheMap.clear();
+        lazySpawnChunksBoundingBox = null;
+        dimensionCache.clear();
     }
 
     private void renderBoundingBoxes(Map<BoundingBox, Set<BoundingBox>> map, Set<BoundingBox> clientBoundingBoxes) {
@@ -603,6 +593,7 @@ public class ClientProxy extends CommonProxy {
     }
 
     private Set<BoundingBox> getClientBoundingBoxes(DimensionType dimensionType) {
+        WorldData worldData = dimensionCache.getWorldData();
         if (worldData == null || dimensionType != DimensionType.OVERWORLD) {
             return null;
         }
@@ -643,6 +634,7 @@ public class ClientProxy extends CommonProxy {
     }
 
     private boolean isSlimeChunk(int chunkX, int chunkZ) {
+        WorldData worldData = dimensionCache.getWorldData();
         Random r = new Random(worldData.getSeed() +
                 (long) (chunkX * chunkX * 4987142) +
                 (long) (chunkX * 5947611) +
