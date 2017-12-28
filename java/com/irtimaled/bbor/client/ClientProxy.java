@@ -38,14 +38,10 @@ import java.util.Random;
 import java.util.Set;
 
 public class ClientProxy extends CommonProxy {
-    private double activeY;
     private boolean active;
     private boolean outerBoxOnly;
     private KeyBinding activeHotKey;
     private KeyBinding outerBoxOnlyHotKey;
-    private double playerX;
-    private double playerY;
-    private double playerZ;
     private BoundingBox worldSpawnBoundingBox;
     private BoundingBox spawnChunksBoundingBox;
     private BoundingBox lazySpawnChunksBoundingBox;
@@ -54,7 +50,7 @@ public class ClientProxy extends CommonProxy {
         if (activeHotKey.isPressed()) {
             active = !active;
             if (active)
-                activeY = playerY;
+                PlayerData.setActiveY();
         } else if (outerBoxOnlyHotKey.isPressed()) {
             outerBoxOnly = !outerBoxOnly;
         }
@@ -79,9 +75,7 @@ public class ClientProxy extends CommonProxy {
 
     public void render(float partialTicks) {
         EntityPlayer entityPlayer = Minecraft.getMinecraft().player;
-        playerX = entityPlayer.lastTickPosX + (entityPlayer.posX - entityPlayer.lastTickPosX) * (double) partialTicks;
-        playerY = entityPlayer.lastTickPosY + (entityPlayer.posY - entityPlayer.lastTickPosY) * (double) partialTicks;
-        playerZ = entityPlayer.lastTickPosZ + (entityPlayer.posZ - entityPlayer.lastTickPosZ) * (double) partialTicks;
+        PlayerData.setPlayerPosition(partialTicks, entityPlayer);
 
         if (this.active) {
             DimensionType dimensionType = DimensionType.getById(entityPlayer.dimension);
@@ -349,7 +343,7 @@ public class ClientProxy extends CommonProxy {
     private void renderWorldSpawn(BoundingBoxWorldSpawn bb) {
         AxisAlignedBB aaBB = bb.toAxisAlignedBB(false);
         Color color = bb.getColor();
-        double y = getMaxY(ConfigManager.worldSpawnMaxY.getInt()) + 0.001F;
+        double y = PlayerData.getMaxY(ConfigManager.worldSpawnMaxY.getInt()) + 0.001F;
         renderRectangle(aaBB, y, y, color, false);
     }
 
@@ -358,19 +352,10 @@ public class ClientProxy extends CommonProxy {
         Color color = bb.getColor();
         renderCuboid(aaBB, color, fill());
 
-        double maxY = getMaxY(ConfigManager.slimeChunkMaxY.getInt());
+        double maxY = PlayerData.getMaxY(ConfigManager.slimeChunkMaxY.getInt());
         if (maxY > 39) {
             renderRectangle(aaBB, 39, maxY, color, fill());
         }
-    }
-
-    private double getMaxY(double configMaxY) {
-        if (configMaxY == -1) {
-            return activeY;
-        } else if ((configMaxY == 0) || (playerY < configMaxY)) {
-            return playerY;
-        }
-        return configMaxY;
     }
 
     private void renderRectangle(AxisAlignedBB aaBB, double minY, double maxY, Color color, Boolean fill) {
@@ -538,7 +523,7 @@ public class ClientProxy extends CommonProxy {
         }
         return axisAlignedBB
                 .grow(growXZ, growY, growXZ)
-                .offset(-playerX, -playerY, -playerZ);
+                .offset(-PlayerData.getX(), -PlayerData.getY(), -PlayerData.getZ());
     }
 
     private void renderBoundingBoxVillageAsSphere(BoundingBoxVillage bb) {
@@ -583,15 +568,15 @@ public class ClientProxy extends CommonProxy {
         }
 
         public double getX() {
-            return x - playerX;
+            return x - PlayerData.getX();
         }
 
         public double getY() {
-            return y - playerY;
+            return y - PlayerData.getY();
         }
 
         public double getZ() {
-            return z - playerZ;
+            return z - PlayerData.getZ();
         }
 
         public OffsetPoint add(double x, double y, double z) {
