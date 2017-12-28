@@ -61,8 +61,8 @@ public class ClientProxy extends CommonProxy {
     }
 
     @Override
-    public void init(ConfigManager configManager) {
-        super.init(configManager);
+    public void init() {
+        super.init();
         String category = "Bounding Box Outline Reloaded";
         activeHotKey = new KeyBinding("Toggle On/Off", Keyboard.KEY_B, category);
         outerBoxOnlyHotKey = new KeyBinding("Toggle Display Outer Box Only", Keyboard.KEY_O, category);
@@ -104,16 +104,16 @@ public class ClientProxy extends CommonProxy {
     private void loadLocalStructures(String host, int port) {
         Logger.info("Looking for local structures (host:port=%s:%d)", host, port);
         String path = String.format("BBOutlineReloaded%s%s%s%d", File.separator, host, File.separator, port);
-        File localStructuresFolder = new File(configManager.configDir, path);
+        File localStructuresFolder = new File(ConfigManager.configDir, path);
         Logger.info("Looking for local structures (folder=%s)", localStructuresFolder.getAbsolutePath());
         if (!localStructuresFolder.exists()) {
             path = String.format("BBOutlineReloaded%s%s", File.separator, host);
-            localStructuresFolder = new File(configManager.configDir, path);
+            localStructuresFolder = new File(ConfigManager.configDir, path);
             Logger.info("Looking for local structures (folder=%s)", localStructuresFolder.getAbsolutePath());
         }
         if (!localStructuresFolder.exists()) {
             path = String.format("BBOutlineReloaded%s%s,%d", File.separator, host, port);
-            localStructuresFolder = new File(configManager.configDir, path);
+            localStructuresFolder = new File(ConfigManager.configDir, path);
             Logger.info("Looking for local structures (folder=%s)", localStructuresFolder.getAbsolutePath());
         }
         if (!localStructuresFolder.exists()) {
@@ -128,28 +128,28 @@ public class ClientProxy extends CommonProxy {
 
     private void loadOverworldStructures(File localStructuresFolder) {
         BoundingBoxCache cache = new BoundingBoxCache();
-        if (configManager.drawDesertTemples.getBoolean()) {
+        if (ConfigManager.drawDesertTemples.getBoolean()) {
             loadStructureNbtFile(localStructuresFolder, cache, "Temple.dat", StructureType.DesertTemple.getColor(), "TeDP");
         }
-        if (configManager.drawJungleTemples.getBoolean()) {
+        if (ConfigManager.drawJungleTemples.getBoolean()) {
             loadStructureNbtFile(localStructuresFolder, cache, "Temple.dat", StructureType.JungleTemple.getColor(), "TeJP");
         }
-        if (configManager.drawWitchHuts.getBoolean()) {
+        if (ConfigManager.drawWitchHuts.getBoolean()) {
             loadStructureNbtFile(localStructuresFolder, cache, "Temple.dat", StructureType.WitchHut.getColor(), "TeSH");
         }
-        if (configManager.drawOceanMonuments.getBoolean()) {
+        if (ConfigManager.drawOceanMonuments.getBoolean()) {
             loadStructureNbtFile(localStructuresFolder, cache, "Monument.dat", StructureType.OceanMonument.getColor(), "*");
         }
-        if (configManager.drawStrongholds.getBoolean()) {
+        if (ConfigManager.drawStrongholds.getBoolean()) {
             loadStructureNbtFile(localStructuresFolder, cache, "Stronghold.dat", StructureType.Stronghold.getColor(), "*");
         }
-        if (configManager.drawMansions.getBoolean()) {
+        if (ConfigManager.drawMansions.getBoolean()) {
             loadStructureNbtFile(localStructuresFolder, cache, "Mansion.dat", StructureType.Mansion.getColor(), "*");
         }
-        if (configManager.drawMineShafts.getBoolean()) {
+        if (ConfigManager.drawMineShafts.getBoolean()) {
             loadStructureNbtFile(localStructuresFolder, cache, "Mineshaft.dat", StructureType.MineShaft.getColor(), "*");
         }
-        if (configManager.drawVillages.getBoolean()) {
+        if (ConfigManager.drawVillages.getBoolean()) {
             loadVillageNbtFile(localStructuresFolder, cache, "Villages.dat");
         }
 
@@ -158,9 +158,9 @@ public class ClientProxy extends CommonProxy {
 
     private void loadNetherStructures(File localStructuresFolder) {
         BoundingBoxCache cache = new BoundingBoxCache();
-        if (configManager.drawNetherFortresses.getBoolean())
+        if (ConfigManager.drawNetherFortresses.getBoolean())
             loadStructureNbtFile(localStructuresFolder, cache, "Fortress.dat", StructureType.NetherFortress.getColor(), "*");
-        if (configManager.drawVillages.getBoolean()) {
+        if (ConfigManager.drawVillages.getBoolean()) {
             loadVillageNbtFile(localStructuresFolder, cache, "villages_nether.dat");
         }
         boundingBoxCacheMap.put(DimensionType.NETHER, cache);
@@ -168,10 +168,10 @@ public class ClientProxy extends CommonProxy {
 
     private void loadEndStructures(File localStructuresFolder) {
         BoundingBoxCache cache = new BoundingBoxCache();
-        if (configManager.drawVillages.getBoolean()) {
+        if (ConfigManager.drawVillages.getBoolean()) {
             loadVillageNbtFile(localStructuresFolder, cache, "Villages_end.dat");
         }
-        if (configManager.drawEndCities.getBoolean()) {
+        if (ConfigManager.drawEndCities.getBoolean()) {
             loadStructureNbtFile(localStructuresFolder, cache, "EndCity.dat", StructureType.EndCity.getColor(), "*");
         }
         boundingBoxCacheMap.put(DimensionType.THE_END, cache);
@@ -265,7 +265,7 @@ public class ClientProxy extends CommonProxy {
 
     public void playerDisconnectedFromServer() {
         active = false;
-        if (configManager.keepCacheBetweenSessions.getBoolean()) return;
+        if (ConfigManager.keepCacheBetweenSessions.getBoolean()) return;
         worldData = null;
         worldSpawnBoundingBox = null;
         spawnChunksBoundingBox = null;
@@ -284,7 +284,7 @@ public class ClientProxy extends CommonProxy {
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glDisable(GL11.GL_CULL_FACE);
 
-        if (configManager.alwaysVisible.getBoolean()) {
+        if (ConfigManager.alwaysVisible.getBoolean()) {
             GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
         }
 
@@ -320,16 +320,16 @@ public class ClientProxy extends CommonProxy {
 
         if (bb instanceof BoundingBoxVillage) {
             BoundingBoxVillage villageBB = (BoundingBoxVillage) bb;
-            if (configManager.renderVillageAsSphere.getBoolean()) {
+            if (ConfigManager.renderVillageAsSphere.getBoolean()) {
                 renderBoundingBoxVillageAsSphere(villageBB);
             } else {
                 renderBoundingBox(villageBB);
             }
-            if (configManager.drawIronGolemSpawnArea.getBoolean() &&
+            if (ConfigManager.drawIronGolemSpawnArea.getBoolean() &&
                     villageBB.getSpawnsIronGolems()) {
                 renderIronGolemSpawnArea(villageBB);
             }
-            if (configManager.drawVillageDoors.getBoolean())
+            if (ConfigManager.drawVillageDoors.getBoolean())
                 renderVillageDoors(villageBB);
         } else if (bb instanceof BoundingBoxSlimeChunk) {
             renderSlimeChunk((BoundingBoxSlimeChunk) bb);
@@ -349,7 +349,7 @@ public class ClientProxy extends CommonProxy {
     private void renderWorldSpawn(BoundingBoxWorldSpawn bb) {
         AxisAlignedBB aaBB = bb.toAxisAlignedBB(false);
         Color color = bb.getColor();
-        double y = getMaxY(configManager.worldSpawnMaxY.getInt()) + 0.001F;
+        double y = getMaxY(ConfigManager.worldSpawnMaxY.getInt()) + 0.001F;
         renderRectangle(aaBB, y, y, color, false);
     }
 
@@ -358,7 +358,7 @@ public class ClientProxy extends CommonProxy {
         Color color = bb.getColor();
         renderCuboid(aaBB, color, fill());
 
-        double maxY = getMaxY(configManager.slimeChunkMaxY.getInt());
+        double maxY = getMaxY(ConfigManager.slimeChunkMaxY.getInt());
         if (maxY > 39) {
             renderRectangle(aaBB, 39, maxY, color, fill());
         }
@@ -379,7 +379,7 @@ public class ClientProxy extends CommonProxy {
     }
 
     private boolean fill() {
-        return configManager.fill.getBoolean();
+        return ConfigManager.fill.getBoolean();
     }
 
     private void renderIronGolemSpawnArea(BoundingBoxVillage villageBB) {
@@ -623,14 +623,14 @@ public class ClientProxy extends CommonProxy {
         }
 
         Set<BoundingBox> boundingBoxes = new HashSet<>();
-        if (configManager.drawWorldSpawn.getBoolean()) {
+        if (ConfigManager.drawWorldSpawn.getBoolean()) {
             boundingBoxes.add(getWorldSpawnBoundingBox(worldData.getSpawnX(), worldData.getSpawnZ()));
             boundingBoxes.add(getSpawnChunksBoundingBox(worldData.getSpawnX(), worldData.getSpawnZ()));
         }
-        if (configManager.drawLazySpawnChunks.getBoolean()) {
+        if (ConfigManager.drawLazySpawnChunks.getBoolean()) {
             boundingBoxes.add(getLazySpawnChunksBoundingBox(worldData.getSpawnX(), worldData.getSpawnZ()));
         }
-        if (configManager.drawSlimeChunks.getBoolean()) {
+        if (ConfigManager.drawSlimeChunks.getBoolean()) {
             boundingBoxes.addAll(this.getSlimeChunks());
         }
         return boundingBoxes;

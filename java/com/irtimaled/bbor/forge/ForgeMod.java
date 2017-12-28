@@ -15,8 +15,6 @@ public class ForgeMod {
     public static final String VERSION = "1.0.0-beta18";
     public static final String MCVERSION = "1.12";
 
-    private ConfigManager configManager;
-
     public SimpleNetworkWrapper network;
 
     @Mod.Instance()
@@ -27,12 +25,12 @@ public class ForgeMod {
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent evt) {
-        configManager = new ConfigManager(evt.getModConfigurationDirectory());
+        ConfigManager.loadConfig(evt.getModConfigurationDirectory());
     }
 
     @Mod.EventHandler
     public void load(FMLInitializationEvent evt) {
         MinecraftForge.EVENT_BUS.register(proxy);
-        proxy.init(configManager);
+        proxy.init();
     }
 }

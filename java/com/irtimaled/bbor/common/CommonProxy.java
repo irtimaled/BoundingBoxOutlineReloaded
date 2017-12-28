@@ -17,12 +17,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CommonProxy {
     public Map<DimensionType, BoundingBoxCache> boundingBoxCacheMap = new ConcurrentHashMap<>();
 
-    public ConfigManager configManager;
     protected WorldData worldData;
     private IEventHandler eventHandler = null;
 
-    public void init(ConfigManager configManager) {
-        this.configManager = configManager;
+    public void init() {
     }
 
     public void worldLoaded(World world) {
@@ -32,7 +30,7 @@ public class CommonProxy {
             setWorldData(new WorldData(world.getSeed(), world.getWorldInfo().getSpawnX(), world.getWorldInfo().getSpawnZ()));
             DimensionType dimensionType = world.provider.getDimensionType();
             Logger.info("create world dimension: %s, %s (chunkprovider: %s) (seed: %d)", dimensionType, world.getClass().toString(), chunkGenerator.getClass().toString(), worldData.getSeed());
-            boundingBoxCacheMap.put(dimensionType, new DimensionProcessor(eventHandler, configManager, world, dimensionType, chunkGenerator));
+            boundingBoxCacheMap.put(dimensionType, new DimensionProcessor(eventHandler, world, dimensionType, chunkGenerator));
         }
     }
 

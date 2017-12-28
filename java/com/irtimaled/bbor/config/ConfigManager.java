@@ -3,34 +3,34 @@ package com.irtimaled.bbor.config;
 import java.io.File;
 
 public class ConfigManager {
-    public final File configDir;
+    public static File configDir;
 
-    public Setting fill;
-    public Setting drawVillages;
-    public Setting drawDesertTemples;
-    public Setting drawJungleTemples;
-    public Setting drawWitchHuts;
-    public Setting drawStrongholds;
-    public Setting drawMineShafts;
-    public Setting drawNetherFortresses;
-    public Setting drawOceanMonuments;
-    public Setting alwaysVisible;
-    public Setting renderVillageAsSphere;
-    public Setting drawIronGolemSpawnArea;
-    public Setting drawVillageDoors;
-    public Setting drawSlimeChunks;
-    public Setting slimeChunkMaxY;
-    public Setting keepCacheBetweenSessions;
-    public Setting drawWorldSpawn;
-    public Setting worldSpawnMaxY;
-    public Setting drawLazySpawnChunks;
-    public Setting drawEndCities;
-    public Setting drawMansions;
+    public static Setting fill;
+    public static Setting drawVillages;
+    public static Setting drawDesertTemples;
+    public static Setting drawJungleTemples;
+    public static Setting drawWitchHuts;
+    public static Setting drawStrongholds;
+    public static Setting drawMineShafts;
+    public static Setting drawNetherFortresses;
+    public static Setting drawOceanMonuments;
+    public static Setting alwaysVisible;
+    public static Setting renderVillageAsSphere;
+    public static Setting drawIronGolemSpawnArea;
+    public static Setting drawVillageDoors;
+    public static Setting drawSlimeChunks;
+    public static Setting slimeChunkMaxY;
+    public static Setting keepCacheBetweenSessions;
+    public static Setting drawWorldSpawn;
+    public static Setting worldSpawnMaxY;
+    public static Setting drawLazySpawnChunks;
+    public static Setting drawEndCities;
+    public static Setting drawMansions;
 
-    private Configuration config;
+    private static Configuration config;
 
-    public ConfigManager(File configDir) {
-        this.configDir = configDir;
+    public static void loadConfig(File mcConfigDir) {
+        configDir = mcConfigDir;
         config = new Configuration(new File(configDir, "BBOutlineReloaded.cfg"));
         config.load();
 
@@ -58,14 +58,14 @@ public class ConfigManager {
         config.save();
     }
 
-    private Setting SetupBooleanProperty(Configuration config, String category, String settingName, Boolean defaultValue, String comment) {
+    private static Setting SetupBooleanProperty(Configuration config, String category, String settingName, Boolean defaultValue, String comment) {
         Setting property = config.get(category, settingName, defaultValue);
         property.comment = comment;
         property.set(property.getBoolean(defaultValue));
         return property;
     }
 
-    private Setting SetupIntegerProperty(Configuration config, String category, String settingName, int defaultValue, String comment) {
+    private static Setting SetupIntegerProperty(Configuration config, String category, String settingName, int defaultValue, String comment) {
         Setting property = config.get(category, settingName, defaultValue);
         property.comment = comment;
         property.set(property.getInt(defaultValue));

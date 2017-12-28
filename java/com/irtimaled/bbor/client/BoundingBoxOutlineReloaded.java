@@ -9,11 +9,12 @@ import net.minecraft.world.chunk.Chunk;
 import java.io.File;
 
 public class BoundingBoxOutlineReloaded {
-    public static ClientProxy proxy;
+    private static ClientProxy proxy;
 
     public static void init() {
+        ConfigManager.loadConfig(new File(Minecraft.getMinecraft().mcDataDir, "config"));
         proxy = new ClientProxy();
-        proxy.init(new ConfigManager(new File(Minecraft.getMinecraft().mcDataDir, "config")));
+        proxy.init();
     }
 
     public static void chunkLoaded(Chunk chunk) {

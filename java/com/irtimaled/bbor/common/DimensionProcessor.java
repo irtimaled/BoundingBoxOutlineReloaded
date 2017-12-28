@@ -23,13 +23,11 @@ import java.util.*;
 import java.util.List;
 
 public class DimensionProcessor extends BoundingBoxCache {
-    private ConfigManager configManager;
     private World world;
     private IEventHandler eventHandler;
 
-    public DimensionProcessor(IEventHandler eventHandler, ConfigManager configManager, World world, DimensionType dimensionType, IChunkGenerator chunkGenerator) {
+    public DimensionProcessor(IEventHandler eventHandler, World world, DimensionType dimensionType, IChunkGenerator chunkGenerator) {
         this.eventHandler = eventHandler;
-        this.configManager = configManager;
         this.world = world;
         this.dimensionType = dimensionType;
         this.chunkGenerator = chunkGenerator;
@@ -69,39 +67,39 @@ public class DimensionProcessor extends BoundingBoxCache {
     private Map<StructureType, Collection<StructureStart>> getStructures() {
         Map<StructureType, Collection<StructureStart>> structureMap = new HashMap<>();
         if (chunkGenerator instanceof ChunkGeneratorOverworld) {
-            if (configManager.drawDesertTemples.getBoolean()) {
+            if (ConfigManager.drawDesertTemples.getBoolean()) {
                 structureMap.put(StructureType.DesertTemple, getStructuresWithComponent(getStructures(chunkGenerator, MapGenScatteredFeature.class), ComponentScatteredFeaturePieces.DesertPyramid.class));
             }
 
-            if (configManager.drawJungleTemples.getBoolean()) {
+            if (ConfigManager.drawJungleTemples.getBoolean()) {
                 structureMap.put(StructureType.JungleTemple, getStructuresWithComponent(getStructures(chunkGenerator, MapGenScatteredFeature.class), ComponentScatteredFeaturePieces.JunglePyramid.class));
             }
 
-            if (configManager.drawWitchHuts.getBoolean()) {
+            if (ConfigManager.drawWitchHuts.getBoolean()) {
                 structureMap.put(StructureType.WitchHut, getStructuresWithComponent(getStructures(chunkGenerator, MapGenScatteredFeature.class), ComponentScatteredFeaturePieces.SwampHut.class));
             }
 
-            if (configManager.drawOceanMonuments.getBoolean()) {
+            if (ConfigManager.drawOceanMonuments.getBoolean()) {
                 structureMap.put(StructureType.OceanMonument, getStructures(chunkGenerator, StructureOceanMonument.class));
             }
 
-            if (configManager.drawStrongholds.getBoolean()) {
+            if (ConfigManager.drawStrongholds.getBoolean()) {
                 structureMap.put(StructureType.Stronghold, getStructures(chunkGenerator, MapGenStronghold.class));
             }
 
-            if (configManager.drawMansions.getBoolean()) {
+            if (ConfigManager.drawMansions.getBoolean()) {
                 structureMap.put(StructureType.Mansion, getStructures(chunkGenerator, WoodlandMansion.class));
             }
 
-            if (configManager.drawMineShafts.getBoolean()) {
+            if (ConfigManager.drawMineShafts.getBoolean()) {
                 structureMap.put(StructureType.MineShaft, getStructures(chunkGenerator, MapGenMineshaft.class));
             }
         } else if (chunkGenerator instanceof ChunkGeneratorHell) {
-            if (configManager.drawNetherFortresses.getBoolean()) {
+            if (ConfigManager.drawNetherFortresses.getBoolean()) {
                 structureMap.put(StructureType.NetherFortress, getStructures(chunkGenerator, MapGenNetherBridge.class));
             }
         } else if (chunkGenerator instanceof ChunkGeneratorEnd) {
-            if (configManager.drawEndCities.getBoolean()) {
+            if (ConfigManager.drawEndCities.getBoolean()) {
                 structureMap.put(StructureType.EndCity, getStructures(chunkGenerator, MapGenEndCity.class));
             }
         }
@@ -141,7 +139,7 @@ public class DimensionProcessor extends BoundingBoxCache {
             }
         }
 
-        if (configManager.drawVillages.getBoolean() &&
+        if (ConfigManager.drawVillages.getBoolean() &&
                 world.getVillageCollection() != null) {
             Map<Integer, BoundingBoxVillage> villageBoundingBoxes = new HashMap<>();
             List<Village> villages = world.getVillageCollection().getVillageList();

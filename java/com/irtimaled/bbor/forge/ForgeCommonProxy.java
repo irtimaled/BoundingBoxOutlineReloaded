@@ -53,10 +53,10 @@ public class ForgeCommonProxy implements IEventHandler {
     protected SimpleNetworkWrapper network;
     private CommonProxy commonProxy;
 
-    public void init(ConfigManager configManager) {
+    public void init() {
         CommonProxy proxy = getProxy();
         proxy.setEventHandler(this);
-        proxy.init(configManager);
+        proxy.init();
         network = NetworkRegistry.INSTANCE.newSimpleChannel("bbor");
         network.registerMessage(AddBoundingBoxMessageHandler.class, AddBoundingBoxMessage.class, 0, Side.CLIENT);
         network.registerMessage(RemoveBoundingBoxMessageHandler.class, RemoveBoundingBoxMessage.class, 1, Side.CLIENT);
