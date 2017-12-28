@@ -1,4 +1,4 @@
-package com.irtimaled.bbor;
+package com.irtimaled.bbor.common;
 
 import java.awt.*;
 

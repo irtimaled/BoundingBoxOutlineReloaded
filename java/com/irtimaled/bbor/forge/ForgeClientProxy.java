@@ -1,6 +1,6 @@
 package com.irtimaled.bbor.forge;
 
-import com.irtimaled.bbor.ClientProxy;
+import com.irtimaled.bbor.client.ClientProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.event.RenderWorldLastEvent;

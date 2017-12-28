@@ -1,8 +1,8 @@
 package com.irtimaled.bbor.forge.messages;
 
-import com.irtimaled.bbor.BoundingBox;
-import com.irtimaled.bbor.BoundingBoxStructure;
-import com.irtimaled.bbor.BoundingBoxVillage;
+import com.irtimaled.bbor.common.models.BoundingBox;
+import com.irtimaled.bbor.common.models.BoundingBoxStructure;
+import com.irtimaled.bbor.common.models.BoundingBoxVillage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;

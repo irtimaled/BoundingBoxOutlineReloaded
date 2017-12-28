@@ -1,4 +1,4 @@
-package com.irtimaled.bbor;
+package com.irtimaled.bbor.common.models;
 
 import net.minecraft.util.math.BlockPos;
 

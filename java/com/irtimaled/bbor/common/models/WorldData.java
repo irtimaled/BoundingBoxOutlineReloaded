@@ -1,4 +1,4 @@
-package com.irtimaled.bbor;
+package com.irtimaled.bbor.common.models;
 
 public class WorldData {
     private long seed;

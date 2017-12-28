@@ -1,5 +1,11 @@
-package com.irtimaled.bbor;
+package com.irtimaled.bbor.common;
 
+import com.irtimaled.bbor.Logger;
+import com.irtimaled.bbor.ReflectionHelper;
+import com.irtimaled.bbor.common.models.BoundingBox;
+import com.irtimaled.bbor.common.models.BoundingBoxStructure;
+import com.irtimaled.bbor.common.models.BoundingBoxVillage;
+import com.irtimaled.bbor.config.ConfigManager;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.village.Village;

@@ -1,5 +1,11 @@
-package com.irtimaled.bbor;
+package com.irtimaled.bbor.client;
 
+import com.irtimaled.bbor.Logger;
+import com.irtimaled.bbor.common.BoundingBoxCache;
+import com.irtimaled.bbor.common.CommonProxy;
+import com.irtimaled.bbor.common.StructureType;
+import com.irtimaled.bbor.common.models.*;
+import com.irtimaled.bbor.config.ConfigManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.BufferBuilder;

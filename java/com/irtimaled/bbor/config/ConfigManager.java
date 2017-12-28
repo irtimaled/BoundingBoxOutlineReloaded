@@ -1,7 +1,4 @@
-package com.irtimaled.bbor;
-
-import com.irtimaled.bbor.config.Configuration;
-import com.irtimaled.bbor.config.Setting;
+package com.irtimaled.bbor.config;
 
 import java.io.File;
 

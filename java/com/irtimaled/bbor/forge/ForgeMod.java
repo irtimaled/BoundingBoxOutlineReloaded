@@ -1,6 +1,6 @@
 package com.irtimaled.bbor.forge;
 
-import com.irtimaled.bbor.ConfigManager;
+import com.irtimaled.bbor.config.ConfigManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;

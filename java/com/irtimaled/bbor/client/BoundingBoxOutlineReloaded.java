@@ -1,5 +1,6 @@
-package com.irtimaled.bbor;
+package com.irtimaled.bbor.client;
 
+import com.irtimaled.bbor.config.ConfigManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.world.World;

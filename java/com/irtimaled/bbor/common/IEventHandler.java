@@ -1,5 +1,6 @@
-package com.irtimaled.bbor;
+package com.irtimaled.bbor.common;
 
+import com.irtimaled.bbor.common.models.BoundingBox;
 import net.minecraft.world.DimensionType;
 
 public interface IEventHandler {

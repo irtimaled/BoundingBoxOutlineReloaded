@@ -1,6 +1,12 @@
 package com.irtimaled.bbor.forge;
 
-import com.irtimaled.bbor.*;
+import com.irtimaled.bbor.Logger;
+import com.irtimaled.bbor.common.BoundingBoxCache;
+import com.irtimaled.bbor.common.CommonProxy;
+import com.irtimaled.bbor.common.IEventHandler;
+import com.irtimaled.bbor.common.models.BoundingBox;
+import com.irtimaled.bbor.common.models.WorldData;
+import com.irtimaled.bbor.config.ConfigManager;
 import com.irtimaled.bbor.forge.messages.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;

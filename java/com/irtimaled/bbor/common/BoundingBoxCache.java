@@ -1,4 +1,6 @@
-package com.irtimaled.bbor;
+package com.irtimaled.bbor.common;
+
+import com.irtimaled.bbor.common.models.BoundingBox;
 
 import java.util.HashSet;
 import java.util.Map;

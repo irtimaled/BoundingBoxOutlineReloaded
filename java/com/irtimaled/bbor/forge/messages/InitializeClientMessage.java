@@ -1,6 +1,6 @@
 package com.irtimaled.bbor.forge.messages;
 
-import com.irtimaled.bbor.WorldData;
+import com.irtimaled.bbor.common.models.WorldData;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 

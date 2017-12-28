@@ -1,6 +1,6 @@
 package com.irtimaled.bbor.forge.messages;
 
-import com.irtimaled.bbor.BoundingBox;
+import com.irtimaled.bbor.common.models.BoundingBox;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.world.DimensionType;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
