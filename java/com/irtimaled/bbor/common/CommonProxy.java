@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class CommonProxy {
-    protected DimensionCache dimensionCache = new DimensionCache();
+    protected DimensionCache dimensionCache;
     protected Set<VillageProcessor> villageProcessors = new HashSet<>();
 
     private IVillageEventHandler eventHandler = null;
@@ -44,6 +44,7 @@ public class CommonProxy {
     }
 
     public void init() {
+        dimensionCache = new DimensionCache();
     }
 
     public void setEventHandler(IVillageEventHandler eventHandler) {

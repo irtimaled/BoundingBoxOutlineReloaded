@@ -16,8 +16,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.DimensionType;
 import org.apache.commons.lang3.ArrayUtils;
 import org.lwjgl.input.Keyboard;
@@ -28,7 +26,6 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 
 public class ClientProxy extends CommonProxy {
@@ -36,9 +33,7 @@ public class ClientProxy extends CommonProxy {
     private boolean outerBoxOnly;
     private KeyBinding activeHotKey;
     private KeyBinding outerBoxOnlyHotKey;
-    private BoundingBox worldSpawnBoundingBox;
-    private BoundingBox spawnChunksBoundingBox;
-    private BoundingBox lazySpawnChunksBoundingBox;
+    private ClientBoundingBoxProvider clientBoundingBoxProvider;
 
     public void keyPressed() {
         if (activeHotKey.isPressed()) {
@@ -52,11 +47,13 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void init() {
-        super.init();
         String category = "Bounding Box Outline Reloaded";
         activeHotKey = new KeyBinding("Toggle On/Off", Keyboard.KEY_B, category);
         outerBoxOnlyHotKey = new KeyBinding("Toggle Display Outer Box Only", Keyboard.KEY_O, category);
         Minecraft.getMinecraft().gameSettings.keyBindings = ArrayUtils.addAll(Minecraft.getMinecraft().gameSettings.keyBindings, activeHotKey, outerBoxOnlyHotKey);
+        ClientDimensionCache clientDimensionCache = new ClientDimensionCache();
+        clientBoundingBoxProvider = new ClientBoundingBoxProvider(clientDimensionCache);
+        dimensionCache = clientDimensionCache;
     }
 
     public void render(float partialTicks) {
@@ -70,7 +67,7 @@ public class ClientProxy extends CommonProxy {
             if (boundingBoxCache != null) {
                 boundingBoxes = boundingBoxCache.getBoundingBoxes();
             }
-            renderBoundingBoxes(boundingBoxes, getClientBoundingBoxes(dimensionType));
+            renderBoundingBoxes(boundingBoxes, clientBoundingBoxProvider.getClientBoundingBoxes(dimensionType));
         }
     }
 
@@ -85,9 +82,6 @@ public class ClientProxy extends CommonProxy {
     public void playerDisconnectedFromServer() {
         active = false;
         if (ConfigManager.keepCacheBetweenSessions.getBoolean()) return;
-        worldSpawnBoundingBox = null;
-        spawnChunksBoundingBox = null;
-        lazySpawnChunksBoundingBox = null;
         VillageColorCache.clear();
         dimensionCache.clear();
         villageProcessors.forEach(VillageProcessor::clear);
@@ -424,100 +418,5 @@ public class ClientProxy extends CommonProxy {
                 points.add(center.add(dx, dy, dz));
             }
         return points;
-    }
-
-    private Set<BoundingBox> getClientBoundingBoxes(DimensionType dimensionType) {
-        WorldData worldData = dimensionCache.getWorldData();
-        if (worldData == null || dimensionType != DimensionType.OVERWORLD) {
-            return null;
-        }
-
-        Set<BoundingBox> boundingBoxes = new HashSet<>();
-        if (ConfigManager.drawWorldSpawn.getBoolean()) {
-            boundingBoxes.add(getWorldSpawnBoundingBox(worldData.getSpawnX(), worldData.getSpawnZ()));
-            boundingBoxes.add(getSpawnChunksBoundingBox(worldData.getSpawnX(), worldData.getSpawnZ()));
-        }
-        if (ConfigManager.drawLazySpawnChunks.getBoolean()) {
-            boundingBoxes.add(getLazySpawnChunksBoundingBox(worldData.getSpawnX(), worldData.getSpawnZ()));
-        }
-        if (ConfigManager.drawSlimeChunks.getBoolean()) {
-            boundingBoxes.addAll(this.getSlimeChunks());
-        }
-        return boundingBoxes;
-    }
-
-    private Set<BoundingBoxSlimeChunk> getSlimeChunks() {
-        Minecraft minecraft = Minecraft.getMinecraft();
-        int renderDistanceChunks = minecraft.gameSettings.renderDistanceChunks;
-        int playerChunkX = MathHelper.floor(minecraft.player.posX / 16.0D);
-        int playerChunkZ = MathHelper.floor(minecraft.player.posZ / 16.0D);
-        Set<BoundingBoxSlimeChunk> slimeChunks = new HashSet<>();
-        for (int chunkX = playerChunkX - renderDistanceChunks; chunkX <= playerChunkX + renderDistanceChunks; ++chunkX) {
-            for (int chunkZ = playerChunkZ - renderDistanceChunks; chunkZ <= playerChunkZ + renderDistanceChunks; ++chunkZ) {
-                if (isSlimeChunk(chunkX, chunkZ)) {
-                    ChunkPos chunk = new ChunkPos(chunkX, chunkZ);
-                    BlockPos minBlockPos = new BlockPos(chunk.getXStart(), 1, chunk.getZStart());
-                    BlockPos maxBlockPos = new BlockPos(chunk.getXEnd(), 38, chunk.getZEnd());
-                    if (minecraft.world.isAreaLoaded(minBlockPos, maxBlockPos)) {
-                        slimeChunks.add(BoundingBoxSlimeChunk.from(minBlockPos, maxBlockPos, Color.GREEN));
-                    }
-                }
-            }
-        }
-        return slimeChunks;
-    }
-
-    private boolean isSlimeChunk(int chunkX, int chunkZ) {
-        WorldData worldData = dimensionCache.getWorldData();
-        Random r = new Random(worldData.getSeed() +
-                (long) (chunkX * chunkX * 4987142) +
-                (long) (chunkX * 5947611) +
-                (long) (chunkZ * chunkZ) * 4392871L +
-                (long) (chunkZ * 389711) ^ 987234911L);
-        return r.nextInt(10) == 0;
-    }
-
-    private BoundingBox getSpawnChunksBoundingBox(int spawnX, int spawnZ) {
-        if (spawnChunksBoundingBox != null) {
-            return spawnChunksBoundingBox;
-        }
-        BoundingBox boundingBox = getSpawnChunksBoundingBox(spawnX, spawnZ, 12, Color.RED);
-        spawnChunksBoundingBox = boundingBox;
-        return boundingBox;
-    }
-
-    private BoundingBox getLazySpawnChunksBoundingBox(int spawnX, int spawnZ) {
-        if (lazySpawnChunksBoundingBox != null)
-            return lazySpawnChunksBoundingBox;
-
-        BoundingBox boundingBox = getSpawnChunksBoundingBox(spawnX, spawnZ, 16, Color.RED);
-        lazySpawnChunksBoundingBox = boundingBox;
-        return boundingBox;
-    }
-
-    private BoundingBox getSpawnChunksBoundingBox(int spawnX, int spawnZ, int size, Color color) {
-        double chunkSize = 16;
-        double midOffset = chunkSize * (size / 2);
-        double midX = Math.round((float) (spawnX / chunkSize)) * chunkSize;
-        double midZ = Math.round((float) (spawnZ / chunkSize)) * chunkSize;
-        BlockPos minBlockPos = new BlockPos(midX - midOffset, 0, midZ - midOffset);
-        if (spawnX / chunkSize % 0.5D == 0.0D && spawnZ / chunkSize % 0.5D == 0.0D) {
-            midX += chunkSize;
-            midZ += chunkSize;
-        }
-        BlockPos maxBlockPos = new BlockPos(midX + midOffset, 0, midZ + midOffset);
-        return BoundingBoxWorldSpawn.from(minBlockPos, maxBlockPos, color);
-    }
-
-    private BoundingBox getWorldSpawnBoundingBox(int spawnX, int spawnZ) {
-        if (worldSpawnBoundingBox != null)
-            return worldSpawnBoundingBox;
-
-        BlockPos minBlockPos = new BlockPos(spawnX - 10, 0, spawnZ - 10);
-        BlockPos maxBlockPos = new BlockPos(spawnX + 10, 0, spawnZ + 10);
-
-        BoundingBox boundingBox = BoundingBoxWorldSpawn.from(minBlockPos, maxBlockPos, Color.RED);
-        worldSpawnBoundingBox = boundingBox;
-        return boundingBox;
     }
 }
