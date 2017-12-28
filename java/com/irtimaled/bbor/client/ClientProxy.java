@@ -1,11 +1,9 @@
 package com.irtimaled.bbor.client;
 
-import com.irtimaled.bbor.Logger;
 import com.irtimaled.bbor.common.BoundingBoxCache;
 import com.irtimaled.bbor.common.CommonProxy;
 import com.irtimaled.bbor.common.VillageColorCache;
 import com.irtimaled.bbor.common.VillageProcessor;
-import com.irtimaled.bbor.common.StructureType;
 import com.irtimaled.bbor.common.models.*;
 import com.irtimaled.bbor.config.ConfigManager;
 import net.minecraft.client.Minecraft;
@@ -15,9 +13,6 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -29,9 +24,6 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.HashSet;
@@ -86,170 +78,8 @@ public class ClientProxy extends CommonProxy {
         SocketAddress remoteAddress = networkManager.getRemoteAddress();
         if (remoteAddress instanceof InetSocketAddress) {
             InetSocketAddress socketAddress = (InetSocketAddress) remoteAddress;
-            loadLocalStructures(socketAddress.getHostName(), socketAddress.getPort());
+            NBTFileParser.loadLocalDatFiles(socketAddress.getHostName(), socketAddress.getPort(), dimensionCache);
         }
-    }
-
-    private void loadLocalStructures(String host, int port) {
-        Logger.info("Looking for local structures (host:port=%s:%d)", host, port);
-        String path = String.format("BBOutlineReloaded%s%s%s%d", File.separator, host, File.separator, port);
-        File localStructuresFolder = new File(ConfigManager.configDir, path);
-        Logger.info("Looking for local structures (folder=%s)", localStructuresFolder.getAbsolutePath());
-        if (!localStructuresFolder.exists()) {
-            path = String.format("BBOutlineReloaded%s%s", File.separator, host);
-            localStructuresFolder = new File(ConfigManager.configDir, path);
-            Logger.info("Looking for local structures (folder=%s)", localStructuresFolder.getAbsolutePath());
-        }
-        if (!localStructuresFolder.exists()) {
-            path = String.format("BBOutlineReloaded%s%s,%d", File.separator, host, port);
-            localStructuresFolder = new File(ConfigManager.configDir, path);
-            Logger.info("Looking for local structures (folder=%s)", localStructuresFolder.getAbsolutePath());
-        }
-        if (!localStructuresFolder.exists()) {
-            Logger.info("No local structures folders found");
-            return;
-        }
-        loadLevelDat(localStructuresFolder);
-        loadNetherStructures(localStructuresFolder);
-        loadOverworldStructures(localStructuresFolder);
-        loadEndStructures(localStructuresFolder);
-    }
-
-    private void loadOverworldStructures(File localStructuresFolder) {
-        BoundingBoxCache cache = new BoundingBoxCache();
-        if (ConfigManager.drawDesertTemples.getBoolean()) {
-            loadStructureNbtFile(localStructuresFolder, cache, "Temple.dat", StructureType.DesertTemple.getColor(), "TeDP");
-        }
-        if (ConfigManager.drawJungleTemples.getBoolean()) {
-            loadStructureNbtFile(localStructuresFolder, cache, "Temple.dat", StructureType.JungleTemple.getColor(), "TeJP");
-        }
-        if (ConfigManager.drawWitchHuts.getBoolean()) {
-            loadStructureNbtFile(localStructuresFolder, cache, "Temple.dat", StructureType.WitchHut.getColor(), "TeSH");
-        }
-        if (ConfigManager.drawOceanMonuments.getBoolean()) {
-            loadStructureNbtFile(localStructuresFolder, cache, "Monument.dat", StructureType.OceanMonument.getColor(), "*");
-        }
-        if (ConfigManager.drawStrongholds.getBoolean()) {
-            loadStructureNbtFile(localStructuresFolder, cache, "Stronghold.dat", StructureType.Stronghold.getColor(), "*");
-        }
-        if (ConfigManager.drawMansions.getBoolean()) {
-            loadStructureNbtFile(localStructuresFolder, cache, "Mansion.dat", StructureType.Mansion.getColor(), "*");
-        }
-        if (ConfigManager.drawMineShafts.getBoolean()) {
-            loadStructureNbtFile(localStructuresFolder, cache, "Mineshaft.dat", StructureType.MineShaft.getColor(), "*");
-        }
-        if (ConfigManager.drawVillages.getBoolean()) {
-            loadVillageNbtFile(localStructuresFolder, cache, "Villages.dat");
-        }
-
-        dimensionCache.put(DimensionType.OVERWORLD, cache);
-    }
-
-    private void loadNetherStructures(File localStructuresFolder) {
-        BoundingBoxCache cache = new BoundingBoxCache();
-        if (ConfigManager.drawNetherFortresses.getBoolean())
-            loadStructureNbtFile(localStructuresFolder, cache, "Fortress.dat", StructureType.NetherFortress.getColor(), "*");
-        if (ConfigManager.drawVillages.getBoolean()) {
-            loadVillageNbtFile(localStructuresFolder, cache, "villages_nether.dat");
-        }
-        dimensionCache.put(DimensionType.NETHER, cache);
-    }
-
-    private void loadEndStructures(File localStructuresFolder) {
-        BoundingBoxCache cache = new BoundingBoxCache();
-        if (ConfigManager.drawVillages.getBoolean()) {
-            loadVillageNbtFile(localStructuresFolder, cache, "Villages_end.dat");
-        }
-        if (ConfigManager.drawEndCities.getBoolean()) {
-            loadStructureNbtFile(localStructuresFolder, cache, "EndCity.dat", StructureType.EndCity.getColor(), "*");
-        }
-        dimensionCache.put(DimensionType.THE_END, cache);
-    }
-
-    private void loadVillageNbtFile(File localStructuresFolder, BoundingBoxCache cache, String fileName) {
-        File file = new File(localStructuresFolder, fileName);
-        NBTTagCompound nbt = loadNbtFile(file);
-        if (nbt == null)
-            return;
-
-        NBTTagCompound[] villages = getChildCompoundTags(nbt.getCompoundTag("data"), "Villages");
-        for (NBTTagCompound village : villages) {
-            BlockPos center = new BlockPos(village.getInteger("CX"), village.getInteger("CY"), village.getInteger("CZ"));
-            int radius = village.getInteger("Radius");
-            int population = village.getInteger("PopSize");
-            Set<BlockPos> doors = getDoors(village);
-            BoundingBox boundingBox = BoundingBoxVillage.from(center, radius, village.hashCode(), population, doors);
-            cache.addBoundingBox(boundingBox);
-        }
-
-        Logger.info("Loaded %s (%d villages)", fileName, villages.length);
-    }
-
-    private Set<BlockPos> getDoors(NBTTagCompound village) {
-        Set<BlockPos> doors = new HashSet<>();
-        for (NBTTagCompound door : getChildCompoundTags(village, "Doors")) {
-            doors.add(new BlockPos(door.getInteger("X"), door.getInteger("Y"), door.getInteger("Z")));
-        }
-        return doors;
-    }
-
-    private void loadStructureNbtFile(File localStructuresFolder, BoundingBoxCache cache, String fileName, Color color, String id) {
-        File file = new File(localStructuresFolder, fileName);
-        NBTTagCompound nbt = loadNbtFile(file);
-        if (nbt == null)
-            return;
-
-        NBTTagCompound features = nbt.getCompoundTag("data")
-                .getCompoundTag("Features");
-        int loadedStructureCount = 0;
-        for (Object key : features.getKeySet()) {
-            NBTTagCompound feature = features.getCompoundTag((String) key);
-            BoundingBox structure = BoundingBoxStructure.from(feature.getIntArray("BB"), color);
-            Set<BoundingBox> boundingBoxes = new HashSet<>();
-            NBTTagCompound[] children = getChildCompoundTags(feature, "Children");
-            for (NBTTagCompound child : children) {
-                if (id.equals(child.getString("id")) || id.equals("*"))
-                    boundingBoxes.add(BoundingBoxStructure.from(child.getIntArray("BB"), color));
-            }
-            if (boundingBoxes.size() > 0)
-                ++loadedStructureCount;
-            cache.addBoundingBoxes(structure, boundingBoxes);
-        }
-
-        Logger.info("Loaded %s (%d structures with type %s)", fileName, loadedStructureCount, id);
-    }
-
-    private NBTTagCompound[] getChildCompoundTags(NBTTagCompound parent, String key) {
-        NBTTagList tagList = parent.getTagList(key, 10);
-        NBTTagCompound[] result = new NBTTagCompound[tagList.tagCount()];
-        for (int index = 0; index < tagList.tagCount(); index++) {
-            result[index] = tagList.getCompoundTagAt(index);
-        }
-        return result;
-    }
-
-    private void loadLevelDat(File localStructuresFolder) {
-        File file = new File(localStructuresFolder, "level.dat");
-        NBTTagCompound nbt = loadNbtFile(file);
-        if (nbt == null)
-            return;
-
-        NBTTagCompound data = nbt.getCompoundTag("Data");
-        long seed = data.getLong("RandomSeed");
-        int spawnX = data.getInteger("SpawnX");
-        int spawnZ = data.getInteger("SpawnZ");
-        dimensionCache.setWorldData(seed, spawnX, spawnZ);
-        Logger.info("Loaded level.dat (seed: %d, spawn: %d,%d)", seed, spawnX, spawnZ);
-    }
-
-    private NBTTagCompound loadNbtFile(File file) {
-        if (!file.exists())
-            return null;
-        try {
-            return CompressedStreamTools.readCompressed(new FileInputStream(file));
-        } catch (IOException e) {
-        }
-        return null;
     }
 
     public void playerDisconnectedFromServer() {
