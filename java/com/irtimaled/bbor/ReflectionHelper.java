@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ReflectionHelper {
-
     public static <T, R> R getPrivateValue(Class<T> sourceClass, T instance, Class<R> resultClass) {
         try {
             Field f = getField(sourceClass, resultClass);
@@ -17,17 +16,16 @@ public class ReflectionHelper {
         return null;
     }
 
-    private static Map<Class, Map<Class, Field>> fieldMap = new HashMap<Class, Map<Class, Field>>();
+    private static Map<Class, Map<Class, Field>> fieldMap = new HashMap<>();
 
     protected static <T, R> Field getField(Class<T> sourceClass, Class<R> resultClass) {
         Map<Class, Field> map = fieldMap.get(sourceClass);
-        if(map == null)
-        {
-            map = new HashMap<Class, Field>();
+        if (map == null) {
+            map = new HashMap<>();
             fieldMap.put(sourceClass, map);
         }
         Field field = map.get(resultClass);
-        if(field == null) {
+        if (field == null) {
             field = getFieldUsingReflection(sourceClass, resultClass);
             if (field != null) {
                 field.setAccessible(true);
@@ -39,12 +37,12 @@ public class ReflectionHelper {
 
     private static <T, R> Field getFieldUsingReflection(Class<T> sourceClass, Class<R> resultClass) {
         Field[] fields = sourceClass.getDeclaredFields();
-        for(Field field : fields) {
-            if(field.getType().equals(resultClass))
+        for (Field field : fields) {
+            if (field.getType().equals(resultClass))
                 return field;
         }
-        for(Field field : fields) {
-            if(resultClass.isAssignableFrom(field.getType()))
+        for (Field field : fields) {
+            if (resultClass.isAssignableFrom(field.getType()))
                 return field;
         }
         return null;

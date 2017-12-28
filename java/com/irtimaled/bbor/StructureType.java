@@ -23,11 +23,9 @@ public class StructureType {
     public final static StructureType EndCity = new StructureType(END_CITY);
     public final static StructureType Mansion = new StructureType(MANSION);
 
-
     private final int type;
 
     private StructureType(int type) {
-
         this.type = type;
     }
 
@@ -50,7 +48,7 @@ public class StructureType {
             case END_CITY:
                 return Color.MAGENTA;
             case MANSION:
-                return new Color(139,69,19);
+                return new Color(139, 69, 19);
         }
         return Color.WHITE;
     }

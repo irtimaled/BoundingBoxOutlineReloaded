@@ -9,7 +9,6 @@ import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 
 public class ForgeClientProxy extends ForgeCommonProxy {
-
     private ClientProxy proxy;
 
     @Override

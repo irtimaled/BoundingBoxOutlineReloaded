@@ -32,7 +32,6 @@ import java.util.Random;
 import java.util.Set;
 
 public class ClientProxy extends CommonProxy {
-
     private double activeY;
     private boolean active;
     private boolean outerBoxOnly;
@@ -50,8 +49,7 @@ public class ClientProxy extends CommonProxy {
             active = !active;
             if (active)
                 activeY = playerY;
-        } else
-        if(outerBoxOnlyHotKey.isPressed()){
+        } else if (outerBoxOnlyHotKey.isPressed()) {
             outerBoxOnly = !outerBoxOnly;
         }
     }
@@ -112,7 +110,7 @@ public class ClientProxy extends CommonProxy {
             localStructuresFolder = new File(configManager.configDir, path);
             Logger.info("Looking for local structures (folder=%s)", localStructuresFolder.getAbsolutePath());
         }
-        if (!localStructuresFolder.exists())        {
+        if (!localStructuresFolder.exists()) {
             Logger.info("No local structures folders found");
             return;
         }
@@ -139,7 +137,7 @@ public class ClientProxy extends CommonProxy {
         if (configManager.drawStrongholds.getBoolean()) {
             loadStructureNbtFile(localStructuresFolder, cache, "Stronghold.dat", StructureType.Stronghold.getColor(), "*");
         }
-        if (configManager.drawMansions.getBoolean()){
+        if (configManager.drawMansions.getBoolean()) {
             loadStructureNbtFile(localStructuresFolder, cache, "Mansion.dat", StructureType.Mansion.getColor(), "*");
         }
         if (configManager.drawMineShafts.getBoolean()) {
@@ -193,7 +191,7 @@ public class ClientProxy extends CommonProxy {
     }
 
     private Set<BlockPos> getDoors(NBTTagCompound village) {
-        Set<BlockPos> doors = new HashSet<BlockPos>();
+        Set<BlockPos> doors = new HashSet<>();
         for (NBTTagCompound door : getChildCompoundTags(village, "Doors")) {
             doors.add(new BlockPos(door.getInteger("X"), door.getInteger("Y"), door.getInteger("Z")));
         }
@@ -212,7 +210,7 @@ public class ClientProxy extends CommonProxy {
         for (Object key : features.getKeySet()) {
             NBTTagCompound feature = features.getCompoundTag((String) key);
             BoundingBox structure = BoundingBoxStructure.from(feature.getIntArray("BB"), color);
-            Set<BoundingBox> boundingBoxes = new HashSet<BoundingBox>();
+            Set<BoundingBox> boundingBoxes = new HashSet<>();
             NBTTagCompound[] children = getChildCompoundTags(feature, "Children");
             for (NBTTagCompound child : children) {
                 if (id.equals(child.getString("id")) || id.equals("*"))
@@ -272,7 +270,7 @@ public class ClientProxy extends CommonProxy {
     }
 
     private void renderBoundingBoxes(Map<BoundingBox, Set<BoundingBox>> map, Set<BoundingBox> clientBoundingBoxes) {
-        if(map == null && clientBoundingBoxes == null)
+        if (map == null && clientBoundingBoxes == null)
             return;
 
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -284,16 +282,16 @@ public class ClientProxy extends CommonProxy {
             GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
         }
 
-        if(map != null)
-        for (BoundingBox bb : map.keySet()) {
-            if (outerBoxOnly) {
-                renderBoundingBoxSet(map.get(bb));
-            } else {
-                renderBoundingBoxByType(bb);
+        if (map != null)
+            for (BoundingBox bb : map.keySet()) {
+                if (outerBoxOnly) {
+                    renderBoundingBoxSet(map.get(bb));
+                } else {
+                    renderBoundingBoxByType(bb);
+                }
             }
-        }
 
-        if(clientBoundingBoxes != null)
+        if (clientBoundingBoxes != null)
             renderBoundingBoxSet(clientBoundingBoxes);
 
         GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
@@ -302,10 +300,10 @@ public class ClientProxy extends CommonProxy {
     }
 
     private void renderBoundingBoxSet(Set<BoundingBox> bbList) {
-        if(bbList != null)
-        for (BoundingBox bb : bbList) {
-            renderBoundingBoxByType(bb);
-        }
+        if (bbList != null)
+            for (BoundingBox bb : bbList) {
+                renderBoundingBoxByType(bb);
+            }
     }
 
     private void renderBoundingBoxByType(BoundingBox bb) {
@@ -325,7 +323,7 @@ public class ClientProxy extends CommonProxy {
                     villageBB.getSpawnsIronGolems()) {
                 renderIronGolemSpawnArea(villageBB);
             }
-            if(configManager.drawVillageDoors.getBoolean())
+            if (configManager.drawVillageDoors.getBoolean())
                 renderVillageDoors(villageBB);
         } else if (bb instanceof BoundingBoxSlimeChunk) {
             renderSlimeChunk((BoundingBoxSlimeChunk) bb);
@@ -361,7 +359,6 @@ public class ClientProxy extends CommonProxy {
     }
 
     private double getMaxY(double configMaxY) {
-
         if (configMaxY == -1) {
             return activeY;
         } else if ((configMaxY == 0) || (playerY < configMaxY)) {
@@ -459,7 +456,6 @@ public class ClientProxy extends CommonProxy {
                 .endVertex();
 
         if (bb.minY != bb.maxY) {
-
             worldRenderer.pos(bb.minX, bb.maxY, bb.minZ)
                     .color(colorR, colorG, colorB, alphaChannel)
                     .endVertex();
@@ -541,7 +537,8 @@ public class ClientProxy extends CommonProxy {
 
     private void renderBoundingBoxVillageAsSphere(BoundingBoxVillage bb) {
         OffsetPoint center = new OffsetPoint(bb.getCenter())
-                .add(bb.getCenterOffsetX(), 0.0, bb.getCenterOffsetZ());;
+                .add(bb.getCenterOffsetX(), 0.0, bb.getCenterOffsetZ());
+        ;
         int radius = bb.getRadius();
         Color color = bb.getColor();
         renderSphere(center, radius, color);
@@ -597,7 +594,7 @@ public class ClientProxy extends CommonProxy {
     }
 
     private Set<OffsetPoint> buildPoints(OffsetPoint center, double radius) {
-        Set<OffsetPoint> points = new HashSet<OffsetPoint>(1200);
+        Set<OffsetPoint> points = new HashSet<>(1200);
 
         double tau = 6.283185307179586D;
         double pi = tau / 2D;
@@ -619,7 +616,7 @@ public class ClientProxy extends CommonProxy {
             return null;
         }
 
-        Set<BoundingBox> boundingBoxes = new HashSet<BoundingBox>();
+        Set<BoundingBox> boundingBoxes = new HashSet<>();
         if (configManager.drawWorldSpawn.getBoolean()) {
             boundingBoxes.add(getWorldSpawnBoundingBox(worldData.getSpawnX(), worldData.getSpawnZ()));
             boundingBoxes.add(getSpawnChunksBoundingBox(worldData.getSpawnX(), worldData.getSpawnZ()));
@@ -638,8 +635,8 @@ public class ClientProxy extends CommonProxy {
         int renderDistanceChunks = minecraft.gameSettings.renderDistanceChunks;
         int playerChunkX = MathHelper.floor(minecraft.player.posX / 16.0D);
         int playerChunkZ = MathHelper.floor(minecraft.player.posZ / 16.0D);
-        Set<BoundingBoxSlimeChunk> slimeChunks = new HashSet<BoundingBoxSlimeChunk>();
-        for (int chunkX = playerChunkX-renderDistanceChunks; chunkX <= playerChunkX+renderDistanceChunks; ++chunkX) {
+        Set<BoundingBoxSlimeChunk> slimeChunks = new HashSet<>();
+        for (int chunkX = playerChunkX - renderDistanceChunks; chunkX <= playerChunkX + renderDistanceChunks; ++chunkX) {
             for (int chunkZ = playerChunkZ - renderDistanceChunks; chunkZ <= playerChunkZ + renderDistanceChunks; ++chunkZ) {
                 if (isSlimeChunk(chunkX, chunkZ)) {
                     ChunkPos chunk = new ChunkPos(chunkX, chunkZ);

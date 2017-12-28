@@ -45,7 +45,7 @@ public class Configuration {
         }
     }
 
-    Map<String, Map<String, Setting>> settingsGroup = new HashMap<String, Map<String, Setting>>();
+    Map<String, Map<String, Setting>> settingsGroup = new HashMap<>();
 
     public void load() {
         try {
@@ -67,7 +67,7 @@ public class Configuration {
                 }
                 if (category == null && trimmedLine.endsWith("{")) {
                     category = trimmedLine.substring(0, trimmedLine.length() - 1).trim();
-                    settingsGroup.put(category, new HashMap<String, Setting>());
+                    settingsGroup.put(category, new HashMap<>());
                     continue;
                 }
                 if (category != null) {
@@ -98,7 +98,7 @@ public class Configuration {
 
     public Setting get(String category, String settingName, Object defaultValue) {
         if (!settingsGroup.containsKey(category)) {
-            settingsGroup.put(category, new HashMap<String, Setting>());
+            settingsGroup.put(category, new HashMap<>());
         }
         Map<String, Setting> settings = settingsGroup.get(category);
         if (!settings.containsKey(settingName)) {

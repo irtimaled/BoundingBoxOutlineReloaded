@@ -10,7 +10,6 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import java.awt.*;
 
 public class BoundingBoxSerializer {
-
     public static void serialize(BoundingBox boundingBox, ByteBuf buf) {
         if (boundingBox instanceof BoundingBoxVillage) {
             serializeVillage((BoundingBoxVillage) boundingBox, buf);
@@ -20,15 +19,13 @@ public class BoundingBoxSerializer {
         }
     }
 
-
     private static void serializeVillage(BoundingBoxVillage boundingBox, ByteBuf buf) {
         ByteBufUtils.writeVarShort(buf, 'V');
         serializeBlockPos(boundingBox.getCenter(), buf);
         ByteBufUtils.writeVarInt(buf, boundingBox.getRadius(), 5);
         ByteBufUtils.writeVarShort(buf, boundingBox.getSpawnsIronGolems() ? 1 : 0);
         serializeColor(boundingBox.getColor(), buf);
-        for(BlockPos door : boundingBox.getDoors())
-        {
+        for (BlockPos door : boundingBox.getDoors()) {
             serializeBlockPos(door, buf);
         }
     }

@@ -8,7 +8,6 @@ import net.minecraft.world.chunk.Chunk;
 import java.io.File;
 
 public class BoundingBoxOutlineReloaded {
-
     public static ClientProxy proxy;
 
     public static void init() {
@@ -40,5 +39,3 @@ public class BoundingBoxOutlineReloaded {
         proxy.playerDisconnectedFromServer();
     }
 }
-
-

@@ -1,12 +1,10 @@
 package com.irtimaled.bbor.config;
 
 public class Setting {
-
     private Object value;
     public String comment;
 
     public Setting(Object value) {
-
         this.value = value;
     }
 

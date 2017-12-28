@@ -6,8 +6,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class BoundingBoxCache {
-
-    private Map<BoundingBox, Set<BoundingBox>> cache = new ConcurrentHashMap<BoundingBox, Set<BoundingBox>>();
+    private Map<BoundingBox, Set<BoundingBox>> cache = new ConcurrentHashMap<>();
 
     public Map<BoundingBox, Set<BoundingBox>> getBoundingBoxes() {
         return cache;
@@ -29,7 +28,7 @@ public class BoundingBoxCache {
     }
 
     public void addBoundingBox(BoundingBox key) {
-        Set<BoundingBox> boundingBoxes = new HashSet<BoundingBox>();
+        Set<BoundingBox> boundingBoxes = new HashSet<>();
         boundingBoxes.add(key);
         addBoundingBoxes(key, boundingBoxes);
     }

@@ -43,8 +43,7 @@ public class BoundingBoxVillage extends BoundingBox {
         return new BoundingBoxVillage(center, radius, color, spawnsIronGolems, doors, minBlockPos, maxBlockPos);
     }
 
-    private void calculateCenterOffsets(Set<BlockPos> doors)
-    {
+    private void calculateCenterOffsets(Set<BlockPos> doors) {
         boolean processedFirstDoor = false;
         int minX = 0;
         int maxX = 0;
@@ -66,8 +65,8 @@ public class BoundingBoxVillage extends BoundingBox {
 
             processedFirstDoor = true;
         }
-        centerOffsetX = Math.abs(maxX-minX) % 2 == 0 ? 0.5 : (minX < 0 ? 0 : 1);
-        centerOffsetZ = Math.abs(maxZ-minZ) % 2 == 0 ? 0.5 : (minZ < 0 ? 0 : 1);
+        centerOffsetX = Math.abs(maxX - minX) % 2 == 0 ? 0.5 : (minX < 0 ? 0 : 1);
+        centerOffsetZ = Math.abs(maxZ - minZ) % 2 == 0 ? 0.5 : (minZ < 0 ? 0 : 1);
     }
 
     @Override
@@ -92,10 +91,10 @@ public class BoundingBoxVillage extends BoundingBox {
     }
 
     @Override
-    public int hashCode()
-    { final int prime = 31;
+    public int hashCode() {
+        final int prime = 31;
         int result = super.hashCode();
-        for(BlockPos door : doors) {
+        for (BlockPos door : doors) {
             result = prime * result + door.hashCode();
         }
         return result;

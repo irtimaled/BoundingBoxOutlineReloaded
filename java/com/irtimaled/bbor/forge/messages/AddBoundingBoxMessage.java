@@ -26,7 +26,7 @@ public class AddBoundingBoxMessage implements IMessage {
     public void fromBytes(ByteBuf buf) {
         dimensionType = DimensionType.getById(ByteBufUtils.readVarInt(buf, 5));
         key = BoundingBoxDeserializer.deserialize(buf);
-        boundingBoxes = new HashSet<BoundingBox>();
+        boundingBoxes = new HashSet<>();
         while (buf.isReadable()) {
             BoundingBox boundingBox = BoundingBoxDeserializer.deserialize(buf);
             boundingBoxes.add(boundingBox);

@@ -2,7 +2,6 @@ package com.irtimaled.bbor.forge;
 
 import com.irtimaled.bbor.ConfigManager;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -11,7 +10,6 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 
 @Mod(modid = ForgeMod.MODID, name = ForgeMod.NAME, version = ForgeMod.VERSION, acceptedMinecraftVersions = ForgeMod.MCVERSION, acceptableRemoteVersions = "*")
 public class ForgeMod {
-
     public static final String MODID = "bbor";
     public static final String NAME = "Bounding Box Outline Reloaded";
     public static final String VERSION = "1.0.0-beta18";
@@ -35,9 +33,6 @@ public class ForgeMod {
     @Mod.EventHandler
     public void load(FMLInitializationEvent evt) {
         MinecraftForge.EVENT_BUS.register(proxy);
-
         proxy.init(configManager);
     }
 }
-
-

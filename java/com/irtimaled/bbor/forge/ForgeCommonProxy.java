@@ -25,10 +25,9 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ForgeCommonProxy implements IEventHandler {
-
-    public Map<EntityPlayerMP, DimensionType> playerDimensions = new ConcurrentHashMap<EntityPlayerMP, DimensionType>();
-    private Map<EntityPlayerMP, Set<BoundingBox>> playerBoundingBoxesCache = new HashMap<EntityPlayerMP, Set<BoundingBox>>();
-    public HashSet<EntityPlayerMP> registeredPlayers = new HashSet<EntityPlayerMP>();
+    public Map<EntityPlayerMP, DimensionType> playerDimensions = new ConcurrentHashMap<>();
+    private Map<EntityPlayerMP, Set<BoundingBox>> playerBoundingBoxesCache = new HashMap<>();
+    public HashSet<EntityPlayerMP> registeredPlayers = new HashSet<>();
 
     protected CommonProxy getProxy() {
         if (commonProxy == null)
@@ -108,7 +107,7 @@ public class ForgeCommonProxy implements IEventHandler {
     public void tickEvent(TickEvent event) {
         for (EntityPlayerMP player : playerDimensions.keySet()) {
             MinecraftServer mc = FMLCommonHandler.instance().getMinecraftServerInstance();
-            if(!mc.getPlayerList().getPlayers().contains(player)) {
+            if (!mc.getPlayerList().getPlayers().contains(player)) {
                 playerDimensions.remove(player);
             } else {
                 DimensionType dimensionType = playerDimensions.get(player);
@@ -124,7 +123,7 @@ public class ForgeCommonProxy implements IEventHandler {
     }
 
     private void sendToPlayer(EntityPlayerMP player, BoundingBoxCache boundingBoxCache) {
-        if(boundingBoxCache == null)
+        if (boundingBoxCache == null)
             return;
         Map<BoundingBox, Set<BoundingBox>> cacheSubset = getBoundingBoxMap(player, boundingBoxCache.getBoundingBoxes());
 
@@ -138,14 +137,14 @@ public class ForgeCommonProxy implements IEventHandler {
             network.sendTo(AddBoundingBoxMessage.from(dimensionType, key, boundingBoxes), player);
 
             if (!playerBoundingBoxesCache.containsKey(player)) {
-                playerBoundingBoxesCache.put(player, new HashSet<BoundingBox>());
+                playerBoundingBoxesCache.put(player, new HashSet<>());
             }
             playerBoundingBoxesCache.get(player).add(key);
         }
     }
 
     private Map<BoundingBox, Set<BoundingBox>> getBoundingBoxMap(EntityPlayerMP player, Map<BoundingBox, Set<BoundingBox>> boundingBoxMap) {
-        Map<BoundingBox, Set<BoundingBox>> cacheSubset = new HashMap<BoundingBox, Set<BoundingBox>>();
+        Map<BoundingBox, Set<BoundingBox>> cacheSubset = new HashMap<>();
         for (BoundingBox key : boundingBoxMap.keySet()) {
             if (!playerBoundingBoxesCache.containsKey(player) || !playerBoundingBoxesCache.get(player).contains(key)) {
                 cacheSubset.put(key, boundingBoxMap.get(key));

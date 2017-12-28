@@ -35,7 +35,7 @@ public class BoundingBoxDeserializer {
         int radius = ByteBufUtils.readVarInt(buf, 5);
         boolean spawnsIronGolems = ByteBufUtils.readVarShort(buf) == 1;
         Color color = new Color(ByteBufUtils.readVarInt(buf, 5));
-        Set<BlockPos> doors = new HashSet<BlockPos>();
+        Set<BlockPos> doors = new HashSet<>();
         while (buf.isReadable()) {
             BlockPos door = deserializeBlockPos(buf);
             doors.add(door);

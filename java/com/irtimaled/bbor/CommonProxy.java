@@ -3,16 +3,15 @@ package com.irtimaled.bbor;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.ChunkProviderServer;
+import net.minecraft.world.gen.IChunkGenerator;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CommonProxy {
-
-    public Map<DimensionType, BoundingBoxCache> boundingBoxCacheMap = new ConcurrentHashMap<DimensionType, BoundingBoxCache>();
+    public Map<DimensionType, BoundingBoxCache> boundingBoxCacheMap = new ConcurrentHashMap<>();
 
     public ConfigManager configManager;
     protected WorldData worldData;
