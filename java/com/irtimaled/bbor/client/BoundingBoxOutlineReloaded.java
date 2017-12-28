@@ -30,6 +30,7 @@ public class BoundingBoxOutlineReloaded {
     }
 
     public static void render(float partialTicks) {
+        proxy.tick();
         proxy.render(partialTicks);
     }
 

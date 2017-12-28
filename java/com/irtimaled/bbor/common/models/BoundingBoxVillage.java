@@ -1,8 +1,12 @@
 package com.irtimaled.bbor.common.models;
 
+import com.irtimaled.bbor.common.VillageColorCache;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.village.Village;
+import net.minecraft.village.VillageDoorInfo;
 
 import java.awt.*;
+import java.util.HashSet;
 import java.util.Set;
 
 public class BoundingBoxVillage extends BoundingBox {
@@ -12,23 +16,16 @@ public class BoundingBoxVillage extends BoundingBox {
     private Set<BlockPos> doors;
     private Double centerOffsetX;
     private Double centerOffsetZ;
+    private int villageHash;
 
-    protected BoundingBoxVillage(BlockPos center, Integer radius, Color color, boolean spawnsIronGolems, Set<BlockPos> doors, BlockPos minBlockPos, BlockPos maxBlockPos) {
+    private BoundingBoxVillage(BlockPos center, Integer radius, Color color, boolean spawnsIronGolems, Set<BlockPos> doors, BlockPos minBlockPos, BlockPos maxBlockPos) {
         super(minBlockPos, maxBlockPos, color);
         this.center = center;
         this.radius = radius;
         this.spawnsIronGolems = spawnsIronGolems;
         this.doors = doors;
+        this.villageHash = computeHash(center, radius, spawnsIronGolems, doors);
         calculateCenterOffsets(doors);
-    }
-
-    public static BoundingBoxVillage from(BlockPos center, Integer radius, int population, Set<BlockPos> doors) {
-        return from(center, radius, null, population, doors);
-    }
-
-    public static BoundingBoxVillage from(BlockPos center, Integer radius, Color color, int population, Set<BlockPos> doors) {
-        Boolean spawnsIronGolems = population >= 10 && doors.size() >= 21;
-        return from(center, radius, color, spawnsIronGolems, doors);
     }
 
     public static BoundingBoxVillage from(BlockPos center, Integer radius, Color color, boolean spawnsIronGolems, Set<BlockPos> doors) {
@@ -38,9 +35,33 @@ public class BoundingBoxVillage extends BoundingBox {
         BlockPos maxBlockPos = new BlockPos(center.getX() + radius,
                 center.getY() + 4,
                 center.getZ() + radius);
-        if (color == null)
-            color = getNextColor();
         return new BoundingBoxVillage(center, radius, color, spawnsIronGolems, doors, minBlockPos, maxBlockPos);
+    }
+
+    public static BoundingBoxVillage from(BlockPos center, Integer radius, int villageId, int population, Set<BlockPos> doors) {
+        Boolean spawnsIronGolems = shouldSpawnIronGolems(population, doors.size());
+        Color color = VillageColorCache.getColor(villageId);
+        return from(center, radius, color, spawnsIronGolems, doors);
+    }
+
+    private static boolean shouldSpawnIronGolems(int population, int doorCount) {
+        return population >= 10 && doorCount >= 21;
+    }
+
+    public static BoundingBoxVillage from(Village village) {
+        BlockPos center = village.getCenter();
+        int radius = village.getVillageRadius();
+        Set<BlockPos> doors = getDoorsFromVillage(village);
+        return from(center, radius, village.hashCode(), village.getNumVillagers(), doors);
+    }
+
+    private static Set<BlockPos> getDoorsFromVillage(Village village) {
+        Set<BlockPos> doors = new HashSet<>();
+        for (Object doorInfo : village.getVillageDoorInfoList()) {
+            VillageDoorInfo villageDoorInfo = (VillageDoorInfo) doorInfo;
+            doors.add(villageDoorInfo.getDoorBlockPos());
+        }
+        return doors;
     }
 
     private void calculateCenterOffsets(Set<BlockPos> doors) {
@@ -90,39 +111,31 @@ public class BoundingBoxVillage extends BoundingBox {
         return centerOffsetZ;
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
+    private static int computeHash(BlockPos center, Integer radius, boolean spawnsIronGolems, Set<BlockPos> doors) {
+        int result = (center.hashCode() * 31) + radius;
         for (BlockPos door : doors) {
-            result = prime * result + door.hashCode();
+            result = (31 * result) + door.hashCode();
+        }
+        if (spawnsIronGolems) {
+            result = 31 * result;
         }
         return result;
     }
 
-    public boolean getSpawnsIronGolems() {
-        return spawnsIronGolems;
+    public boolean matches(Village village) {
+        return this.villageHash == computeHash(village.getCenter(),
+                village.getVillageRadius(),
+                shouldSpawnIronGolems(village.getNumVillagers(), village.getNumVillageDoors()),
+                getDoorsFromVillage(village));
     }
 
-    private static int colorIndex = -1;
+    @Override
+    public int hashCode() {
+        return (super.hashCode() * 31) + villageHash;
+    }
 
-    public static Color getNextColor() {
-        ++colorIndex;
-        switch (colorIndex % 6) {
-            case 0:
-                return Color.RED;
-            case 1:
-                return Color.GREEN;
-            case 2:
-                return Color.BLUE;
-            case 3:
-                return Color.MAGENTA;
-            case 4:
-                return Color.YELLOW;
-            case 5:
-                return Color.CYAN;
-        }
-        return Color.WHITE;
+    public boolean getSpawnsIronGolems() {
+        return spawnsIronGolems;
     }
 
     public Set<BlockPos> getDoors() {

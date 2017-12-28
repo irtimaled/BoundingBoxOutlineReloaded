@@ -3,6 +3,8 @@ package com.irtimaled.bbor.client;
 import com.irtimaled.bbor.Logger;
 import com.irtimaled.bbor.common.BoundingBoxCache;
 import com.irtimaled.bbor.common.CommonProxy;
+import com.irtimaled.bbor.common.VillageColorCache;
+import com.irtimaled.bbor.common.VillageProcessor;
 import com.irtimaled.bbor.common.StructureType;
 import com.irtimaled.bbor.common.models.*;
 import com.irtimaled.bbor.config.ConfigManager;
@@ -176,7 +178,7 @@ public class ClientProxy extends CommonProxy {
             int radius = village.getInteger("Radius");
             int population = village.getInteger("PopSize");
             Set<BlockPos> doors = getDoors(village);
-            BoundingBox boundingBox = BoundingBoxVillage.from(center, radius, population, doors);
+            BoundingBox boundingBox = BoundingBoxVillage.from(center, radius, village.hashCode(), population, doors);
             cache.addBoundingBox(boundingBox);
         }
 
@@ -256,7 +258,9 @@ public class ClientProxy extends CommonProxy {
         worldSpawnBoundingBox = null;
         spawnChunksBoundingBox = null;
         lazySpawnChunksBoundingBox = null;
+        VillageColorCache.clear();
         dimensionCache.clear();
+        villageProcessors.forEach(VillageProcessor::clear);
     }
 
     private void renderBoundingBoxes(Map<BoundingBox, Set<BoundingBox>> map, Set<BoundingBox> clientBoundingBoxes) {

@@ -126,6 +126,7 @@ public class ForgeCommonProxy implements IVillageEventHandler {
                 sendToPlayer(player, getDimensionCache().getBoundingBoxes(dimensionType));
             }
         }
+        getProxy().tick();
     }
 
     private void sendToPlayer(EntityPlayerMP player, BoundingBoxCache boundingBoxCache) {

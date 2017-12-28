@@ -4,14 +4,9 @@ import com.irtimaled.bbor.Logger;
 import com.irtimaled.bbor.ReflectionHelper;
 import com.irtimaled.bbor.common.models.BoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBoxStructure;
-import com.irtimaled.bbor.common.models.BoundingBoxVillage;
 import com.irtimaled.bbor.config.ConfigManager;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.village.Village;
-import net.minecraft.village.VillageDoorInfo;
 import net.minecraft.world.DimensionType;
-import net.minecraft.world.World;
 import net.minecraft.world.gen.ChunkGeneratorEnd;
 import net.minecraft.world.gen.ChunkGeneratorHell;
 import net.minecraft.world.gen.ChunkGeneratorOverworld;
@@ -20,27 +15,15 @@ import net.minecraft.world.gen.structure.*;
 
 import java.awt.*;
 import java.util.*;
-import java.util.List;
 
 public class DimensionProcessor extends BoundingBoxCache {
-    private World world;
-    private IVillageEventHandler eventHandler;
-
-    DimensionProcessor(IVillageEventHandler eventHandler, World world, DimensionType dimensionType, IChunkGenerator chunkGenerator) {
-        this.eventHandler = eventHandler;
-        this.world = world;
+    DimensionProcessor(DimensionType dimensionType, IChunkGenerator chunkGenerator) {
         this.dimensionType = dimensionType;
         this.chunkGenerator = chunkGenerator;
-        villageCache = new HashMap<>();
-        slimeChunkCache = new HashSet<>();
-        worldSpawnCache = new HashSet<>();
     }
 
     private DimensionType dimensionType;
     private IChunkGenerator chunkGenerator;
-    private Map<Integer, BoundingBoxVillage> villageCache;
-    private Set<BoundingBox> slimeChunkCache;
-    private Set<BoundingBox> worldSpawnCache;
 
     private boolean closed = false;
 
@@ -48,9 +31,6 @@ public class DimensionProcessor extends BoundingBoxCache {
     public void close() {
         closed = true;
         chunkGenerator = null;
-        villageCache.clear();
-        slimeChunkCache.clear();
-        worldSpawnCache.clear();
         super.close();
     }
 
@@ -133,59 +113,10 @@ public class DimensionProcessor extends BoundingBoxCache {
                             structureBoundingBoxes.add(BoundingBoxStructure.from(structureComponent.getBoundingBox(), color));
                         }
                         addBoundingBoxes(boundingBox, structureBoundingBoxes);
-                        Logger.info("[%s] new boundingBoxCacheMap entries: %d", dimensionType, structureBoundingBoxes.size());
+                        Logger.info("[%s] new dimensionCache entries: %d", dimensionType, structureBoundingBoxes.size());
                     }
                 }
             }
-        }
-
-        if (ConfigManager.drawVillages.getBoolean() &&
-                world.getVillageCollection() != null) {
-            Map<Integer, BoundingBoxVillage> villageBoundingBoxes = new HashMap<>();
-            List<Village> villages = world.getVillageCollection().getVillageList();
-            for (Village village : villages) {
-                int villageId = village.hashCode();
-                BlockPos center = village.getCenter();
-                Color color = null;
-                if (villageCache.containsKey(villageId)) {
-                    BoundingBoxVillage boundingBoxVillage = villageCache.get(villageId);
-                    if (boundingBoxVillage.getCenter() == center) {
-                        villageBoundingBoxes.put(villageId, boundingBoxVillage);
-                        villageCache.remove(villageId);
-                        continue;
-                    }
-                    color = boundingBoxVillage.getColor();
-                }
-
-                Integer radius = village.getVillageRadius();
-                int population = village.getNumVillagers();
-                Set<BlockPos> doors = getDoorsFromVillage(village);
-                villageBoundingBoxes.put(villageId, BoundingBoxVillage.from(center, radius, color, population, doors));
-            }
-            processDelta(villageCache, villageBoundingBoxes);
-            villageCache = villageBoundingBoxes;
-        }
-    }
-
-    private Set<BlockPos> getDoorsFromVillage(Village village) {
-        Set<BlockPos> doors = new HashSet<>();
-        for (Object doorInfo : village.getVillageDoorInfoList()) {
-            VillageDoorInfo villageDoorInfo = (VillageDoorInfo) doorInfo;
-            doors.add(villageDoorInfo.getDoorBlockPos());
-        }
-        return doors;
-    }
-
-    private void processDelta(Map<Integer, BoundingBoxVillage> oldVillages, Map<Integer, BoundingBoxVillage> newVillages) {
-        for (BoundingBox village : oldVillages.values()) {
-            removeBoundingBox(village);
-            if (eventHandler != null) {
-                eventHandler.villageRemoved(this.dimensionType, village);
-            }
-        }
-        for (BoundingBox village : newVillages.values()) {
-            if (!isCached(village))
-                addBoundingBox(village);
         }
     }
 }
