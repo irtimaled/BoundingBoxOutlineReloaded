@@ -28,7 +28,7 @@ public class InitializeClientMessage implements IMessage {
         buf.writeInt(worldData.getSpawnZ());
     }
 
-    public WorldData getWorldData() {
+    WorldData getWorldData() {
         return worldData;
     }
 }

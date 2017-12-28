@@ -51,11 +51,11 @@ public class AddBoundingBoxMessage implements IMessage {
         return dimensionType;
     }
 
-    public BoundingBox getKey() {
+    BoundingBox getKey() {
         return key;
     }
 
-    public Set<BoundingBox> getBoundingBoxes() {
+    Set<BoundingBox> getBoundingBoxes() {
         return boundingBoxes;
     }
 }

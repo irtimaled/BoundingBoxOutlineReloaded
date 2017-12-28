@@ -21,7 +21,7 @@ public class BoundingBoxCache {
         cache.clear();
     }
 
-    public boolean isCached(BoundingBox key) {
+    boolean isCached(BoundingBox key) {
         return cache.containsKey(key);
     }
 

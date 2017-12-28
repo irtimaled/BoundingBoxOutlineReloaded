@@ -10,10 +10,10 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 
 @Mod(modid = ForgeMod.MODID, name = ForgeMod.NAME, version = ForgeMod.VERSION, acceptedMinecraftVersions = ForgeMod.MCVERSION, acceptableRemoteVersions = "*")
 public class ForgeMod {
-    public static final String MODID = "bbor";
-    public static final String NAME = "Bounding Box Outline Reloaded";
-    public static final String VERSION = "1.0.0-beta18";
-    public static final String MCVERSION = "1.12";
+    static final String MODID = "bbor";
+    static final String NAME = "Bounding Box Outline Reloaded";
+    static final String VERSION = "1.0.0-beta18";
+    static final String MCVERSION = "1.12";
 
     public SimpleNetworkWrapper network;
 

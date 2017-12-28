@@ -24,9 +24,9 @@ import java.util.List;
 
 public class DimensionProcessor extends BoundingBoxCache {
     private World world;
-    private IEventHandler eventHandler;
+    private IVillageEventHandler eventHandler;
 
-    public DimensionProcessor(IEventHandler eventHandler, World world, DimensionType dimensionType, IChunkGenerator chunkGenerator) {
+    DimensionProcessor(IVillageEventHandler eventHandler, World world, DimensionType dimensionType, IChunkGenerator chunkGenerator) {
         this.eventHandler = eventHandler;
         this.world = world;
         this.dimensionType = dimensionType;
@@ -180,7 +180,7 @@ public class DimensionProcessor extends BoundingBoxCache {
         for (BoundingBox village : oldVillages.values()) {
             removeBoundingBox(village);
             if (eventHandler != null) {
-                eventHandler.boundingBoxRemoved(this.dimensionType, village);
+                eventHandler.villageRemoved(this.dimensionType, village);
             }
         }
         for (BoundingBox village : newVillages.values()) {

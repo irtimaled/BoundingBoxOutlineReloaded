@@ -9,8 +9,8 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import java.awt.*;
 
-public class BoundingBoxSerializer {
-    public static void serialize(BoundingBox boundingBox, ByteBuf buf) {
+class BoundingBoxSerializer {
+    static void serialize(BoundingBox boundingBox, ByteBuf buf) {
         if (boundingBox instanceof BoundingBoxVillage) {
             serializeVillage((BoundingBoxVillage) boundingBox, buf);
         }

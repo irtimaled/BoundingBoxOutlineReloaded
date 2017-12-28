@@ -11,8 +11,8 @@ import java.awt.*;
 import java.util.HashSet;
 import java.util.Set;
 
-public class BoundingBoxDeserializer {
-    public static BoundingBox deserialize(ByteBuf buf) {
+class BoundingBoxDeserializer {
+    static BoundingBox deserialize(ByteBuf buf) {
         char type = (char) ByteBufUtils.readVarShort(buf);
         switch (type) {
             case 'V':

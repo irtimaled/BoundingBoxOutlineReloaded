@@ -28,9 +28,7 @@ public class ForgeClientProxy extends ForgeCommonProxy {
     protected boolean isRemotePlayer(EntityPlayer player) {
         if (Minecraft.getMinecraft().isSingleplayer()) {
             EntityPlayer singlePlayer = Minecraft.getMinecraft().player;
-            if (singlePlayer == null)
-                return false;
-            return player.getGameProfile() != singlePlayer.getGameProfile();
+            return singlePlayer != null && player.getGameProfile() != singlePlayer.getGameProfile();
         }
         return true;
     }

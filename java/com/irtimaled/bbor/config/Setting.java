@@ -2,9 +2,9 @@ package com.irtimaled.bbor.config;
 
 public class Setting {
     private Object value;
-    public String comment;
+    String comment;
 
-    public Setting(Object value) {
+    Setting(Object value) {
         this.value = value;
     }
 
@@ -15,7 +15,7 @@ public class Setting {
         return defaultValue;
     }
 
-    public int getInt(int defaultValue) {
+    int getInt(int defaultValue) {
         if (value instanceof Integer)
             return (Integer) value;
 
@@ -34,7 +34,7 @@ public class Setting {
         return getInt(0);
     }
 
-    public String getType() {
+    String getType() {
         if (value instanceof Integer)
             return "I";
         if (value instanceof Boolean)
@@ -42,7 +42,7 @@ public class Setting {
         return "S";
     }
 
-    public Object getValue() {
+    Object getValue() {
         return value;
     }
 }

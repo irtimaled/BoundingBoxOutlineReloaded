@@ -4,16 +4,15 @@ import com.irtimaled.bbor.Logger;
 import com.irtimaled.bbor.common.BoundingBoxCache;
 import com.irtimaled.bbor.common.CommonProxy;
 import com.irtimaled.bbor.common.DimensionCache;
-import com.irtimaled.bbor.common.IEventHandler;
+import com.irtimaled.bbor.common.IVillageEventHandler;
 import com.irtimaled.bbor.common.models.BoundingBox;
-import com.irtimaled.bbor.common.models.WorldData;
-import com.irtimaled.bbor.config.ConfigManager;
 import com.irtimaled.bbor.forge.messages.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.DimensionType;
+import net.minecraft.world.World;
 import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -31,10 +30,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ForgeCommonProxy implements IEventHandler {
-    public Map<EntityPlayerMP, DimensionType> playerDimensions = new ConcurrentHashMap<>();
+public class ForgeCommonProxy implements IVillageEventHandler {
+    private Map<EntityPlayerMP, DimensionType> playerDimensions = new ConcurrentHashMap<>();
     private Map<EntityPlayerMP, Set<BoundingBox>> playerBoundingBoxesCache = new HashMap<>();
-    public HashSet<EntityPlayerMP> registeredPlayers = new HashSet<>();
+    private HashSet<EntityPlayerMP> registeredPlayers = new HashSet<>();
 
     protected CommonProxy getProxy() {
         if (commonProxy == null)
@@ -54,7 +53,7 @@ public class ForgeCommonProxy implements IEventHandler {
     protected SimpleNetworkWrapper network;
     private CommonProxy commonProxy;
 
-    public void init() {
+    void init() {
         CommonProxy proxy = getProxy();
         proxy.setEventHandler(this);
         proxy.init();
@@ -66,7 +65,8 @@ public class ForgeCommonProxy implements IEventHandler {
 
     @SubscribeEvent
     public void worldEvent(WorldEvent.Load event) {
-        getProxy().worldLoaded(event.getWorld());
+        World world = event.getWorld();
+        getProxy().worldLoaded(world);
     }
 
     @SubscribeEvent
@@ -78,15 +78,8 @@ public class ForgeCommonProxy implements IEventHandler {
     public void playerChangedDimensionEvent(PlayerEvent.PlayerChangedDimensionEvent evt) {
         if (playerDimensions.containsKey(evt.player)) {
             EntityPlayerMP player = (EntityPlayerMP) evt.player;
-            DimensionType dimensionType = DimensionType.getById(player.dimension);
-            playerDimensions.put(player, dimensionType);
-
-            sendToPlayer(player, getDimensionCache().getBoundingBoxes(dimensionType));
+            sendBoundingBoxes(player);
         }
-    }
-
-    protected boolean isRemotePlayer(EntityPlayer player) {
-        return registeredPlayers.contains(player);
     }
 
     @SubscribeEvent
@@ -95,10 +88,22 @@ public class ForgeCommonProxy implements IEventHandler {
                 isRemotePlayer(evt.player)) {
             EntityPlayerMP player = (EntityPlayerMP) evt.player;
             initializeClient(player);
-            DimensionType dimensionType = DimensionType.getById(player.dimension);
-            playerDimensions.put(player, dimensionType);
-            sendToPlayer(player, getDimensionCache().getBoundingBoxes(dimensionType));
+            sendBoundingBoxes(player);
         }
+    }
+
+    private void sendBoundingBoxes(EntityPlayerMP player) {
+        DimensionType dimensionType = DimensionType.getById(player.dimension);
+        playerDimensions.put(player, dimensionType);
+        sendToPlayer(player, getDimensionCache().getBoundingBoxes(dimensionType));
+    }
+
+    protected boolean isRemotePlayer(EntityPlayer player) {
+        return registeredPlayers.contains(player);
+    }
+
+    private void initializeClient(EntityPlayerMP player) {
+        network.sendTo(InitializeClientMessage.from(getDimensionCache().getWorldData()), player);
     }
 
     @SubscribeEvent
@@ -121,10 +126,6 @@ public class ForgeCommonProxy implements IEventHandler {
                 sendToPlayer(player, getDimensionCache().getBoundingBoxes(dimensionType));
             }
         }
-    }
-
-    private void initializeClient(EntityPlayerMP player) {
-        network.sendTo(InitializeClientMessage.from(getDimensionCache().getWorldData()), player);
     }
 
     private void sendToPlayer(EntityPlayerMP player, BoundingBoxCache boundingBoxCache) {
@@ -158,11 +159,11 @@ public class ForgeCommonProxy implements IEventHandler {
         return cacheSubset;
     }
 
-    public void boundingBoxRemoved(DimensionType dimensionType, BoundingBox bb) {
+    public void villageRemoved(DimensionType dimensionType, BoundingBox bb) {
         RemoveBoundingBoxMessage message = RemoveBoundingBoxMessage.from(dimensionType, bb);
         for (EntityPlayerMP player : playerDimensions.keySet()) {
             if (DimensionType.getById(player.dimension) == dimensionType) {
-                Logger.info("remove 1 entry from %s (0)", player.getDisplayNameString());
+                Logger.info("remove 1 entry from %s (%s)", player.getDisplayNameString(), dimensionType);
                 network.sendTo(message, player);
 
                 if (playerBoundingBoxesCache.containsKey(player) &&
@@ -173,8 +174,8 @@ public class ForgeCommonProxy implements IEventHandler {
         }
     }
 
-    public void setWorldData(WorldData worldData) {
-        getDimensionCache().setWorldData(worldData.getSeed(), worldData.getSpawnX(), worldData.getSpawnZ());
+    public void setWorldData(long seed, int spawnX, int spawnZ) {
+        getDimensionCache().setWorldData(seed, spawnX, spawnZ);
     }
 
     public void addBoundingBox(DimensionType dimensionType, BoundingBox key, Set<BoundingBox> boundingBoxes) {

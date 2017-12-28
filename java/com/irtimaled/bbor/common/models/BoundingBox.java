@@ -34,11 +34,7 @@ public abstract class BoundingBox {
         if (getClass() != obj.getClass())
             return false;
         BoundingBox other = (BoundingBox) obj;
-        if (!minBlockPos.equals(other.minBlockPos))
-            return false;
-        if (!maxBlockPos.equals(other.maxBlockPos))
-            return false;
-        return true;
+        return minBlockPos.equals(other.minBlockPos) && maxBlockPos.equals(other.maxBlockPos);
     }
 
     @Override

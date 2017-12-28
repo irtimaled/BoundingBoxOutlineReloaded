@@ -12,7 +12,7 @@ import net.minecraft.world.gen.IChunkGenerator;
 public class CommonProxy {
     protected DimensionCache dimensionCache = new DimensionCache();
 
-    private IEventHandler eventHandler = null;
+    private IVillageEventHandler eventHandler = null;
 
     public void worldLoaded(World world) {
         IChunkProvider chunkProvider = world.getChunkProvider();
@@ -34,7 +34,7 @@ public class CommonProxy {
     public void init() {
     }
 
-    public void setEventHandler(IEventHandler eventHandler) {
+    public void setEventHandler(IVillageEventHandler eventHandler) {
         this.eventHandler = eventHandler;
     }
 

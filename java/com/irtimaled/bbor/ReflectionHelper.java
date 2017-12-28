@@ -11,19 +11,15 @@ public class ReflectionHelper {
             if (f != null) {
                 return (R) f.get(instance);
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return null;
     }
 
     private static Map<Class, Map<Class, Field>> fieldMap = new HashMap<>();
 
-    protected static <T, R> Field getField(Class<T> sourceClass, Class<R> resultClass) {
-        Map<Class, Field> map = fieldMap.get(sourceClass);
-        if (map == null) {
-            map = new HashMap<>();
-            fieldMap.put(sourceClass, map);
-        }
+    private static <T, R> Field getField(Class<T> sourceClass, Class<R> resultClass) {
+        Map<Class, Field> map = fieldMap.computeIfAbsent(sourceClass, k -> new HashMap<>());
         Field field = map.get(resultClass);
         if (field == null) {
             field = getFieldUsingReflection(sourceClass, resultClass);

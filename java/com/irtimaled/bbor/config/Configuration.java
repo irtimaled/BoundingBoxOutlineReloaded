@@ -11,11 +11,11 @@ import java.util.Map;
 public class Configuration {
     private final File file;
 
-    public Configuration(File file) {
+    Configuration(File file) {
         this.file = file;
     }
 
-    public void save() {
+    void save() {
         Writer writer = null;
         try {
             writer = new BufferedWriter(new OutputStreamWriter(
@@ -36,18 +36,20 @@ public class Configuration {
                 }
                 writer.write("}\n");
             }
-        } catch (IOException ex) {
+        } catch (IOException ignored) {
         } finally {
             try {
-                writer.close();
-            } catch (Exception ex) {
+                if (writer != null) {
+                    writer.close();
+                }
+            } catch (Exception ignored) {
             }
         }
     }
 
-    Map<String, Map<String, Setting>> settingsGroup = new HashMap<>();
+    private Map<String, Map<String, Setting>> settingsGroup = new HashMap<>();
 
-    public void load() {
+    void load() {
         try {
             List<String> lines = Files.readLines(file, Charset.forName("utf-8"));
             String category = null;
@@ -79,10 +81,9 @@ public class Configuration {
                     Setting setting = new Setting(value);
                     setting.comment = lastCommentLine;
                     settingsGroup.get(category).put(name, setting);
-                    continue;
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException ignored) {
         }
     }
 

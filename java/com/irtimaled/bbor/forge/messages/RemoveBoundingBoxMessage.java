@@ -33,7 +33,7 @@ public class RemoveBoundingBoxMessage implements IMessage {
         return dimensionType;
     }
 
-    public BoundingBox getKey() {
+    BoundingBox getKey() {
         return key;
     }
 }

@@ -27,11 +27,9 @@ public class ConfigManager {
     public static Setting drawEndCities;
     public static Setting drawMansions;
 
-    private static Configuration config;
-
     public static void loadConfig(File mcConfigDir) {
         configDir = mcConfigDir;
-        config = new Configuration(new File(configDir, "BBOutlineReloaded.cfg"));
+        Configuration config = new Configuration(new File(configDir, "BBOutlineReloaded.cfg"));
         config.load();
 
         fill = SetupBooleanProperty(config, "general", "fill", true, "If set to true the bounding boxes are filled. (default: true)");
