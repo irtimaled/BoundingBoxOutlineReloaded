@@ -1,11 +1,13 @@
 package com.irtimaled.bbor.client;
 
+import com.irtimaled.bbor.common.BoundingBoxCache;
 import com.irtimaled.bbor.common.models.BoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBoxSlimeChunk;
 import com.irtimaled.bbor.common.models.BoundingBoxWorldSpawn;
 import com.irtimaled.bbor.common.models.WorldData;
 import com.irtimaled.bbor.config.ConfigManager;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
@@ -15,6 +17,7 @@ import java.awt.*;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 class ClientBoundingBoxProvider {
     private final ClientDimensionCache dimensionCache;
@@ -23,15 +26,29 @@ class ClientBoundingBoxProvider {
         this.dimensionCache = dimensionCache;
     }
 
-    Set<BoundingBox> getClientBoundingBoxes(DimensionType dimensionType) {
-        WorldData worldData = dimensionCache.getWorldData();
-
-        if (worldData == null) {
-            return null;
+    Set<BoundingBox> getBoundingBoxes(DimensionType dimensionType, Boolean outerBoxOnly, WorldClient world) {
+        Set<BoundingBox> boundingBoxes = getClientBoundingBoxes(dimensionType);
+        BoundingBoxCache boundingBoxCache = dimensionCache.getBoundingBoxes(dimensionType);
+        if (boundingBoxCache != null) {
+            if (outerBoxOnly) {
+                boundingBoxes.addAll(boundingBoxCache.getBoundingBoxes().keySet());
+            } else {
+                boundingBoxCache.getBoundingBoxes()
+                        .values()
+                        .forEach(boundingBoxes::addAll);
+            }
         }
 
+        return boundingBoxes.stream()
+                .filter(bb -> world.isAreaLoaded(bb.getMinBlockPos(), bb.getMaxBlockPos()))
+                .collect(Collectors.toSet());
+    }
+
+    private Set<BoundingBox> getClientBoundingBoxes(DimensionType dimensionType) {
+        WorldData worldData = dimensionCache.getWorldData();
+
         Set<BoundingBox> boundingBoxes = new HashSet<>();
-        if (dimensionType == DimensionType.OVERWORLD) {
+        if (worldData != null && dimensionType == DimensionType.OVERWORLD) {
             if (ConfigManager.drawWorldSpawn.getBoolean()) {
                 boundingBoxes.add(getWorldSpawnBoundingBox(worldData.getSpawnX(), worldData.getSpawnZ()));
                 boundingBoxes.add(buildSpawnChunksBoundingBox(worldData.getSpawnX(), worldData.getSpawnZ()));
