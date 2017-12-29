@@ -1,0 +1,67 @@
+{
+  "mappings": {
+    "com/irtimaled/bbor/litemod/mixins/MixinIntegratedServer": {
+      "loadAllWorlds": "Lchd;a(Ljava/lang/String;Ljava/lang/String;JLamz;Ljava/lang/String;)V"
+    },
+    "com/irtimaled/bbor/litemod/mixins/MixinNetworkManager": {
+      "sendPacket(Lnet/minecraft/network/Packet;)V": "Lgw;a(Lht;)V"
+    },
+    "com/irtimaled/bbor/litemod/mixins/MixinEntityRenderer": {
+      "Lnet/minecraft/profiler/Profiler;endStartSection(Ljava/lang/String;)V": "Lrl;c(Ljava/lang/String;)V",
+      "renderWorldPass": "Lbuq;a(IFJ)V"
+    },
+    "com/irtimaled/bbor/litemod/mixins/MixinWorldClient": {
+      "sendQuittingDisconnectingPacket": "Lbsb;O()V"
+    },
+    "com/irtimaled/bbor/litemod/mixins/MixinChunk": {
+      "onLoad": "Laxw;c()V"
+    },
+    "com/irtimaled/bbor/litemod/mixins/MixinKeyBinding": {
+      "compareTo": "Lbhy;a(Lbhy;)I"
+    }
+  },
+  "data": {
+    "notch": {
+      "com/irtimaled/bbor/litemod/mixins/MixinIntegratedServer": {
+        "loadAllWorlds": "Lchd;a(Ljava/lang/String;Ljava/lang/String;JLamz;Ljava/lang/String;)V"
+      },
+      "com/irtimaled/bbor/litemod/mixins/MixinNetworkManager": {
+        "sendPacket(Lnet/minecraft/network/Packet;)V": "Lgw;a(Lht;)V"
+      },
+      "com/irtimaled/bbor/litemod/mixins/MixinEntityRenderer": {
+        "Lnet/minecraft/profiler/Profiler;endStartSection(Ljava/lang/String;)V": "Lrl;c(Ljava/lang/String;)V",
+        "renderWorldPass": "Lbuq;a(IFJ)V"
+      },
+      "com/irtimaled/bbor/litemod/mixins/MixinWorldClient": {
+        "sendQuittingDisconnectingPacket": "Lbsb;O()V"
+      },
+      "com/irtimaled/bbor/litemod/mixins/MixinChunk": {
+        "onLoad": "Laxw;c()V"
+      },
+      "com/irtimaled/bbor/litemod/mixins/MixinKeyBinding": {
+        "compareTo": "Lbhy;a(Lbhy;)I"
+      }
+    },
+    "searge": {
+      "com/irtimaled/bbor/litemod/mixins/MixinIntegratedServer": {
+        "loadAllWorlds": "Lnet/minecraft/server/integrated/IntegratedServer;func_71247_a(Ljava/lang/String;Ljava/lang/String;JLnet/minecraft/world/WorldType;Ljava/lang/String;)V"
+      },
+      "com/irtimaled/bbor/litemod/mixins/MixinNetworkManager": {
+        "sendPacket(Lnet/minecraft/network/Packet;)V": "Lnet/minecraft/network/NetworkManager;func_179290_a(Lnet/minecraft/network/Packet;)V"
+      },
+      "com/irtimaled/bbor/litemod/mixins/MixinEntityRenderer": {
+        "Lnet/minecraft/profiler/Profiler;endStartSection(Ljava/lang/String;)V": "Lnet/minecraft/profiler/Profiler;func_76318_c(Ljava/lang/String;)V",
+        "renderWorldPass": "Lnet/minecraft/client/renderer/EntityRenderer;func_175068_a(IFJ)V"
+      },
+      "com/irtimaled/bbor/litemod/mixins/MixinWorldClient": {
+        "sendQuittingDisconnectingPacket": "Lnet/minecraft/client/multiplayer/WorldClient;func_72882_A()V"
+      },
+      "com/irtimaled/bbor/litemod/mixins/MixinChunk": {
+        "onLoad": "Lnet/minecraft/world/chunk/Chunk;func_76631_c()V"
+      },
+      "com/irtimaled/bbor/litemod/mixins/MixinKeyBinding": {
+        "compareTo": "Lnet/minecraft/client/settings/KeyBinding;compareTo(Lnet/minecraft/client/settings/KeyBinding;)I"
+      }
+    }
+  }
+}
