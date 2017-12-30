@@ -11,11 +11,12 @@ import java.util.List;
 import java.util.Map;
 
 public class VillageProcessor {
-    private final World world;
-    private final DimensionType dimensionType;
-    private final IVillageEventHandler eventHandler;
+    private World world;
+    private DimensionType dimensionType;
+    private IVillageEventHandler eventHandler;
     private BoundingBoxCache boundingBoxCache;
     private Map<Integer, BoundingBoxVillage> villageCache = new HashMap<>();
+    private boolean closed = false;
 
     VillageProcessor(World world, DimensionType dimensionType, IVillageEventHandler eventHandler, BoundingBoxCache boundingBoxCache) {
         this.world = world;
@@ -25,6 +26,8 @@ public class VillageProcessor {
     }
 
     synchronized void process() {
+        if (closed) return;
+
         Map<Integer, BoundingBoxVillage> oldVillages = new HashMap<>(villageCache);
         Map<Integer, BoundingBoxVillage> newVillages = new HashMap<>();
         VillageCollection villageCollection = world.getVillageCollection();
@@ -54,7 +57,11 @@ public class VillageProcessor {
         villageCache = newVillages;
     }
 
-    public void clear() {
+    public void close() {
+        closed = true;
+        world = null;
+        eventHandler = null;
+        boundingBoxCache = null;
         villageCache.clear();
     }
 }

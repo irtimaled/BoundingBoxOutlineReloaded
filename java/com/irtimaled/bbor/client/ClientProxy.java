@@ -62,9 +62,11 @@ public class ClientProxy extends CommonProxy {
 
     public void playerDisconnectedFromServer() {
         active = false;
+        villageProcessors.forEach(VillageProcessor::close);
+        villageProcessors.clear();
+
         if (ConfigManager.keepCacheBetweenSessions.getBoolean()) return;
         VillageColorCache.clear();
         dimensionCache.clear();
-        villageProcessors.forEach(VillageProcessor::clear);
     }
 }

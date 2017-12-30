@@ -13,8 +13,7 @@ public class VillageColorCache {
     }
 
     private static Color getNextColor() {
-        ++colorIndex;
-        switch (colorIndex % 6) {
+        switch (++colorIndex % 6) {
             case 0:
                 return Color.RED;
             case 1:
