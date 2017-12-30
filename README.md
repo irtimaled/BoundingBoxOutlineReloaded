@@ -1,6 +1,6 @@
 # BoundingBoxOutlineReloaded
 
-BoundingBoxOutlineReloaded is a mod for Minecraft Forge 1.11.2, 1.11 & 1.10.2 and Vanilla 1.11.2 & 1.11
+BoundingBoxOutlineReloaded is a mod for Minecraft Forge, LiteLoader, and Vanilla
 
 # Why did I make it?
 
@@ -28,9 +28,9 @@ This mod highlights in a variety of colours and styles the different structures 
 
 As chunks are loaded the game provides metadata about all the different structures & features in those chunks.  The mod interprets this meta data, caches the results, and renders the bounding boxes to the screen.  In an SMP environment this data is not present on the clients so the mod needs to run on the server where the processing happens and then the relevant metadata is sent to the clients for them to render.
 
-# Installing (Forge Version)
+# Installing (Forge/LiteLoader)
 
-Make sure you have Forge 1.11 installed then drop the jar file into the mods/1.11 folder. Remember this will need to be installed on client and server in an SMP scenario (unless you use local dat files - see below)
+Make sure you have Forge or LiteLoader installed then drop the mod file into the appropriate mods folder. [Forge Only] If you want to use client/server with your SMP server then make sure the mod is installed on both client and server.
 
 # Installing (Vanilla)
 
@@ -38,7 +38,7 @@ Copy the contents of the Vanilla archive into the JAR file as per usual.  In a S
 
 # Configuring
 
-The keyboard shortcut can be configured in the standard Controls screen.
+The keyboard shortcuts can be configured in the standard Controls screen.
 
 The following options are available for configuration
 
@@ -92,9 +92,9 @@ There are two options when you want bounding boxes to show whilst accessing vani
   - Mansion.dat; include this for Mansions to be rendered.
   - Temple.dat; include this for Desert & Jungle Temples and witch huts to be rendered.
 
-  It is also possible to include the villages.dat, villages_end.dat & villages_nether.dat files and it will render villages however these files only contain the villages that were loaded when the files were copied and will not handle any changes that occur with villages such as when doors are added/removed or villager population changes.
+It is also possible to include the villages.dat, villages_end.dat & villages_nether.dat files and it will render villages however these files only contain the villages that were loaded when the files were copied and will not handle any changes that occur with villages such as when doors are added/removed or villager population changes.
 
 # Links
-- Forge - [1.11.2](http://files.minecraftforge.net/maven/net/minecraftforge/forge/index_1.11.2.html) | [1.11](http://files.minecraftforge.net/maven/net/minecraftforge/forge/index_1.11.html)
+- Forge - [Download](https://files.minecraftforge.net/)
 - 4poc's BBOutline mod - [Forum](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1286555-bounding-box-outline) | [Source](http://www.github.com/4poc/bboutline)
 - KaboPC's VillageMarker mod - [Forum](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1288327-village-marker-mod)
