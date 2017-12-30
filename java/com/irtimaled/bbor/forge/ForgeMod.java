@@ -11,9 +11,9 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 @Mod(modid = ForgeMod.MODID, name = ForgeMod.NAME, version = ForgeMod.VERSION, acceptedMinecraftVersions = ForgeMod.MCVERSION, acceptableRemoteVersions = "*")
 public class ForgeMod {
     static final String MODID = "bbor";
-    static final String NAME = "Bounding Box Outline Reloaded";
-    static final String VERSION = "1.0.0-beta18";
-    static final String MCVERSION = "1.12";
+    static final String NAME = "BoundingBoxOutlineReloaded";
+    static final String VERSION = "1.0.1";
+    static final String MCVERSION = "1.12.2";
 
     public SimpleNetworkWrapper network;
 
