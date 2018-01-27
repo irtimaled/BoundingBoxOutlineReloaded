@@ -6,8 +6,8 @@ import net.minecraft.village.Village;
 import net.minecraft.village.VillageDoorInfo;
 
 import java.awt.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.List;
 
 public class BoundingBoxVillage extends BoundingBox {
     private final BlockPos center;
@@ -57,9 +57,10 @@ public class BoundingBoxVillage extends BoundingBox {
 
     private static Set<BlockPos> getDoorsFromVillage(Village village) {
         Set<BlockPos> doors = new HashSet<>();
-        for (Object doorInfo : village.getVillageDoorInfoList()) {
-            VillageDoorInfo villageDoorInfo = (VillageDoorInfo) doorInfo;
-            doors.add(villageDoorInfo.getDoorBlockPos());
+        List<VillageDoorInfo> doorInfoList = village.getVillageDoorInfoList();
+        for (int i = 0; i < doorInfoList.size(); i++) {
+            VillageDoorInfo doorInfo = doorInfoList.get(i);
+            doors.add(doorInfo.getDoorBlockPos());
         }
         return doors;
     }

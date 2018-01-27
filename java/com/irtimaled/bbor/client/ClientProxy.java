@@ -52,6 +52,13 @@ public class ClientProxy extends CommonProxy {
         }
     }
 
+    @Override
+    public void tick() {
+        if (this.active) {
+            super.tick();
+        }
+    }
+
     public void playerConnectedToServer(NetworkManager networkManager) {
         SocketAddress remoteAddress = networkManager.getRemoteAddress();
         if (remoteAddress instanceof InetSocketAddress) {
