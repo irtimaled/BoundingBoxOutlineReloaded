@@ -47,6 +47,7 @@ public class ForgeCommonProxy implements IVillageEventHandler {
                 event.getRegistrations().contains("bbor") &&
                 event.getHandler() instanceof NetHandlerPlayServer) {
             registeredPlayers.add(((NetHandlerPlayServer) event.getHandler()).player);
+            onRegisteredPlayerCountChanged(registeredPlayers.size());
         }
     }
 
@@ -108,11 +109,15 @@ public class ForgeCommonProxy implements IVillageEventHandler {
 
     @SubscribeEvent
     public void playerLoggedOutEvent(PlayerEvent.PlayerLoggedOutEvent evt) {
-        if (playerDimensions.containsKey(evt.player)) {
+        if (isRemotePlayer(evt.player)) {
             playerDimensions.remove(evt.player);
             playerBoundingBoxesCache.remove(evt.player);
             registeredPlayers.remove(evt.player);
+            onRegisteredPlayerCountChanged(registeredPlayers.size());
         }
+    }
+
+    protected void onRegisteredPlayerCountChanged(int registeredPlayerCount) {
     }
 
     @SubscribeEvent

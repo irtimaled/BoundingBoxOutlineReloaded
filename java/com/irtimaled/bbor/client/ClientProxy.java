@@ -21,6 +21,7 @@ public class ClientProxy extends CommonProxy {
     private KeyBinding activeHotKey;
     private KeyBinding outerBoxOnlyHotKey;
     private ClientRenderer renderer;
+    private int remoteUserCount = 0;
 
     public void keyPressed() {
         if (activeHotKey.isPressed()) {
@@ -52,9 +53,17 @@ public class ClientProxy extends CommonProxy {
         }
     }
 
+    public void setRemoteUserCount(int remoteUserCount) {
+        this.remoteUserCount = remoteUserCount;
+    }
+
+    protected boolean hasRemoteUsers()    {
+        return remoteUserCount > 0;
+    }
+
     @Override
     public void tick() {
-        if (this.active) {
+        if (this.active || this.hasRemoteUsers()) {
             super.tick();
         }
     }

@@ -25,6 +25,11 @@ public class ForgeClientProxy extends ForgeCommonProxy {
     }
 
     @Override
+    protected void onRegisteredPlayerCountChanged(int registeredPlayerCount) {
+        getProxy().setRemoteUserCount(registeredPlayerCount-1);
+    }
+
+    @Override
     protected boolean isRemotePlayer(EntityPlayer player) {
         if (Minecraft.getMinecraft().isSingleplayer()) {
             EntityPlayer singlePlayer = Minecraft.getMinecraft().player;
