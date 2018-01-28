@@ -33,7 +33,8 @@ public class VillageProcessor {
         VillageCollection villageCollection = world.getVillageCollection();
         if (villageCollection != null) {
             List<Village> villages = villageCollection.getVillageList();
-            for (Village village : villages) {
+            for(int i = 0; i < villages.size(); i++) {
+                Village village = villages.get(i);
                 int villageId = village.hashCode();
                 BoundingBoxVillage newVillage = oldVillages.get(villageId);
                 if (newVillage != null && newVillage.matches(village)) {
