@@ -12,7 +12,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 public class ForgeMod {
     static final String MODID = "bbor";
     static final String NAME = "BoundingBoxOutlineReloaded";
-    static final String VERSION = "1.0.1";
+    static final String VERSION = "1.0.3";
     static final String MCVERSION = "1.12.2";
 
     public SimpleNetworkWrapper network;
