@@ -8,9 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.world.DimensionType;
 import org.apache.commons.lang3.ArrayUtils;
-import org.lwjgl.input.Keyboard;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -36,20 +34,20 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void init() {
         String category = "Bounding Box Outline Reloaded";
-        activeHotKey = new KeyBinding("Toggle On/Off", Keyboard.KEY_B, category);
-        outerBoxOnlyHotKey = new KeyBinding("Toggle Display Outer Box Only", Keyboard.KEY_O, category);
-        Minecraft.getMinecraft().gameSettings.keyBindings = ArrayUtils.addAll(Minecraft.getMinecraft().gameSettings.keyBindings, activeHotKey, outerBoxOnlyHotKey);
+        activeHotKey = new KeyBinding("Toggle On/Off", 0x42, category);
+        outerBoxOnlyHotKey = new KeyBinding("Toggle Display Outer Box Only", 0x4f, category);
+        Minecraft.getInstance().gameSettings.keyBindings = ArrayUtils.addAll(Minecraft.getInstance().gameSettings.keyBindings, activeHotKey, outerBoxOnlyHotKey);
         ClientDimensionCache clientDimensionCache = new ClientDimensionCache();
         renderer = new ClientRenderer(clientDimensionCache);
         dimensionCache = clientDimensionCache;
     }
 
     public void render(float partialTicks) {
-        EntityPlayer entityPlayer = Minecraft.getMinecraft().player;
+        EntityPlayer entityPlayer = Minecraft.getInstance().player;
         PlayerData.setPlayerPosition(partialTicks, entityPlayer);
 
         if (this.active) {
-            renderer.render(DimensionType.getById(entityPlayer.dimension), outerBoxOnly);
+            renderer.render(entityPlayer.dimension, outerBoxOnly);
         }
     }
 

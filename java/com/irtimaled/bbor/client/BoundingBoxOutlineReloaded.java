@@ -12,7 +12,7 @@ public class BoundingBoxOutlineReloaded {
     private static ClientProxy proxy;
 
     public static void init() {
-        ConfigManager.loadConfig(new File(Minecraft.getMinecraft().mcDataDir, "config"));
+        ConfigManager.loadConfig(new File(Minecraft.getInstance().gameDir, "config"));
         proxy = new ClientProxy();
         proxy.init();
     }

@@ -1,7 +1,7 @@
 package com.irtimaled.bbor.common;
 
 import com.irtimaled.bbor.common.models.WorldData;
-import net.minecraft.world.DimensionType;
+import net.minecraft.world.dimension.DimensionType;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

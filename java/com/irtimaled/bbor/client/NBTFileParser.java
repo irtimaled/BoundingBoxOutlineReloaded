@@ -12,7 +12,7 @@ import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.DimensionType;
+import net.minecraft.world.dimension.DimensionType;
 
 import java.awt.*;
 import java.io.File;
@@ -51,10 +51,10 @@ class NBTFileParser {
         if (nbt == null)
             return;
 
-        NBTTagCompound data = nbt.getCompoundTag("Data");
+        NBTTagCompound data = nbt.getCompound("Data");
         long seed = data.getLong("RandomSeed");
-        int spawnX = data.getInteger("SpawnX");
-        int spawnZ = data.getInteger("SpawnZ");
+        int spawnX = data.getInt("SpawnX");
+        int spawnZ = data.getInt("SpawnZ");
         Logger.info("Loaded level.dat (seed: %d, spawn: %d,%d)", seed, spawnX, spawnZ);
         dimensionCache.setWorldData(seed, spawnX, spawnZ);
     }
@@ -121,11 +121,11 @@ class NBTFileParser {
         if (nbt == null)
             return;
 
-        NBTTagCompound features = nbt.getCompoundTag("data")
-                .getCompoundTag("Features");
+        NBTTagCompound features = nbt.getCompound("data")
+                .getCompound("Features");
         int loadedStructureCount = 0;
-        for (Object key : features.getKeySet()) {
-            NBTTagCompound feature = features.getCompoundTag((String) key);
+        for (Object key : features.keySet()) {
+            NBTTagCompound feature = features.getCompound((String) key);
             BoundingBox structure = BoundingBoxStructure.from(feature.getIntArray("BB"), color);
             Set<BoundingBox> boundingBoxes = new HashSet<>();
             NBTTagCompound[] children = getChildCompoundTags(feature, "Children");
@@ -147,11 +147,11 @@ class NBTFileParser {
         if (nbt == null)
             return;
 
-        NBTTagCompound[] villages = getChildCompoundTags(nbt.getCompoundTag("data"), "Villages");
+        NBTTagCompound[] villages = getChildCompoundTags(nbt.getCompound("data"), "Villages");
         for (NBTTagCompound village : villages) {
-            BlockPos center = new BlockPos(village.getInteger("CX"), village.getInteger("CY"), village.getInteger("CZ"));
-            int radius = village.getInteger("Radius");
-            int population = village.getInteger("PopSize");
+            BlockPos center = new BlockPos(village.getInt("CX"), village.getInt("CY"), village.getInt("CZ"));
+            int radius = village.getInt("Radius");
+            int population = village.getInt("PopSize");
             Set<BlockPos> doors = getDoors(village);
             BoundingBox boundingBox = BoundingBoxVillage.from(center, radius, village.hashCode(), population, doors);
             cache.addBoundingBox(boundingBox);
@@ -163,7 +163,7 @@ class NBTFileParser {
     private static Set<BlockPos> getDoors(NBTTagCompound village) {
         Set<BlockPos> doors = new HashSet<>();
         for (NBTTagCompound door : getChildCompoundTags(village, "Doors")) {
-            doors.add(new BlockPos(door.getInteger("X"), door.getInteger("Y"), door.getInteger("Z")));
+            doors.add(new BlockPos(door.getInt("X"), door.getInt("Y"), door.getInt("Z")));
         }
         return doors;
     }
@@ -179,10 +179,10 @@ class NBTFileParser {
     }
 
     private static NBTTagCompound[] getChildCompoundTags(NBTTagCompound parent, String key) {
-        NBTTagList tagList = parent.getTagList(key, 10);
-        NBTTagCompound[] result = new NBTTagCompound[tagList.tagCount()];
-        for (int index = 0; index < tagList.tagCount(); index++) {
-            result[index] = tagList.getCompoundTagAt(index);
+        NBTTagList tagList = parent.getList(key, 10);
+        NBTTagCompound[] result = new NBTTagCompound[tagList.size()];
+        for (int index = 0; index < tagList.size(); index++) {
+            result[index] = tagList.getCompound(index);
         }
         return result;
     }
