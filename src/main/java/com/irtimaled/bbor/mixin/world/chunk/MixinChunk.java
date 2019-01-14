@@ -1,4 +1,4 @@
-package com.irtimaled.bbor.litemod.mixins;
+package com.irtimaled.bbor.mixin.world.chunk;
 
 import com.irtimaled.bbor.client.BoundingBoxOutlineReloaded;
 import net.minecraft.world.chunk.Chunk;
@@ -8,10 +8,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Chunk.class)
-public abstract class MixinChunk {
-    @Inject(method = "onLoad",
-            at = @At("RETURN"))
-    private void onLoaded(CallbackInfo ci) {
-        BoundingBoxOutlineReloaded.chunkLoaded((Chunk)(Object)this);
+public class MixinChunk {
+    @Inject(method = "onLoad", at = @At("RETURN"))
+    private void onLoad(CallbackInfo ci) {
+        BoundingBoxOutlineReloaded.chunkLoaded((Chunk) (Object) this);
     }
 }
