@@ -8,7 +8,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.world.dimension.DimensionType;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.net.InetSocketAddress;
@@ -48,7 +47,7 @@ public class ClientProxy extends CommonProxy {
         PlayerData.setPlayerPosition(partialTicks, entityPlayer);
 
         if (this.active) {
-            renderer.render(DimensionType.getById(entityPlayer.dimension), outerBoxOnly);
+            renderer.render(entityPlayer.dimension, outerBoxOnly);
         }
     }
 
