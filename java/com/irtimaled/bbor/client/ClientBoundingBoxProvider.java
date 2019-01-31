@@ -11,7 +11,7 @@ import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.DimensionType;
+import net.minecraft.world.dimension.DimensionType;
 
 import java.awt.*;
 import java.util.HashSet;
@@ -64,7 +64,7 @@ class ClientBoundingBoxProvider {
     }
 
     private Set<BoundingBoxSlimeChunk> getSlimeChunks() {
-        Minecraft minecraft = Minecraft.getMinecraft();
+        Minecraft minecraft = Minecraft.getInstance();
         int renderDistanceChunks = minecraft.gameSettings.renderDistanceChunks;
         int playerChunkX = MathHelper.floor(minecraft.player.posX / 16.0D);
         int playerChunkZ = MathHelper.floor(minecraft.player.posZ / 16.0D);

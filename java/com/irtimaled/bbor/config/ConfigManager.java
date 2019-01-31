@@ -26,9 +26,14 @@ public class ConfigManager {
     public static Setting drawLazySpawnChunks;
     public static Setting drawEndCities;
     public static Setting drawMansions;
+    public static Setting drawShipwrecks;
+    public static Setting drawOceanRuins;
+    public static Setting drawBuriedTreasure;
+    public static Setting drawIgloos;
 
     public static void loadConfig(File mcConfigDir) {
         configDir = mcConfigDir;
+        configDir.mkdirs();
         Configuration config = new Configuration(new File(configDir, "BBOutlineReloaded.cfg"));
         config.load();
 
@@ -53,6 +58,10 @@ public class ConfigManager {
         drawLazySpawnChunks = SetupBooleanProperty(config, "features", "drawLazySpawnChunks", false, "If set to true the lazy spawn chunks bounding boxes will be drawn. (default: false)");
         drawEndCities = SetupBooleanProperty(config, "features", "drawEndCities", true, "If set to true end city bounding boxes will be drawn. (default: true)");
         drawMansions = SetupBooleanProperty(config, "features", "drawMansions", true, "If set to true woodland mansions will be drawn. (default: true)");
+        drawShipwrecks = SetupBooleanProperty(config, "features", "drawShipwrecks", false, "If set to true shipwrecks will be drawn. (default: false)");
+        drawOceanRuins = SetupBooleanProperty(config, "features", "drawOceanRuins", false, "If set to true ocean ruins will be drawn. (default: false)");
+        drawBuriedTreasure = SetupBooleanProperty(config, "features", "drawBuriedTreasures", false, "If set to true buried treasure will be drawn. (default: false)");
+        drawIgloos = SetupBooleanProperty(config, "features", "drawIgloos", false, "If set to true igloos will be drawn. (default: false)");
         config.save();
     }
 

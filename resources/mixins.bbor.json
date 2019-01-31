@@ -1,19 +1,19 @@
 {
   "required": true,
-  "minVersion": "0.7.3",
+  "minVersion": "0.7.11",
   "compatibilityLevel": "JAVA_8",
   "target": "@env(DEFAULT)",
-  "package": "com.irtimaled.bbor.litemod.mixins",
+  "package": "com.irtimaled.bbor.mixin",
   "refmap": "mixins.bbor.refmap.json",
   "mixins": [
-    "MixinIntegratedServer",
-    "MixinEntityRenderer",
-    "MixinChunk",
-    "MixinNetworkManager",
-    "MixinWorldClient",
-    "MixinKeyBinding"
+    "world.chunk.MixinChunk",
+    "network.MixinNetworkManager",
+    "server.MixinMinecraftServer"
   ],
-  "injectors": {
-    "defaultRequire": 1
-  }
+  "client": [
+    "client.MixinMinecraft",
+    "client.renderer.MixinEntityRenderer",
+    "client.multiplayer.MixinWorldClient",
+    "client.settings.MixinKeyBinding"
+  ]
 }

@@ -4,7 +4,7 @@ import com.irtimaled.bbor.client.renderers.*;
 import com.irtimaled.bbor.common.models.*;
 import com.irtimaled.bbor.config.ConfigManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.DimensionType;
+import net.minecraft.world.dimension.DimensionType;
 import org.lwjgl.opengl.GL11;
 
 import java.util.HashMap;
@@ -24,7 +24,7 @@ public class ClientRenderer {
     }
 
     public void render(DimensionType dimensionType, Boolean outerBoxesOnly) {
-        Set<BoundingBox> boundingBoxes = clientBoundingBoxProvider.getBoundingBoxes(dimensionType, outerBoxesOnly, Minecraft.getMinecraft().world);
+        Set<BoundingBox> boundingBoxes = clientBoundingBoxProvider.getBoundingBoxes(dimensionType, outerBoxesOnly, Minecraft.getInstance().world);
         if (boundingBoxes == null || boundingBoxes.size() == 0)
             return;
 

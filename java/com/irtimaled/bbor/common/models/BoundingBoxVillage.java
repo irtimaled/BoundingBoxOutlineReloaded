@@ -6,8 +6,9 @@ import net.minecraft.village.Village;
 import net.minecraft.village.VillageDoorInfo;
 
 import java.awt.*;
-import java.util.*;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class BoundingBoxVillage extends BoundingBox {
     private final BlockPos center;
