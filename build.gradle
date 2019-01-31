@@ -7,7 +7,7 @@ buildscript {
         maven { url 'https://files.minecraftforge.net/maven' }
     }
     dependencies {
-        classpath "com.github.Irtimaled:ForgeGradle:jitpack-SNAPSHOT"
+        classpath "com.github.Irtimaled:ForgeGradle:1.13.2-SNAPSHOT"
         classpath 'org.spongepowered:mixingradle:0.6-SNAPSHOT'
         classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
     }
@@ -19,7 +19,7 @@ apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'maven-publish'
 
-def mcVersion = '1.13.1'
+def mcVersion = '1.13.2'
 group 'com.irtimaled'
 version "1.0.4-beta3-$mcVersion"
 archivesBaseName = 'BBOutlineReloaded'
