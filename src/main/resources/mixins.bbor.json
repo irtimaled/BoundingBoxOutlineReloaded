@@ -12,7 +12,7 @@
   ],
   "client": [
     "client.MixinMinecraft",
-    "client.renderer.MixinEntityRenderer",
+    "client.renderer.MixinGameRenderer",
     "client.multiplayer.MixinWorldClient",
     "client.settings.MixinKeyBinding",
     "client.settings.MixinGameSettings"
