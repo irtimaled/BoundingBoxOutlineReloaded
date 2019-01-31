@@ -1,0 +1,30 @@
+{
+    "inheritsFrom": "${mcVersion}",
+    "id": "${mcVersion}-BBOR-${version}",
+    "jar": "${mcVersion}",
+    "time": "${formattedTime}",
+    "type": "release",
+    "arguments": {
+        "game": [
+            "--tweakClass",
+            "${tweakClass}"
+        ]
+    },
+    "mainClass": "net.minecraft.launchwrapper.Launch",
+    "libraries": [
+        {
+            "name": "com.irtimaled:bbor:${version}"
+        },
+        {
+            "name": "org.ow2.asm:asm:6.2",
+            "url": "http://repo1.maven.org/maven2/"
+        },
+        {
+            "name": "org.ow2.asm:asm-commons:6.2",
+            "url": "http://repo1.maven.org/maven2/"
+        },
+        {
+            "name": "net.minecraft:launchwrapper:1.12"
+        }
+    ]
+}
