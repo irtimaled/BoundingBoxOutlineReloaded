@@ -1,12 +1,17 @@
 buildscript {
     repositories {
         jcenter()
-        maven { url 'https://www.dimdev.org/maven/' }
         maven { url 'https://repo.spongepowered.org/maven' }
         maven { url 'https://plugins.gradle.org/m2/' }
+        maven { url 'https://jitpack.io' }
+        maven { url 'https://files.minecraftforge.net/maven' }
     }
     dependencies {
-        classpath 'org.dimdev:ForgeGradle:2.3-SNAPSHOT'
+        if(gradle.startParameter.projectProperties.mc == null) {
+            classpath 'com.github.Irtimaled:ForgeGradle:1.13.2-SNAPSHOT'
+        } else {
+            classpath "com.github.Irtimaled:ForgeGradle:${mc}-SNAPSHOT"
+        }
         classpath 'org.spongepowered:mixingradle:0.6-SNAPSHOT'
     }
 }
@@ -16,7 +21,7 @@ apply plugin: 'java'
 apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'maven-publish'
 
-def mcVersion = '1.13'
+def mcVersion = project.hasProperty('mc') ? project.mc : '1.13.2'
 group 'com.irtimaled'
 version "1.0.4-$mcVersion"
 archivesBaseName = 'BBOutlineReloaded'
@@ -27,8 +32,8 @@ targetCompatibility = 1.8
 repositories {
     mavenCentral()
     maven { url 'https://libraries.minecraft.net/' }
-    maven { url 'https://www.dimdev.org/maven/' }
     maven { url 'https://repo.spongepowered.org/maven/' }
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -40,7 +45,7 @@ dependencies {
 
 minecraft {
     version = mcVersion
-    mappings = 'snapshot_20180908'
+    mappings = 'snapshot_20181106'
     runDir = 'run'
     tweakClass = 'com.irtimaled.bbor.launch.ClientTweaker'
     makeObfSourceJar = false

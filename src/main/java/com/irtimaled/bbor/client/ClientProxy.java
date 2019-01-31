@@ -7,7 +7,6 @@ import com.irtimaled.bbor.config.ConfigManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.world.dimension.DimensionType;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -40,7 +39,7 @@ public class ClientProxy extends CommonProxy {
         PlayerData.setPlayerPosition(partialTicks, entityPlayer);
 
         if (this.active) {
-            renderer.render(DimensionType.getById(entityPlayer.dimension), outerBoxOnly);
+            renderer.render(entityPlayer.dimension, outerBoxOnly);
         }
     }
 
