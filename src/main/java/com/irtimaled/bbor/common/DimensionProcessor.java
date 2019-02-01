@@ -8,21 +8,20 @@ import com.irtimaled.bbor.config.Setting;
 import net.minecraft.util.math.MutableBoundingBox;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.world.gen.ChunkProviderServer;
 import net.minecraft.world.gen.feature.structure.StructurePiece;
 import net.minecraft.world.gen.feature.structure.StructureStart;
 
 import java.awt.*;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class DimensionProcessor extends BoundingBoxCache {
-    DimensionProcessor(DimensionType dimensionType, ChunkProviderServer chunkProvider) {
+    DimensionProcessor(DimensionType dimensionType) {
         this.dimensionType = dimensionType;
-        this.chunkProvider = chunkProvider;
     }
 
     private DimensionType dimensionType;
-    private ChunkProviderServer chunkProvider;
 
     private boolean closed = false;
 
@@ -32,47 +31,31 @@ public class DimensionProcessor extends BoundingBoxCache {
         super.close();
     }
 
-    private void addStructures(Setting drawStructure, StructureType structureType, Map<String, Collection<StructureStart>> structureMap) {
+    private void addStructures(Setting drawStructure, StructureType structureType, Map<String, StructureStart> structureMap) {
         if (!drawStructure.getBoolean()) return;
 
-        Collection<StructureStart> structureStarts = structureMap.get(structureType.getName());
-        if (structureStarts == null || structureStarts.size() == 0) return;
+        StructureStart structureStart = structureMap.get(structureType.getName());
+        if (structureStart == null) return;
         Color color = structureType.getColor();
-        for (StructureStart structureStart : structureStarts) {
+        MutableBoundingBox bb = structureStart.getBoundingBox();
+        if (bb == null)
+            return;
 
-            MutableBoundingBox bb = structureStart.getBoundingBox();
-            if(bb == null)
-                continue;
+        BoundingBox boundingBox = BoundingBoxStructure.from(bb, color);
+        if (isCached(boundingBox)) return;
 
-            BoundingBox boundingBox = BoundingBoxStructure.from(bb, color);
-            if (isCached(boundingBox)) continue;
-
-            Set<BoundingBox> structureBoundingBoxes = new HashSet<>();
-            for (StructurePiece structureComponent : structureStart.getComponents()) {
-                structureBoundingBoxes.add(BoundingBoxStructure.from(structureComponent.getBoundingBox(), color));
-            }
-            addBoundingBoxes(boundingBox, structureBoundingBoxes);
-            Logger.info("[%s] new dimensionCache entries: %d", dimensionType, structureBoundingBoxes.size());
+        Set<BoundingBox> structureBoundingBoxes = new HashSet<>();
+        for (StructurePiece structureComponent : structureStart.getComponents()) {
+            structureBoundingBoxes.add(BoundingBoxStructure.from(structureComponent.getBoundingBox(), color));
         }
+        addBoundingBoxes(boundingBox, structureBoundingBoxes);
+        Logger.info("[%s] new dimensionCache entries: %d", dimensionType, structureBoundingBoxes.size());
     }
 
-    private Map<String, Collection<StructureStart>> getStructureMap(ChunkProviderServer chunkProvider) {
-        Map<String, Collection<StructureStart>> map = new HashMap<>();
-        for (Chunk chunk : chunkProvider.getLoadedChunks()) {
-            Map<String, StructureStart> structureStarts = chunk.getStructureStarts();
-            for (String key : structureStarts.keySet())            {
-                map.computeIfAbsent(key, s -> new HashSet<>())
-                   .add(structureStarts.get(key));
-            }
-        }
-        return map;
-    }
-
-    @Override
-    public synchronized void refresh() {
+    public synchronized void processChunk(Chunk chunk) {
         if (closed) return;
 
-        Map<String, Collection<StructureStart>> structureMap = getStructureMap(chunkProvider);
+        Map<String, StructureStart> structureMap = chunk.getStructureStarts();
         if (structureMap.size() > 0) {
             addStructures(ConfigManager.drawDesertTemples, StructureType.DesertTemple, structureMap);
             addStructures(ConfigManager.drawJungleTemples, StructureType.JungleTemple, structureMap);

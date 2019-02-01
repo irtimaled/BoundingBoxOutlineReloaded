@@ -12,7 +12,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(MinecraftServer.class)
 public class MixinMinecraftServer {
-
     @Shadow public WorldServer[] worlds;
 
     @Inject(method = "initialWorldChunkLoad", at = @At("HEAD"))

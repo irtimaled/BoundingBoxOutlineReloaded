@@ -2,3 +2,5 @@
 .gradle
 build
 run
+.idea
+classes

@@ -1,4 +1,5 @@
 package com.irtimaled.bbor.common;
+
 import java.awt.*;
 
 public class StructureType {

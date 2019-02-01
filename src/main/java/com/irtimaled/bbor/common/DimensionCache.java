@@ -10,10 +10,8 @@ public class DimensionCache {
     private final Map<DimensionType, BoundingBoxCache> map = new ConcurrentHashMap<>();
     private WorldData worldData;
 
-    void refresh(DimensionType dimensionType) {
-        if (map.containsKey(dimensionType)) {
-            map.get(dimensionType).refresh();
-        }
+    public BoundingBoxCache get(DimensionType dimensionType) {
+        return map.get(dimensionType);
     }
 
     public void put(DimensionType dimensionType, BoundingBoxCache boundingBoxCache) {

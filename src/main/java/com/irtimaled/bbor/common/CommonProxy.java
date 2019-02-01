@@ -1,6 +1,5 @@
 package com.irtimaled.bbor.common;
 
-
 import com.irtimaled.bbor.Logger;
 import com.irtimaled.bbor.config.ConfigManager;
 import net.minecraft.world.World;
@@ -24,7 +23,7 @@ public class CommonProxy {
             dimensionCache.setWorldData(world.getSeed(), world.getWorldInfo().getSpawnX(), world.getWorldInfo().getSpawnZ());
             DimensionType dimensionType = world.dimension.getType();
             Logger.info("create world dimension: %s, %s (seed: %d)", dimensionType, world.getClass().toString(), world.getSeed());
-            DimensionProcessor boundingBoxCache = new DimensionProcessor(dimensionType, (ChunkProviderServer)chunkProvider);
+            DimensionProcessor boundingBoxCache = new DimensionProcessor(dimensionType);
             dimensionCache.put(dimensionType, boundingBoxCache);
             if (ConfigManager.drawVillages.getBoolean()) {
                 villageProcessors.add(new VillageProcessor(world, dimensionType, eventHandler, boundingBoxCache));
@@ -34,7 +33,10 @@ public class CommonProxy {
 
     public void chunkLoaded(Chunk chunk) {
         DimensionType dimensionType = chunk.getWorld().dimension.getType();
-        dimensionCache.refresh(dimensionType);
+        BoundingBoxCache cache = dimensionCache.get(dimensionType);
+        if(cache instanceof DimensionProcessor) {
+            ((DimensionProcessor)cache).processChunk(chunk);
+        }
     }
 
     public void tick() {

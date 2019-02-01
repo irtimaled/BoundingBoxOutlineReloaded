@@ -14,6 +14,7 @@
     "client.MixinMinecraft",
     "client.renderer.MixinEntityRenderer",
     "client.multiplayer.MixinWorldClient",
-    "client.settings.MixinKeyBinding"
+    "client.settings.MixinKeyBinding",
+    "client.settings.MixinGameSettings"
   ]
 }

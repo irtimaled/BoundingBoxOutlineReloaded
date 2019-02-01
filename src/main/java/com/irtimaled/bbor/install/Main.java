@@ -66,7 +66,7 @@ public class Main {
             }
 
             JOptionPane.showMessageDialog(null,
-                    "Bounding Box Outline Reloaded @VERSION@ for\n Minecraft @MC_VERSION@ has been successfully installed!\n" +
+                    "Bounding Box Outline Reloaded @VERSION@ for\nMinecraft @MC_VERSION@ has been successfully installed!\n" +
                             "\n" +
                             "Re-open the Minecraft Launcher to see it in the dropdown.",
                     "Bounding Box Outline Reloaded Installer", JOptionPane.INFORMATION_MESSAGE);

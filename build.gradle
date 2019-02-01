@@ -18,8 +18,9 @@ apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'maven-publish'
 
+def mcVersion = '1.13'
 group 'com.irtimaled'
-version '1.0.4-beta2'
+version "1.0.4-beta3-$mcVersion"
 archivesBaseName = 'BBOutlineReloaded'
 
 sourceCompatibility = 1.8
@@ -33,14 +34,14 @@ repositories {
 }
 
 dependencies {
-    compile('org.spongepowered:mixin:0.7.11-SNAPSHOT')
+    compile('org.spongepowered:mixin:0.7.11-SNAPSHOT') { transitive = false }
     implementation('net.minecraft:launchwrapper:1.12') { transitive = false }
     implementation 'org.ow2.asm:asm:6.2'
     implementation 'org.ow2.asm:asm-commons:6.2'
 }
 
 minecraft {
-    version = '1.13'
+    version = mcVersion
     mappings = 'snapshot_20180908'
     runDir = 'run'
     tweakClass = 'com.irtimaled.bbor.launch.ClientTweaker'
@@ -77,7 +78,7 @@ processResources {
 
     // Re-run this task when these change
     inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
+    inputs.property "mcVersion", project.minecraft.version
 }
 
 jar {
@@ -90,11 +91,6 @@ jar {
 task devJar(type: Jar, dependsOn: classes) {
     classifier 'dev'
     from sourceSets.main.output
-}
-
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier 'sources'
-    from sourceSets.main.allSource
 }
 
 shadowJar {
@@ -110,7 +106,7 @@ shadowJar {
         include(dependency('org.spongepowered:mixin'))
     }
     
-    classifier = 'vanilla' + project.minecraft.version
+    classifier = 'vanilla'
 }
 
 reobf {
@@ -131,6 +127,4 @@ build.dependsOn {[
 
 artifacts {
     archives shadowJar
-    archives sourceJar
-    archives devJar
 }
