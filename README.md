@@ -1,6 +1,6 @@
 # BoundingBoxOutlineReloaded
 
-BoundingBoxOutlineReloaded is a mod for Minecraft Forge, LiteLoader, and Vanilla
+BoundingBoxOutlineReloaded is a mod for Minecraft Vanilla, Forge, LiteLoader, Rift and Fabric
 
 # Why did I make it?
 
@@ -20,21 +20,27 @@ This mod highlights in a variety of colours and styles the different structures 
 - Strongholds; yellow boxes show each room in the stronghold. Does anyone make anything with silverfish spawners?
 - Woodland Mansions; brown boxes show each room in the woodland mansion. Here's Johnny!
 - Mine Shafts; light gray boxes illustrate each of the mine shafts. Cobwebs... grrr!
-- Villages; multicoloured spheres encircle  the village, with boxes marking if and where iron golems will spawn. You should see the iron titan... CRAZY!
+- Villages; multicoloured spheres encircle the village, with boxes marking if and where iron golems will spawn. You should see the iron titan... CRAZY!
 - Slime chunks; bright green boxes highlight where slimes will spawn, with a dynamic box that rises to where the players feet are to help find them from the surface. Bouncy... bouncy...
 - World Spawn & spawn chunks; red boxes outline the world spawn and the spawn chunks (active & lazy).
+- Igloos (*); white boxes show where igloos are. Maybe you can convert the zombie villager back?
+- Shipwrecks (*); cyan boxes are like a lighthouse those wary sailors wish they'd had. Time to find some buried treasure? 
+- Ocean ruins (*); cyan boxes show the different ocean ruin structures. Watch out for those pesky drowns tho!
+- Buried treasure (*); cyan boxes highlight where the heart of the sea can be found. Conduit anyone?
+
+(*) Due to how Minecraft generates these structures they will initially float above where they should be, however upon re-logging they should drop down to the correct height.  Unfortunately (or fortunately?) buried treasure will always appear at y-90 (unless Mojang change something that is!)
 
 # How it works
 
 As chunks are loaded the game provides metadata about all the different structures & features in those chunks.  The mod interprets this meta data, caches the results, and renders the bounding boxes to the screen.  In an SMP environment this data is not present on the clients so the mod needs to run on the server where the processing happens and then the relevant metadata is sent to the clients for them to render.
 
-# Installing (Forge/LiteLoader)
+# Installing (Forge/LiteLoader/Rift/Fabric)
 
-Make sure you have Forge or LiteLoader installed then drop the mod file into the appropriate mods folder. [Forge Only] If you want to use client/server with your SMP server then make sure the mod is installed on both client and server.
+Make sure you have the relevant mod loader installed then drop the mod file into the appropriate mods folder. [Forge Only] If you want to use client/server with your SMP server then make sure the mod is installed on both client and server.
 
 # Installing (Vanilla)
 
-Copy the contents of the Vanilla archive into the JAR file as per usual.  In a SMP scenario you'll need to use local dat files - see below.
+Double-click the jar file and a profile for the relevant version of Minecraft will be created/updated in the launcher. In a SMP scenario you'll need to use local dat files - see below.
 
 # Configuring
 
@@ -53,6 +59,10 @@ End Cities | Both | Process/Render End Cities | drawEndCities | true/false | tru
 Strongholds | Both | Process/Render Strongholds | drawStrongholds | true/false | false
 Woodland Mansions | Both | Process/Render Mansions | drawMansions | true/false | true
 Mine Shafts | Both | Process/Render Mine Shafts | drawMineShafts | true/false | false
+Igloos | Client | Process/Render Igloos | drawIgloos | true/false | true
+Shipwrecks | Client | Process/Render Shipwrecks | drawShipwrecks | true/false | true
+Ocean Ruins | Client | Process/Render Ocean Ruins | drawOceanRuins | true/false | true
+Buried Treasure | Client | Process/Render Buried Treasure | drawBuriedTreasure | true/false | true
 Villages | Both | Process/Render Villages | drawVillages | true/false | true
 Village spheres | Client | Render Villages as spheres instead of cuboids | renderVillageAsSphere | true/false | true
 Village Iron Golem Spawn Area | Client | Render Iron Golem Spawn Area within valid Villages | drawIronGolemSpawnArea | true/false | true
@@ -77,7 +87,7 @@ Open the config/BBOutlineReloaded.cfg file with your text editor of choice and c
 Press B, sit back and enjoy the goodness flowing onto your screen.
 Press O to switch the "Display Outer Boxes Only" mode on and off, this will allow you to see the full boundary of Nether Fortresses, End Cities, Strongholds and Mineshafts
 
-# Using with vanilla servers
+# Bounding boxes when connected to vanilla servers
 
 There are two options when you want bounding boxes to show whilst accessing vanilla servers:-
 

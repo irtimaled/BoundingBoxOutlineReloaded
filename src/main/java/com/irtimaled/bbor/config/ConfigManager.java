@@ -58,10 +58,10 @@ public class ConfigManager {
         drawLazySpawnChunks = SetupBooleanProperty(config, "features", "drawLazySpawnChunks", false, "If set to true the lazy spawn chunks bounding boxes will be drawn. (default: false)");
         drawEndCities = SetupBooleanProperty(config, "features", "drawEndCities", true, "If set to true end city bounding boxes will be drawn. (default: true)");
         drawMansions = SetupBooleanProperty(config, "features", "drawMansions", true, "If set to true woodland mansions will be drawn. (default: true)");
-        drawShipwrecks = SetupBooleanProperty(config, "features", "drawShipwrecks", false, "If set to true shipwrecks will be drawn. (default: false)");
-        drawOceanRuins = SetupBooleanProperty(config, "features", "drawOceanRuins", false, "If set to true ocean ruins will be drawn. (default: false)");
-        drawBuriedTreasure = SetupBooleanProperty(config, "features", "drawBuriedTreasures", false, "If set to true buried treasure will be drawn. (default: false)");
-        drawIgloos = SetupBooleanProperty(config, "features", "drawIgloos", false, "If set to true igloos will be drawn. (default: false)");
+        drawIgloos = SetupBooleanProperty(config, "features", "drawIgloos", true, "If set to true igloos will be drawn. (default: true)");
+        drawShipwrecks = SetupBooleanProperty(config, "features", "drawShipwrecks", true, "If set to true shipwrecks will be drawn. (default: true)");
+        drawOceanRuins = SetupBooleanProperty(config, "features", "drawOceanRuins", true, "If set to true ocean ruins will be drawn. (default: true)");
+        drawBuriedTreasure = SetupBooleanProperty(config, "features", "drawBuriedTreasures", true, "If set to true buried treasure will be drawn. (default: true)");
         config.save();
     }
 
