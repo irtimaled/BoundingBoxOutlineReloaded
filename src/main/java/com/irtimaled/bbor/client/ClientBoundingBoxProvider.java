@@ -7,7 +7,6 @@ import com.irtimaled.bbor.common.models.BoundingBoxWorldSpawn;
 import com.irtimaled.bbor.common.models.WorldData;
 import com.irtimaled.bbor.config.ConfigManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
@@ -15,33 +14,54 @@ import net.minecraft.world.DimensionType;
 
 import java.awt.*;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 class ClientBoundingBoxProvider {
+    private static final int CHUNK_SIZE = 16;
     private final ClientDimensionCache dimensionCache;
 
     ClientBoundingBoxProvider(ClientDimensionCache dimensionCache) {
         this.dimensionCache = dimensionCache;
     }
 
-    Set<BoundingBox> getBoundingBoxes(DimensionType dimensionType, Boolean outerBoxOnly, WorldClient world) {
+    private boolean isWithinRenderDistance(BlockPos minBlockPos, BlockPos maxBlockPos) {
+        int renderDistanceBlocks = Minecraft.getMinecraft().gameSettings.renderDistanceChunks * CHUNK_SIZE;
+        int minX = MathHelper.floor(PlayerData.getX() - renderDistanceBlocks);
+        int maxX = MathHelper.floor(PlayerData.getX() + renderDistanceBlocks);
+        int minZ = MathHelper.floor(PlayerData.getZ() - renderDistanceBlocks);
+        int maxZ = MathHelper.floor(PlayerData.getZ() + renderDistanceBlocks);
+
+        return maxBlockPos.getX() > minX &&
+                maxBlockPos.getZ() > minZ &&
+                minBlockPos.getX() < maxX &&
+                minBlockPos.getZ() < maxZ;
+    }
+
+    Set<BoundingBox> getBoundingBoxes(DimensionType dimensionType, Boolean outerBoxOnly) {
         Set<BoundingBox> boundingBoxes = getClientBoundingBoxes(dimensionType);
         BoundingBoxCache boundingBoxCache = dimensionCache.getBoundingBoxes(dimensionType);
-        if (boundingBoxCache != null) {
-            if (outerBoxOnly) {
-                boundingBoxes.addAll(boundingBoxCache.getBoundingBoxes().keySet());
-            } else {
-                boundingBoxCache.getBoundingBoxes()
-                        .values()
-                        .forEach(boundingBoxes::addAll);
-            }
+        if (boundingBoxCache == null)
+            return boundingBoxes;
+
+        for (Map.Entry<BoundingBox, Set<BoundingBox>> entry : boundingBoxCache.getBoundingBoxes().entrySet()) {
+            BoundingBox bb = entry.getKey();
+            if (!isWithinRenderDistance(bb.getMinBlockPos(), bb.getMaxBlockPos())) continue;
+            if (outerBoxOnly)
+                boundingBoxes.add(bb);
+            else
+                boundingBoxes.addAll(entry.getValue());
         }
 
-        return boundingBoxes.stream()
-                .filter(bb -> world.isAreaLoaded(bb.getMinBlockPos(), bb.getMaxBlockPos()))
-                .collect(Collectors.toSet());
+
+        return boundingBoxes;
+    }
+
+    private void addIfWithinRenderDistance(Set<BoundingBox> boundingBoxes, BoundingBox boundingBox)
+    {
+        if(isWithinRenderDistance(boundingBox.getMinBlockPos(), boundingBox.getMaxBlockPos()))
+            boundingBoxes.add(boundingBox);
     }
 
     private Set<BoundingBox> getClientBoundingBoxes(DimensionType dimensionType) {
@@ -50,11 +70,11 @@ class ClientBoundingBoxProvider {
         Set<BoundingBox> boundingBoxes = new HashSet<>();
         if (worldData != null && dimensionType == DimensionType.OVERWORLD) {
             if (ConfigManager.drawWorldSpawn.getBoolean()) {
-                boundingBoxes.add(getWorldSpawnBoundingBox(worldData.getSpawnX(), worldData.getSpawnZ()));
-                boundingBoxes.add(buildSpawnChunksBoundingBox(worldData.getSpawnX(), worldData.getSpawnZ()));
+                addIfWithinRenderDistance(boundingBoxes, getSpawnChunksBoundingBox(worldData.getSpawnX(), worldData.getSpawnZ()));
+                addIfWithinRenderDistance(boundingBoxes, getWorldSpawnBoundingBox(worldData.getSpawnX(), worldData.getSpawnZ()));
             }
             if (ConfigManager.drawLazySpawnChunks.getBoolean()) {
-                boundingBoxes.add(getLazySpawnChunksBoundingBox(worldData.getSpawnX(), worldData.getSpawnZ()));
+                addIfWithinRenderDistance(boundingBoxes, getLazySpawnChunksBoundingBox(worldData.getSpawnX(), worldData.getSpawnZ()));
             }
             if (ConfigManager.drawSlimeChunks.getBoolean()) {
                 boundingBoxes.addAll(this.getSlimeChunks());
@@ -64,21 +84,17 @@ class ClientBoundingBoxProvider {
     }
 
     private Set<BoundingBoxSlimeChunk> getSlimeChunks() {
-        Minecraft minecraft = Minecraft.getMinecraft();
-        int renderDistanceChunks = minecraft.gameSettings.renderDistanceChunks;
-        int playerChunkX = MathHelper.floor(minecraft.player.posX / 16.0D);
-        int playerChunkZ = MathHelper.floor(minecraft.player.posZ / 16.0D);
+        int renderDistanceChunks = Minecraft.getMinecraft().gameSettings.renderDistanceChunks;
+        int playerChunkX = MathHelper.floor(PlayerData.getX() / CHUNK_SIZE);
+        int playerChunkZ = MathHelper.floor(PlayerData.getZ() / CHUNK_SIZE);
         Set<BoundingBoxSlimeChunk> slimeChunks = new HashSet<>();
         for (int chunkX = playerChunkX - renderDistanceChunks; chunkX <= playerChunkX + renderDistanceChunks; ++chunkX) {
             for (int chunkZ = playerChunkZ - renderDistanceChunks; chunkZ <= playerChunkZ + renderDistanceChunks; ++chunkZ) {
-                if (isSlimeChunk(chunkX, chunkZ)) {
-                    ChunkPos chunk = new ChunkPos(chunkX, chunkZ);
-                    BlockPos minBlockPos = new BlockPos(chunk.getXStart(), 1, chunk.getZStart());
-                    BlockPos maxBlockPos = new BlockPos(chunk.getXEnd(), 38, chunk.getZEnd());
-                    if (minecraft.world.isAreaLoaded(minBlockPos, maxBlockPos)) {
-                        slimeChunks.add(BoundingBoxSlimeChunk.from(minBlockPos, maxBlockPos, Color.GREEN));
-                    }
-                }
+                if (!isSlimeChunk(chunkX, chunkZ)) continue;
+                ChunkPos chunk = new ChunkPos(chunkX, chunkZ);
+                BlockPos minBlockPos = new BlockPos(chunk.getXStart(), 1, chunk.getZStart());
+                BlockPos maxBlockPos = new BlockPos(chunk.getXEnd(), 38, chunk.getZEnd());
+                slimeChunks.add(BoundingBoxSlimeChunk.from(minBlockPos, maxBlockPos, Color.GREEN));
             }
         }
         return slimeChunks;
@@ -94,7 +110,7 @@ class ClientBoundingBoxProvider {
         return r.nextInt(10) == 0;
     }
 
-    private BoundingBox buildSpawnChunksBoundingBox(int spawnX, int spawnZ) {
+    private BoundingBox getSpawnChunksBoundingBox(int spawnX, int spawnZ) {
         return dimensionCache.getOrSetSpawnChunks(() -> buildSpawnChunksBoundingBox(spawnX, spawnZ, 12));
     }
 
@@ -103,14 +119,13 @@ class ClientBoundingBoxProvider {
     }
 
     private BoundingBox buildSpawnChunksBoundingBox(int spawnX, int spawnZ, int size) {
-        double chunkSize = 16;
-        double midOffset = chunkSize * (size / 2);
-        double midX = Math.round((float) (spawnX / chunkSize)) * chunkSize;
-        double midZ = Math.round((float) (spawnZ / chunkSize)) * chunkSize;
+        double midOffset = CHUNK_SIZE * (size / 2.0);
+        double midX = Math.round((float) (spawnX / (double) CHUNK_SIZE)) * (double) CHUNK_SIZE;
+        double midZ = Math.round((float) (spawnZ / (double) CHUNK_SIZE)) * (double) CHUNK_SIZE;
         BlockPos minBlockPos = new BlockPos(midX - midOffset, 0, midZ - midOffset);
-        if (spawnX / chunkSize % 0.5D == 0.0D && spawnZ / chunkSize % 0.5D == 0.0D) {
-            midX += chunkSize;
-            midZ += chunkSize;
+        if (spawnX / (double) CHUNK_SIZE % 0.5D == 0.0D && spawnZ / (double) CHUNK_SIZE % 0.5D == 0.0D) {
+            midX += (double) CHUNK_SIZE;
+            midZ += (double) CHUNK_SIZE;
         }
         BlockPos maxBlockPos = new BlockPos(midX + midOffset, 0, midZ + midOffset);
         return BoundingBoxWorldSpawn.from(minBlockPos, maxBlockPos, Color.RED);
