@@ -1,7 +1,7 @@
 package com.irtimaled.bbor.common.models;
 
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.gen.structure.StructureBoundingBox;
+import net.minecraft.util.math.MutableBoundingBox;
 
 import java.awt.*;
 
@@ -10,7 +10,7 @@ public class BoundingBoxStructure extends BoundingBox {
         super(minBlockPos, maxBlockPos, color);
     }
 
-    public static BoundingBoxStructure from(StructureBoundingBox bb, Color color) {
+    public static BoundingBoxStructure from(MutableBoundingBox bb, Color color) {
         BlockPos minBlockPos = new BlockPos(bb.minX, bb.minY, bb.minZ);
         BlockPos maxBlockPos = new BlockPos(bb.maxX, bb.maxY, bb.maxZ);
         return new BoundingBoxStructure(minBlockPos, maxBlockPos, color);

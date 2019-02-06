@@ -1,7 +1,7 @@
 package com.irtimaled.bbor.client.renderers;
 
-import com.irtimaled.bbor.common.models.BoundingBoxVillage;
 import com.irtimaled.bbor.client.PlayerData;
+import com.irtimaled.bbor.common.models.BoundingBoxVillage;
 import com.irtimaled.bbor.config.ConfigManager;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;

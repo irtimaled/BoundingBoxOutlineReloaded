@@ -2,6 +2,7 @@ package com.irtimaled.bbor.client;
 
 import com.irtimaled.bbor.config.ConfigManager;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -12,7 +13,7 @@ public class BoundingBoxOutlineReloaded {
     private static ClientProxy proxy;
 
     public static void init() {
-        ConfigManager.loadConfig(new File(Minecraft.getMinecraft().mcDataDir, "config"));
+        ConfigManager.loadConfig(new File(Minecraft.getInstance().gameDir, "config"));
         proxy = new ClientProxy();
         proxy.init();
     }
@@ -26,8 +27,16 @@ public class BoundingBoxOutlineReloaded {
     }
 
     public static void keyPressed() {
-        proxy.keyPressed();
+        if (ActiveHotKey.isPressed()) {
+            proxy.toggleActive();
+        } else if (OuterBoxOnlyHotKey.isPressed()) {
+            proxy.toggleOuterBoxOnly();
+        }
     }
+
+    public static final String KeyCategory = "Bounding Box Outline Reloaded";
+    public static KeyBinding ActiveHotKey =  new KeyBinding("Toggle On/Off", 0x42, KeyCategory);
+    public static KeyBinding OuterBoxOnlyHotKey= new KeyBinding("Toggle Display Outer Box Only", 0x4f, KeyCategory);
 
     public static void render(float partialTicks) {
         proxy.tick();

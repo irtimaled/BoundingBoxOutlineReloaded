@@ -3,8 +3,8 @@ package com.irtimaled.bbor.common;
 import com.irtimaled.bbor.common.models.BoundingBoxVillage;
 import net.minecraft.village.Village;
 import net.minecraft.village.VillageCollection;
-import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 
 import java.util.HashMap;
 import java.util.List;

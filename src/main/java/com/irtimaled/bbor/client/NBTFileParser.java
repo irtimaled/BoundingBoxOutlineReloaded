@@ -12,7 +12,7 @@ import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.DimensionType;
+import net.minecraft.world.dimension.DimensionType;
 
 import java.awt.*;
 import java.io.File;
@@ -180,8 +180,8 @@ class NBTFileParser {
 
     private static NBTTagCompound[] getChildCompoundTags(NBTTagCompound parent, String key) {
         NBTTagList tagList = parent.getTagList(key, 10);
-        NBTTagCompound[] result = new NBTTagCompound[tagList.tagCount()];
-        for (int index = 0; index < tagList.tagCount(); index++) {
+        NBTTagCompound[] result = new NBTTagCompound[tagList.size()];
+        for (int index = 0; index < tagList.size(); index++) {
             result[index] = tagList.getCompoundTagAt(index);
         }
         return result;

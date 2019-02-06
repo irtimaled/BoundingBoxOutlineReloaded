@@ -10,7 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.DimensionType;
+import net.minecraft.world.dimension.DimensionType;
 
 import java.awt.*;
 import java.util.HashSet;
@@ -27,7 +27,7 @@ class ClientBoundingBoxProvider {
     }
 
     private boolean isWithinRenderDistance(BlockPos minBlockPos, BlockPos maxBlockPos) {
-        int renderDistanceBlocks = Minecraft.getMinecraft().gameSettings.renderDistanceChunks * CHUNK_SIZE;
+        int renderDistanceBlocks = Minecraft.getInstance().gameSettings.renderDistanceChunks * CHUNK_SIZE;
         int minX = MathHelper.floor(PlayerData.getX() - renderDistanceBlocks);
         int maxX = MathHelper.floor(PlayerData.getX() + renderDistanceBlocks);
         int minZ = MathHelper.floor(PlayerData.getZ() - renderDistanceBlocks);
@@ -84,7 +84,7 @@ class ClientBoundingBoxProvider {
     }
 
     private Set<BoundingBoxSlimeChunk> getSlimeChunks() {
-        int renderDistanceChunks = Minecraft.getMinecraft().gameSettings.renderDistanceChunks;
+        int renderDistanceChunks = Minecraft.getInstance().gameSettings.renderDistanceChunks;
         int playerChunkX = MathHelper.floor(PlayerData.getX() / CHUNK_SIZE);
         int playerChunkZ = MathHelper.floor(PlayerData.getZ() / CHUNK_SIZE);
         Set<BoundingBoxSlimeChunk> slimeChunks = new HashSet<>();
