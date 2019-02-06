@@ -7,8 +7,8 @@ import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBoxMobSpawner;
 import com.irtimaled.bbor.common.models.BoundingBoxStructure;
 import com.irtimaled.bbor.common.models.Coords;
+import net.minecraft.tileentity.MobSpawnerTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityMobSpawner;
 import net.minecraft.util.math.MutableBoundingBox;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.feature.structure.StructurePiece;
@@ -54,7 +54,7 @@ public abstract class AbstractChunkProcessor {
     private void addMobSpawners(Chunk chunk) {
         Collection<TileEntity> tileEntities = chunk.getTileEntityMap().values();
         for (TileEntity tileEntity : tileEntities) {
-            TileEntityMobSpawner spawner = TypeHelper.as(tileEntity, TileEntityMobSpawner.class);
+            MobSpawnerTileEntity spawner = TypeHelper.as(tileEntity, MobSpawnerTileEntity.class);
             if (spawner != null) {
                 Coords coords = new Coords(spawner.getPos());
                 boundingBoxCache.addBoundingBox(BoundingBoxMobSpawner.from(coords));

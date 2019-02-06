@@ -23,7 +23,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CommonProxy {
     private Map<Integer, ServerPlayer> players = new ConcurrentHashMap<>();
     private Map<Integer, Set<AbstractBoundingBox>> playerBoundingBoxesCache = new HashMap<>();
-    private Map<Integer, VillageProcessor> villageProcessors = new HashMap<>();
     private Map<Integer, AbstractChunkProcessor> chunkProcessors = new HashMap<>();
     private final Map<Integer, BoundingBoxCache> dimensionCache = new ConcurrentHashMap<>();
     private Long seed = null;
@@ -37,9 +36,7 @@ public class CommonProxy {
         EventBus.subscribe(PlayerLoggedIn.class, this::playerLoggedIn);
         EventBus.subscribe(PlayerLoggedOut.class, this::playerLoggedOut);
         EventBus.subscribe(PlayerSubscribed.class, this::onPlayerSubscribed);
-        EventBus.subscribe(ServerWorldTick.class, this::serverWorldTick);
         EventBus.subscribe(ServerTick.class, e -> serverTick());
-        EventBus.subscribe(VillageRemoved.class, this::onVillageRemoved);
     }
 
     protected void setSeed(long seed) {
@@ -71,7 +68,6 @@ public class CommonProxy {
         }
         Logger.info("create world dimension: %s (seed: %d)", dimensionId, seed);
         chunkProcessors.put(dimensionId, chunkProcessor);
-        villageProcessors.put(dimensionId, new VillageProcessor(dimensionId, boundingBoxCache));
     }
 
     private void chunkLoaded(ChunkLoaded event) {
@@ -93,10 +89,6 @@ public class CommonProxy {
         int playerId = event.getPlayerId();
         players.remove(playerId);
         playerBoundingBoxesCache.remove(playerId);
-    }
-
-    private void onVillageRemoved(VillageRemoved event) {
-        sendRemoveBoundingBox(event.getDimensionId(), event.getVillage());
     }
 
     private void sendRemoveBoundingBox(int dimensionId, AbstractBoundingBox boundingBox) {
@@ -170,13 +162,6 @@ public class CommonProxy {
         }
     }
 
-    private void serverWorldTick(ServerWorldTick event) {
-        VillageProcessor villageProcessor = villageProcessors.get(event.getDimensionId());
-        if (villageProcessor == null) return;
-
-        villageProcessor.process(event.getWorld());
-    }
-
     protected BoundingBoxCache getCache(int dimensionId) {
         return dimensionCache.get(dimensionId);
     }
@@ -186,10 +171,6 @@ public class CommonProxy {
     }
 
     protected void clearCaches() {
-        for (VillageProcessor villageProcessor : villageProcessors.values()) {
-            villageProcessor.clear();
-        }
-        villageProcessors.clear();
         for (BoundingBoxCache cache : dimensionCache.values()) {
             cache.clear();
         }

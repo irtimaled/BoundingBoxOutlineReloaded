@@ -16,7 +16,7 @@ public class MixinEntityRenderer {
     @Final
     private Minecraft mc;
 
-    @Inject(method = "updateCameraAndRender(FJ)V", at = @At(value = "INVOKE_STRING", target = "Lnet/minecraft/profiler/Profiler;endStartSection(Ljava/lang/String;)V", args = "ldc=hand", shift = At.Shift.BEFORE))
+    @Inject(method = "updateCameraAndRender(FJ)V", at = @At(value = "INVOKE_STRING", target = "Lnet/minecraft/profiler/IProfiler;func_219895_b(Ljava/lang/String;)V", args = "ldc=hand", shift = At.Shift.BEFORE))
     private void render(float partialTicks, long ignored, CallbackInfo ci) {
         ClientInterop.render(partialTicks, this.mc.player);
     }

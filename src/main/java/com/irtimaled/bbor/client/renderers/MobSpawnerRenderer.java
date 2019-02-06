@@ -1,6 +1,5 @@
 package com.irtimaled.bbor.client.renderers;
 
-import com.irtimaled.bbor.client.PlayerCoords;
 import com.irtimaled.bbor.common.models.BoundingBoxMobSpawner;
 import com.irtimaled.bbor.common.models.Colors;
 import com.irtimaled.bbor.common.models.Coords;
@@ -26,13 +25,13 @@ public class MobSpawnerRenderer extends AbstractRenderer<BoundingBoxMobSpawner> 
     }
 
     private void renderActivationLine(OffsetPoint centerPoint) {
-        OffsetPoint playerPos = new OffsetPoint(PlayerCoords.getX(), PlayerCoords.getY(), PlayerCoords.getZ());
-        double distance = centerPoint.getDistance(playerPos);
+        OffsetPoint camera = OffsetPoint.Camera();
+        double distance = centerPoint.getDistance(camera);
         if (distance <= 20) {
             Color color = distance > 18 ? Color.RED : distance > 16 ? Colors.DARK_ORANGE : Color.GREEN;
 
             GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
-            Renderer.startLines().setColor(color).addPoint(centerPoint).addPoint(playerPos.offset(0, 0.1, 0)).render();
+            Renderer.startLines().setColor(color).addPoint(centerPoint).addPoint(camera.offset(0, -1, 0)).render();
         }
     }
 }

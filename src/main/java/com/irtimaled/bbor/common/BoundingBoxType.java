@@ -30,7 +30,6 @@ public class BoundingBoxType {
     public final static BoundingBoxType LazySpawnChunks = register(Color.RED, "Lazy_Chunks", ConfigManager.drawLazySpawnChunks);
     public final static BoundingBoxType MobSpawner = register(Color.GREEN, "Mob_Spawner", ConfigManager.drawMobSpawners);
     public final static BoundingBoxType SlimeChunks = register(Colors.DARK_GREEN, "Slime_Chunks", ConfigManager.drawSlimeChunks);
-    public final static BoundingBoxType Village = register(null, "Village", ConfigManager.drawVillages);
 
     private static BoundingBoxType register(Color color, String name, Setting<Boolean> shouldRenderSetting) {
         return structureTypeMap.computeIfAbsent(name.hashCode(), k -> new BoundingBoxType(color, name, shouldRenderSetting));

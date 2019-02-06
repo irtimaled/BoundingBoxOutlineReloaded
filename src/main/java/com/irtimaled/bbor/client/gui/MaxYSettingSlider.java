@@ -5,8 +5,8 @@ import com.irtimaled.bbor.config.Setting;
 class MaxYSettingSlider extends IntSettingSlider {
     private final int actualMinValue;
 
-    MaxYSettingSlider(int id, int x, int y, int width, int minValue, Setting<Integer> setting) {
-        super(id, x, y, width, minValue - 2, 127, "Max Y", setting);
+    MaxYSettingSlider(int x, int y, int width, int minValue, Setting<Integer> setting) {
+        super(x, y, width, minValue - 2, 127, "Max Y", setting);
         this.actualMinValue = minValue;
         this.setProgress(getSliderValue());
         this.addDisplayValue(-1, "Activated");

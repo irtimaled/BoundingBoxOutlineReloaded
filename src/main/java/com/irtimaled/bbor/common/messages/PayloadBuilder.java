@@ -2,10 +2,10 @@ package com.irtimaled.bbor.common.messages;
 
 import com.irtimaled.bbor.common.models.Coords;
 import io.netty.buffer.Unpooled;
-import net.minecraft.network.Packet;
+import net.minecraft.network.IPacket;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.network.play.client.CPacketCustomPayload;
-import net.minecraft.network.play.server.SPacketCustomPayload;
+import net.minecraft.network.play.client.CCustomPayloadPacket;
+import net.minecraft.network.play.server.SCustomPayloadPlayPacket;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.HashMap;
@@ -16,26 +16,26 @@ public class PayloadBuilder {
     private static Map<String, ResourceLocation> packetNames = new HashMap<>();
 
     static PayloadBuilder clientBound(String name) {
-        return new PayloadBuilder(packetNames.computeIfAbsent(name, ResourceLocation::new), SPacketCustomPayload::new);
+        return new PayloadBuilder(packetNames.computeIfAbsent(name, ResourceLocation::new), SCustomPayloadPlayPacket::new);
     }
 
     static PayloadBuilder serverBound(String name) {
-        return new PayloadBuilder(packetNames.computeIfAbsent(name, ResourceLocation::new), CPacketCustomPayload::new);
+        return new PayloadBuilder(packetNames.computeIfAbsent(name, ResourceLocation::new), CCustomPayloadPacket::new);
     }
 
     private final ResourceLocation name;
-    private final BiFunction<ResourceLocation, PacketBuffer, Packet<?>> packetBuilder;
+    private final BiFunction<ResourceLocation, PacketBuffer, IPacket<?>> packetBuilder;
     private final PacketBuffer buffer;
 
-    private PayloadBuilder(ResourceLocation name, BiFunction<ResourceLocation, PacketBuffer, Packet<?>> packetBuilder) {
+    private PayloadBuilder(ResourceLocation name, BiFunction<ResourceLocation, PacketBuffer, IPacket<?>> packetBuilder) {
         this.name = name;
         this.buffer = new PacketBuffer(Unpooled.buffer());
         this.packetBuilder = packetBuilder;
     }
 
-    private Packet<?> packet;
+    private IPacket<?> packet;
 
-    public Packet<?> build() {
+    public IPacket<?> build() {
         if (packet == null)
             packet = packetBuilder.apply(name, buffer);
         return packet;

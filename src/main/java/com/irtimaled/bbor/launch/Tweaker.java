@@ -16,7 +16,6 @@ public abstract class Tweaker implements ITweaker {
     @Override
     public void acceptOptions(List<String> args, File gameDir, File assetsDir, String profile) {
         this.args = new ArrayList<>(args);
-        addArg("--version", profile);
         addOptions(args, gameDir, assetsDir, profile);
     }
 

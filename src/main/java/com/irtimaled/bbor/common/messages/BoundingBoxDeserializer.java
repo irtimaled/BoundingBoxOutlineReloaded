@@ -1,11 +1,10 @@
 package com.irtimaled.bbor.common.messages;
 
 import com.irtimaled.bbor.common.BoundingBoxType;
-import com.irtimaled.bbor.common.models.*;
-
-import java.awt.*;
-import java.util.HashSet;
-import java.util.Set;
+import com.irtimaled.bbor.common.models.AbstractBoundingBox;
+import com.irtimaled.bbor.common.models.BoundingBoxMobSpawner;
+import com.irtimaled.bbor.common.models.BoundingBoxStructure;
+import com.irtimaled.bbor.common.models.Coords;
 
 class BoundingBoxDeserializer {
     static AbstractBoundingBox deserialize(PayloadReader reader) {
@@ -13,8 +12,6 @@ class BoundingBoxDeserializer {
 
         char type = reader.readChar();
         switch (type) {
-            case 'V':
-                return deserializeVillage(reader);
             case 'S':
                 return deserializeStructure(reader);
             case 'M':
@@ -29,18 +26,6 @@ class BoundingBoxDeserializer {
         Coords minCoords = reader.readCoords();
         Coords maxCoords = reader.readCoords();
         return BoundingBoxStructure.from(minCoords, maxCoords, type);
-    }
-
-    private static AbstractBoundingBox deserializeVillage(PayloadReader reader) {
-        Coords center = reader.readCoords();
-        int radius = reader.readVarInt();
-        boolean spawnsIronGolems = reader.readBoolean();
-        Color color = new Color(reader.readVarInt());
-        Set<Coords> doors = new HashSet<>();
-        while (reader.isReadable()) {
-            doors.add(reader.readCoords());
-        }
-        return BoundingBoxVillage.from(center, radius, color, spawnsIronGolems, doors);
     }
 
     private static AbstractBoundingBox deserializeMobSpawner(PayloadReader reader) {

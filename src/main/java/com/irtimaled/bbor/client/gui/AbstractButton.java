@@ -1,16 +1,16 @@
 package com.irtimaled.bbor.client.gui;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.widget.Widget;
 
-abstract class AbstractButton extends GuiButton implements IRenderableControl {
-    AbstractButton(int id, int x, int y, int width, String name) {
-        super(id, x, y, width, 20, name);
+abstract class AbstractButton extends Widget implements IRenderableControl {
+    AbstractButton(int x, int y, int width, String name) {
+        super(x, y, width, 20, name);
     }
 
-    AbstractButton(int id, int x, int y, int width, String name, boolean enabled) {
-        this(id, x, y, width, name);
-        this.enabled = enabled;
+    AbstractButton(int x, int y, int width, String name, boolean enabled) {
+        this(x, y, width, name);
+        this.active = enabled;
     }
 
     @Override
@@ -19,7 +19,7 @@ abstract class AbstractButton extends GuiButton implements IRenderableControl {
     }
 
     @Override
-    protected void renderBg(Minecraft p_renderBg_1_, int p_renderBg_2_, int p_renderBg_3_) {
+    protected void renderBg(Minecraft minecraft, int mouseX, int mouseY) {
         renderBackground();
     }
 
@@ -27,12 +27,12 @@ abstract class AbstractButton extends GuiButton implements IRenderableControl {
     }
 
     @Override
-    protected int getHoverState(boolean p_getHoverState_1_) {
+    protected int getYImage(boolean hovered) {
         return getState();
     }
 
     protected int getState() {
-        return this.enabled ? this.hovered ? 2 : 1 : 0;
+        return this.active ? this.isHovered() ? 2 : 1 : 0;
     }
 
     @Override

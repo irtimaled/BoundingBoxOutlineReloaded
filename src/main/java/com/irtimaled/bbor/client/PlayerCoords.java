@@ -1,6 +1,6 @@
 package com.irtimaled.bbor.client;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 
 public class PlayerCoords {
     private static double x;
@@ -8,7 +8,7 @@ public class PlayerCoords {
     private static double z;
     private static double activeY;
 
-    public static void setPlayerPosition(double partialTicks, EntityPlayer entityPlayer) {
+    public static void setPlayerPosition(double partialTicks, PlayerEntity entityPlayer) {
         x = entityPlayer.lastTickPosX + (entityPlayer.posX - entityPlayer.lastTickPosX) * partialTicks;
         y = entityPlayer.lastTickPosY + (entityPlayer.posY - entityPlayer.lastTickPosY) * partialTicks;
         z = entityPlayer.lastTickPosZ + (entityPlayer.posZ - entityPlayer.lastTickPosZ) * partialTicks;

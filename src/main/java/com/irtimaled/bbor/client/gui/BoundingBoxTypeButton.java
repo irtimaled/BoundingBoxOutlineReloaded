@@ -7,19 +7,19 @@ import java.awt.*;
 public class BoundingBoxTypeButton extends BoolSettingButton {
     private final Color color;
 
-    BoundingBoxTypeButton(int id, int x, int y, int width, String label, BoundingBoxType type) {
-        super(id, x, y, width, label, type.shouldRenderSetting);
+    BoundingBoxTypeButton(int x, int y, int width, String label, BoundingBoxType type) {
+        super(x, y, width, label, type.shouldRenderSetting);
         color = type.getColor();
     }
 
     public BoundingBoxTypeButton(int id, int x, int y, int width, String label, BoundingBoxType type, boolean enabled) {
-        this(id, x, y, width, label, type);
-        this.enabled = enabled;
+        this(x, y, width, label, type);
+        this.active = enabled;
     }
 
     @Override
     protected void renderBackground() {
-        if (!enabled) return;
+        if (!active) return;
 
         int left = x + 1;
         int top = y + 1;
@@ -42,6 +42,6 @@ public class BoundingBoxTypeButton extends BoolSettingButton {
     }
 
     private void drawRectangle(int left, int top, int right, int bottom, Color color) {
-        drawRect(left, top, right, bottom, color.getRGB());
+        fill(left, top, right, bottom, color.getRGB());
     }
 }

@@ -6,13 +6,13 @@ import com.irtimaled.bbor.common.models.Coords;
 import com.irtimaled.bbor.common.models.ServerPlayer;
 import com.irtimaled.bbor.config.ConfigManager;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockMobSpawner;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.NetHandlerPlayServer;
+import net.minecraft.block.SpawnerBlock;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.ServerPlayNetHandler;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.ServerWorld;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 
 import java.io.File;
@@ -27,13 +27,13 @@ public class CommonInterop {
         EventBus.publish(new ChunkLoaded(chunk));
     }
 
-    public static void loadWorlds(Collection<WorldServer> worlds) {
-        for (WorldServer world : worlds) {
+    public static void loadWorlds(Collection<ServerWorld> worlds) {
+        for (ServerWorld world : worlds) {
             loadWorld(world);
         }
     }
 
-    public static void loadWorld(WorldServer world) {
+    public static void loadWorld(ServerWorld world) {
         EventBus.publish(new WorldLoaded(world));
     }
 
@@ -41,12 +41,8 @@ public class CommonInterop {
         EventBus.publish(new ServerTick());
     }
 
-    public static void worldTick(WorldServer worldServer) {
-        EventBus.publish(new ServerWorldTick(worldServer));
-    }
-
-    public static void playerLoggedIn(EntityPlayerMP player) {
-        NetHandlerPlayServer connection = player.connection;
+    public static void playerLoggedIn(ServerPlayerEntity player) {
+        ServerPlayNetHandler connection = player.connection;
         if (connection == null) return;
 
         NetworkManager networkManager = connection.netManager;
@@ -55,16 +51,16 @@ public class CommonInterop {
         EventBus.publish(new PlayerLoggedIn(new ServerPlayer(player)));
     }
 
-    public static void playerLoggedOut(EntityPlayerMP player) {
+    public static void playerLoggedOut(ServerPlayerEntity player) {
         EventBus.publish(new PlayerLoggedOut(player.getEntityId()));
     }
 
-    public static void playerSubscribed(EntityPlayerMP player) {
+    public static void playerSubscribed(ServerPlayerEntity player) {
         EventBus.publish(new PlayerSubscribed(player.getEntityId(), new ServerPlayer(player)));
     }
 
     public static void tryHarvestBlock(Block block, BlockPos pos, World world) {
-        if (block instanceof BlockMobSpawner) {
+        if (block instanceof SpawnerBlock) {
             EventBus.publish(new MobSpawnerBroken(world.dimension.getType().getId(), new Coords(pos)));
         }
     }

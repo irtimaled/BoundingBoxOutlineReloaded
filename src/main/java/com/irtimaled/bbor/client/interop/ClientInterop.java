@@ -6,7 +6,7 @@ import com.irtimaled.bbor.client.events.Render;
 import com.irtimaled.bbor.client.events.SeedCommandTyped;
 import com.irtimaled.bbor.client.events.UpdateWorldSpawnReceived;
 import com.irtimaled.bbor.common.EventBus;
-import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 
 public class ClientInterop {
@@ -14,7 +14,7 @@ public class ClientInterop {
         EventBus.publish(new DisconnectedFromRemoteServer());
     }
 
-    public static void render(float partialTicks, EntityPlayerSP player) {
+    public static void render(float partialTicks, ClientPlayerEntity player) {
         PlayerCoords.setPlayerPosition(partialTicks, player);
         EventBus.publish(new Render(player.dimension.getId()));
     }

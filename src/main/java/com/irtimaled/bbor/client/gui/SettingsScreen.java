@@ -5,26 +5,27 @@ import com.irtimaled.bbor.client.renderers.Renderer;
 import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.TypeHelper;
 import com.irtimaled.bbor.config.ConfigManager;
+import com.mojang.blaze3d.platform.GLX;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.IGuiEventListener;
-import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.util.text.StringTextComponent;
 import org.lwjgl.opengl.GL11;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class SettingsScreen extends GuiScreen {
+public class SettingsScreen extends Screen {
     private static final int CONTROLS_WIDTH = 310;
 
-    private final GuiScreen lastScreen;
+    private final Screen lastScreen;
     private final int tabIndex;
 
-    private String title;
     private Set<IRenderableControl> controls = new HashSet<>();
 
-    SettingsScreen(GuiScreen lastScreen, int tabIndex) {
+    SettingsScreen(Screen lastScreen, int tabIndex) {
+        super(new StringTextComponent(ClientProxy.Name));
         this.lastScreen = lastScreen;
         this.tabIndex = tabIndex;
     }
@@ -49,7 +50,7 @@ public class SettingsScreen extends GuiScreen {
         for (String label : labels) {
             final int index = column;
             addControl(0, column, y, CONTROLS_WIDTH / columns,
-                    (id, x, y1, width) -> new AbstractButton(id, x, y, width, label, index != tabIndex) {
+                    (x, y1, width) -> new AbstractButton(x, y, width, label, index != tabIndex) {
                         @Override
                         public void onPressed() {
                             Minecraft.getInstance().displayGuiScreen(new SettingsScreen(lastScreen, index));
@@ -59,11 +60,11 @@ public class SettingsScreen extends GuiScreen {
         }
 
         //done button
-        addControl(new AbstractButton(200, this.width / 2 - 100, getY(5.5), 200, "Done") {
+        addControl(new AbstractButton(this.width / 2 - 100, getY(5.5), 200, "Done") {
             @Override
             public void onPressed() {
                 ConfigManager.saveConfig();
-                mc.displayGuiScreen(lastScreen);
+                minecraft.displayGuiScreen(lastScreen);
             }
         });
     }
@@ -74,8 +75,7 @@ public class SettingsScreen extends GuiScreen {
 
     private IControl addControl(int offset, int column, int y, int width, CreateControl createControl) {
         int x = getX(width, column, offset);
-        int id = controls.size();
-        IControl control = createControl.create(id, x, y, width);
+        IControl control = createControl.create(x, y, width);
         TypeHelper.doIfType(control, IRenderableControl.class, this::addControl);
         return control;
     }
@@ -109,14 +109,12 @@ public class SettingsScreen extends GuiScreen {
     }
 
     @Override
-    protected void initGui() {
-        this.title = ClientProxy.Name;
-
+    protected void init() {
         this.controls = new HashSet<>();
-        this.addTabs("General", "Structures", "Villages");
+        this.addTabs("General", "Structures");
 
         buildTab(0,
-                (id, x, y, width) -> new AbstractButton(id, x, y, width, "Active", this.mc.world != null) {
+                (x, y, width) -> new AbstractButton(x, y, width, "Active", this.minecraft.world != null) {
                     @Override
                     public void onPressed() {
                         ClientProxy.toggleActive();
@@ -124,61 +122,48 @@ public class SettingsScreen extends GuiScreen {
 
                     @Override
                     protected int getState() {
-                        return enabled ? ClientProxy.active ? 2 : 1 : 0;
+                        return active ? ClientProxy.active ? 2 : 1 : 0;
                     }
                 },
-                (id, x, y, width) -> new BoolSettingButton(id, x, y, width, "Outer Box Only", ConfigManager.outerBoxesOnly),
-                (id, x, y, width) -> new BoolSettingButton(id, x, y, width, "Fill", ConfigManager.fill),
+                (x, y, width) -> new BoolSettingButton(x, y, width, "Outer Box Only", ConfigManager.outerBoxesOnly),
+                (x, y, width) -> new BoolSettingButton(x, y, width, "Fill", ConfigManager.fill),
 
-                (id, x, y, width) -> (IRowHeight) () -> 0.5,
+                (x, y, width) -> (IRowHeight) () -> 0.5,
 
-                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Spawn Chunks", BoundingBoxType.WorldSpawn),
-                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Lazy Chunks", BoundingBoxType.LazySpawnChunks),
-                (id, x, y, width) -> new MaxYSettingSlider(id, x, y, width, 39, ConfigManager.worldSpawnMaxY),
+                (x, y, width) -> new BoundingBoxTypeButton(x, y, width, "Spawn Chunks", BoundingBoxType.WorldSpawn),
+                (x, y, width) -> new BoundingBoxTypeButton(x, y, width, "Lazy Chunks", BoundingBoxType.LazySpawnChunks),
+                (x, y, width) -> new MaxYSettingSlider(x, y, width, 39, ConfigManager.worldSpawnMaxY),
 
-                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Slime Chunks", BoundingBoxType.SlimeChunks),
-                (id, x, y, width) -> new MaxYSettingSlider(id, x, y, width, 39, ConfigManager.slimeChunkMaxY),
-                (id, x, y, width) -> (IRowHeight) () -> 0,
+                (x, y, width) -> new BoundingBoxTypeButton(x, y, width, "Slime Chunks", BoundingBoxType.SlimeChunks),
+                (x, y, width) -> new MaxYSettingSlider(x, y, width, 39, ConfigManager.slimeChunkMaxY),
+                (x, y, width) -> (IRowHeight) () -> 0,
 
-                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Mob Spawners", BoundingBoxType.MobSpawner),
-                (id, x, y, width) -> new BoolSettingButton(id, x, y, width, "Spawn Area", ConfigManager.renderMobSpawnerSpawnArea),
-                (id, x, y, width) -> new BoolSettingButton(id, x, y, width, "Activation Lines", ConfigManager.renderMobSpawnerActivationLines));
+                (x, y, width) -> new BoundingBoxTypeButton(x, y, width, "Mob Spawners", BoundingBoxType.MobSpawner),
+                (x, y, width) -> new BoolSettingButton(x, y, width, "Spawn Area", ConfigManager.renderMobSpawnerSpawnArea),
+                (x, y, width) -> new BoolSettingButton(x, y, width, "Activation Lines", ConfigManager.renderMobSpawnerActivationLines));
         buildTab(1,
-                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Desert Temples", BoundingBoxType.DesertTemple),
-                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Jungle Temples", BoundingBoxType.JungleTemple),
-                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Witch Huts", BoundingBoxType.WitchHut),
+                (x, y, width) -> new BoundingBoxTypeButton(x, y, width, "Desert Temples", BoundingBoxType.DesertTemple),
+                (x, y, width) -> new BoundingBoxTypeButton(x, y, width, "Jungle Temples", BoundingBoxType.JungleTemple),
+                (x, y, width) -> new BoundingBoxTypeButton(x, y, width, "Witch Huts", BoundingBoxType.WitchHut),
 
-                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Mansions", BoundingBoxType.Mansion),
-                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Monuments", BoundingBoxType.OceanMonument),
-                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Igloos", BoundingBoxType.Igloo),
+                (x, y, width) -> new BoundingBoxTypeButton(x, y, width, "Mansions", BoundingBoxType.Mansion),
+                (x, y, width) -> new BoundingBoxTypeButton(x, y, width, "Monuments", BoundingBoxType.OceanMonument),
+                (x, y, width) -> new BoundingBoxTypeButton(x, y, width, "Igloos", BoundingBoxType.Igloo),
 
-                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Ocean Ruins", BoundingBoxType.OceanRuin),
-                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Buried Treasure", BoundingBoxType.BuriedTreasure),
-                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Shipwrecks", BoundingBoxType.Shipwreck),
+                (x, y, width) -> new BoundingBoxTypeButton(x, y, width, "Ocean Ruins", BoundingBoxType.OceanRuin),
+                (x, y, width) -> new BoundingBoxTypeButton(x, y, width, "Buried Treasure", BoundingBoxType.BuriedTreasure),
+                (x, y, width) -> new BoundingBoxTypeButton(x, y, width, "Shipwrecks", BoundingBoxType.Shipwreck),
 
-                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Pillager Outposts", BoundingBoxType.PillagerOutpost, false),
-                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Strongholds", BoundingBoxType.Stronghold),
-                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Mineshafts", BoundingBoxType.MineShaft),
+                (x, y, width) -> new BoundingBoxTypeButton(x, y, width, "Pillager Outposts", BoundingBoxType.PillagerOutpost),
+                (x, y, width) -> new BoundingBoxTypeButton(x, y, width, "Strongholds", BoundingBoxType.Stronghold),
+                (x, y, width) -> new BoundingBoxTypeButton(x, y, width, "Mineshafts", BoundingBoxType.MineShaft),
 
-                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Fortresses", BoundingBoxType.NetherFortress),
-                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "End Cities", BoundingBoxType.EndCity));
-        buildTab(2,
-                (id, x, y, width) -> new BoolSettingButton(id, x, y, width, "Villages", ConfigManager.drawVillages),
-                (id, x, y, width) -> new BoolSettingButton(id, x, y, width, "Door Lines", ConfigManager.drawVillageDoors),
-                (id, x, y, width) -> new BoolSettingButton(id, x, y, width, "Golem Spawn", ConfigManager.drawIronGolemSpawnArea),
-
-                (id, x, y, width) -> new BoolSettingButton(id, x, y, width, "Render Sphere", ConfigManager.renderVillageAsSphere),
-                (id, x, y, width) -> new IntSettingSlider(id, x, y, width, 1, 5, "Dot Size", ConfigManager.villageSphereDotSize),
-                (id, x, y, width) -> new IntSettingSlider(id, x, y, width, 1, 5, "Density", ConfigManager.villageSphereDensity)
-                        .addDisplayValue(1, "Fewest")
-                        .addDisplayValue(2, "Fewer")
-                        .addDisplayValue(3, "Normal")
-                        .addDisplayValue(4, "More")
-                        .addDisplayValue(5, "Most"));
+                (x, y, width) -> new BoundingBoxTypeButton(x, y, width, "Fortresses", BoundingBoxType.NetherFortress),
+                (x, y, width) -> new BoundingBoxTypeButton(x, y, width, "End Cities", BoundingBoxType.EndCity));
     }
 
     private void drawScreen(int top, int bottom) {
-        this.mc.getTextureManager().bindTexture(Gui.OPTIONS_BACKGROUND);
+        this.minecraft.getTextureManager().bindTexture(AbstractGui.BACKGROUND_LOCATION);
 
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glDisable(GL11.GL_FOG);
@@ -195,7 +180,7 @@ public class SettingsScreen extends GuiScreen {
 
         GL11.glDisable(GL11.GL_DEPTH_TEST);
         GL11.glEnable(GL11.GL_BLEND);
-        OpenGlHelper.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ZERO, GL11.GL_ONE);
+        GLX.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ZERO, GL11.GL_ONE);
 
         GL11.glDisable(GL11.GL_ALPHA_TEST);
         GL11.glShadeModel(7425);
@@ -222,17 +207,17 @@ public class SettingsScreen extends GuiScreen {
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glShadeModel(7424);
         GL11.glEnable(GL11.GL_ALPHA_TEST);
-        OpenGlHelper.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+        GLX.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
         GL11.glDisable(GL11.GL_BLEND);
     }
 
     @Override
     public void render(int mouseX, int mouseY, float unknown) {
-        if (this.mc.world == null) {
-            this.drawDefaultBackground();
+        if (this.minecraft.world == null) {
+            this.renderBackground();
             this.drawScreen(getY(-1), getY(5.5) - 4);
         }
-        this.drawCenteredString(this.fontRenderer, this.title, this.width / 2, 15, 16777215);
+        this.drawCenteredString(this.font, title.getUnformattedComponentText(), this.width / 2, 15, 16777215);
         for (IRenderableControl control : controls) {
             control.render(mouseX, mouseY);
         }

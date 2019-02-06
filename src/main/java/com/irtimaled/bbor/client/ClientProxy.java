@@ -6,7 +6,6 @@ import com.irtimaled.bbor.client.keyboard.KeyListener;
 import com.irtimaled.bbor.common.BoundingBoxCache;
 import com.irtimaled.bbor.common.CommonProxy;
 import com.irtimaled.bbor.common.EventBus;
-import com.irtimaled.bbor.common.VillageColorCache;
 import com.irtimaled.bbor.config.ConfigManager;
 import com.irtimaled.bbor.config.Setting;
 
@@ -62,7 +61,6 @@ public class ClientProxy extends CommonProxy {
         active = false;
         if (ConfigManager.keepCacheBetweenSessions.get()) return;
         ready = false;
-        VillageColorCache.clear();
         clearCaches();
         renderer.clear();
     }

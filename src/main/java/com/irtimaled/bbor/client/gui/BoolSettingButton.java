@@ -5,14 +5,14 @@ import com.irtimaled.bbor.config.Setting;
 public class BoolSettingButton extends AbstractButton {
     private final Setting<Boolean> setting;
 
-    BoolSettingButton(int id, int x, int y, int width, String label, Setting<Boolean> setting) {
-        super(id, x, y, width, label);
+    BoolSettingButton(int x, int y, int width, String label, Setting<Boolean> setting) {
+        super(x, y, width, label);
         this.setting = setting;
     }
 
     @Override
     protected int getState() {
-        return enabled ? setting.get() ? 2 : 1 : 0;
+        return active ? setting.get() ? 2 : 1 : 0;
     }
 
     @Override

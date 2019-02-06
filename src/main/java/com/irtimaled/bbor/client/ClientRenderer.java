@@ -22,7 +22,6 @@ public class ClientRenderer {
 
     ClientRenderer(GetCache getCache) {
         this.getCache = getCache;
-        boundingBoxRendererMap.put(BoundingBoxVillage.class, new VillageRenderer());
         boundingBoxRendererMap.put(BoundingBoxSlimeChunk.class, new SlimeChunkRenderer());
         boundingBoxRendererMap.put(BoundingBoxWorldSpawn.class, new WorldSpawnRenderer());
         boundingBoxRendererMap.put(BoundingBoxStructure.class, new StructureRenderer());
