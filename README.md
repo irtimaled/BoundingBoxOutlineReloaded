@@ -28,6 +28,7 @@ This mod highlights in a variety of colours and styles the different structures 
 - Ocean ruins (*); cyan boxes show the different ocean ruin structures. Watch out for those pesky drowns tho!
 - Buried treasure (*); cyan boxes highlight where the heart of the sea can be found. Conduit anyone?
 - Mob Spawners; bright green boxes show where mob spawners are, where mobs will be spawned, and red/orange/green lines help the player see if a spawner is nearby and activated.
+- Pillager Outposts; grey boxes outline where crossbow wielding pillagers will spawn. Beware of bad omens tho!
 
 (*) Due to how Minecraft generates these structures they will initially float above where they should be, however upon re-logging they should drop down to the correct height.  Unfortunately (or fortunately?) buried treasure will always appear at y-90 (unless Mojang change something that is!)
 
@@ -67,6 +68,7 @@ Buried Treasure | Client | Process/Render Buried Treasure | drawBuriedTreasure |
 Mob Spawner | Client | Process/Render Mob Spawners | drawMobSpawners | true/false | true
 Mob Spawner Spawn Area | Client | Render where mobs will be spawned | renderMobSpawnerSpawnArea | true/false | true
 Mob Spawner Activation Lines | Client | Render red/orange/green lines to show nearby spawners and if they are active | renderMobSpawnerActivationLines | true/false | true
+Pillager Outposts | Client | Process/Render Pillager Outpoints | drawPillagerOutposts | true/false | true
 Villages | Both | Process/Render Villages | drawVillages | true/false | true
 Village spheres | Client | Render Villages as spheres instead of cuboids | renderVillageAsSphere | true/false | true
 Village Iron Golem Spawn Area | Client | Render Iron Golem Spawn Area within valid Villages | drawIronGolemSpawnArea | true/false | true

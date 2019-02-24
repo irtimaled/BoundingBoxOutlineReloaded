@@ -33,6 +33,7 @@ public class ConfigManager {
     public static Setting drawMobSpawners;
     public static Setting renderMobSpawnerSpawnArea;
     public static Setting renderMobSpawnerActivationLines;
+    public static Setting drawPillagerOutposts;
 
     public static void loadConfig(File mcConfigDir) {
         configDir = mcConfigDir;
@@ -68,6 +69,7 @@ public class ConfigManager {
         drawMobSpawners = SetupBooleanProperty(config, "features", "drawMobSpawners", true, "If set to true mob spawners will be drawn. (default: true}");
         renderMobSpawnerSpawnArea = SetupBooleanProperty(config, "features", "renderMobSpawnerSpawnArea", true, "If set to true a box to show the maximum possible spawn area (10x10x4) for a spawner will be drawn (default: true)");
         renderMobSpawnerActivationLines = SetupBooleanProperty(config, "features", "renderMobSpawnerActivationLines", true, "If set to true a red/orange/green line will be drawn to show if the spawner is active (default: true)");
+        drawPillagerOutposts = SetupBooleanProperty(config, "features", "drawPillagerOutposts", true, "If set to true pillager outposts will be drawn. (default: true)");
         config.save();
     }
 
