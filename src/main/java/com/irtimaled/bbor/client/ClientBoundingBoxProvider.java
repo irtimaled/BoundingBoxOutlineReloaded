@@ -1,10 +1,7 @@
 package com.irtimaled.bbor.client;
 
 import com.irtimaled.bbor.common.BoundingBoxCache;
-import com.irtimaled.bbor.common.models.BoundingBox;
-import com.irtimaled.bbor.common.models.BoundingBoxSlimeChunk;
-import com.irtimaled.bbor.common.models.BoundingBoxWorldSpawn;
-import com.irtimaled.bbor.common.models.WorldData;
+import com.irtimaled.bbor.common.models.*;
 import com.irtimaled.bbor.config.ConfigManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
@@ -54,7 +51,6 @@ class ClientBoundingBoxProvider {
                 boundingBoxes.addAll(entry.getValue());
         }
 
-
         return boundingBoxes;
     }
 
@@ -94,7 +90,7 @@ class ClientBoundingBoxProvider {
                 ChunkPos chunk = new ChunkPos(chunkX, chunkZ);
                 BlockPos minBlockPos = new BlockPos(chunk.getXStart(), 1, chunk.getZStart());
                 BlockPos maxBlockPos = new BlockPos(chunk.getXEnd(), 38, chunk.getZEnd());
-                slimeChunks.add(BoundingBoxSlimeChunk.from(minBlockPos, maxBlockPos, Color.GREEN));
+                slimeChunks.add(BoundingBoxSlimeChunk.from(minBlockPos, maxBlockPos, Colors.DARK_GREEN));
             }
         }
         return slimeChunks;

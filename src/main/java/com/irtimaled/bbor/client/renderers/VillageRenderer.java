@@ -1,6 +1,5 @@
 package com.irtimaled.bbor.client.renderers;
 
-import com.irtimaled.bbor.client.PlayerData;
 import com.irtimaled.bbor.common.models.BoundingBoxVillage;
 import com.irtimaled.bbor.config.ConfigManager;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -87,40 +86,6 @@ public class VillageRenderer extends Renderer<BoundingBoxVillage> {
                     .endVertex();
         }
         tessellator.draw();
-    }
-
-    private class OffsetPoint {
-        private final double x;
-        private final double y;
-        private final double z;
-
-        OffsetPoint(double x, double y, double z) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
-
-        OffsetPoint(BlockPos blockPos) {
-            this.x = blockPos.getX();
-            this.y = blockPos.getY();
-            this.z = blockPos.getZ();
-        }
-
-        double getX() {
-            return x - PlayerData.getX();
-        }
-
-        double getY() {
-            return y - PlayerData.getY();
-        }
-
-        double getZ() {
-            return z - PlayerData.getZ();
-        }
-
-        public OffsetPoint add(double x, double y, double z) {
-            return new OffsetPoint(this.x + x, this.y + y, this.z + z);
-        }
     }
 
     private Set<OffsetPoint> buildPoints(OffsetPoint center, double radius) {

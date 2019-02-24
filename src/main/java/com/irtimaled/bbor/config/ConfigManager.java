@@ -30,6 +30,9 @@ public class ConfigManager {
     public static Setting drawOceanRuins;
     public static Setting drawBuriedTreasure;
     public static Setting drawIgloos;
+    public static Setting drawMobSpawners;
+    public static Setting renderMobSpawnerSpawnArea;
+    public static Setting renderMobSpawnerActivationLines;
 
     public static void loadConfig(File mcConfigDir) {
         configDir = mcConfigDir;
@@ -62,6 +65,9 @@ public class ConfigManager {
         drawShipwrecks = SetupBooleanProperty(config, "features", "drawShipwrecks", true, "If set to true shipwrecks will be drawn. (default: true)");
         drawOceanRuins = SetupBooleanProperty(config, "features", "drawOceanRuins", true, "If set to true ocean ruins will be drawn. (default: true)");
         drawBuriedTreasure = SetupBooleanProperty(config, "features", "drawBuriedTreasures", true, "If set to true buried treasure will be drawn. (default: true)");
+        drawMobSpawners = SetupBooleanProperty(config, "features", "drawMobSpawners", true, "If set to true mob spawners will be drawn. (default: true}");
+        renderMobSpawnerSpawnArea = SetupBooleanProperty(config, "features", "renderMobSpawnerSpawnArea", true, "If set to true a box to show the maximum possible spawn area (10x10x4) for a spawner will be drawn (default: true)");
+        renderMobSpawnerActivationLines = SetupBooleanProperty(config, "features", "renderMobSpawnerActivationLines", true, "If set to true a red/orange/green line will be drawn to show if the spawner is active (default: true)");
         config.save();
     }
 

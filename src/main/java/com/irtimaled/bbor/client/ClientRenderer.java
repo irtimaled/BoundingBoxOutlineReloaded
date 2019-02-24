@@ -20,6 +20,7 @@ public class ClientRenderer {
         boundingBoxRendererMap.put(BoundingBoxSlimeChunk.class, new SlimeChunkRenderer());
         boundingBoxRendererMap.put(BoundingBoxWorldSpawn.class, new WorldSpawnRenderer());
         boundingBoxRendererMap.put(BoundingBoxStructure.class, new StructureRenderer());
+        boundingBoxRendererMap.put(BoundingBoxMobSpawner.class, new MobSpawnerRenderer());
     }
 
     public void render(DimensionType dimensionType, Boolean outerBoxesOnly) {

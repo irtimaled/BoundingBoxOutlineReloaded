@@ -7,9 +7,12 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
+import java.util.HashSet;
+import java.util.Set;
 
 public abstract class Renderer<T extends BoundingBox> {
     public abstract void render(T boundingBox);
@@ -25,6 +28,19 @@ public abstract class Renderer<T extends BoundingBox> {
     void renderRectangle(AxisAlignedBB aaBB, double minY, double maxY, Color color, Boolean fill) {
         aaBB = new AxisAlignedBB(aaBB.minX, minY, aaBB.minZ, aaBB.maxX, maxY, aaBB.maxZ);
         renderCuboid(aaBB, color, fill);
+    }
+
+    void renderLine(OffsetPoint point1, OffsetPoint point2, Color color) {
+        int colorR = color.getRed();
+        int colorG = color.getGreen();
+        int colorB = color.getBlue();
+
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder worldRenderer = tessellator.getBuffer();
+        worldRenderer.begin(GL11.GL_LINES, worldRenderer.getVertexFormat());
+        worldRenderer.pos(point1.getX(), point1.getY(), point1.getZ()).color(colorR, colorG, colorB, 255).endVertex();
+        worldRenderer.pos(point2.getX(), point2.getY(), point2.getZ()).color(colorR, colorG, colorB, 255).endVertex();
+        tessellator.draw();
     }
 
     void renderCuboid(AxisAlignedBB aaBB, Color color, boolean fill) {

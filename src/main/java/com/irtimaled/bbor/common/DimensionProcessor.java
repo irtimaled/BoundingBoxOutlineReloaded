@@ -2,9 +2,12 @@ package com.irtimaled.bbor.common;
 
 import com.irtimaled.bbor.Logger;
 import com.irtimaled.bbor.common.models.BoundingBox;
+import com.irtimaled.bbor.common.models.BoundingBoxMobSpawner;
 import com.irtimaled.bbor.common.models.BoundingBoxStructure;
 import com.irtimaled.bbor.config.ConfigManager;
 import com.irtimaled.bbor.config.Setting;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityMobSpawner;
 import net.minecraft.util.math.MutableBoundingBox;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.dimension.DimensionType;
@@ -12,6 +15,7 @@ import net.minecraft.world.gen.feature.structure.StructurePiece;
 import net.minecraft.world.gen.feature.structure.StructureStart;
 
 import java.awt.*;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -71,6 +75,14 @@ public class DimensionProcessor extends BoundingBoxCache {
             addStructures(ConfigManager.drawNetherFortresses, StructureType.NetherFortress, structureMap);
             addStructures(ConfigManager.drawEndCities, StructureType.EndCity, structureMap);
             addStructures(ConfigManager.drawPillagerOutposts, StructureType.PillagerOutpost, structureMap);
+        }
+        if(ConfigManager.drawMobSpawners.getBoolean()) {
+            Collection<TileEntity> tileEntities = chunk.getTileEntityMap().values();
+            for (TileEntity tileEntity : tileEntities) {
+                if (tileEntity instanceof TileEntityMobSpawner) {
+                    addBoundingBox(BoundingBoxMobSpawner.from((TileEntityMobSpawner) tileEntity));
+                }
+            }
         }
     }
 }

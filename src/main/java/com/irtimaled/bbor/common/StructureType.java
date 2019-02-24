@@ -1,9 +1,11 @@
 package com.irtimaled.bbor.common;
 
+import com.irtimaled.bbor.common.models.Colors;
+
 import java.awt.*;
 
 public class StructureType {
-    public final static StructureType JungleTemple = new StructureType(Color.GREEN, "Jungle_Pyramid");
+    public final static StructureType JungleTemple = new StructureType(Colors.DARK_GREEN, "Jungle_Pyramid");
     public final static StructureType DesertTemple = new StructureType(Color.ORANGE, "Desert_Pyramid");
     public final static StructureType WitchHut = new StructureType(Color.BLUE, "Swamp_Hut");
     public final static StructureType OceanMonument = new StructureType(Color.CYAN, "Monument");
