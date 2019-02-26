@@ -80,7 +80,7 @@ public class DimensionProcessor extends BoundingBoxCache {
             Collection<TileEntity> tileEntities = chunk.getTileEntityMap().values();
             for (TileEntity tileEntity : tileEntities) {
                 if (tileEntity instanceof TileEntityMobSpawner) {
-                    addBoundingBox(BoundingBoxMobSpawner.from((TileEntityMobSpawner) tileEntity));
+                    addBoundingBox(BoundingBoxMobSpawner.from(tileEntity.getPos()));
                 }
             }
         }

@@ -1,6 +1,6 @@
 package com.irtimaled.bbor.mixin.client.settings;
 
-import com.irtimaled.bbor.client.BoundingBoxOutlineReloaded;
+import com.irtimaled.bbor.client.ClientProxy;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
@@ -15,7 +15,8 @@ import java.io.File;
 
 @Mixin(GameSettings.class)
 public class MixinGameSettings {
-    @Shadow private KeyBinding[] keyBindings;
+    @Shadow
+    private KeyBinding[] keyBindings;
 
     @Inject(method = "<init>()V", at = @At("RETURN"))
     private void init(CallbackInfo ci) {
@@ -23,7 +24,7 @@ public class MixinGameSettings {
     }
 
     private KeyBinding[] getKeysAll() {
-        return ArrayUtils.addAll(keyBindings, BoundingBoxOutlineReloaded.ActiveHotKey, BoundingBoxOutlineReloaded.OuterBoxOnlyHotKey);
+        return ArrayUtils.addAll(keyBindings, ClientProxy.ActiveHotKey, ClientProxy.OuterBoxOnlyHotKey);
     }
 
     @Inject(method = "<init>(Lnet/minecraft/client/Minecraft;Ljava/io/File;)V", at = @At("RETURN"))

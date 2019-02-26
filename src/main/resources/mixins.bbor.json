@@ -7,13 +7,13 @@
   "refmap": "mixins.bbor.refmap.json",
   "mixins": [
     "world.chunk.MixinChunk",
-    "network.MixinNetworkManager",
     "server.MixinMinecraftServer"
   ],
   "client": [
     "client.MixinMinecraft",
     "client.renderer.MixinEntityRenderer",
     "client.multiplayer.MixinWorldClient",
+    "client.network.MixinNetHandlerLoginClient",
     "client.settings.MixinKeyBinding",
     "client.settings.MixinGameSettings"
   ]

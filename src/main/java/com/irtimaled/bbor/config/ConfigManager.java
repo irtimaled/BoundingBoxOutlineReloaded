@@ -36,7 +36,7 @@ public class ConfigManager {
     public static Setting drawPillagerOutposts;
 
     public static void loadConfig(File mcConfigDir) {
-        configDir = mcConfigDir;
+        configDir = new File(mcConfigDir, "config");
         configDir.mkdirs();
         Configuration config = new Configuration(new File(configDir, "BBOutlineReloaded.cfg"));
         config.load();

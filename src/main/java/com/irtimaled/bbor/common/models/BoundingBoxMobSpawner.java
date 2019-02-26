@@ -15,19 +15,14 @@ public class BoundingBoxMobSpawner extends BoundingBox {
         this.radius = radius;
     }
 
-    public static BoundingBoxMobSpawner from(BlockPos center, Integer radius, Color color) {
+    public static BoundingBoxMobSpawner from(BlockPos center) {
         BlockPos minBlockPos = new BlockPos(center.getX() - 5,
                 center.getY() - 1,
                 center.getZ() - 5);
         BlockPos maxBlockPos = new BlockPos(center.getX() + 5,
                 center.getY() + 2,
                 center.getZ() + 5);
-        return new BoundingBoxMobSpawner(center, radius, color, minBlockPos, maxBlockPos);
-    }
-
-    public static BoundingBoxMobSpawner from(TileEntityMobSpawner mobSpawner) {
-        BlockPos center = mobSpawner.getPos();
-        return from(center, 16, Color.GREEN);
+        return new BoundingBoxMobSpawner(center, 16, Color.GREEN, minBlockPos, maxBlockPos);
     }
 
     @Override

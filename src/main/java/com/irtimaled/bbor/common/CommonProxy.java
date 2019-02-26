@@ -1,6 +1,8 @@
 package com.irtimaled.bbor.common;
 
 import com.irtimaled.bbor.Logger;
+import com.irtimaled.bbor.common.events.ChunkLoaded;
+import com.irtimaled.bbor.common.events.WorldLoaded;
 import com.irtimaled.bbor.config.ConfigManager;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -15,8 +17,17 @@ public class CommonProxy {
     protected DimensionCache dimensionCache;
     protected Set<VillageProcessor> villageProcessors = new HashSet<>();
 
+    public void init() {
+        dimensionCache = new DimensionCache();
+        registerEventHandlers();
+    }
 
-    public void worldLoaded(World world) {
+    protected void registerEventHandlers() {
+        EventBus.subscribe(WorldLoaded.class, e -> worldLoaded(e.getWorld()));
+        EventBus.subscribe(ChunkLoaded.class, e -> chunkLoaded(e.getChunk()));
+    }
+
+    private void worldLoaded(World world) {
         IChunkProvider chunkProvider = world.getChunkProvider();
         if (chunkProvider instanceof ChunkProviderServer) {
             dimensionCache.setWorldData(world.getSeed(), world.getWorldInfo().getSpawnX(), world.getWorldInfo().getSpawnZ());
@@ -30,23 +41,15 @@ public class CommonProxy {
         }
     }
 
-    public void chunkLoaded(Chunk chunk) {
+    private void chunkLoaded(Chunk chunk) {
         DimensionType dimensionType = chunk.getWorld().dimension.getType();
         BoundingBoxCache cache = dimensionCache.get(dimensionType);
-        if(cache instanceof DimensionProcessor) {
-            ((DimensionProcessor)cache).processChunk(chunk);
+        if (cache instanceof DimensionProcessor) {
+            ((DimensionProcessor) cache).processChunk(chunk);
         }
     }
 
-    public void tick() {
+    protected void tick() {
         villageProcessors.forEach(VillageProcessor::process);
-    }
-
-    public void init() {
-        dimensionCache = new DimensionCache();
-    }
-
-    public DimensionCache getDimensionCache() {
-        return dimensionCache;
     }
 }
