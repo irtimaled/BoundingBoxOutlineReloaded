@@ -7,6 +7,7 @@
   "refmap": "mixins.bbor.refmap.json",
   "mixins": [
     "world.chunk.MixinChunk",
+    "server.management.MixinPlayerInteractionManager",
     "server.MixinMinecraftServer"
   ],
   "client": [

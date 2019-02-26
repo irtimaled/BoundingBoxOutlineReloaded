@@ -2,8 +2,12 @@ package com.irtimaled.bbor.common;
 
 import com.irtimaled.bbor.Logger;
 import com.irtimaled.bbor.common.events.ChunkLoaded;
+import com.irtimaled.bbor.common.events.MobSpawnerBroken;
 import com.irtimaled.bbor.common.events.WorldLoaded;
+import com.irtimaled.bbor.common.models.BoundingBox;
+import com.irtimaled.bbor.common.models.BoundingBoxMobSpawner;
 import com.irtimaled.bbor.config.ConfigManager;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
@@ -25,6 +29,7 @@ public class CommonProxy {
     protected void registerEventHandlers() {
         EventBus.subscribe(WorldLoaded.class, e -> worldLoaded(e.getWorld()));
         EventBus.subscribe(ChunkLoaded.class, e -> chunkLoaded(e.getChunk()));
+        EventBus.subscribe(MobSpawnerBroken.class, e -> mobSpawnerBroken(e.getDimensionType(), e.getPos()));
     }
 
     private void worldLoaded(World world) {
@@ -51,5 +56,13 @@ public class CommonProxy {
 
     protected void tick() {
         villageProcessors.forEach(VillageProcessor::process);
+    }
+
+    private void mobSpawnerBroken(DimensionType dimensionType, BlockPos pos) {
+        BoundingBox boundingBox = BoundingBoxMobSpawner.from(pos);
+        BoundingBoxCache cache = dimensionCache.getBoundingBoxes(dimensionType);
+        if (cache != null) {
+            cache.removeBoundingBox(boundingBox);
+        }
     }
 }
