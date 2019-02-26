@@ -4,7 +4,6 @@ import com.irtimaled.bbor.common.models.BoundingBoxVillage;
 import net.minecraft.village.Village;
 import net.minecraft.village.VillageCollection;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
 
 import java.util.HashMap;
 import java.util.List;
@@ -12,16 +11,12 @@ import java.util.Map;
 
 public class VillageProcessor {
     private World world;
-    private DimensionType dimensionType;
-    private IVillageEventHandler eventHandler;
     private BoundingBoxCache boundingBoxCache;
     private Map<Integer, BoundingBoxVillage> villageCache = new HashMap<>();
     private boolean closed = false;
 
-    VillageProcessor(World world, DimensionType dimensionType, IVillageEventHandler eventHandler, BoundingBoxCache boundingBoxCache) {
+    VillageProcessor(World world, BoundingBoxCache boundingBoxCache) {
         this.world = world;
-        this.dimensionType = dimensionType;
-        this.eventHandler = eventHandler;
         this.boundingBoxCache = boundingBoxCache;
     }
 
@@ -33,8 +28,7 @@ public class VillageProcessor {
         VillageCollection villageCollection = world.getVillageCollection();
         if (villageCollection != null) {
             List<Village> villages = villageCollection.getVillageList();
-            for(int i = 0; i < villages.size(); i++) {
-                Village village = villages.get(i);
+            for (Village village : villages) {
                 int villageId = village.hashCode();
                 BoundingBoxVillage newVillage = oldVillages.get(villageId);
                 if (newVillage != null && newVillage.matches(village)) {
@@ -48,9 +42,6 @@ public class VillageProcessor {
         }
         for (BoundingBoxVillage village : oldVillages.values()) {
             boundingBoxCache.removeBoundingBox(village);
-            if (eventHandler != null) {
-                eventHandler.villageRemoved(dimensionType, village);
-            }
         }
         for (BoundingBoxVillage village : newVillages.values()) {
             boundingBoxCache.addBoundingBox(village);
@@ -61,7 +52,6 @@ public class VillageProcessor {
     public void close() {
         closed = true;
         world = null;
-        eventHandler = null;
         boundingBoxCache = null;
         villageCache.clear();
     }

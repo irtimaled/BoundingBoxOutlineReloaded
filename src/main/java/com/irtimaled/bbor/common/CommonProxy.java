@@ -15,7 +15,6 @@ public class CommonProxy {
     protected DimensionCache dimensionCache;
     protected Set<VillageProcessor> villageProcessors = new HashSet<>();
 
-    private IVillageEventHandler eventHandler = null;
 
     public void worldLoaded(World world) {
         IChunkProvider chunkProvider = world.getChunkProvider();
@@ -26,7 +25,7 @@ public class CommonProxy {
             DimensionProcessor boundingBoxCache = new DimensionProcessor(dimensionType);
             dimensionCache.put(dimensionType, boundingBoxCache);
             if (ConfigManager.drawVillages.getBoolean()) {
-                villageProcessors.add(new VillageProcessor(world, dimensionType, eventHandler, boundingBoxCache));
+                villageProcessors.add(new VillageProcessor(world, boundingBoxCache));
             }
         }
     }
@@ -45,10 +44,6 @@ public class CommonProxy {
 
     public void init() {
         dimensionCache = new DimensionCache();
-    }
-
-    public void setEventHandler(IVillageEventHandler eventHandler) {
-        this.eventHandler = eventHandler;
     }
 
     public DimensionCache getDimensionCache() {
