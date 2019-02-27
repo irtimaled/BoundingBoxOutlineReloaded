@@ -99,7 +99,6 @@ public abstract class Renderer<T extends BoundingBox> {
                 .endVertex();
 
         if (bb.minY != bb.maxY) {
-
             worldRenderer.pos(bb.minX, bb.maxY, bb.minZ)
                     .color(colorR, colorG, colorB, alphaChannel)
                     .endVertex();

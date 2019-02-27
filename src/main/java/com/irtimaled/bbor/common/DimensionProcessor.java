@@ -76,7 +76,7 @@ public class DimensionProcessor extends BoundingBoxCache {
             addStructures(ConfigManager.drawEndCities, StructureType.EndCity, structureMap);
             addStructures(ConfigManager.drawPillagerOutposts, StructureType.PillagerOutpost, structureMap);
         }
-        if(ConfigManager.drawMobSpawners.getBoolean()) {
+        if (ConfigManager.drawMobSpawners.getBoolean()) {
             Collection<TileEntity> tileEntities = chunk.getTileEntityMap().values();
             for (TileEntity tileEntity : tileEntities) {
                 if (tileEntity instanceof TileEntityMobSpawner) {

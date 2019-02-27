@@ -29,21 +29,21 @@ public class ClientDimensionCache extends DimensionCache {
     }
 
     BoundingBox getOrSetSpawnChunks(Supplier<BoundingBox> defaultSupplier) {
-        if(spawnChunksBoundingBox == null) {
+        if (spawnChunksBoundingBox == null) {
             spawnChunksBoundingBox = defaultSupplier.get();
         }
         return spawnChunksBoundingBox;
     }
 
     BoundingBox getOrSetLazySpawnChunks(Supplier<BoundingBox> defaultSupplier) {
-        if(lazySpawnChunksBoundingBox == null) {
+        if (lazySpawnChunksBoundingBox == null) {
             lazySpawnChunksBoundingBox = defaultSupplier.get();
         }
         return lazySpawnChunksBoundingBox;
     }
 
     BoundingBox getOrSetWorldSpawn(Supplier<BoundingBox> defaultSupplier) {
-        if(worldSpawnBoundingBox == null) {
+        if (worldSpawnBoundingBox == null) {
             worldSpawnBoundingBox = defaultSupplier.get();
         }
         return worldSpawnBoundingBox;

@@ -9,8 +9,7 @@ import net.minecraft.util.math.BlockPos;
 
 import java.awt.*;
 
-public class MobSpawnerRenderer extends Renderer<BoundingBoxMobSpawner>
-{
+public class MobSpawnerRenderer extends Renderer<BoundingBoxMobSpawner> {
     @Override
     public void render(BoundingBoxMobSpawner boundingBox) {
         BlockPos center = boundingBox.getCenter();

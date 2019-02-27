@@ -54,9 +54,8 @@ class ClientBoundingBoxProvider {
         return boundingBoxes;
     }
 
-    private void addIfWithinRenderDistance(Set<BoundingBox> boundingBoxes, BoundingBox boundingBox)
-    {
-        if(isWithinRenderDistance(boundingBox.getMinBlockPos(), boundingBox.getMaxBlockPos()))
+    private void addIfWithinRenderDistance(Set<BoundingBox> boundingBoxes, BoundingBox boundingBox) {
+        if (isWithinRenderDistance(boundingBox.getMinBlockPos(), boundingBox.getMaxBlockPos()))
             boundingBoxes.add(boundingBox);
     }
 
