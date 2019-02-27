@@ -1,9 +1,11 @@
 package com.irtimaled.bbor.common;
 
+import com.irtimaled.bbor.common.events.VillageRemoved;
 import com.irtimaled.bbor.common.models.BoundingBoxVillage;
 import net.minecraft.village.Village;
 import net.minecraft.village.VillageCollection;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 
 import java.util.HashMap;
 import java.util.List;
@@ -11,12 +13,14 @@ import java.util.Map;
 
 public class VillageProcessor {
     private World world;
+    private DimensionType dimensionType;
     private BoundingBoxCache boundingBoxCache;
     private Map<Integer, BoundingBoxVillage> villageCache = new HashMap<>();
     private boolean closed = false;
 
-    VillageProcessor(World world, BoundingBoxCache boundingBoxCache) {
+    VillageProcessor(World world, DimensionType dimensionType, BoundingBoxCache boundingBoxCache) {
         this.world = world;
+        this.dimensionType = dimensionType;
         this.boundingBoxCache = boundingBoxCache;
     }
 
@@ -42,6 +46,7 @@ public class VillageProcessor {
         }
         for (BoundingBoxVillage village : oldVillages.values()) {
             boundingBoxCache.removeBoundingBox(village);
+            EventBus.publish(new VillageRemoved(dimensionType, village));
         }
         for (BoundingBoxVillage village : newVillages.values()) {
             boundingBoxCache.addBoundingBox(village);

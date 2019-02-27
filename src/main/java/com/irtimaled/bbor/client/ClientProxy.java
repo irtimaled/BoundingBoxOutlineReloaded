@@ -1,13 +1,9 @@
 package com.irtimaled.bbor.client;
 
-import com.irtimaled.bbor.client.events.ConnectedToRemoteServer;
-import com.irtimaled.bbor.client.events.DisconnectedFromRemoteServer;
-import com.irtimaled.bbor.client.events.KeyPressed;
-import com.irtimaled.bbor.client.events.RenderEvent;
-import com.irtimaled.bbor.common.CommonProxy;
-import com.irtimaled.bbor.common.EventBus;
-import com.irtimaled.bbor.common.VillageColorCache;
-import com.irtimaled.bbor.common.VillageProcessor;
+import com.irtimaled.bbor.client.events.*;
+import com.irtimaled.bbor.common.*;
+import com.irtimaled.bbor.common.events.Tick;
+import com.irtimaled.bbor.common.models.BoundingBox;
 import com.irtimaled.bbor.config.ConfigManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
@@ -17,6 +13,7 @@ import net.minecraft.world.dimension.DimensionType;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.util.Set;
 
 public class ClientProxy extends CommonProxy {
     public static final String KeyCategory = "Bounding Box Outline Reloaded";
@@ -42,6 +39,10 @@ public class ClientProxy extends CommonProxy {
         EventBus.subscribe(KeyPressed.class, e -> keyPressed());
         EventBus.subscribe(ConnectedToRemoteServer.class, e -> connectedToServer(e.getNetworkManager()));
         EventBus.subscribe(DisconnectedFromRemoteServer.class, e -> disconnectedFromServer());
+        EventBus.subscribe(InitializeClientReceived.class, e -> dimensionCache.setWorldData(e.getSeed(), e.getSpawnX(), e.getSpawnZ()));
+        EventBus.subscribe(AddBoundingBoxReceived.class, e -> addBoundingBox(e.getDimensionType(), e.getKey(), e.getBoundingBoxes()));
+        EventBus.subscribe(RemoveBoundingBoxReceived.class, e -> removeBoundingBox(e.getDimensionType(), e.getKey()));
+        EventBus.subscribe(Tick.class, e -> tick());
     }
 
     private void render(float partialTicks) {
@@ -49,8 +50,14 @@ public class ClientProxy extends CommonProxy {
         PlayerData.setPlayerPosition(partialTicks, entityPlayer);
 
         if (this.active) {
-            tick();
             renderer.render(DimensionType.getById(entityPlayer.dimension), outerBoxOnly);
+        }
+    }
+
+    @Override
+    protected void tick() {
+        if (this.active || hasRemoteUsers()) {
+            super.tick();
         }
     }
 
@@ -80,5 +87,14 @@ public class ClientProxy extends CommonProxy {
         if (ConfigManager.keepCacheBetweenSessions.getBoolean()) return;
         VillageColorCache.clear();
         dimensionCache.clear();
+    }
+
+    private void addBoundingBox(DimensionType dimensionType, BoundingBox key, Set<BoundingBox> boundingBoxes) {
+        BoundingBoxCache cache = dimensionCache.get(dimensionType);
+        if (cache == null) {
+            dimensionCache.put(dimensionType, cache = new BoundingBoxCache());
+        }
+
+        cache.addBoundingBoxes(key, boundingBoxes);
     }
 }

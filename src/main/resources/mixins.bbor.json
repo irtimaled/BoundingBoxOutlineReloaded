@@ -7,6 +7,10 @@
   "refmap": "mixins.bbor.refmap.json",
   "mixins": [
     "world.chunk.MixinChunk",
+    "network.play.client.MixinCPacketCustomPayload",
+    "network.play.server.MixinSPacketCustomPayload",
+    "entity.player.MixinEntityPlayerMP",
+    "server.management.MixinPlayerList",
     "server.management.MixinPlayerInteractionManager",
     "server.MixinMinecraftServer"
   ],
@@ -17,5 +21,8 @@
     "client.network.MixinNetHandlerLoginClient",
     "client.settings.MixinKeyBinding",
     "client.settings.MixinGameSettings"
+  ],
+  "server": [
+    "server.dedicated.MixinDedicatedServer"
   ]
 }
