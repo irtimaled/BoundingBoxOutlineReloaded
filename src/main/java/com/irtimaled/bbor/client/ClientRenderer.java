@@ -1,6 +1,7 @@
 package com.irtimaled.bbor.client;
 
 import com.irtimaled.bbor.client.renderers.*;
+import com.irtimaled.bbor.common.DimensionCache;
 import com.irtimaled.bbor.common.models.*;
 import com.irtimaled.bbor.config.ConfigManager;
 import net.minecraft.world.dimension.DimensionType;
@@ -14,7 +15,7 @@ public class ClientRenderer {
     private final ClientBoundingBoxProvider clientBoundingBoxProvider;
     private static final Map<Class<? extends BoundingBox>, Renderer> boundingBoxRendererMap = new HashMap<>();
 
-    ClientRenderer(ClientDimensionCache dimensionCache) {
+    ClientRenderer(DimensionCache dimensionCache) {
         this.clientBoundingBoxProvider = new ClientBoundingBoxProvider(dimensionCache);
         boundingBoxRendererMap.put(BoundingBoxVillage.class, new VillageRenderer());
         boundingBoxRendererMap.put(BoundingBoxSlimeChunk.class, new SlimeChunkRenderer());

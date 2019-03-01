@@ -1,8 +1,10 @@
 package com.irtimaled.bbor.client;
 
 import com.irtimaled.bbor.common.BoundingBoxCache;
-import com.irtimaled.bbor.common.BoundingBoxType;
-import com.irtimaled.bbor.common.models.*;
+import com.irtimaled.bbor.common.DimensionCache;
+import com.irtimaled.bbor.common.models.BoundingBox;
+import com.irtimaled.bbor.common.models.BoundingBoxSlimeChunk;
+import com.irtimaled.bbor.common.models.WorldData;
 import com.irtimaled.bbor.config.ConfigManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
@@ -10,17 +12,17 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.dimension.DimensionType;
 
-import java.awt.*;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-class ClientBoundingBoxProvider {
-    private static final int CHUNK_SIZE = 16;
-    private final ClientDimensionCache dimensionCache;
+import static com.irtimaled.bbor.client.Constants.CHUNK_SIZE;
 
-    ClientBoundingBoxProvider(ClientDimensionCache dimensionCache) {
+class ClientBoundingBoxProvider {
+    private final DimensionCache dimensionCache;
+
+    ClientBoundingBoxProvider(DimensionCache dimensionCache) {
         this.dimensionCache = dimensionCache;
     }
 
@@ -45,7 +47,7 @@ class ClientBoundingBoxProvider {
 
         for (Map.Entry<BoundingBox, Set<BoundingBox>> entry : boundingBoxCache.getBoundingBoxes().entrySet()) {
             BoundingBox bb = entry.getKey();
-            if (!isWithinRenderDistance(bb.getMinBlockPos(), bb.getMaxBlockPos())) continue;
+            if (!bb.shouldRender() && !isWithinRenderDistance(bb.getMinBlockPos(), bb.getMaxBlockPos())) continue;
             if (outerBoxOnly)
                 boundingBoxes.add(bb);
             else
@@ -55,23 +57,11 @@ class ClientBoundingBoxProvider {
         return boundingBoxes;
     }
 
-    private void addIfWithinRenderDistance(Set<BoundingBox> boundingBoxes, BoundingBox boundingBox) {
-        if (isWithinRenderDistance(boundingBox.getMinBlockPos(), boundingBox.getMaxBlockPos()))
-            boundingBoxes.add(boundingBox);
-    }
-
     private Set<BoundingBox> getClientBoundingBoxes(DimensionType dimensionType) {
         WorldData worldData = dimensionCache.getWorldData();
 
         Set<BoundingBox> boundingBoxes = new HashSet<>();
         if (worldData != null && dimensionType == DimensionType.OVERWORLD) {
-            if (ConfigManager.drawWorldSpawn.getBoolean()) {
-                addIfWithinRenderDistance(boundingBoxes, getSpawnChunksBoundingBox(worldData.getSpawnX(), worldData.getSpawnZ()));
-                addIfWithinRenderDistance(boundingBoxes, getWorldSpawnBoundingBox(worldData.getSpawnX(), worldData.getSpawnZ()));
-            }
-            if (ConfigManager.drawLazySpawnChunks.getBoolean()) {
-                addIfWithinRenderDistance(boundingBoxes, getLazySpawnChunksBoundingBox(worldData.getSpawnX(), worldData.getSpawnZ()));
-            }
             if (ConfigManager.drawSlimeChunks.getBoolean()) {
                 boundingBoxes.addAll(this.getSlimeChunks());
             }
@@ -104,37 +94,5 @@ class ClientBoundingBoxProvider {
                 (long) (chunkZ * chunkZ) * 4392871L +
                 (long) (chunkZ * 389711) ^ 987234911L);
         return r.nextInt(10) == 0;
-    }
-
-    private BoundingBox getSpawnChunksBoundingBox(int spawnX, int spawnZ) {
-        return dimensionCache.getOrSetSpawnChunks(() -> buildSpawnChunksBoundingBox(spawnX, spawnZ, 12, BoundingBoxType.SpawnChunks));
-    }
-
-    private BoundingBox getLazySpawnChunksBoundingBox(int spawnX, int spawnZ) {
-        return dimensionCache.getOrSetLazySpawnChunks(() -> buildSpawnChunksBoundingBox(spawnX, spawnZ, 16, BoundingBoxType.LazySpawnChunks));
-    }
-
-    private BoundingBox buildSpawnChunksBoundingBox(int spawnX, int spawnZ, int size, BoundingBoxType type) {
-        double midOffset = CHUNK_SIZE * (size / 2.0);
-        double midX = Math.round((float) (spawnX / (double) CHUNK_SIZE)) * (double) CHUNK_SIZE;
-        double midZ = Math.round((float) (spawnZ / (double) CHUNK_SIZE)) * (double) CHUNK_SIZE;
-        BlockPos minBlockPos = new BlockPos(midX - midOffset, 0, midZ - midOffset);
-        if (spawnX / (double) CHUNK_SIZE % 0.5D == 0.0D && spawnZ / (double) CHUNK_SIZE % 0.5D == 0.0D) {
-            midX += (double) CHUNK_SIZE;
-            midZ += (double) CHUNK_SIZE;
-        }
-        BlockPos maxBlockPos = new BlockPos(midX + midOffset, 0, midZ + midOffset);
-        return BoundingBoxWorldSpawn.from(minBlockPos, maxBlockPos, type);
-    }
-
-    private BoundingBox getWorldSpawnBoundingBox(int spawnX, int spawnZ) {
-        return dimensionCache.getOrSetWorldSpawn(() -> buildWorldSpawnBoundingBox(spawnX, spawnZ));
-    }
-
-    private BoundingBox buildWorldSpawnBoundingBox(int spawnX, int spawnZ) {
-        BlockPos minBlockPos = new BlockPos(spawnX - 10, 0, spawnZ - 10);
-        BlockPos maxBlockPos = new BlockPos(spawnX + 10, 0, spawnZ + 10);
-
-        return BoundingBoxWorldSpawn.from(minBlockPos, maxBlockPos, BoundingBoxType.WorldSpawn);
     }
 }

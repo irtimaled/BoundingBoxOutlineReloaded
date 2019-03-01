@@ -21,7 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 class NBTFileParser {
-    static void loadLocalDatFiles(String host, int port, DimensionCache dimensionCache) {
+    static void loadLocalDatFiles(String host, int port, DimensionCache dimensionCache, SetWorldData setWorldData) {
         Logger.info("Looking for local structures (host:port=%s:%d)", host, port);
         String path = String.format("BBOutlineReloaded%s%s%s%d", File.separator, host, File.separator, port);
         File localStructuresFolder = new File(ConfigManager.configDir, path);
@@ -40,11 +40,11 @@ class NBTFileParser {
             Logger.info("No local structures folders found");
             return;
         }
-        loadWorldData(localStructuresFolder, dimensionCache);
+        loadWorldData(localStructuresFolder, setWorldData);
         populateBoundingBoxCache(localStructuresFolder, dimensionCache);
     }
 
-    private static void loadWorldData(File localStructuresFolder, DimensionCache dimensionCache) {
+    private static void loadWorldData(File localStructuresFolder, SetWorldData setWorldData) {
         File file = new File(localStructuresFolder, "level.dat");
         NBTTagCompound nbt = loadNbtFile(file);
         if (nbt == null)
@@ -55,7 +55,7 @@ class NBTFileParser {
         int spawnX = data.getInteger("SpawnX");
         int spawnZ = data.getInteger("SpawnZ");
         Logger.info("Loaded level.dat (seed: %d, spawn: %d,%d)", seed, spawnX, spawnZ);
-        dimensionCache.setWorldData(seed, spawnX, spawnZ);
+        setWorldData.accept(seed, spawnX, spawnZ);
     }
 
     private static void populateBoundingBoxCache(File localStructuresFolder, DimensionCache dimensionCache) {

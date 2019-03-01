@@ -30,14 +30,9 @@ public class CommonProxy {
     private Map<EntityPlayerMP, Set<BoundingBox>> playerBoundingBoxesCache = new HashMap<>();
     private Map<Integer, BoundingBoxVillage> villageCache = new HashMap<>();
 
-    protected DimensionCache dimensionCache;
+    protected DimensionCache dimensionCache = new DimensionCache();
 
     public void init() {
-        dimensionCache = new DimensionCache();
-        registerEventHandlers();
-    }
-
-    protected void registerEventHandlers() {
         EventBus.subscribe(WorldLoaded.class, e -> worldLoaded(e.getWorld()));
         EventBus.subscribe(ChunkLoaded.class, e -> chunkLoaded(e.getChunk()));
         EventBus.subscribe(MobSpawnerBroken.class, e -> mobSpawnerBroken(e.getDimensionType(), e.getPos()));
@@ -51,11 +46,17 @@ public class CommonProxy {
         }
     }
 
+    protected void setWorldData(long seed, int spawnX, int spawnZ) {
+        dimensionCache.setWorldData(seed, spawnX, spawnZ);
+    }
+
     private void worldLoaded(World world) {
         IChunkProvider chunkProvider = world.getChunkProvider();
         if (chunkProvider instanceof ChunkProviderServer) {
-            dimensionCache.setWorldData(world.getSeed(), world.getWorldInfo().getSpawnX(), world.getWorldInfo().getSpawnZ());
             DimensionType dimensionType = world.dimension.getType();
+            if(dimensionType == DimensionType.OVERWORLD) {
+                setWorldData(world.getSeed(), world.getWorldInfo().getSpawnX(), world.getWorldInfo().getSpawnZ());
+            }
             Logger.info("create world dimension: %s, %s (seed: %d)", dimensionType, world.getClass().toString(), world.getSeed());
             DimensionProcessor boundingBoxCache = new DimensionProcessor(dimensionType);
             dimensionCache.put(dimensionType, boundingBoxCache);
