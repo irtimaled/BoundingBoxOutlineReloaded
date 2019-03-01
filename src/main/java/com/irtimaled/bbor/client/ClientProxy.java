@@ -42,7 +42,6 @@ public class ClientProxy extends CommonProxy {
         EventBus.subscribe(InitializeClientReceived.class, e -> dimensionCache.setWorldData(e.getSeed(), e.getSpawnX(), e.getSpawnZ()));
         EventBus.subscribe(AddBoundingBoxReceived.class, e -> addBoundingBox(e.getDimensionType(), e.getKey(), e.getBoundingBoxes()));
         EventBus.subscribe(RemoveBoundingBoxReceived.class, e -> removeBoundingBox(e.getDimensionType(), e.getKey()));
-        EventBus.subscribe(Tick.class, e -> tick());
     }
 
     private void render(float partialTicks) {
@@ -51,13 +50,6 @@ public class ClientProxy extends CommonProxy {
 
         if (this.active) {
             renderer.render(DimensionType.getById(entityPlayer.dimension), outerBoxOnly);
-        }
-    }
-
-    @Override
-    protected void tick() {
-        if (this.active || hasRemoteUsers()) {
-            super.tick();
         }
     }
 
@@ -81,12 +73,9 @@ public class ClientProxy extends CommonProxy {
 
     private void disconnectedFromServer() {
         active = false;
-        villageProcessors.forEach(VillageProcessor::close);
-        villageProcessors.clear();
-
         if (ConfigManager.keepCacheBetweenSessions.getBoolean()) return;
         VillageColorCache.clear();
-        dimensionCache.clear();
+        clearCaches();
     }
 
     private void addBoundingBox(DimensionType dimensionType, BoundingBox key, Set<BoundingBox> boundingBoxes) {

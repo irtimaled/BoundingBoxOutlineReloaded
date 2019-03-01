@@ -10,6 +10,7 @@
     "network.play.client.MixinCPacketCustomPayload",
     "network.play.server.MixinSPacketCustomPayload",
     "entity.player.MixinEntityPlayerMP",
+    "village.MixinVillage",
     "server.management.MixinPlayerList",
     "server.management.MixinPlayerInteractionManager",
     "server.MixinMinecraftServer"

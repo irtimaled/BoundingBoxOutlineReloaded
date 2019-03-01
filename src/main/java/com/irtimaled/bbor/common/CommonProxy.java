@@ -7,10 +7,12 @@ import com.irtimaled.bbor.common.messages.InitializeClient;
 import com.irtimaled.bbor.common.messages.RemoveBoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBoxMobSpawner;
+import com.irtimaled.bbor.common.models.BoundingBoxVillage;
 import com.irtimaled.bbor.config.ConfigManager;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.server.SPacketCustomPayload;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.village.Village;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
@@ -26,9 +28,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CommonProxy {
     private Map<EntityPlayerMP, DimensionType> playerDimensions = new ConcurrentHashMap<>();
     private Map<EntityPlayerMP, Set<BoundingBox>> playerBoundingBoxesCache = new HashMap<>();
+    private Map<Integer, BoundingBoxVillage> villageCache = new HashMap<>();
 
     protected DimensionCache dimensionCache;
-    protected Set<VillageProcessor> villageProcessors = new HashSet<>();
 
     public void init() {
         dimensionCache = new DimensionCache();
@@ -42,13 +44,11 @@ public class CommonProxy {
         EventBus.subscribe(PlayerChangedDimension.class, e -> playerChangedDimension(e.getPlayer()));
         EventBus.subscribe(PlayerLoggedIn.class, e -> playerLoggedIn(e.getPlayer()));
         EventBus.subscribe(PlayerLoggedOut.class, e -> playerLoggedOut(e.getPlayer()));
-        EventBus.subscribe(VillageRemoved.class, e -> sendRemoveBoundingBox(e.getDimensionType(), e.getBoundingBox()));
         EventBus.subscribe(PlayerSubscribed.class, e -> sendBoundingBoxes(e.getPlayer()));
         EventBus.subscribe(Tick.class, e -> tick());
-    }
-
-    protected boolean hasRemoteUsers() {
-        return playerDimensions.size() > 0;
+        if (ConfigManager.drawVillages.getBoolean()) {
+            EventBus.subscribe(VillageUpdated.class, e -> villageUpdated(e.getDimensionType(), e.getVillage()));
+        }
     }
 
     private void worldLoaded(World world) {
@@ -59,9 +59,6 @@ public class CommonProxy {
             Logger.info("create world dimension: %s, %s (seed: %d)", dimensionType, world.getClass().toString(), world.getSeed());
             DimensionProcessor boundingBoxCache = new DimensionProcessor(dimensionType);
             dimensionCache.put(dimensionType, boundingBoxCache);
-            if (BoundingBoxType.Village.shouldRender()) {
-                villageProcessors.add(new VillageProcessor(world, dimensionType, boundingBoxCache));
-            }
         }
     }
 
@@ -152,11 +149,35 @@ public class CommonProxy {
         sendRemoveBoundingBox(dimensionType, boundingBox);
     }
 
-    protected void tick() {
-        villageProcessors.forEach(VillageProcessor::process);
+    private void tick() {
         for (EntityPlayerMP player : playerDimensions.keySet()) {
             DimensionType dimensionType = playerDimensions.get(player);
             sendToPlayer(player, dimensionCache.getBoundingBoxes(dimensionType));
         }
+    }
+
+    private void villageUpdated(DimensionType dimensionType, Village village) {
+        BoundingBoxCache cache = dimensionCache.getBoundingBoxes(dimensionType);
+        if (cache == null) return;
+
+        int villageId = village.hashCode();
+        BoundingBoxVillage oldVillage = villageCache.get(villageId);
+        if (oldVillage != null && !oldVillage.matches(village)) {
+            cache.removeBoundingBox(oldVillage);
+            sendRemoveBoundingBox(dimensionType, oldVillage);
+            oldVillage = null;
+        }
+        if (village.isAnnihilated()) {
+            villageCache.remove(villageId);
+        } else {
+            BoundingBoxVillage newVillage = oldVillage == null ? BoundingBoxVillage.from(village) : oldVillage;
+            cache.addBoundingBox(newVillage);
+            villageCache.put(villageId, newVillage);
+        }
+    }
+
+    protected void clearCaches() {
+        villageCache.clear();
+        dimensionCache.clear();
     }
 }
