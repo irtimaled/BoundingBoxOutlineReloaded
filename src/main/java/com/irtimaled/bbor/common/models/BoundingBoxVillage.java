@@ -1,5 +1,6 @@
 package com.irtimaled.bbor.common.models;
 
+import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.VillageColorCache;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.village.Village;
@@ -14,15 +15,17 @@ public class BoundingBoxVillage extends BoundingBox {
     private final BlockPos center;
     private final Integer radius;
     private final boolean spawnsIronGolems;
+    private final Color color;
     private Set<BlockPos> doors;
     private Double centerOffsetX;
     private Double centerOffsetZ;
     private int villageHash;
 
     private BoundingBoxVillage(BlockPos center, Integer radius, Color color, boolean spawnsIronGolems, Set<BlockPos> doors, BlockPos minBlockPos, BlockPos maxBlockPos) {
-        super(minBlockPos, maxBlockPos, color);
+        super(minBlockPos, maxBlockPos, BoundingBoxType.Village);
         this.center = center;
         this.radius = radius;
+        this.color = color;
         this.spawnsIronGolems = spawnsIronGolems;
         this.doors = doors;
         this.villageHash = computeHash(center, radius, spawnsIronGolems, doors);
@@ -104,6 +107,8 @@ public class BoundingBoxVillage extends BoundingBox {
     public BlockPos getCenter() {
         return center;
     }
+
+    public Color getColor() { return color; }
 
     public Double getCenterOffsetX() {
         return centerOffsetX;

@@ -59,7 +59,7 @@ public class CommonProxy {
             Logger.info("create world dimension: %s, %s (seed: %d)", dimensionType, world.getClass().toString(), world.getSeed());
             DimensionProcessor boundingBoxCache = new DimensionProcessor(dimensionType);
             dimensionCache.put(dimensionType, boundingBoxCache);
-            if (ConfigManager.drawVillages.getBoolean()) {
+            if (BoundingBoxType.Village.shouldRender()) {
                 villageProcessors.add(new VillageProcessor(world, dimensionType, boundingBoxCache));
             }
         }

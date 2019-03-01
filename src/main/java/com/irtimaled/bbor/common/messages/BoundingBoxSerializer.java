@@ -9,7 +9,7 @@ import net.minecraft.util.math.BlockPos;
 
 import java.awt.*;
 
-public class BoundingBoxSerializer {
+class BoundingBoxSerializer {
     static void serialize(BoundingBox boundingBox, PacketBuffer buf) {
         if (boundingBox instanceof BoundingBoxVillage) {
             serializeVillage((BoundingBoxVillage) boundingBox, buf);
@@ -35,8 +35,8 @@ public class BoundingBoxSerializer {
 
     private static void serializeStructure(BoundingBoxStructure boundingBox, PacketBuffer buf) {
         buf.writeChar('S');
+        buf.writeInt(boundingBox.getTypeName().hashCode());
         serializeCuboid(boundingBox, buf);
-        serializeColor(boundingBox.getColor(), buf);
     }
 
     private static void serializeMobSpawner(BoundingBoxMobSpawner boundingBox, PacketBuffer buf) {

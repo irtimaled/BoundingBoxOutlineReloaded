@@ -1,19 +1,20 @@
 package com.irtimaled.bbor.common.models;
 
+import com.irtimaled.bbor.common.BoundingBoxType;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 
 import java.awt.*;
 
 public abstract class BoundingBox {
-    private final Color color;
     private final BlockPos minBlockPos;
     private final BlockPos maxBlockPos;
+    private final BoundingBoxType type;
 
-    protected BoundingBox(BlockPos minBlockPos, BlockPos maxBlockPos, Color color) {
+    protected BoundingBox(BlockPos minBlockPos, BlockPos maxBlockPos, BoundingBoxType type) {
         this.minBlockPos = minBlockPos;
         this.maxBlockPos = maxBlockPos;
-        this.color = color;
+        this.type = type;
     }
 
     @Override
@@ -62,6 +63,12 @@ public abstract class BoundingBox {
     }
 
     public Color getColor() {
-        return color;
+        return type.getColor();
+    }
+
+    public Boolean shouldRender() { return type.shouldRender(); }
+
+    public String getTypeName() {
+        return type.getName();
     }
 }

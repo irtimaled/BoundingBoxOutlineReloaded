@@ -1,6 +1,7 @@
 package com.irtimaled.bbor.client;
 
 import com.irtimaled.bbor.common.BoundingBoxCache;
+import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.models.*;
 import com.irtimaled.bbor.config.ConfigManager;
 import net.minecraft.client.Minecraft;
@@ -89,7 +90,7 @@ class ClientBoundingBoxProvider {
                 ChunkPos chunk = new ChunkPos(chunkX, chunkZ);
                 BlockPos minBlockPos = new BlockPos(chunk.getXStart(), 1, chunk.getZStart());
                 BlockPos maxBlockPos = new BlockPos(chunk.getXEnd(), 38, chunk.getZEnd());
-                slimeChunks.add(BoundingBoxSlimeChunk.from(minBlockPos, maxBlockPos, Colors.DARK_GREEN));
+                slimeChunks.add(BoundingBoxSlimeChunk.from(minBlockPos, maxBlockPos));
             }
         }
         return slimeChunks;
@@ -106,14 +107,14 @@ class ClientBoundingBoxProvider {
     }
 
     private BoundingBox getSpawnChunksBoundingBox(int spawnX, int spawnZ) {
-        return dimensionCache.getOrSetSpawnChunks(() -> buildSpawnChunksBoundingBox(spawnX, spawnZ, 12));
+        return dimensionCache.getOrSetSpawnChunks(() -> buildSpawnChunksBoundingBox(spawnX, spawnZ, 12, BoundingBoxType.SpawnChunks));
     }
 
     private BoundingBox getLazySpawnChunksBoundingBox(int spawnX, int spawnZ) {
-        return dimensionCache.getOrSetLazySpawnChunks(() -> buildSpawnChunksBoundingBox(spawnX, spawnZ, 16));
+        return dimensionCache.getOrSetLazySpawnChunks(() -> buildSpawnChunksBoundingBox(spawnX, spawnZ, 16, BoundingBoxType.LazySpawnChunks));
     }
 
-    private BoundingBox buildSpawnChunksBoundingBox(int spawnX, int spawnZ, int size) {
+    private BoundingBox buildSpawnChunksBoundingBox(int spawnX, int spawnZ, int size, BoundingBoxType type) {
         double midOffset = CHUNK_SIZE * (size / 2.0);
         double midX = Math.round((float) (spawnX / (double) CHUNK_SIZE)) * (double) CHUNK_SIZE;
         double midZ = Math.round((float) (spawnZ / (double) CHUNK_SIZE)) * (double) CHUNK_SIZE;
@@ -123,7 +124,7 @@ class ClientBoundingBoxProvider {
             midZ += (double) CHUNK_SIZE;
         }
         BlockPos maxBlockPos = new BlockPos(midX + midOffset, 0, midZ + midOffset);
-        return BoundingBoxWorldSpawn.from(minBlockPos, maxBlockPos, Color.RED);
+        return BoundingBoxWorldSpawn.from(minBlockPos, maxBlockPos, type);
     }
 
     private BoundingBox getWorldSpawnBoundingBox(int spawnX, int spawnZ) {
@@ -134,6 +135,6 @@ class ClientBoundingBoxProvider {
         BlockPos minBlockPos = new BlockPos(spawnX - 10, 0, spawnZ - 10);
         BlockPos maxBlockPos = new BlockPos(spawnX + 10, 0, spawnZ + 10);
 
-        return BoundingBoxWorldSpawn.from(minBlockPos, maxBlockPos, Color.RED);
+        return BoundingBoxWorldSpawn.from(minBlockPos, maxBlockPos, BoundingBoxType.WorldSpawn);
     }
 }

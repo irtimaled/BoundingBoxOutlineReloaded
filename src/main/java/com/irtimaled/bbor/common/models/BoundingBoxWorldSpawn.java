@@ -1,15 +1,14 @@
 package com.irtimaled.bbor.common.models;
 
+import com.irtimaled.bbor.common.BoundingBoxType;
 import net.minecraft.util.math.BlockPos;
 
-import java.awt.*;
-
 public class BoundingBoxWorldSpawn extends BoundingBox {
-    private BoundingBoxWorldSpawn(BlockPos minBlockPos, BlockPos maxBlockPos, Color color) {
-        super(minBlockPos, maxBlockPos, color);
+    private BoundingBoxWorldSpawn(BlockPos minBlockPos, BlockPos maxBlockPos, BoundingBoxType type) {
+        super(minBlockPos, maxBlockPos, type);
     }
 
-    public static BoundingBoxWorldSpawn from(BlockPos minBlockPos, BlockPos maxBlockPos, Color color) {
-        return new BoundingBoxWorldSpawn(minBlockPos, maxBlockPos, color);
+    public static BoundingBoxWorldSpawn from(BlockPos minBlockPos, BlockPos maxBlockPos, BoundingBoxType type) {
+        return new BoundingBoxWorldSpawn(minBlockPos, maxBlockPos, type);
     }
 }

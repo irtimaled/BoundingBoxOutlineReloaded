@@ -1,5 +1,6 @@
 package com.irtimaled.bbor.common.messages;
 
+import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.models.BoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBoxMobSpawner;
 import com.irtimaled.bbor.common.models.BoundingBoxStructure;
@@ -11,7 +12,7 @@ import java.awt.*;
 import java.util.HashSet;
 import java.util.Set;
 
-public class BoundingBoxDeserializer {
+class BoundingBoxDeserializer {
     static BoundingBox deserialize(PacketBuffer buf) {
         char type = buf.readChar();
         switch (type) {
@@ -26,10 +27,11 @@ public class BoundingBoxDeserializer {
     }
 
     private static BoundingBox deserializeStructure(PacketBuffer buf) {
+        BoundingBoxType type = BoundingBoxType.getByNameHash(buf.readInt());
+        if(type == null) return null;
         BlockPos minBlockPos = deserializeBlockPos(buf);
         BlockPos maxBlockPos = deserializeBlockPos(buf);
-        Color color = new Color(buf.readVarInt());
-        return BoundingBoxStructure.from(minBlockPos, maxBlockPos, color);
+        return BoundingBoxStructure.from(minBlockPos, maxBlockPos, type);
     }
 
     private static BoundingBox deserializeVillage(PacketBuffer buf) {

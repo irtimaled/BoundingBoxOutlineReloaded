@@ -2,8 +2,8 @@ package com.irtimaled.bbor.client;
 
 import com.irtimaled.bbor.Logger;
 import com.irtimaled.bbor.common.BoundingBoxCache;
+import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.DimensionCache;
-import com.irtimaled.bbor.common.StructureType;
 import com.irtimaled.bbor.common.models.BoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBoxStructure;
 import com.irtimaled.bbor.common.models.BoundingBoxVillage;
@@ -14,7 +14,6 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.dimension.DimensionType;
 
-import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -67,55 +66,34 @@ class NBTFileParser {
 
     private static BoundingBoxCache loadOverworldStructures(File localStructuresFolder) {
         BoundingBoxCache cache = new BoundingBoxCache();
-        if (ConfigManager.drawDesertTemples.getBoolean()) {
-            loadStructure(localStructuresFolder, cache, "Temple.dat", StructureType.DesertTemple.getColor(), "TeDP");
-        }
-        if (ConfigManager.drawJungleTemples.getBoolean()) {
-            loadStructure(localStructuresFolder, cache, "Temple.dat", StructureType.JungleTemple.getColor(), "TeJP");
-        }
-        if (ConfigManager.drawWitchHuts.getBoolean()) {
-            loadStructure(localStructuresFolder, cache, "Temple.dat", StructureType.WitchHut.getColor(), "TeSH");
-        }
-        if (ConfigManager.drawOceanMonuments.getBoolean()) {
-            loadStructure(localStructuresFolder, cache, "Monument.dat", StructureType.OceanMonument.getColor(), "*");
-        }
-        if (ConfigManager.drawStrongholds.getBoolean()) {
-            loadStructure(localStructuresFolder, cache, "Stronghold.dat", StructureType.Stronghold.getColor(), "*");
-        }
-        if (ConfigManager.drawMansions.getBoolean()) {
-            loadStructure(localStructuresFolder, cache, "Mansion.dat", StructureType.Mansion.getColor(), "*");
-        }
-        if (ConfigManager.drawMineShafts.getBoolean()) {
-            loadStructure(localStructuresFolder, cache, "Mineshaft.dat", StructureType.MineShaft.getColor(), "*");
-        }
-        if (ConfigManager.drawVillages.getBoolean()) {
-            loadVillages(localStructuresFolder, cache, "Villages.dat");
-        }
+        loadStructure(localStructuresFolder, cache, "Temple.dat", "TeDP", BoundingBoxType.DesertTemple);
+        loadStructure(localStructuresFolder, cache, "Temple.dat", "TeJP", BoundingBoxType.JungleTemple);
+        loadStructure(localStructuresFolder, cache, "Temple.dat", "TeSH", BoundingBoxType.WitchHut);
+        loadStructure(localStructuresFolder, cache, "Monument.dat", "*", BoundingBoxType.OceanMonument);
+        loadStructure(localStructuresFolder, cache, "Stronghold.dat", "*", BoundingBoxType.Stronghold);
+        loadStructure(localStructuresFolder, cache, "Mansion.dat", "*", BoundingBoxType.Mansion);
+        loadStructure(localStructuresFolder, cache, "Mineshaft.dat", "*", BoundingBoxType.MineShaft);
+        loadVillages(localStructuresFolder, cache, "Villages.dat");
         return cache;
     }
 
     private static BoundingBoxCache loadNetherStructures(File localStructuresFolder) {
         BoundingBoxCache cache = new BoundingBoxCache();
-        if (ConfigManager.drawNetherFortresses.getBoolean())
-            loadStructure(localStructuresFolder, cache, "Fortress.dat", StructureType.NetherFortress.getColor(), "*");
-        if (ConfigManager.drawVillages.getBoolean()) {
-            loadVillages(localStructuresFolder, cache, "villages_nether.dat");
-        }
+        loadStructure(localStructuresFolder, cache, "Fortress.dat", "*", BoundingBoxType.NetherFortress);
+        loadVillages(localStructuresFolder, cache, "villages_nether.dat");
         return cache;
     }
 
     private static BoundingBoxCache loadEndStructures(File localStructuresFolder) {
         BoundingBoxCache cache = new BoundingBoxCache();
-        if (ConfigManager.drawVillages.getBoolean()) {
-            loadVillages(localStructuresFolder, cache, "Villages_end.dat");
-        }
-        if (ConfigManager.drawEndCities.getBoolean()) {
-            loadStructure(localStructuresFolder, cache, "EndCity.dat", StructureType.EndCity.getColor(), "*");
-        }
+        loadVillages(localStructuresFolder, cache, "Villages_end.dat");
+        loadStructure(localStructuresFolder, cache, "EndCity.dat", "*", BoundingBoxType.EndCity);
         return cache;
     }
 
-    private static void loadStructure(File localStructuresFolder, BoundingBoxCache cache, String fileName, Color color, String id) {
+    private static void loadStructure(File localStructuresFolder, BoundingBoxCache cache, String fileName, String id, BoundingBoxType type) {
+        if(!type.shouldRender()) return;
+
         File file = new File(localStructuresFolder, fileName);
         NBTTagCompound nbt = loadNbtFile(file);
         if (nbt == null)
@@ -126,12 +104,12 @@ class NBTFileParser {
         int loadedStructureCount = 0;
         for (Object key : features.getKeySet()) {
             NBTTagCompound feature = features.getCompoundTag((String) key);
-            BoundingBox structure = BoundingBoxStructure.from(feature.getIntArray("BB"), color);
+            BoundingBox structure = BoundingBoxStructure.from(feature.getIntArray("BB"), type);
             Set<BoundingBox> boundingBoxes = new HashSet<>();
             NBTTagCompound[] children = getChildCompoundTags(feature, "Children");
             for (NBTTagCompound child : children) {
                 if (id.equals(child.getString("id")) || id.equals("*"))
-                    boundingBoxes.add(BoundingBoxStructure.from(child.getIntArray("BB"), color));
+                    boundingBoxes.add(BoundingBoxStructure.from(child.getIntArray("BB"), type));
             }
             if (boundingBoxes.size() > 0)
                 ++loadedStructureCount;
@@ -142,6 +120,8 @@ class NBTFileParser {
     }
 
     private static void loadVillages(File localStructuresFolder, BoundingBoxCache cache, String fileName) {
+        if(!BoundingBoxType.Village.shouldRender()) return;
+
         File file = new File(localStructuresFolder, fileName);
         NBTTagCompound nbt = loadNbtFile(file);
         if (nbt == null)

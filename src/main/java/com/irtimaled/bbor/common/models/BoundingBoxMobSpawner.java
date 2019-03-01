@@ -1,16 +1,14 @@
 package com.irtimaled.bbor.common.models;
 
-import net.minecraft.tileentity.TileEntityMobSpawner;
+import com.irtimaled.bbor.common.BoundingBoxType;
 import net.minecraft.util.math.BlockPos;
-
-import java.awt.*;
 
 public class BoundingBoxMobSpawner extends BoundingBox {
     private final BlockPos center;
     private final Integer radius;
 
-    private BoundingBoxMobSpawner(BlockPos center, Integer radius, Color color, BlockPos minBlockPos, BlockPos maxBlockPos) {
-        super(minBlockPos, maxBlockPos, color);
+    private BoundingBoxMobSpawner(BlockPos center, Integer radius, BlockPos minBlockPos, BlockPos maxBlockPos) {
+        super(minBlockPos, maxBlockPos, BoundingBoxType.MobSpawner);
         this.center = center;
         this.radius = radius;
     }
@@ -22,7 +20,7 @@ public class BoundingBoxMobSpawner extends BoundingBox {
         BlockPos maxBlockPos = new BlockPos(center.getX() + 5,
                 center.getY() + 2,
                 center.getZ() + 5);
-        return new BoundingBoxMobSpawner(center, 16, Color.GREEN, minBlockPos, maxBlockPos);
+        return new BoundingBoxMobSpawner(center, 16, minBlockPos, maxBlockPos);
     }
 
     @Override
