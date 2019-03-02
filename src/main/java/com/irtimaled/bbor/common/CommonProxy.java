@@ -12,6 +12,7 @@ import com.irtimaled.bbor.common.messages.RemoveBoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBoxMobSpawner;
 import com.irtimaled.bbor.common.models.BoundingBoxVillage;
+import com.irtimaled.bbor.common.models.WorldData;
 import com.irtimaled.bbor.config.ConfigManager;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.server.SPacketCustomPayload;
@@ -28,14 +29,15 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 public class CommonProxy {
     private Map<EntityPlayerMP, DimensionType> playerDimensions = new ConcurrentHashMap<>();
     private Map<EntityPlayerMP, Set<BoundingBox>> playerBoundingBoxesCache = new HashMap<>();
     private Map<Integer, BoundingBoxVillage> villageCache = new HashMap<>();
     private Map<DimensionType, ChunkProcessor> chunkProcessors = new HashMap<>();
-
-    protected DimensionCache dimensionCache = new DimensionCache();
+    private WorldData worldData = null;
+    private final Map<DimensionType, BoundingBoxCache> dimensionCache = new ConcurrentHashMap<>();
 
     public void init() {
         EventBus.subscribe(WorldLoaded.class, e -> worldLoaded(e.getWorld()));
@@ -52,14 +54,14 @@ public class CommonProxy {
     }
 
     protected void setWorldData(long seed, int spawnX, int spawnZ) {
-        dimensionCache.setWorldData(seed, spawnX, spawnZ);
+        worldData = new WorldData(seed, spawnX, spawnZ);
     }
 
     private void worldLoaded(World world) {
         IChunkProvider chunkProvider = world.getChunkProvider();
         if (chunkProvider instanceof ChunkProviderServer) {
             DimensionType dimensionType = world.dimension.getType();
-            BoundingBoxCache boundingBoxCache = dimensionCache.getOrCreateCache(dimensionType);
+            BoundingBoxCache boundingBoxCache = getOrCreateCache(dimensionType);
             ChunkProcessor chunkProcessor = null;
             if (dimensionType == DimensionType.OVERWORLD) {
                 setWorldData(world.getSeed(), world.getWorldInfo().getSpawnX(), world.getWorldInfo().getSpawnZ());
@@ -91,7 +93,7 @@ public class CommonProxy {
     }
 
     private void playerLoggedIn(EntityPlayerMP player) {
-        player.connection.sendPacket(InitializeClient.getPayload(dimensionCache.getWorldData()));
+        player.connection.sendPacket(InitializeClient.getPayload(worldData));
     }
 
     private void playerLoggedOut(EntityPlayerMP player) {
@@ -116,12 +118,12 @@ public class CommonProxy {
     private void sendBoundingBoxes(EntityPlayerMP player) {
         DimensionType dimensionType = DimensionType.getById(player.dimension);
         playerDimensions.put(player, dimensionType);
-        sendToPlayer(player, dimensionCache.getCache(dimensionType));
+        sendToPlayer(player, getCache(dimensionType));
     }
 
     private void sendToPlayer(EntityPlayerMP player, BoundingBoxCache boundingBoxCache) {
-        if (boundingBoxCache == null)
-            return;
+        if (boundingBoxCache == null) return;
+
         Map<BoundingBox, Set<BoundingBox>> cacheSubset = getBoundingBoxMap(player, boundingBoxCache.getBoundingBoxes());
 
         DimensionType dimensionType = DimensionType.getById(player.dimension);
@@ -151,10 +153,10 @@ public class CommonProxy {
     }
 
     protected void removeBoundingBox(DimensionType dimensionType, BoundingBox key) {
-        BoundingBoxCache cache = dimensionCache.getCache(dimensionType);
-        if (cache != null) {
-            cache.removeBoundingBox(key);
-        }
+        BoundingBoxCache cache = getCache(dimensionType);
+        if (cache == null) return;
+
+        cache.removeBoundingBox(key);
     }
 
     private void mobSpawnerBroken(DimensionType dimensionType, BlockPos pos) {
@@ -166,12 +168,12 @@ public class CommonProxy {
     private void tick() {
         for (EntityPlayerMP player : playerDimensions.keySet()) {
             DimensionType dimensionType = playerDimensions.get(player);
-            sendToPlayer(player, dimensionCache.getCache(dimensionType));
+            sendToPlayer(player, getCache(dimensionType));
         }
     }
 
     private void villageUpdated(DimensionType dimensionType, Village village) {
-        BoundingBoxCache cache = dimensionCache.getCache(dimensionType);
+        BoundingBoxCache cache = getCache(dimensionType);
         if (cache == null) return;
 
         int villageId = village.hashCode();
@@ -190,8 +192,24 @@ public class CommonProxy {
         }
     }
 
+    protected BoundingBoxCache getCache(DimensionType dimensionType) {
+        return dimensionCache.get(dimensionType);
+    }
+
+    protected BoundingBoxCache getOrCreateCache(DimensionType dimensionType)
+    {
+        return dimensionCache.computeIfAbsent(dimensionType, dt -> new BoundingBoxCache());
+    }
+
+    protected void runOnCache(DimensionType dimensionType, Consumer<BoundingBoxCache> action) {
+        action.accept(getOrCreateCache(dimensionType));
+    }
+
     protected void clearCaches() {
         villageCache.clear();
+        for (BoundingBoxCache cache : dimensionCache.values()) {
+            cache.close();
+        }
         dimensionCache.clear();
     }
 }

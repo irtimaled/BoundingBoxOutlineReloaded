@@ -20,7 +20,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 class NBTFileParser {
-    static void loadLocalDatFiles(String host, int port, SetWorldData setWorldData, CreateCache createCache) {
+    static void loadLocalDatFiles(String host, int port, SetWorldData setWorldData, GetCache createCache) {
         Logger.info("Looking for local structures (host:port=%s:%d)", host, port);
         String path = String.format("BBOutlineReloaded%s%s%s%d", File.separator, host, File.separator, port);
         File localStructuresFolder = new File(ConfigManager.configDir, path);
@@ -57,7 +57,7 @@ class NBTFileParser {
         setWorldData.accept(seed, spawnX, spawnZ);
     }
 
-    private static void populateBoundingBoxCache(File localStructuresFolder, CreateCache createCache) {
+    private static void populateBoundingBoxCache(File localStructuresFolder, GetCache createCache) {
         loadOverworldStructures(localStructuresFolder, createCache.apply(DimensionType.OVERWORLD));
         loadNetherStructures(localStructuresFolder, createCache.apply(DimensionType.NETHER));
         loadEndStructures(localStructuresFolder, createCache.apply(DimensionType.THE_END));

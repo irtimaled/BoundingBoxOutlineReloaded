@@ -37,10 +37,10 @@ public class ClientProxy extends CommonProxy {
         EventBus.subscribe(ConnectedToRemoteServer.class, e -> connectedToServer(e.getNetworkManager()));
         EventBus.subscribe(DisconnectedFromRemoteServer.class, e -> disconnectedFromServer());
         EventBus.subscribe(InitializeClientReceived.class, e -> setWorldData(e.getSeed(), e.getSpawnX(), e.getSpawnZ()));
-        EventBus.subscribe(AddBoundingBoxReceived.class, e -> dimensionCache.delegate(e.getDimensionType(), cache -> cache.addBoundingBoxes(e.getKey(), e.getBoundingBoxes())));
+        EventBus.subscribe(AddBoundingBoxReceived.class, e -> runOnCache(e.getDimensionType(), cache -> cache.addBoundingBoxes(e.getKey(), e.getBoundingBoxes())));
         EventBus.subscribe(RemoveBoundingBoxReceived.class, e -> removeBoundingBox(e.getDimensionType(), e.getKey()));
 
-        renderer = new ClientRenderer(dimensionCache);
+        renderer = new ClientRenderer(this::getCache);
     }
 
     private void render(float partialTicks) {
@@ -66,7 +66,7 @@ public class ClientProxy extends CommonProxy {
         SocketAddress remoteAddress = networkManager.getRemoteAddress();
         if (remoteAddress instanceof InetSocketAddress) {
             InetSocketAddress socketAddress = (InetSocketAddress) remoteAddress;
-            NBTFileParser.loadLocalDatFiles(socketAddress.getHostName(), socketAddress.getPort(), this::setWorldData, dimensionCache::getOrCreateCache);
+            NBTFileParser.loadLocalDatFiles(socketAddress.getHostName(), socketAddress.getPort(), this::setWorldData, this::getOrCreateCache);
         }
     }
 
@@ -88,7 +88,7 @@ public class ClientProxy extends CommonProxy {
         BoundingBox spawnChunksBoundingBox = buildSpawnChunksBoundingBox(spawnX, spawnZ, 12, BoundingBoxType.SpawnChunks);
         BoundingBox lazySpawnChunksBoundingBox = buildSpawnChunksBoundingBox(spawnX, spawnZ, 16, BoundingBoxType.LazySpawnChunks);
 
-        dimensionCache.delegate(DimensionType.OVERWORLD, cache -> {
+        runOnCache(DimensionType.OVERWORLD, cache -> {
             cache.addBoundingBox(worldSpawnBoundingBox);
             cache.addBoundingBox(spawnChunksBoundingBox);
             cache.addBoundingBox(lazySpawnChunksBoundingBox);

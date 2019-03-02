@@ -5,4 +5,4 @@ import net.minecraft.world.dimension.DimensionType;
 
 import java.util.function.Function;
 
-public interface CreateCache extends Function<DimensionType, BoundingBoxCache> { }
+public interface GetCache extends Function<DimensionType, BoundingBoxCache> { }

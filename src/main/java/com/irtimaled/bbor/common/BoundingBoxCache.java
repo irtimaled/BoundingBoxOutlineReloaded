@@ -33,8 +33,6 @@ public class BoundingBoxCache {
     }
 
     public void removeBoundingBox(BoundingBox key) {
-        if (cache.containsKey(key)) {
-            cache.remove(key);
-        }
+        cache.remove(key);
     }
 }

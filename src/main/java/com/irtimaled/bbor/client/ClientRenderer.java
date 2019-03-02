@@ -2,7 +2,6 @@ package com.irtimaled.bbor.client;
 
 import com.irtimaled.bbor.client.renderers.*;
 import com.irtimaled.bbor.common.BoundingBoxCache;
-import com.irtimaled.bbor.common.DimensionCache;
 import com.irtimaled.bbor.common.models.*;
 import com.irtimaled.bbor.config.ConfigManager;
 import net.minecraft.client.Minecraft;
@@ -18,11 +17,11 @@ import java.util.Set;
 import static com.irtimaled.bbor.client.Constants.CHUNK_SIZE;
 
 public class ClientRenderer {
-    private final DimensionCache dimensionCache;
+    private final GetCache getCache;
     private static final Map<Class<? extends BoundingBox>, Renderer> boundingBoxRendererMap = new HashMap<>();
 
-    ClientRenderer(DimensionCache dimensionCache) {
-        this.dimensionCache = dimensionCache;
+    ClientRenderer(GetCache getCache) {
+        this.getCache = getCache;
         boundingBoxRendererMap.put(BoundingBoxVillage.class, new VillageRenderer());
         boundingBoxRendererMap.put(BoundingBoxSlimeChunk.class, new SlimeChunkRenderer());
         boundingBoxRendererMap.put(BoundingBoxWorldSpawn.class, new WorldSpawnRenderer());
@@ -44,7 +43,7 @@ public class ClientRenderer {
     }
 
     public void render(DimensionType dimensionType, Boolean outerBoxesOnly) {
-        BoundingBoxCache cache = dimensionCache.getCache(dimensionType);
+        BoundingBoxCache cache = getCache.apply(dimensionType);
         if (cache == null) return;
 
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -62,10 +61,14 @@ public class ClientRenderer {
             Renderer renderer = boundingBoxRendererMap.get(key.getClass());
             if (renderer == null) continue;
 
-            if (outerBoxesOnly)
-                renderer.render(key);
-            else
-                entry.getValue().forEach(renderer::render);
+            if (!outerBoxesOnly) {
+                Set<BoundingBox> boundingBoxes = entry.getValue();
+                if (boundingBoxes != null) {
+                    boundingBoxes.forEach(renderer::render);
+                    continue;
+                }
+            }
+            renderer.render(key);
         }
 
         GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
