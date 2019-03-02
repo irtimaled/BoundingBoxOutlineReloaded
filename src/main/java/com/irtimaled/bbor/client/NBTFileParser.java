@@ -3,7 +3,6 @@ package com.irtimaled.bbor.client;
 import com.irtimaled.bbor.Logger;
 import com.irtimaled.bbor.common.BoundingBoxCache;
 import com.irtimaled.bbor.common.BoundingBoxType;
-import com.irtimaled.bbor.common.DimensionCache;
 import com.irtimaled.bbor.common.models.BoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBoxStructure;
 import com.irtimaled.bbor.common.models.BoundingBoxVillage;
@@ -21,7 +20,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 class NBTFileParser {
-    static void loadLocalDatFiles(String host, int port, DimensionCache dimensionCache, SetWorldData setWorldData) {
+    static void loadLocalDatFiles(String host, int port, SetWorldData setWorldData, CreateCache createCache) {
         Logger.info("Looking for local structures (host:port=%s:%d)", host, port);
         String path = String.format("BBOutlineReloaded%s%s%s%d", File.separator, host, File.separator, port);
         File localStructuresFolder = new File(ConfigManager.configDir, path);
@@ -41,7 +40,7 @@ class NBTFileParser {
             return;
         }
         loadWorldData(localStructuresFolder, setWorldData);
-        populateBoundingBoxCache(localStructuresFolder, dimensionCache);
+        populateBoundingBoxCache(localStructuresFolder, createCache);
     }
 
     private static void loadWorldData(File localStructuresFolder, SetWorldData setWorldData) {
@@ -58,14 +57,13 @@ class NBTFileParser {
         setWorldData.accept(seed, spawnX, spawnZ);
     }
 
-    private static void populateBoundingBoxCache(File localStructuresFolder, DimensionCache dimensionCache) {
-        dimensionCache.put(DimensionType.OVERWORLD, loadOverworldStructures(localStructuresFolder));
-        dimensionCache.put(DimensionType.NETHER, loadNetherStructures(localStructuresFolder));
-        dimensionCache.put(DimensionType.THE_END, loadEndStructures(localStructuresFolder));
+    private static void populateBoundingBoxCache(File localStructuresFolder, CreateCache createCache) {
+        loadOverworldStructures(localStructuresFolder, createCache.apply(DimensionType.OVERWORLD));
+        loadNetherStructures(localStructuresFolder, createCache.apply(DimensionType.NETHER));
+        loadEndStructures(localStructuresFolder, createCache.apply(DimensionType.THE_END));
     }
 
-    private static BoundingBoxCache loadOverworldStructures(File localStructuresFolder) {
-        BoundingBoxCache cache = new BoundingBoxCache();
+    private static void loadOverworldStructures(File localStructuresFolder, BoundingBoxCache cache) {
         loadStructure(localStructuresFolder, cache, "Temple.dat", "TeDP", BoundingBoxType.DesertTemple);
         loadStructure(localStructuresFolder, cache, "Temple.dat", "TeJP", BoundingBoxType.JungleTemple);
         loadStructure(localStructuresFolder, cache, "Temple.dat", "TeSH", BoundingBoxType.WitchHut);
@@ -74,26 +72,19 @@ class NBTFileParser {
         loadStructure(localStructuresFolder, cache, "Mansion.dat", "*", BoundingBoxType.Mansion);
         loadStructure(localStructuresFolder, cache, "Mineshaft.dat", "*", BoundingBoxType.MineShaft);
         loadVillages(localStructuresFolder, cache, "Villages.dat");
-        return cache;
     }
 
-    private static BoundingBoxCache loadNetherStructures(File localStructuresFolder) {
-        BoundingBoxCache cache = new BoundingBoxCache();
+    private static void loadNetherStructures(File localStructuresFolder, BoundingBoxCache cache) {
         loadStructure(localStructuresFolder, cache, "Fortress.dat", "*", BoundingBoxType.NetherFortress);
         loadVillages(localStructuresFolder, cache, "villages_nether.dat");
-        return cache;
     }
 
-    private static BoundingBoxCache loadEndStructures(File localStructuresFolder) {
-        BoundingBoxCache cache = new BoundingBoxCache();
+    private static void loadEndStructures(File localStructuresFolder, BoundingBoxCache cache) {
         loadVillages(localStructuresFolder, cache, "Villages_end.dat");
         loadStructure(localStructuresFolder, cache, "EndCity.dat", "*", BoundingBoxType.EndCity);
-        return cache;
     }
 
     private static void loadStructure(File localStructuresFolder, BoundingBoxCache cache, String fileName, String id, BoundingBoxType type) {
-        if(!type.shouldRender()) return;
-
         File file = new File(localStructuresFolder, fileName);
         NBTTagCompound nbt = loadNbtFile(file);
         if (nbt == null)
@@ -120,8 +111,6 @@ class NBTFileParser {
     }
 
     private static void loadVillages(File localStructuresFolder, BoundingBoxCache cache, String fileName) {
-        if(!BoundingBoxType.Village.shouldRender()) return;
-
         File file = new File(localStructuresFolder, fileName);
         NBTTagCompound nbt = loadNbtFile(file);
         if (nbt == null)

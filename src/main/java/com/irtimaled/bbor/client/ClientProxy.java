@@ -1,7 +1,10 @@
 package com.irtimaled.bbor.client;
 
 import com.irtimaled.bbor.client.events.*;
-import com.irtimaled.bbor.common.*;
+import com.irtimaled.bbor.common.BoundingBoxType;
+import com.irtimaled.bbor.common.CommonProxy;
+import com.irtimaled.bbor.common.EventBus;
+import com.irtimaled.bbor.common.VillageColorCache;
 import com.irtimaled.bbor.common.models.BoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBoxWorldSpawn;
 import com.irtimaled.bbor.config.ConfigManager;
@@ -14,7 +17,6 @@ import net.minecraft.world.dimension.DimensionType;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
-import java.util.Set;
 
 import static com.irtimaled.bbor.client.Constants.CHUNK_SIZE;
 
@@ -35,7 +37,7 @@ public class ClientProxy extends CommonProxy {
         EventBus.subscribe(ConnectedToRemoteServer.class, e -> connectedToServer(e.getNetworkManager()));
         EventBus.subscribe(DisconnectedFromRemoteServer.class, e -> disconnectedFromServer());
         EventBus.subscribe(InitializeClientReceived.class, e -> setWorldData(e.getSeed(), e.getSpawnX(), e.getSpawnZ()));
-        EventBus.subscribe(AddBoundingBoxReceived.class, e -> addBoundingBox(e.getDimensionType(), e.getKey(), e.getBoundingBoxes()));
+        EventBus.subscribe(AddBoundingBoxReceived.class, e -> dimensionCache.delegate(e.getDimensionType(), cache -> cache.addBoundingBoxes(e.getKey(), e.getBoundingBoxes())));
         EventBus.subscribe(RemoveBoundingBoxReceived.class, e -> removeBoundingBox(e.getDimensionType(), e.getKey()));
 
         renderer = new ClientRenderer(dimensionCache);
@@ -64,7 +66,7 @@ public class ClientProxy extends CommonProxy {
         SocketAddress remoteAddress = networkManager.getRemoteAddress();
         if (remoteAddress instanceof InetSocketAddress) {
             InetSocketAddress socketAddress = (InetSocketAddress) remoteAddress;
-            NBTFileParser.loadLocalDatFiles(socketAddress.getHostName(), socketAddress.getPort(), dimensionCache, this::setWorldData);
+            NBTFileParser.loadLocalDatFiles(socketAddress.getHostName(), socketAddress.getPort(), this::setWorldData, dimensionCache::getOrCreateCache);
         }
     }
 
@@ -75,15 +77,6 @@ public class ClientProxy extends CommonProxy {
         clearCaches();
     }
 
-    private void addBoundingBox(DimensionType dimensionType, BoundingBox key, Set<BoundingBox> boundingBoxes) {
-        BoundingBoxCache cache = dimensionCache.get(dimensionType);
-        if (cache == null) {
-            dimensionCache.put(dimensionType, cache = new BoundingBoxCache());
-        }
-
-        cache.addBoundingBoxes(key, boundingBoxes);
-    }
-
     @Override
     protected void setWorldData(long seed, int spawnX, int spawnZ) {
         super.setWorldData(seed, spawnX, spawnZ);
@@ -91,12 +84,15 @@ public class ClientProxy extends CommonProxy {
     }
 
     private void addSpawnChunkBoundingBoxes(int spawnX, int spawnZ) {
-        BoundingBoxCache cache = dimensionCache.get(DimensionType.OVERWORLD);
-        if (cache == null) return;
+        BoundingBox worldSpawnBoundingBox = getWorldSpawnBoundingBox(spawnX, spawnZ);
+        BoundingBox spawnChunksBoundingBox = buildSpawnChunksBoundingBox(spawnX, spawnZ, 12, BoundingBoxType.SpawnChunks);
+        BoundingBox lazySpawnChunksBoundingBox = buildSpawnChunksBoundingBox(spawnX, spawnZ, 16, BoundingBoxType.LazySpawnChunks);
 
-        cache.addBoundingBox(getWorldSpawnBoundingBox(spawnX, spawnZ));
-        cache.addBoundingBox(buildSpawnChunksBoundingBox(spawnX, spawnZ, 12, BoundingBoxType.SpawnChunks));
-        cache.addBoundingBox(buildSpawnChunksBoundingBox(spawnX, spawnZ, 16, BoundingBoxType.LazySpawnChunks));
+        dimensionCache.delegate(DimensionType.OVERWORLD, cache -> {
+            cache.addBoundingBox(worldSpawnBoundingBox);
+            cache.addBoundingBox(spawnChunksBoundingBox);
+            cache.addBoundingBox(lazySpawnChunksBoundingBox);
+        });
     }
 
     private BoundingBox getWorldSpawnBoundingBox(int spawnX, int spawnZ) {

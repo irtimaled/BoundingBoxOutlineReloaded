@@ -1,6 +1,10 @@
 package com.irtimaled.bbor.common;
 
 import com.irtimaled.bbor.Logger;
+import com.irtimaled.bbor.common.chunkProcessors.ChunkProcessor;
+import com.irtimaled.bbor.common.chunkProcessors.EndChunkProcessor;
+import com.irtimaled.bbor.common.chunkProcessors.NetherChunkProcessor;
+import com.irtimaled.bbor.common.chunkProcessors.OverworldChunkProcessor;
 import com.irtimaled.bbor.common.events.*;
 import com.irtimaled.bbor.common.messages.AddBoundingBox;
 import com.irtimaled.bbor.common.messages.InitializeClient;
@@ -29,6 +33,7 @@ public class CommonProxy {
     private Map<EntityPlayerMP, DimensionType> playerDimensions = new ConcurrentHashMap<>();
     private Map<EntityPlayerMP, Set<BoundingBox>> playerBoundingBoxesCache = new HashMap<>();
     private Map<Integer, BoundingBoxVillage> villageCache = new HashMap<>();
+    private Map<DimensionType, ChunkProcessor> chunkProcessors = new HashMap<>();
 
     protected DimensionCache dimensionCache = new DimensionCache();
 
@@ -54,20 +59,28 @@ public class CommonProxy {
         IChunkProvider chunkProvider = world.getChunkProvider();
         if (chunkProvider instanceof ChunkProviderServer) {
             DimensionType dimensionType = world.dimension.getType();
-            if(dimensionType == DimensionType.OVERWORLD) {
+            BoundingBoxCache boundingBoxCache = dimensionCache.getOrCreateCache(dimensionType);
+            ChunkProcessor chunkProcessor = null;
+            if (dimensionType == DimensionType.OVERWORLD) {
                 setWorldData(world.getSeed(), world.getWorldInfo().getSpawnX(), world.getWorldInfo().getSpawnZ());
+                chunkProcessor = new OverworldChunkProcessor(boundingBoxCache, world.getSeed());
+            }
+            if (dimensionType == DimensionType.NETHER) {
+                chunkProcessor = new NetherChunkProcessor(boundingBoxCache);
+            }
+            if (dimensionType == DimensionType.THE_END) {
+                chunkProcessor = new EndChunkProcessor(boundingBoxCache);
             }
             Logger.info("create world dimension: %s, %s (seed: %d)", dimensionType, world.getClass().toString(), world.getSeed());
-            DimensionProcessor boundingBoxCache = new DimensionProcessor(dimensionType);
-            dimensionCache.put(dimensionType, boundingBoxCache);
+            chunkProcessors.put(dimensionType, chunkProcessor);
         }
     }
 
     private void chunkLoaded(Chunk chunk) {
         DimensionType dimensionType = chunk.getWorld().dimension.getType();
-        BoundingBoxCache cache = dimensionCache.get(dimensionType);
-        if (cache instanceof DimensionProcessor) {
-            ((DimensionProcessor) cache).processChunk(chunk);
+        ChunkProcessor chunkProcessor = chunkProcessors.get(dimensionType);
+        if (chunkProcessor != null) {
+            chunkProcessor.process(chunk);
         }
     }
 
@@ -103,7 +116,7 @@ public class CommonProxy {
     private void sendBoundingBoxes(EntityPlayerMP player) {
         DimensionType dimensionType = DimensionType.getById(player.dimension);
         playerDimensions.put(player, dimensionType);
-        sendToPlayer(player, dimensionCache.getBoundingBoxes(dimensionType));
+        sendToPlayer(player, dimensionCache.getCache(dimensionType));
     }
 
     private void sendToPlayer(EntityPlayerMP player, BoundingBoxCache boundingBoxCache) {
@@ -138,7 +151,7 @@ public class CommonProxy {
     }
 
     protected void removeBoundingBox(DimensionType dimensionType, BoundingBox key) {
-        BoundingBoxCache cache = dimensionCache.getBoundingBoxes(dimensionType);
+        BoundingBoxCache cache = dimensionCache.getCache(dimensionType);
         if (cache != null) {
             cache.removeBoundingBox(key);
         }
@@ -153,12 +166,12 @@ public class CommonProxy {
     private void tick() {
         for (EntityPlayerMP player : playerDimensions.keySet()) {
             DimensionType dimensionType = playerDimensions.get(player);
-            sendToPlayer(player, dimensionCache.getBoundingBoxes(dimensionType));
+            sendToPlayer(player, dimensionCache.getCache(dimensionType));
         }
     }
 
     private void villageUpdated(DimensionType dimensionType, Village village) {
-        BoundingBoxCache cache = dimensionCache.getBoundingBoxes(dimensionType);
+        BoundingBoxCache cache = dimensionCache.getCache(dimensionType);
         if (cache == null) return;
 
         int villageId = village.hashCode();
