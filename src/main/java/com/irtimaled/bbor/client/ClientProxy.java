@@ -8,6 +8,7 @@ import com.irtimaled.bbor.common.VillageColorCache;
 import com.irtimaled.bbor.common.models.BoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBoxWorldSpawn;
 import com.irtimaled.bbor.config.ConfigManager;
+import com.irtimaled.bbor.config.Setting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
@@ -26,7 +27,6 @@ public class ClientProxy extends CommonProxy {
     public static KeyBinding OuterBoxOnlyHotKey = new KeyBinding("Toggle Display Outer Box Only", 0x4f, KeyCategory);
 
     private boolean active;
-    private boolean outerBoxOnly;
     private ClientRenderer renderer;
 
     @Override
@@ -48,7 +48,7 @@ public class ClientProxy extends CommonProxy {
         PlayerData.setPlayerPosition(partialTicks, entityPlayer);
 
         if (this.active) {
-            renderer.render(DimensionType.getById(entityPlayer.dimension), outerBoxOnly);
+            renderer.render(DimensionType.getById(entityPlayer.dimension), ConfigManager.outerBoxesOnly.get());
         }
     }
 
@@ -58,7 +58,8 @@ public class ClientProxy extends CommonProxy {
             if (active)
                 PlayerData.setActiveY();
         } else if (OuterBoxOnlyHotKey.isPressed()) {
-            outerBoxOnly = !outerBoxOnly;
+            Setting<Boolean> outerBoxesOnly = ConfigManager.outerBoxesOnly;
+            outerBoxesOnly.set(!outerBoxesOnly.get());
         }
     }
 

@@ -37,6 +37,7 @@ public class ConfigManager {
     public static Setting<Boolean> renderMobSpawnerSpawnArea;
     public static Setting<Boolean> renderMobSpawnerActivationLines;
     public static Setting<Boolean> drawPillagerOutposts;
+    public static Setting<Boolean> outerBoxesOnly;
 
     public static void loadConfig(File mcConfigDir) {
         configDir = new File(mcConfigDir, "config");
@@ -44,6 +45,7 @@ public class ConfigManager {
         Configuration config = loadConfig();
 
         fill = setup(config, "general", "fill", true, "If set to true the bounding boxes are filled.");
+        outerBoxesOnly = setup(config, "general", "outerBoxesOnly", false, "If set to true only the outer bounding boxes are rendered.");
         alwaysVisible = setup(config, "general", "alwaysVisible", false, "If set to true boxes will be visible even through other blocks.");
         keepCacheBetweenSessions = setup(config, "general", "keepCacheBetweenSessions", false, "If set to true bounding box caches will be kept between sessions.");
 
