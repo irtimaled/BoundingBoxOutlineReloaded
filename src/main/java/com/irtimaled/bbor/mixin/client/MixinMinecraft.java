@@ -1,8 +1,8 @@
 package com.irtimaled.bbor.mixin.client;
 
-import com.irtimaled.bbor.common.EventBus;
 import com.irtimaled.bbor.client.ClientProxy;
 import com.irtimaled.bbor.client.events.KeyPressed;
+import com.irtimaled.bbor.common.EventBus;
 import com.irtimaled.bbor.config.ConfigManager;
 import net.minecraft.client.Minecraft;
 import org.spongepowered.asm.mixin.Mixin;

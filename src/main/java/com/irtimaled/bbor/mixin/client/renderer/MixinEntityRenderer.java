@@ -1,7 +1,7 @@
 package com.irtimaled.bbor.mixin.client.renderer;
 
-import com.irtimaled.bbor.common.EventBus;
 import com.irtimaled.bbor.client.events.Render;
+import com.irtimaled.bbor.common.EventBus;
 import net.minecraft.client.renderer.EntityRenderer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
