@@ -48,7 +48,7 @@ public class CommonProxy {
         EventBus.subscribe(PlayerLoggedOut.class, e -> playerLoggedOut(e.getPlayer()));
         EventBus.subscribe(PlayerSubscribed.class, e -> sendBoundingBoxes(e.getPlayer()));
         EventBus.subscribe(Tick.class, e -> tick());
-        if (ConfigManager.drawVillages.getBoolean()) {
+        if (ConfigManager.drawVillages.get()) {
             EventBus.subscribe(VillageUpdated.class, e -> villageUpdated(e.getDimensionType(), e.getVillage()));
         }
     }

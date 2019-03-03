@@ -12,7 +12,7 @@ public class WorldSpawnRenderer extends Renderer<BoundingBoxWorldSpawn> {
     public void render(BoundingBoxWorldSpawn boundingBox) {
         AxisAlignedBB aaBB = boundingBox.toAxisAlignedBB(false);
         Color color = boundingBox.getColor();
-        double y = PlayerData.getMaxY(ConfigManager.worldSpawnMaxY.getInt()) + 0.001F;
+        double y = PlayerData.getMaxY(ConfigManager.worldSpawnMaxY.get()) + 0.001F;
         renderRectangle(aaBB, y, y, color, false);
     }
 }

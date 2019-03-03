@@ -1,47 +1,22 @@
 package com.irtimaled.bbor.config;
 
-public class Setting {
-    private Object value;
-    String comment;
+public class Setting<T> extends SettingBase {
+    private T value;
 
-    Setting(Object value) {
+    public Setting(char type, T value) {
+        super(type);
         this.value = value;
     }
 
-    public Boolean getBoolean(Boolean defaultValue) {
-        if (value instanceof Boolean)
-            return (Boolean) value;
-
-        return defaultValue;
+    public T get() {
+        return value;
     }
 
-    int getInt(int defaultValue) {
-        if (value instanceof Integer)
-            return (Integer) value;
-
-        return defaultValue;
-    }
-
-    public void set(Object value) {
+    public void set(T value) {
         this.value = value;
     }
 
-    public boolean getBoolean() {
-        return getBoolean(false);
-    }
-
-    public int getInt() {
-        return getInt(0);
-    }
-
-    String getType() {
-        if (value instanceof Integer)
-            return "I";
-        if (value instanceof Boolean)
-            return "B";
-        return "S";
-    }
-
+    @Override
     Object getValue() {
         return value;
     }

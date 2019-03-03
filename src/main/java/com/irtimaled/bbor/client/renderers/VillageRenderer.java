@@ -16,16 +16,16 @@ import java.util.Set;
 public class VillageRenderer extends Renderer<BoundingBoxVillage> {
     @Override
     public void render(BoundingBoxVillage boundingBox) {
-        if (ConfigManager.renderVillageAsSphere.getBoolean()) {
+        if (ConfigManager.renderVillageAsSphere.get()) {
             renderBoundingBoxVillageAsSphere(boundingBox);
         } else {
             renderBoundingBox(boundingBox);
         }
-        if (ConfigManager.drawIronGolemSpawnArea.getBoolean() &&
+        if (ConfigManager.drawIronGolemSpawnArea.get() &&
                 boundingBox.getSpawnsIronGolems()) {
             renderIronGolemSpawnArea(boundingBox);
         }
-        if (ConfigManager.drawVillageDoors.getBoolean()) {
+        if (ConfigManager.drawVillageDoors.get()) {
             renderVillageDoors(boundingBox);
         }
     }

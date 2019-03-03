@@ -22,7 +22,7 @@ public abstract class Renderer<T extends BoundingBox> {
     }
 
     boolean fill() {
-        return ConfigManager.fill.getBoolean();
+        return ConfigManager.fill.get();
     }
 
     void renderRectangle(AxisAlignedBB aaBB, double minY, double maxY, Color color, Boolean fill) {

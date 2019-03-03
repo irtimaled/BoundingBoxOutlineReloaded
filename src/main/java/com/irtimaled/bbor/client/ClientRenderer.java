@@ -51,7 +51,7 @@ public class ClientRenderer {
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glDisable(GL11.GL_CULL_FACE);
 
-        if (ConfigManager.alwaysVisible.getBoolean()) {
+        if (ConfigManager.alwaysVisible.get()) {
             GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
         }
         for (Map.Entry<BoundingBox, Set<BoundingBox>> entry : cache.getBoundingBoxes().entrySet()) {

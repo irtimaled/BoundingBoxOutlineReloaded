@@ -14,7 +14,7 @@ public class SlimeChunkRenderer extends Renderer<BoundingBoxSlimeChunk> {
         Color color = boundingBox.getColor();
         renderCuboid(aaBB, color, fill());
 
-        double maxY = PlayerData.getMaxY(ConfigManager.slimeChunkMaxY.getInt());
+        double maxY = PlayerData.getMaxY(ConfigManager.slimeChunkMaxY.get());
         if (maxY > 39) {
             renderRectangle(aaBB, 39, maxY, color, fill());
         }

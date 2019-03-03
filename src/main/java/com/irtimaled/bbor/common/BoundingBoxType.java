@@ -32,7 +32,7 @@ public class BoundingBoxType {
     public final static BoundingBoxType SlimeChunks = register(Colors.DARK_GREEN, "Slime_Chunks", ConfigManager.drawSlimeChunks);
     public final static BoundingBoxType Village = register(null, "Village", ConfigManager.drawVillages);
 
-    private static BoundingBoxType register(Color color, String name, Setting shouldRenderSetting) {
+    private static BoundingBoxType register(Color color, String name, Setting<Boolean> shouldRenderSetting) {
         return structureTypeMap.computeIfAbsent(name.hashCode(), k -> new BoundingBoxType(color, name, shouldRenderSetting));
     }
 
@@ -42,9 +42,9 @@ public class BoundingBoxType {
 
     private final Color color;
     private final String name;
-    private final Setting shouldRenderSetting;
+    private final Setting<Boolean> shouldRenderSetting;
 
-    private BoundingBoxType(Color color, String name, Setting shouldRenderSetting) {
+    private BoundingBoxType(Color color, String name, Setting<Boolean> shouldRenderSetting) {
         this.color = color;
         this.name = name;
         this.shouldRenderSetting = shouldRenderSetting;
@@ -59,6 +59,6 @@ public class BoundingBoxType {
     }
 
     public Boolean shouldRender() {
-        return shouldRenderSetting.getBoolean();
+        return shouldRenderSetting.get();
     }
 }

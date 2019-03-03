@@ -17,13 +17,13 @@ public class MobSpawnerRenderer extends Renderer<BoundingBoxMobSpawner> {
         OffsetPoint centerPoint = new OffsetPoint(center)
                 .add(0.5, 0.5, 0.5);
         double radius = boundingBox.getRadius();
-        if (ConfigManager.renderMobSpawnerSpawnArea.getBoolean()) {
+        if (ConfigManager.renderMobSpawnerSpawnArea.get()) {
             renderBoundingBox(boundingBox);
         } else {
             renderCuboid(new AxisAlignedBB(center, center).expand(1, 1, 1), color, fill());
         }
 
-        if (!ConfigManager.renderMobSpawnerActivationLines.getBoolean()) return;
+        if (!ConfigManager.renderMobSpawnerActivationLines.get()) return;
 
         OffsetPoint playerPos = new OffsetPoint(PlayerData.getX(), PlayerData.getY(), PlayerData.getZ());
         double distance = centerPoint.getDistance(playerPos);
