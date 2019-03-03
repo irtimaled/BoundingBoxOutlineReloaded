@@ -25,8 +25,8 @@ public class ClientProxy extends CommonProxy {
     public static final String KeyCategory = "Bounding Box Outline Reloaded";
     public static KeyBinding ActiveHotKey = new KeyBinding("Toggle On/Off", 0x42, KeyCategory);
     public static KeyBinding OuterBoxOnlyHotKey = new KeyBinding("Toggle Display Outer Box Only", 0x4f, KeyCategory);
+    public static boolean active;
 
-    private boolean active;
     private ClientRenderer renderer;
 
     @Override
@@ -47,16 +47,20 @@ public class ClientProxy extends CommonProxy {
         EntityPlayer entityPlayer = Minecraft.getInstance().player;
         PlayerData.setPlayerPosition(partialTicks, entityPlayer);
 
-        if (this.active) {
+        if (active) {
             renderer.render(DimensionType.getById(entityPlayer.dimension), ConfigManager.outerBoxesOnly.get());
         }
     }
 
+    public static void toggleActive() {
+        active = !active;
+        if (active)
+            PlayerData.setActiveY();
+    }
+
     private void keyPressed() {
         if (ActiveHotKey.isPressed()) {
-            active = !active;
-            if (active)
-                PlayerData.setActiveY();
+            toggleActive();
         } else if (OuterBoxOnlyHotKey.isPressed()) {
             Setting<Boolean> outerBoxesOnly = ConfigManager.outerBoxesOnly;
             outerBoxesOnly.set(!outerBoxesOnly.get());
