@@ -17,6 +17,7 @@
   ],
   "client": [
     "client.MixinMinecraft",
+    "client.gui.MixinGuiOptions",
     "client.renderer.MixinEntityRenderer",
     "client.multiplayer.MixinWorldClient",
     "client.network.MixinNetHandlerLoginClient",

@@ -42,7 +42,7 @@ public class BoundingBoxType {
 
     private final Color color;
     private final String name;
-    private final Setting<Boolean> shouldRenderSetting;
+    public final Setting<Boolean> shouldRenderSetting;
 
     private BoundingBoxType(Color color, String name, Setting<Boolean> shouldRenderSetting) {
         this.color = color;

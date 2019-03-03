@@ -75,6 +75,7 @@ public class VillageRenderer extends Renderer<BoundingBoxVillage> {
 
     private void renderSphere(OffsetPoint center, double radius, Color color) {
         GL11.glEnable(GL11.GL_POINT_SMOOTH);
+        GL11.glPointSize(ConfigManager.villageSphereDotSize.get());
 
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder worldRenderer = tessellator.getBuffer();
