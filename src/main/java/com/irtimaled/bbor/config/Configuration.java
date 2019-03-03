@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Configuration {
+    public static final String FALLBACK_CATEGORY = "features";
     private final File file;
 
     Configuration(File file) {
@@ -94,6 +95,8 @@ public class Configuration {
         }
         Map<String, Setting<?>> settings = settingsGroup.get(category);
         Setting<?> setting = settings.get(settingName);
+        if(setting == null && category != FALLBACK_CATEGORY)
+            setting = getFallbackSetting(settingName, settings);
         if(setting != null && setting.getType() != type) {
             setting = null;
         }
@@ -101,6 +104,18 @@ public class Configuration {
             settings.put(settingName, setting = new Setting<>(type, defaultValue));
         }
         return (Setting<T>) setting;
+    }
+
+    private Setting<?> getFallbackSetting(String settingName, Map<String, Setting<?>> settings) {
+        Map<String, Setting<?>> fallbackSettings = settingsGroup.get(FALLBACK_CATEGORY);
+        if (fallbackSettings == null) return null;
+
+        Setting<?> setting = fallbackSettings.get(settingName);
+        if (setting != null) {
+            fallbackSettings.remove(settingName);
+            settings.put(settingName, setting);
+        }
+        return setting;
     }
 
     private <T> char getType(T defaultValue) {
