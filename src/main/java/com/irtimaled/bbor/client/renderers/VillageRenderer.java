@@ -75,7 +75,6 @@ public class VillageRenderer extends Renderer<BoundingBoxVillage> {
 
     private void renderSphere(OffsetPoint center, double radius, Color color) {
         GL11.glEnable(GL11.GL_POINT_SMOOTH);
-        GL11.glPointSize(2f);
 
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder worldRenderer = tessellator.getBuffer();
@@ -89,20 +88,25 @@ public class VillageRenderer extends Renderer<BoundingBoxVillage> {
     }
 
     private Set<OffsetPoint> buildPoints(OffsetPoint center, double radius) {
-        Set<OffsetPoint> points = new HashSet<>(1200);
+        int density = ConfigManager.villageSphereDensity.get();
+        int segments = 24 + (density*8);
 
+        Set<OffsetPoint> points = new HashSet<>(segments*segments);
         double tau = 6.283185307179586D;
         double pi = tau / 2D;
-        double segment = tau / 48D;
 
-        for (double t = 0.0D; t < tau; t += segment)
-            for (double theta = 0.0D; theta < pi; theta += segment) {
-                double dx = radius * Math.sin(t) * Math.cos(theta);
-                double dz = radius * Math.sin(t) * Math.sin(theta);
-                double dy = radius * Math.cos(t);
+        double thetaSegment = pi / (double)segments;
+        double phiSegment = tau / (double)segments;
+
+        for (double phi = 0.0D; phi < tau; phi += phiSegment) {
+            for (double theta = 0.0D; theta < pi; theta += thetaSegment) {
+                double dx = radius * Math.sin(phi) * Math.cos(theta);
+                double dz = radius * Math.sin(phi) * Math.sin(theta);
+                double dy = radius * Math.cos(phi);
 
                 points.add(center.add(dx, dy, dz));
             }
+        }
         return points;
     }
 }

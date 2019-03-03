@@ -38,6 +38,8 @@ public class ConfigManager {
     public static Setting<Boolean> renderMobSpawnerActivationLines;
     public static Setting<Boolean> drawPillagerOutposts;
     public static Setting<Boolean> outerBoxesOnly;
+    public static Setting<Integer> villageSphereDotSize;
+    public static Setting<Integer> villageSphereDensity;
 
     public static void loadConfig(File mcConfigDir) {
         configDir = new File(mcConfigDir, "config");
@@ -53,6 +55,8 @@ public class ConfigManager {
         renderVillageAsSphere = setup(config, "villages", "renderVillageAsSphere", true, "If set to true villages will be drawn as a sphere. (default:true)");
         drawIronGolemSpawnArea = setup(config, "villages", "drawIronGolemSpawnArea", true, "If set to true the iron golem spawn area of the village will be drawn. (default:true)");
         drawVillageDoors = setup(config, "villages", "drawVillageDoors", false, "If set to true lines between the village centre and doors will be drawn. (default:false)");
+        villageSphereDotSize = setup(config, "villages", "villageSphereDotSize", 2, "The size of the dots used when rendering village as sphere.");
+        villageSphereDensity = setup(config, "villages", "villageSphereDensity", 3, "The density of the dots used when rendering village as sphere.");
 
         drawDesertTemples = setup(config, "structures", "drawDesertTemples", true, "If set to true desert temple bounding boxes are drawn.");
         drawJungleTemples = setup(config, "structures", "drawJungleTemples", true, "If set to true jungle temple bounding boxes are drawn.");

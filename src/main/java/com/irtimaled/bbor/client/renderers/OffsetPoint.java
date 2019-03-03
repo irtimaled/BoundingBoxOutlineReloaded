@@ -42,4 +42,11 @@ public class OffsetPoint {
         double dz = this.z - point.z;
         return Math.sqrt(dx * dx + dy * dy + dz * dz);
     }
+
+    public double getDistanceFromPlayer() {
+        double dx = this.x - PlayerData.getX();
+        double dy = this.y - PlayerData.getY();
+        double dz = this.z - PlayerData.getZ();
+        return Math.sqrt(dx * dx + dy * dy + dz * dz);
+    }
 }
