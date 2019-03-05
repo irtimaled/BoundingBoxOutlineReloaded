@@ -33,7 +33,8 @@ public class PlayerData {
     public static double getMaxY(double configMaxY) {
         if (configMaxY == -1) {
             return activeY;
-        } else if ((configMaxY == 0) || (y < configMaxY)) {
+        }
+        if (configMaxY == 0) {
             return y;
         }
         return configMaxY;
