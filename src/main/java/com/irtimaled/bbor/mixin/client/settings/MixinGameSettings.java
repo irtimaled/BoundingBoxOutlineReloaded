@@ -1,6 +1,6 @@
 package com.irtimaled.bbor.mixin.client.settings;
 
-import com.irtimaled.bbor.client.ClientProxy;
+import com.irtimaled.bbor.client.keyboard.KeyListener;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
@@ -24,7 +24,7 @@ public class MixinGameSettings {
     }
 
     private KeyBinding[] getKeysAll() {
-        return ArrayUtils.addAll(keyBindings, ClientProxy.ActiveHotKey, ClientProxy.OuterBoxOnlyHotKey);
+        return ArrayUtils.addAll(keyBindings, KeyListener.keyBindings());
     }
 
     @Inject(method = "<init>(Lnet/minecraft/client/Minecraft;Ljava/io/File;)V", at = @At("RETURN"))

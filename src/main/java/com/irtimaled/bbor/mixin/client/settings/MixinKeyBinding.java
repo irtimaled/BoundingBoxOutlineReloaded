@@ -13,6 +13,6 @@ public class MixinKeyBinding {
     private static Map<String, Integer> CATEGORY_ORDER;
 
     static {
-        CATEGORY_ORDER.put(ClientProxy.KeyCategory, 0);
+        CATEGORY_ORDER.put(ClientProxy.Name, 0);
     }
 }

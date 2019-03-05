@@ -110,7 +110,7 @@ public class SettingsScreen extends GuiScreen {
     }
 
     protected void initGui() {
-        this.title = "Bounding Box Outline Reloaded";
+        this.title = ClientProxy.Name;
 
         this.controls = new HashSet<>();
         this.addTabs("General", "Structures", "Villages");

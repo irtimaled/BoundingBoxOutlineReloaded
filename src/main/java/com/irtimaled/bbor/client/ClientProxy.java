@@ -1,6 +1,8 @@
 package com.irtimaled.bbor.client;
 
 import com.irtimaled.bbor.client.events.*;
+import com.irtimaled.bbor.client.gui.SettingsScreen;
+import com.irtimaled.bbor.client.keyboard.KeyListener;
 import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.CommonProxy;
 import com.irtimaled.bbor.common.EventBus;
@@ -10,7 +12,6 @@ import com.irtimaled.bbor.common.models.BoundingBoxWorldSpawn;
 import com.irtimaled.bbor.config.ConfigManager;
 import com.irtimaled.bbor.config.Setting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.util.math.BlockPos;
@@ -22,34 +23,15 @@ import java.net.SocketAddress;
 import static com.irtimaled.bbor.client.Constants.CHUNK_SIZE;
 
 public class ClientProxy extends CommonProxy {
-    public static final String KeyCategory = "Bounding Box Outline Reloaded";
-    public static KeyBinding ActiveHotKey = new KeyBinding("Toggle On/Off", 0x42, KeyCategory);
-    public static KeyBinding OuterBoxOnlyHotKey = new KeyBinding("Toggle Display Outer Box Only", 0x4f, KeyCategory);
+    public static final String Name = "Bounding Box Outline Reloaded";
     public static boolean active;
 
-    private ClientRenderer renderer;
-
-    @Override
-    public void init() {
-        super.init();
-        EventBus.subscribe(Render.class, e -> render(e.getPartialTicks()));
-        EventBus.subscribe(KeyPressed.class, e -> keyPressed());
-        EventBus.subscribe(ConnectedToRemoteServer.class, e -> connectedToServer(e.getNetworkManager()));
-        EventBus.subscribe(DisconnectedFromRemoteServer.class, e -> disconnectedFromServer());
-        EventBus.subscribe(InitializeClientReceived.class, e -> setWorldData(e.getSeed(), e.getSpawnX(), e.getSpawnZ()));
-        EventBus.subscribe(AddBoundingBoxReceived.class, e -> runOnCache(e.getDimensionType(), cache -> cache.addBoundingBoxes(e.getKey(), e.getBoundingBoxes())));
-        EventBus.subscribe(RemoveBoundingBoxReceived.class, e -> removeBoundingBox(e.getDimensionType(), e.getKey()));
-
-        renderer = new ClientRenderer(this::getCache);
-    }
-
-    private void render(float partialTicks) {
-        EntityPlayer entityPlayer = Minecraft.getInstance().player;
-        PlayerData.setPlayerPosition(partialTicks, entityPlayer);
-
-        if (active) {
-            renderer.render(DimensionType.getById(entityPlayer.dimension), ConfigManager.outerBoxesOnly.get());
-        }
+    static {
+        KeyListener.register("Toggle Active", 0x42, Name)
+                .onKeyPressHandler(ClientProxy::toggleActive)
+                .onLongKeyPressHandler(60, SettingsScreen::show);
+        KeyListener.register("Toggle Outer Box Only", 0x4f, Name)
+                .onKeyPressHandler(ClientProxy::toggleOuterBoxesOnly);
     }
 
     public static void toggleActive() {
@@ -58,12 +40,33 @@ public class ClientProxy extends CommonProxy {
             PlayerData.setActiveY();
     }
 
-    private void keyPressed() {
-        if (ActiveHotKey.isPressed()) {
-            toggleActive();
-        } else if (OuterBoxOnlyHotKey.isPressed()) {
-            Setting<Boolean> outerBoxesOnly = ConfigManager.outerBoxesOnly;
-            outerBoxesOnly.set(!outerBoxesOnly.get());
+    private static void toggleOuterBoxesOnly() {
+        Setting<Boolean> outerBoxesOnly = ConfigManager.outerBoxesOnly;
+        outerBoxesOnly.set(!outerBoxesOnly.get());
+    }
+
+    private ClientRenderer renderer;
+
+    @Override
+    public void init() {
+        super.init();
+        EventBus.subscribe(Render.class, e -> render(e.getPartialTicks()));
+        EventBus.subscribe(ConnectedToRemoteServer.class, e -> connectedToServer(e.getNetworkManager()));
+        EventBus.subscribe(DisconnectedFromRemoteServer.class, e -> disconnectedFromServer());
+        EventBus.subscribe(InitializeClientReceived.class, e -> setWorldData(e.getSeed(), e.getSpawnX(), e.getSpawnZ()));
+        EventBus.subscribe(AddBoundingBoxReceived.class, e -> runOnCache(e.getDimensionType(), cache -> cache.addBoundingBoxes(e.getKey(), e.getBoundingBoxes())));
+        EventBus.subscribe(RemoveBoundingBoxReceived.class, e -> removeBoundingBox(e.getDimensionType(), e.getKey()));
+
+        renderer = new ClientRenderer(this::getCache);
+        KeyListener.init();
+    }
+
+    private void render(float partialTicks) {
+        EntityPlayer entityPlayer = Minecraft.getInstance().player;
+        PlayerData.setPlayerPosition(partialTicks, entityPlayer);
+
+        if (active) {
+            renderer.render(DimensionType.getById(entityPlayer.dimension), ConfigManager.outerBoxesOnly.get());
         }
     }
 
