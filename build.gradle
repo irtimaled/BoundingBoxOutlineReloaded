@@ -43,10 +43,10 @@ minecraft {
     makeObfSourceJar = false
 
     replace "@VERSION@", project.version
-    replaceIn "com/irtimaled/bbor/install/Main.java"
+    replaceIn "com/irtimaled/bbor/Main.java"
 
     replace "@MC_VERSION@", project.mcVersion
-    replaceIn "com/irtimaled/bbor/install/Main.java"
+    replaceIn "com/irtimaled/bbor/Main.java"
 }
 
 mixin {
@@ -78,7 +78,7 @@ processResources {
 jar {
     finalizedBy reobfJar
     manifest.attributes(
-            'Main-Class': 'com.irtimaled.bbor.install.Main'
+            'Main-Class': 'com.irtimaled.bbor.Main'
     )
  
     classifier = 'vanilla'

@@ -88,38 +88,8 @@ public class ClientProxy extends CommonProxy {
     @Override
     protected void setWorldData(long seed, int spawnX, int spawnZ) {
         super.setWorldData(seed, spawnX, spawnZ);
-        addSpawnChunkBoundingBoxes(spawnX, spawnZ);
+        renderer.setWorldData(seed, spawnX, spawnZ);
     }
 
-    private void addSpawnChunkBoundingBoxes(int spawnX, int spawnZ) {
-        BoundingBox worldSpawnBoundingBox = getWorldSpawnBoundingBox(spawnX, spawnZ);
-        BoundingBox spawnChunksBoundingBox = buildSpawnChunksBoundingBox(spawnX, spawnZ, 12, BoundingBoxType.SpawnChunks);
-        BoundingBox lazySpawnChunksBoundingBox = buildSpawnChunksBoundingBox(spawnX, spawnZ, 16, BoundingBoxType.LazySpawnChunks);
 
-        runOnCache(DimensionType.OVERWORLD, cache -> {
-            cache.addBoundingBox(worldSpawnBoundingBox);
-            cache.addBoundingBox(spawnChunksBoundingBox);
-            cache.addBoundingBox(lazySpawnChunksBoundingBox);
-        });
-    }
-
-    private BoundingBox getWorldSpawnBoundingBox(int spawnX, int spawnZ) {
-        BlockPos minBlockPos = new BlockPos(spawnX - 10, 0, spawnZ - 10);
-        BlockPos maxBlockPos = new BlockPos(spawnX + 10, 0, spawnZ + 10);
-
-        return BoundingBoxWorldSpawn.from(minBlockPos, maxBlockPos, BoundingBoxType.WorldSpawn);
-    }
-
-    private BoundingBox buildSpawnChunksBoundingBox(int spawnX, int spawnZ, int size, BoundingBoxType type) {
-        double midOffset = CHUNK_SIZE * (size / 2.0);
-        double midX = Math.round((float) (spawnX / (double) CHUNK_SIZE)) * (double) CHUNK_SIZE;
-        double midZ = Math.round((float) (spawnZ / (double) CHUNK_SIZE)) * (double) CHUNK_SIZE;
-        BlockPos minBlockPos = new BlockPos(midX - midOffset, 0, midZ - midOffset);
-        if (spawnX / (double) CHUNK_SIZE % 0.5D == 0.0D && spawnZ / (double) CHUNK_SIZE % 0.5D == 0.0D) {
-            midX += (double) CHUNK_SIZE;
-            midZ += (double) CHUNK_SIZE;
-        }
-        BlockPos maxBlockPos = new BlockPos(midX + midOffset, 0, midZ + midOffset);
-        return BoundingBoxWorldSpawn.from(minBlockPos, maxBlockPos, type);
-    }
 }

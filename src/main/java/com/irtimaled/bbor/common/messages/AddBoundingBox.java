@@ -15,6 +15,8 @@ public class AddBoundingBox {
     public static final ResourceLocation NAME = new ResourceLocation("bbor:add_bounding_box");
 
     public static SPacketCustomPayload getPayload(DimensionType dimensionType, BoundingBox key, Set<BoundingBox> boundingBoxes) {
+        if(!BoundingBoxSerializer.canSerialize(key)) return null;
+
         PacketBuffer buf = new PacketBuffer(Unpooled.buffer());
         buf.writeVarInt(dimensionType.getId());
         BoundingBoxSerializer.serialize(key, buf);
@@ -29,6 +31,8 @@ public class AddBoundingBox {
     public static AddBoundingBoxReceived getEvent(PacketBuffer buf) {
         DimensionType dimensionType = DimensionType.getById(buf.readVarInt());
         BoundingBox key = BoundingBoxDeserializer.deserialize(buf);
+        if (key == null) return null;
+
         Set<BoundingBox> boundingBoxes = new HashSet<>();
         while (buf.isReadable()) {
             BoundingBox boundingBox = BoundingBoxDeserializer.deserialize(buf);

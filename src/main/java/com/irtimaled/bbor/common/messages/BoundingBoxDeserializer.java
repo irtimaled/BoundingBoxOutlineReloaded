@@ -14,6 +14,8 @@ import java.util.Set;
 
 class BoundingBoxDeserializer {
     static BoundingBox deserialize(PacketBuffer buf) {
+        if (!buf.isReadable(2)) return null;
+
         char type = buf.readChar();
         switch (type) {
             case 'V':
@@ -28,7 +30,7 @@ class BoundingBoxDeserializer {
 
     private static BoundingBox deserializeStructure(PacketBuffer buf) {
         BoundingBoxType type = BoundingBoxType.getByNameHash(buf.readInt());
-        if(type == null) return null;
+        if (type == null) return null;
         BlockPos minBlockPos = deserializeBlockPos(buf);
         BlockPos maxBlockPos = deserializeBlockPos(buf);
         return BoundingBoxStructure.from(minBlockPos, maxBlockPos, type);

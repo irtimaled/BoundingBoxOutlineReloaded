@@ -14,15 +14,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinPlayerList {
     @Inject(method = "playerLoggedIn", at = @At("RETURN"))
     private void playerLoggedIn(EntityPlayerMP player, CallbackInfo ci) {
-        if (player.world.isRemote) {
-            EventBus.publish(new PlayerLoggedIn(player));
-        }
+        EventBus.publish(new PlayerLoggedIn(player));
     }
 
     @Inject(method = "playerLoggedOut", at = @At("HEAD"))
     private void playerLoggedOut(EntityPlayerMP player, CallbackInfo ci) {
-        if (player.world.isRemote) {
-            EventBus.publish(new PlayerLoggedOut(player));
-        }
+        EventBus.publish(new PlayerLoggedOut(player));
     }
 }

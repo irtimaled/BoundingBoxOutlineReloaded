@@ -8,18 +8,28 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 
 import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.BiConsumer;
 
 class BoundingBoxSerializer {
+    private static final Map<Class, BiConsumer<BoundingBox, PacketBuffer>> serializers = new HashMap<>();
+
+    static {
+        serializers.put(BoundingBoxVillage.class, (bb, buf) -> serializeVillage((BoundingBoxVillage) bb, buf));
+        serializers.put(BoundingBoxStructure.class, (bb, buf) -> serializeStructure((BoundingBoxStructure) bb, buf));
+        serializers.put(BoundingBoxMobSpawner.class, (bb, buf) -> serializeMobSpawner((BoundingBoxMobSpawner) bb, buf));
+    }
+
+    static boolean canSerialize(BoundingBox key) {
+        return serializers.containsKey(key.getClass());
+    }
+
     static void serialize(BoundingBox boundingBox, PacketBuffer buf) {
-        if (boundingBox instanceof BoundingBoxVillage) {
-            serializeVillage((BoundingBoxVillage) boundingBox, buf);
-        }
-        if (boundingBox instanceof BoundingBoxStructure) {
-            serializeStructure((BoundingBoxStructure) boundingBox, buf);
-        }
-        if (boundingBox instanceof BoundingBoxMobSpawner) {
-            serializeMobSpawner((BoundingBoxMobSpawner) boundingBox, buf);
-        }
+        BiConsumer<BoundingBox, PacketBuffer> serializer = serializers.get(boundingBox.getClass());
+        if (serializer == null) return;
+
+        serializer.accept(boundingBox, buf);
     }
 
     private static void serializeVillage(BoundingBoxVillage boundingBox, PacketBuffer buf) {

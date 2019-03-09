@@ -8,8 +8,6 @@
   "mixins": [
     "world.chunk.MixinChunk",
     "network.play.client.MixinCPacketCustomPayload",
-    "network.play.server.MixinSPacketCustomPayload",
-    "entity.player.MixinEntityPlayerMP",
     "village.MixinVillage",
     "server.management.MixinPlayerList",
     "server.management.MixinPlayerInteractionManager",
@@ -19,6 +17,7 @@
     "client.MixinMinecraft",
     "client.gui.MixinGuiOptions",
     "client.renderer.MixinEntityRenderer",
+    "network.play.server.MixinSPacketCustomPayload",
     "client.multiplayer.MixinWorldClient",
     "client.network.MixinNetHandlerLoginClient",
     "client.settings.MixinKeyBinding",

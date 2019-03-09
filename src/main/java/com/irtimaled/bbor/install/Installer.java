@@ -11,8 +11,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class Main {
-    public static void main(String... args) throws Throwable {
+public class Installer {
+    public static void install(final String version, final String mcVersion) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Throwable t) {
@@ -22,16 +22,16 @@ public class Main {
         try {
             String osName = getOsName();
             File minecraftFolder = getMinecraftFolder(osName);
-            File versionFolder = new File(minecraftFolder, "versions/BBOR-@VERSION@/");
+            File versionFolder = new File(minecraftFolder, "versions/BBOR-" + version + "/");
             versionFolder.mkdirs();
 
-            File versionJson = new File(versionFolder, "BBOR-@VERSION@.json");
-            Files.copy(Main.class.getResourceAsStream("/profile.json"), versionJson.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            File versionJson = new File(versionFolder, "BBOR-" + version + ".json");
+            Files.copy(Installer.class.getResourceAsStream("/profile.json"), versionJson.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
             try {
                 File profilesJson = new File(minecraftFolder, "launcher_profiles.json");
                 if (profilesJson.exists()) { // TODO: use gson instead
-                    String identifier = "\"bbor-@MC_VERSION@\"";
+                    String identifier = "\"bbor-" + mcVersion + "\"";
                     String contents = new String(Files.readAllBytes(profilesJson.toPath()));
                     if (contents.contains(identifier)) {
                         contents = contents.replaceAll(",\n *" + identifier + ": \\{[^}]*},", ",");
@@ -46,7 +46,7 @@ public class Main {
                             "      \"type\": \"custom\",\n" +
                             "      \"created\": \"" + date + "T00:00:00.000Z\",\n" +
                             "      \"lastUsed\": \"2100-01-01T00:00:00.000Z\",\n" +
-                            "      \"lastVersionId\": \"BBOR-@VERSION@\"\n" +
+                            "      \"lastVersionId\": \"BBOR-" + version + "\"\n" +
                             "    },");
 
                     Files.write(profilesJson.toPath(), contents.getBytes());
@@ -55,21 +55,20 @@ public class Main {
                 t.printStackTrace();
             }
 
-            // Copy rift jar to libraries
             try {
-                String source = Main.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+                String source = Installer.class.getProtectionDomain().getCodeSource().getLocation().getPath();
                 if (source.startsWith("/") && osName.contains("win")) {
                     source = source.substring(1);
                 }
-                File riftJar = new File(minecraftFolder, "libraries/com/irtimaled/bbor/@VERSION@/bbor-@VERSION@.jar");
-                riftJar.getParentFile().mkdirs();
-                Files.copy(Paths.get(source), riftJar.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                File mainJar = new File(minecraftFolder, "libraries/com/irtimaled/bbor/" + version + "/bbor-" + version + ".jar");
+                mainJar.getParentFile().mkdirs();
+                Files.copy(Paths.get(source), mainJar.toPath(), StandardCopyOption.REPLACE_EXISTING);
             } catch (Throwable t) {
                 t.printStackTrace();
             }
 
             JOptionPane.showMessageDialog(null,
-                    "Bounding Box Outline Reloaded @VERSION@ has been successfully installed!\n" +
+                    "Bounding Box Outline Reloaded " + version + " has been successfully installed!\n" +
                             "\n" +
                             "Re-open the Minecraft Launcher to see it in the dropdown.",
                     "Bounding Box Outline Reloaded Installer", JOptionPane.INFORMATION_MESSAGE);
