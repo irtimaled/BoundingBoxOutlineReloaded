@@ -13,11 +13,12 @@
     "mainClass": "net.minecraft.launchwrapper.Launch",
     "libraries": [
         {
-            "name": "com.irtimaled:bbor:${version}"
+            "name": "com.irtimaled:bbor:${version}",
+            "url": "https://github.com/irtimaled/maven/releases/download/"
         },
         {
             "name": "org.spongepowered:mixin:0.7.11-SNAPSHOT",
-            "url": "https://github.com/irtimaled/Mixin/releases/download/"
+            "url": "https://github.com/irtimaled/maven/releases/download/"
         },
         {
             "name": "org.ow2.asm:asm:6.2",
