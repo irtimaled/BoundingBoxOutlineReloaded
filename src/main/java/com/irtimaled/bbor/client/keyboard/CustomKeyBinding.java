@@ -18,7 +18,7 @@ class CustomKeyBinding extends KeyBinding {
         key.updateKeyCode(keyCode);
     }
 
-    public Key getKey() {
+    public Key getCustomKey() {
         return key;
     }
 }
