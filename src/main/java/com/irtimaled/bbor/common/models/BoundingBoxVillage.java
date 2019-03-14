@@ -43,7 +43,7 @@ public class BoundingBoxVillage extends BoundingBox {
     }
 
     public static BoundingBoxVillage from(BlockPos center, Integer radius, int villageId, int population, Set<BlockPos> doors) {
-        Boolean spawnsIronGolems = shouldSpawnIronGolems(population, doors.size());
+        boolean spawnsIronGolems = shouldSpawnIronGolems(population, doors.size());
         Color color = VillageColorCache.getColor(villageId);
         return from(center, radius, color, spawnsIronGolems, doors);
     }
@@ -62,8 +62,7 @@ public class BoundingBoxVillage extends BoundingBox {
     private static Set<BlockPos> getDoorsFromVillage(Village village) {
         Set<BlockPos> doors = new HashSet<>();
         List<VillageDoorInfo> doorInfoList = village.getVillageDoorInfoList();
-        for (int i = 0; i < doorInfoList.size(); i++) {
-            VillageDoorInfo doorInfo = doorInfoList.get(i);
+        for (VillageDoorInfo doorInfo : doorInfoList) {
             doors.add(doorInfo.getDoorBlockPos());
         }
         return doors;

@@ -1,7 +1,7 @@
 package com.irtimaled.bbor.mixin.server;
 
 import com.irtimaled.bbor.common.EventBus;
-import com.irtimaled.bbor.common.events.Tick;
+import com.irtimaled.bbor.common.events.ServerTick;
 import com.irtimaled.bbor.common.events.WorldLoaded;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
@@ -26,6 +26,6 @@ public class MixinMinecraftServer {
 
     @Inject(method = "tick", at = @At("RETURN"))
     private void tick(CallbackInfo ci) {
-        EventBus.publish(new Tick());
+        EventBus.publish(new ServerTick());
     }
 }

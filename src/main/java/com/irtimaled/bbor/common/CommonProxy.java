@@ -11,15 +11,14 @@ import com.irtimaled.bbor.common.messages.InitializeClient;
 import com.irtimaled.bbor.common.messages.RemoveBoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBoxMobSpawner;
-import com.irtimaled.bbor.common.models.BoundingBoxVillage;
 import com.irtimaled.bbor.common.models.WorldData;
-import com.irtimaled.bbor.config.ConfigManager;
 import io.netty.channel.local.LocalAddress;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.server.SPacketCustomPayload;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.village.Village;
+import net.minecraft.village.VillageCollection;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.dimension.DimensionType;
@@ -35,7 +34,7 @@ import java.util.function.Consumer;
 public class CommonProxy {
     private Set<EntityPlayerMP> players = new HashSet<>();
     private Map<EntityPlayerMP, Set<BoundingBox>> playerBoundingBoxesCache = new HashMap<>();
-    private Map<Integer, BoundingBoxVillage> villageCache = new HashMap<>();
+    private Map<DimensionType, VillageProcessor> villageProcessors = new HashMap<>();
     private Map<DimensionType, ChunkProcessor> chunkProcessors = new HashMap<>();
     private WorldData worldData = null;
     private final Map<DimensionType, BoundingBoxCache> dimensionCache = new ConcurrentHashMap<>();
@@ -47,10 +46,9 @@ public class CommonProxy {
         EventBus.subscribe(PlayerLoggedIn.class, e -> playerLoggedIn(e.getPlayer()));
         EventBus.subscribe(PlayerLoggedOut.class, e -> playerLoggedOut(e.getPlayer()));
         EventBus.subscribe(PlayerSubscribed.class, e -> sendBoundingBoxes(e.getPlayer()));
-        EventBus.subscribe(Tick.class, e -> tick());
-        if (ConfigManager.drawVillages.get()) {
-            EventBus.subscribe(VillageUpdated.class, e -> villageUpdated(e.getDimensionType(), e.getVillage()));
-        }
+        EventBus.subscribe(ServerWorldTick.class, e -> serverWorldTick(e.getWorld()));
+        EventBus.subscribe(ServerTick.class, e -> serverTick());
+        EventBus.subscribe(VillageRemoved.class, e -> sendRemoveBoundingBox(e.getDimensionType(), e.getVillage()));
     }
 
     protected void setWorldData(long seed, int spawnX, int spawnZ) {
@@ -75,6 +73,7 @@ public class CommonProxy {
             }
             Logger.info("create world dimension: %s, %s (seed: %d)", dimensionType, world.getClass().toString(), world.getSeed());
             chunkProcessors.put(dimensionType, chunkProcessor);
+            villageProcessors.put(dimensionType, new VillageProcessor(dimensionType, boundingBoxCache));
         }
     }
 
@@ -160,31 +159,19 @@ public class CommonProxy {
         sendRemoveBoundingBox(dimensionType, boundingBox);
     }
 
-    private void tick() {
+    private void serverTick() {
         for (EntityPlayerMP player : players) {
             DimensionType dimensionType = DimensionType.getById(player.dimension);
             sendToPlayer(player, getCache(dimensionType));
         }
     }
 
-    private void villageUpdated(DimensionType dimensionType, Village village) {
-        BoundingBoxCache cache = getCache(dimensionType);
-        if (cache == null) return;
+    private void serverWorldTick(WorldServer world) {
+        DimensionType dimensionType = world.dimension.getType();
+        VillageProcessor villageProcessor = villageProcessors.get(dimensionType);
+        if(villageProcessor == null) return;
 
-        int villageId = village.hashCode();
-        BoundingBoxVillage oldVillage = villageCache.get(villageId);
-        if (oldVillage != null && !oldVillage.matches(village)) {
-            cache.removeBoundingBox(oldVillage);
-            sendRemoveBoundingBox(dimensionType, oldVillage);
-            oldVillage = null;
-        }
-        if (village.isAnnihilated()) {
-            villageCache.remove(villageId);
-        } else {
-            BoundingBoxVillage newVillage = oldVillage == null ? BoundingBoxVillage.from(village) : oldVillage;
-            cache.addBoundingBox(newVillage);
-            villageCache.put(villageId, newVillage);
-        }
+        villageProcessor.process(world.getVillageCollection());
     }
 
     protected BoundingBoxCache getCache(DimensionType dimensionType) {
@@ -200,9 +187,12 @@ public class CommonProxy {
     }
 
     protected void clearCaches() {
-        villageCache.clear();
+        for(VillageProcessor villageProcessor : villageProcessors.values()) {
+            villageProcessor.clear();
+        }
+        villageProcessors.clear();
         for (BoundingBoxCache cache : dimensionCache.values()) {
-            cache.close();
+            cache.clear();
         }
         dimensionCache.clear();
     }

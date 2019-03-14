@@ -7,8 +7,8 @@
   "refmap": "mixins.bbor.refmap.json",
   "mixins": [
     "world.chunk.MixinChunk",
+    "world.MixinWorldServer",
     "network.play.client.MixinCPacketCustomPayload",
-    "village.MixinVillage",
     "server.management.MixinPlayerList",
     "server.management.MixinPlayerInteractionManager",
     "server.MixinMinecraftServer"

@@ -14,7 +14,7 @@ public class BoundingBoxCache {
         return cache;
     }
 
-    public void close() {
+    public void clear() {
         cache.clear();
     }
 
