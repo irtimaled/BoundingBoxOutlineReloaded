@@ -1,37 +1,32 @@
 package com.irtimaled.bbor.common.models;
 
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.server.v1_14_R1.DimensionManager;
+import net.minecraft.server.v1_14_R1.MinecraftKey;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class DimensionId {
-    private static final Map<ResourceLocation, DimensionId> dimensionIdMap = new HashMap<>();
+    private static final Map<MinecraftKey, DimensionId> dimensionIdMap = new HashMap<>();
 
-    public static DimensionId from(DimensionType dimensionType) {
-        return from(DimensionType.getKey(dimensionType));
+    public static DimensionId from(DimensionManager dimensionType) {
+        return from(DimensionManager.a(dimensionType));
     }
 
-    public static DimensionId from(ResourceLocation value) {
+    public static DimensionId from(MinecraftKey value) {
         return dimensionIdMap.computeIfAbsent(value, DimensionId::new);
     }
 
-    public static DimensionId OVERWORLD = DimensionId.from(DimensionType.OVERWORLD);
-    public static DimensionId NETHER = DimensionId.from(DimensionType.THE_NETHER);
+    public static DimensionId OVERWORLD = DimensionId.from(DimensionManager.OVERWORLD);
 
-    private final ResourceLocation value;
+    private final MinecraftKey value;
 
-    public DimensionId(ResourceLocation value) {
+    public DimensionId(MinecraftKey value) {
         this.value = value;
     }
 
-    public ResourceLocation getValue() {
+    public MinecraftKey getValue() {
         return value;
-    }
-
-    public DimensionType getDimensionType() {
-        return DimensionType.byName(value);
     }
 
     @Override

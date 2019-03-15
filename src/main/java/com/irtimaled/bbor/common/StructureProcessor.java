@@ -3,9 +3,9 @@ package com.irtimaled.bbor.common;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBoxCuboid;
 import com.irtimaled.bbor.common.models.Coords;
-import net.minecraft.util.math.MutableBoundingBox;
-import net.minecraft.world.gen.feature.structure.StructurePiece;
-import net.minecraft.world.gen.feature.structure.StructureStart;
+import net.minecraft.server.v1_14_R1.StructureBoundingBox;
+import net.minecraft.server.v1_14_R1.StructurePiece;
+import net.minecraft.server.v1_14_R1.StructureStart;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -28,22 +28,22 @@ class StructureProcessor {
         StructureStart structureStart = structureMap.get(type.getName());
         if (structureStart == null) return;
 
-        MutableBoundingBox bb = structureStart.getBoundingBox();
+        StructureBoundingBox bb = structureStart.c();
         if (bb == null) return;
 
         AbstractBoundingBox boundingBox = buildStructure(bb, type);
         if (boundingBoxCache.isCached(boundingBox)) return;
 
         Set<AbstractBoundingBox> structureBoundingBoxes = new HashSet<>();
-        for (StructurePiece structureComponent : structureStart.getComponents()) {
-            structureBoundingBoxes.add(buildStructure(structureComponent.getBoundingBox(), type));
+        for (StructurePiece structureComponent : structureStart.d()) {
+            structureBoundingBoxes.add(buildStructure(structureComponent.g(), type));
         }
         boundingBoxCache.addBoundingBoxes(boundingBox, structureBoundingBoxes);
     }
 
-    private AbstractBoundingBox buildStructure(MutableBoundingBox bb, BoundingBoxType type) {
-        Coords min = new Coords(bb.minX, bb.minY, bb.minZ);
-        Coords max = new Coords(bb.maxX, bb.maxY, bb.maxZ);
+    private AbstractBoundingBox buildStructure(StructureBoundingBox bb, BoundingBoxType type) {
+        Coords min = new Coords(bb.a, bb.b, bb.c);
+        Coords max = new Coords(bb.d, bb.e, bb.f);
         return BoundingBoxCuboid.from(min, max, type);
     }
 

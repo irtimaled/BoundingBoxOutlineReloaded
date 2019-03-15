@@ -1,19 +1,15 @@
 buildscript {
     repositories {
         jcenter()
-        maven { url 'https://repo.spongepowered.org/maven' }
-        maven { url 'https://jitpack.io' }
-        maven { url 'https://files.minecraftforge.net/maven' }
     }
+
     dependencies {
-        classpath 'com.github.Irtimaled:ForgeGradle:2.6-SNAPSHOT'
-        classpath 'org.spongepowered:mixingradle:0.6-SNAPSHOT'
+        classpath 'de.undercouch:gradle-download-task:3.4.3'
     }
 }
 
-apply plugin: 'net.minecraftforge.gradle.tweaker-client'
+apply plugin: 'de.undercouch.download'
 apply plugin: 'java'
-apply plugin: 'org.spongepowered.mixin'
 
 group 'com.irtimaled'
 version project.buildVersion + '-' + project.mcVersion
@@ -22,58 +18,25 @@ archivesBaseName = 'BBOutlineReloaded'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+compileJava {
+    dependsOn 'downloadServer'
+}
+
 repositories {
     mavenCentral()
-    maven { url 'https://libraries.minecraft.net/' }
-    maven { url 'https://repo.spongepowered.org/maven/' }
-    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
-    implementation('org.spongepowered:mixin:0.8') { transitive = false }
-    implementation('net.minecraft:launchwrapper:1.12') { transitive = false }
-    implementation 'org.ow2.asm:asm-tree:6.2'
-    implementation 'org.ow2.asm:asm-commons:6.2'
-    implementation "org.ow2.asm:asm-util:6.2"
-}
-
-minecraft {
-    version = project.mcVersion
-    mappings = 'snapshot_20200119'
-    runDir = 'run'
-    tweakClass = 'com.irtimaled.bbor.launch.ClientTweaker'
-    makeObfSourceJar = false
-    clientJvmArgs = ['-XstartOnFirstThread']
-}
-
-mixin {
-    defaultObfuscationEnv notch
-    add sourceSets.main, 'mixins.bbor.refmap.json'
+    compile files('run/craftbukkit-1.14.4.jar')
 }
 
 sourceSets {
     main
-    debug {
-        compileClasspath += main.compileClasspath
-    }
-}
-
-processResources {
-    filesMatching('profile.json') {
-        expand([
-                'version'      : project.version,
-                'mcVersion'    : project.mcVersion,
-                'tweakClass'   : project.minecraft.tweakClass,
-                'formattedTime': new Date().format("yyyy-MM-dd'T'HH:mm:ss'-08:00'")
-        ])
-    }
-
-    inputs.property "version", project.version
-    inputs.property "mcVersion", project.mcVersion
 }
 
 jar {
-    finalizedBy reobfJar
+    destinationDir = new File('run/plugins')
+
     manifest {
         attributes([
                 "Main-Class": "com.irtimaled.bbor.Main",
@@ -87,9 +50,32 @@ jar {
         ])
     }
 
-    classifier = 'vanilla'
+    classifier = 'bukkit'
+}
+
+processResources {
+    filesMatching('plugin.yml') {
+        expand([
+                'version': project.version
+        ])
+    }
 }
 
 artifacts {
     archives jar
+}
+
+task downloadServer(type: Download) {
+    src 'https://cdn.getbukkit.org/craftbukkit/craftbukkit-1.14.4-R0.1-SNAPSHOT.jar'
+    dest new File('run/craftbukkit-1.14.4.jar')
+    overwrite false
+}
+
+task runServer(dependsOn: jar, type: JavaExec) {
+    workingDir = new File('run');
+
+    main = "-jar";
+    args = [
+            "craftbukkit-1.14.4.jar"
+    ]
 }

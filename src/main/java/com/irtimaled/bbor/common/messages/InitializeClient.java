@@ -1,6 +1,5 @@
 package com.irtimaled.bbor.common.messages;
 
-import com.irtimaled.bbor.client.events.InitializeClientReceived;
 
 public class InitializeClient {
     public static final String NAME = "bbor:initialize";
@@ -10,12 +9,5 @@ public class InitializeClient {
                 .writeLong(seed)
                 .writeInt(spawnX)
                 .writeInt(spawnZ);
-    }
-
-    public static InitializeClientReceived getEvent(PayloadReader reader) {
-        long seed = reader.readLong();
-        int spawnX = reader.readInt();
-        int spawnZ = reader.readInt();
-        return new InitializeClientReceived(seed, spawnX, spawnZ);
     }
 }

@@ -1,9 +1,9 @@
 package com.irtimaled.bbor;
 
-import org.apache.logging.log4j.LogManager;
+import org.bukkit.Bukkit;
 
 public class Logger {
-    private static final org.apache.logging.log4j.Logger logger = LogManager.getLogger();
+    private static final java.util.logging.Logger logger = Bukkit.getLogger();
 
     public static void info(String s, Object... objects) {
         if (objects.length == 0) {

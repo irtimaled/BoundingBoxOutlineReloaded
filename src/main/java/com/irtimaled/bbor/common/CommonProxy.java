@@ -122,15 +122,11 @@ public class CommonProxy {
         }
     }
 
-    protected BoundingBoxCache getCache(DimensionId dimensionId) {
-        return dimensionCache.get(dimensionId);
-    }
-
     protected BoundingBoxCache getOrCreateCache(DimensionId dimensionId) {
         return dimensionCache.computeIfAbsent(dimensionId, dt -> new BoundingBoxCache());
     }
 
-    protected void clearCaches() {
+    public void clearCaches() {
         structureProcessors.clear();
         for (BoundingBoxCache cache : dimensionCache.values()) {
             cache.clear();

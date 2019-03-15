@@ -2,8 +2,6 @@ package com.irtimaled.bbor.common.models;
 
 import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.TypeHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3i;
 
 public class Coords {
     private final int x;
@@ -20,14 +18,6 @@ public class Coords {
         this.x = MathHelper.floor(x);
         this.y = MathHelper.floor(y);
         this.z = MathHelper.floor(z);
-    }
-
-    public Coords(Vec3i pos) {
-        this(pos.getX(), pos.getY(), pos.getZ());
-    }
-
-    public Coords(Vec3d pos) {
-        this(pos.x, pos.y, pos.z);
     }
 
     public int getX() {

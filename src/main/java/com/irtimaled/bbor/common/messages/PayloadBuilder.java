@@ -3,40 +3,35 @@ package com.irtimaled.bbor.common.messages;
 import com.irtimaled.bbor.common.models.Coords;
 import com.irtimaled.bbor.common.models.DimensionId;
 import io.netty.buffer.Unpooled;
-import net.minecraft.network.IPacket;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.network.play.client.CCustomPayloadPacket;
-import net.minecraft.network.play.server.SCustomPayloadPlayPacket;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.server.v1_14_R1.MinecraftKey;
+import net.minecraft.server.v1_14_R1.Packet;
+import net.minecraft.server.v1_14_R1.PacketDataSerializer;
+import net.minecraft.server.v1_14_R1.PacketPlayOutCustomPayload;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
 
 public class PayloadBuilder {
-    private static final Map<String, ResourceLocation> packetNames = new HashMap<>();
+    private static final Map<String, MinecraftKey> packetNames = new HashMap<>();
 
     static PayloadBuilder clientBound(String name) {
-        return new PayloadBuilder(packetNames.computeIfAbsent(name, ResourceLocation::new), SCustomPayloadPlayPacket::new);
+        return new PayloadBuilder(packetNames.computeIfAbsent(name, MinecraftKey::new), PacketPlayOutCustomPayload::new);
     }
 
-    static PayloadBuilder serverBound(String name) {
-        return new PayloadBuilder(packetNames.computeIfAbsent(name, ResourceLocation::new), CCustomPayloadPacket::new);
-    }
+    private final MinecraftKey name;
+    private final BiFunction<MinecraftKey, PacketDataSerializer, Packet<?>> packetBuilder;
+    private final PacketDataSerializer buffer;
 
-    private final ResourceLocation name;
-    private final BiFunction<ResourceLocation, PacketBuffer, IPacket<?>> packetBuilder;
-    private final PacketBuffer buffer;
-
-    private PayloadBuilder(ResourceLocation name, BiFunction<ResourceLocation, PacketBuffer, IPacket<?>> packetBuilder) {
+    private PayloadBuilder(MinecraftKey name, BiFunction<MinecraftKey, PacketDataSerializer, Packet<?>> packetBuilder) {
         this.name = name;
-        this.buffer = new PacketBuffer(Unpooled.buffer());
+        this.buffer = new PacketDataSerializer(Unpooled.buffer());
         this.packetBuilder = packetBuilder;
     }
 
-    private IPacket<?> packet;
+    private Packet<?> packet;
 
-    public IPacket<?> build() {
+    public Packet<?> build() {
         if (packet == null)
             packet = packetBuilder.apply(name, buffer);
         return packet;
@@ -55,7 +50,7 @@ public class PayloadBuilder {
     }
 
     PayloadBuilder writeVarInt(int value) {
-        buffer.writeVarInt(value);
+        buffer.d(value);
         packet = null;
         return this;
     }
@@ -73,7 +68,7 @@ public class PayloadBuilder {
     }
 
     public PayloadBuilder writeDimensionId(DimensionId dimensionId) {
-        buffer.writeResourceLocation(dimensionId.getValue());
+        buffer.a(dimensionId.getValue());
         packet = null;
         return this;
     }

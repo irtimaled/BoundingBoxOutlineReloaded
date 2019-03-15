@@ -4,30 +4,28 @@ import com.irtimaled.bbor.common.EventBus;
 import com.irtimaled.bbor.common.events.*;
 import com.irtimaled.bbor.common.models.DimensionId;
 import com.irtimaled.bbor.common.models.ServerPlayer;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.ServerPlayNetHandler;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.gen.feature.structure.StructureStart;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.server.v1_14_R1.Chunk;
+import net.minecraft.server.v1_14_R1.EntityPlayer;
+import net.minecraft.server.v1_14_R1.StructureStart;
+import net.minecraft.server.v1_14_R1.WorldServer;
 
 import java.util.Collection;
 import java.util.Map;
 
 public class CommonInterop {
     public static void chunkLoaded(Chunk chunk) {
-        DimensionId dimensionId = DimensionId.from(chunk.getWorld().getDimension().getType());
-        Map<String, StructureStart> structures = chunk.getStructureStarts();
+        DimensionId dimensionId = DimensionId.from(((WorldServer) chunk.getWorld()).worldProvider.getDimensionManager());
+        Map<String, StructureStart> structures = chunk.h();
         if (structures.size() > 0) EventBus.publish(new StructuresLoaded(structures, dimensionId));
     }
 
-    public static void loadWorlds(Collection<ServerWorld> worlds) {
-        for (ServerWorld world : worlds) {
+    public static void loadWorlds(Collection<WorldServer> worlds) {
+        for (WorldServer world : worlds) {
             loadWorld(world);
         }
     }
 
-    public static void loadWorld(ServerWorld world) {
+    public static void loadWorld(WorldServer world) {
         EventBus.publish(new WorldLoaded(world));
     }
 
@@ -35,21 +33,15 @@ public class CommonInterop {
         EventBus.publish(new ServerTick());
     }
 
-    public static void playerLoggedIn(ServerPlayerEntity player) {
-        ServerPlayNetHandler connection = player.connection;
-        if (connection == null) return;
-
-        NetworkManager networkManager = connection.netManager;
-        if (networkManager.isLocalChannel()) return;
-
+    public static void playerLoggedIn(EntityPlayer player) {
         EventBus.publish(new PlayerLoggedIn(new ServerPlayer(player)));
     }
 
-    public static void playerLoggedOut(ServerPlayerEntity player) {
-        EventBus.publish(new PlayerLoggedOut(player.getEntityId()));
+    public static void playerLoggedOut(EntityPlayer player) {
+        EventBus.publish(new PlayerLoggedOut(player.getId()));
     }
 
-    public static void playerSubscribed(ServerPlayerEntity player) {
-        EventBus.publish(new PlayerSubscribed(player.getEntityId(), new ServerPlayer(player)));
+    public static void playerSubscribed(EntityPlayer player) {
+        EventBus.publish(new PlayerSubscribed(player.getId(), new ServerPlayer(player)));
     }
 }
