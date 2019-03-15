@@ -20,6 +20,7 @@
     "network.play.server.MixinSPacketCustomPayload",
     "client.multiplayer.MixinWorldClient",
     "client.network.MixinNetHandlerLoginClient",
+    "client.network.MixinNetHandlerPlayClient",
     "client.settings.MixinKeyBinding",
     "client.settings.MixinGameSettings"
   ],
