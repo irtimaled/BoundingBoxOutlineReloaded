@@ -16,13 +16,10 @@ import io.netty.channel.local.LocalAddress;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.server.SPacketCustomPayload;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.village.VillageCollection;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.world.gen.ChunkProviderServer;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -56,8 +53,7 @@ public class CommonProxy {
     }
 
     private void worldLoaded(World world) {
-        IChunkProvider chunkProvider = world.getChunkProvider();
-        if (chunkProvider instanceof ChunkProviderServer) {
+        if (world instanceof WorldServer) {
             DimensionType dimensionType = world.dimension.getType();
             BoundingBoxCache boundingBoxCache = getOrCreateCache(dimensionType);
             ChunkProcessor chunkProcessor = null;

@@ -3,24 +3,18 @@ package com.irtimaled.bbor.client;
 import com.irtimaled.bbor.client.events.*;
 import com.irtimaled.bbor.client.gui.SettingsScreen;
 import com.irtimaled.bbor.client.keyboard.KeyListener;
-import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.CommonProxy;
 import com.irtimaled.bbor.common.EventBus;
 import com.irtimaled.bbor.common.VillageColorCache;
-import com.irtimaled.bbor.common.models.BoundingBox;
-import com.irtimaled.bbor.common.models.BoundingBoxWorldSpawn;
 import com.irtimaled.bbor.config.ConfigManager;
 import com.irtimaled.bbor.config.Setting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.dimension.DimensionType;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
-
-import static com.irtimaled.bbor.client.Constants.CHUNK_SIZE;
 
 public class ClientProxy extends CommonProxy {
     public static final String Name = "Bounding Box Outline Reloaded";

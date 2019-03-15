@@ -1,8 +1,9 @@
 package com.irtimaled.bbor.mixin.client.gui;
 
 import com.irtimaled.bbor.client.gui.SettingsScreenButton;
-import net.minecraft.client.gui.*;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiOptions;
+import net.minecraft.client.gui.GuiScreen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

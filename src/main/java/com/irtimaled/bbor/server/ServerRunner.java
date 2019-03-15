@@ -5,15 +5,15 @@ import net.minecraft.launchwrapper.Launch;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.channels.Channels;
-import java.util.*;
-import java.util.function.Consumer;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ServerRunner {
     private static final Map<String, String> VANILLA_SERVER_JARS = new HashMap<>();
