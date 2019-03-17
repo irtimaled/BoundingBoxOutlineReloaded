@@ -1,38 +1,31 @@
 package com.irtimaled.bbor.common.models;
 
 import com.irtimaled.bbor.common.BoundingBoxType;
-import net.minecraft.util.math.BlockPos;
 
 public class BoundingBoxMobSpawner extends BoundingBox {
-    private final BlockPos center;
-    private final Integer radius;
+    private final Coords coords;
 
-    private BoundingBoxMobSpawner(BlockPos center, Integer radius, BlockPos minBlockPos, BlockPos maxBlockPos) {
-        super(minBlockPos, maxBlockPos, BoundingBoxType.MobSpawner);
-        this.center = center;
-        this.radius = radius;
+    private BoundingBoxMobSpawner(Coords coords, Coords minCoords, Coords maxCoords) {
+        super(minCoords, maxCoords, BoundingBoxType.MobSpawner);
+        this.coords = coords;
     }
 
-    public static BoundingBoxMobSpawner from(BlockPos center) {
-        BlockPos minBlockPos = new BlockPos(center.getX() - 5,
-                center.getY() - 1,
-                center.getZ() - 5);
-        BlockPos maxBlockPos = new BlockPos(center.getX() + 5,
-                center.getY() + 2,
-                center.getZ() + 5);
-        return new BoundingBoxMobSpawner(center, 16, minBlockPos, maxBlockPos);
+    public static BoundingBoxMobSpawner from(Coords coords) {
+        Coords minCoords = new Coords(coords.getX() - 5,
+                coords.getY() - 1,
+                coords.getZ() - 5);
+        Coords maxCoords = new Coords(coords.getX() + 5,
+                coords.getY() + 2,
+                coords.getZ() + 5);
+        return new BoundingBoxMobSpawner(coords, minCoords, maxCoords);
     }
 
     @Override
     public String toString() {
-        return "(" + center.toString() + "; " + radius.toString() + ")";
+        return "(" + coords.toString() + ")";
     }
 
-    public Integer getRadius() {
-        return radius;
-    }
-
-    public BlockPos getCenter() {
-        return center;
+    public Coords getCoords() {
+        return coords;
     }
 }

@@ -2,6 +2,7 @@ package com.irtimaled.bbor.mixin.server.management;
 
 import com.irtimaled.bbor.common.EventBus;
 import com.irtimaled.bbor.common.events.MobSpawnerBroken;
+import com.irtimaled.bbor.common.models.Coords;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockMobSpawner;
 import net.minecraft.server.management.PlayerInteractionManager;
@@ -22,7 +23,7 @@ public class MixinPlayerInteractionManager {
     private void tryHarvestBlock(BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
         Block block = this.world.getBlockState(pos).getBlock();
         if (block instanceof BlockMobSpawner) {
-            EventBus.publish(new MobSpawnerBroken(this.world.dimension.getType(), pos));
+            EventBus.publish(new MobSpawnerBroken(this.world.dimension.getType(), new Coords(pos)));
         }
     }
 }

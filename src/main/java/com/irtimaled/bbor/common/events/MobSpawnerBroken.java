@@ -1,13 +1,13 @@
 package com.irtimaled.bbor.common.events;
 
-import net.minecraft.util.math.BlockPos;
+import com.irtimaled.bbor.common.models.Coords;
 import net.minecraft.world.dimension.DimensionType;
 
 public class MobSpawnerBroken {
     private final DimensionType dimensionType;
-    private final BlockPos pos;
+    private final Coords pos;
 
-    public MobSpawnerBroken(DimensionType dimensionType, BlockPos pos) {
+    public MobSpawnerBroken(DimensionType dimensionType, Coords pos) {
         this.dimensionType = dimensionType;
         this.pos = pos;
     }
@@ -16,7 +16,7 @@ public class MobSpawnerBroken {
         return dimensionType;
     }
 
-    public BlockPos getPos() {
+    public Coords getPos() {
         return pos;
     }
 }

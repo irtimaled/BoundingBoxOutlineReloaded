@@ -6,11 +6,11 @@ import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.models.BoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBoxStructure;
 import com.irtimaled.bbor.common.models.BoundingBoxVillage;
+import com.irtimaled.bbor.common.models.Coords;
 import com.irtimaled.bbor.config.ConfigManager;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.dimension.DimensionType;
 
 import java.io.File;
@@ -95,12 +95,12 @@ class NBTFileParser {
         int loadedStructureCount = 0;
         for (Object key : features.getKeySet()) {
             NBTTagCompound feature = features.getCompoundTag((String) key);
-            BoundingBox structure = BoundingBoxStructure.from(feature.getIntArray("BB"), type);
+            BoundingBox structure = buildStructure(feature, type);
             Set<BoundingBox> boundingBoxes = new HashSet<>();
             NBTTagCompound[] children = getChildCompoundTags(feature, "Children");
             for (NBTTagCompound child : children) {
                 if (id.equals(child.getString("id")) || id.equals("*"))
-                    boundingBoxes.add(BoundingBoxStructure.from(child.getIntArray("BB"), type));
+                    boundingBoxes.add(buildStructure(child, type));
             }
             if (boundingBoxes.size() > 0)
                 ++loadedStructureCount;
@@ -108,6 +108,13 @@ class NBTFileParser {
         }
 
         Logger.info("Loaded %s (%d structures with type %s)", fileName, loadedStructureCount, id);
+    }
+
+    private static BoundingBoxStructure buildStructure(NBTTagCompound feature, BoundingBoxType type) {
+        int[] bb = feature.getIntArray("BB");
+        Coords minCoords = new Coords(bb[0], bb[1], bb[2]);
+        Coords maxCoords = new Coords(bb[3], bb[4], bb[5]);
+        return BoundingBoxStructure.from(minCoords, maxCoords, type);
     }
 
     private static void loadVillages(File localStructuresFolder, BoundingBoxCache cache, String fileName) {
@@ -118,10 +125,10 @@ class NBTFileParser {
 
         NBTTagCompound[] villages = getChildCompoundTags(nbt.getCompoundTag("data"), "Villages");
         for (NBTTagCompound village : villages) {
-            BlockPos center = new BlockPos(village.getInteger("CX"), village.getInteger("CY"), village.getInteger("CZ"));
+            Coords center = new Coords(village.getInteger("CX"), village.getInteger("CY"), village.getInteger("CZ"));
             int radius = village.getInteger("Radius");
             int population = village.getInteger("PopSize");
-            Set<BlockPos> doors = getDoors(village);
+            Set<Coords> doors = getDoors(village);
             BoundingBox boundingBox = BoundingBoxVillage.from(center, radius, village.hashCode(), population, doors);
             cache.addBoundingBox(boundingBox);
         }
@@ -129,10 +136,10 @@ class NBTFileParser {
         Logger.info("Loaded %s (%d villages)", fileName, villages.length);
     }
 
-    private static Set<BlockPos> getDoors(NBTTagCompound village) {
-        Set<BlockPos> doors = new HashSet<>();
+    private static Set<Coords> getDoors(NBTTagCompound village) {
+        Set<Coords> doors = new HashSet<>();
         for (NBTTagCompound door : getChildCompoundTags(village, "Doors")) {
-            doors.add(new BlockPos(door.getInteger("X"), door.getInteger("Y"), door.getInteger("Z")));
+            doors.add(new Coords(door.getInteger("X"), door.getInteger("Y"), door.getInteger("Z")));
         }
         return doors;
     }

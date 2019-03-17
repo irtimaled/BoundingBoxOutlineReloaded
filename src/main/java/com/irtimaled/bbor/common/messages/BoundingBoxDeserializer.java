@@ -1,12 +1,8 @@
 package com.irtimaled.bbor.common.messages;
 
 import com.irtimaled.bbor.common.BoundingBoxType;
-import com.irtimaled.bbor.common.models.BoundingBox;
-import com.irtimaled.bbor.common.models.BoundingBoxMobSpawner;
-import com.irtimaled.bbor.common.models.BoundingBoxStructure;
-import com.irtimaled.bbor.common.models.BoundingBoxVillage;
+import com.irtimaled.bbor.common.models.*;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
 
 import java.awt.*;
 import java.util.HashSet;
@@ -31,33 +27,33 @@ class BoundingBoxDeserializer {
     private static BoundingBox deserializeStructure(PacketBuffer buf) {
         BoundingBoxType type = BoundingBoxType.getByNameHash(buf.readInt());
         if (type == null) return null;
-        BlockPos minBlockPos = deserializeBlockPos(buf);
-        BlockPos maxBlockPos = deserializeBlockPos(buf);
-        return BoundingBoxStructure.from(minBlockPos, maxBlockPos, type);
+        Coords minCoords = deserializeCoords(buf);
+        Coords maxCoords = deserializeCoords(buf);
+        return BoundingBoxStructure.from(minCoords, maxCoords, type);
     }
 
     private static BoundingBox deserializeVillage(PacketBuffer buf) {
-        BlockPos center = deserializeBlockPos(buf);
+        Coords center = deserializeCoords(buf);
         int radius = buf.readVarInt();
         boolean spawnsIronGolems = buf.readBoolean();
         Color color = new Color(buf.readVarInt());
-        Set<BlockPos> doors = new HashSet<>();
+        Set<Coords> doors = new HashSet<>();
         while (buf.isReadable()) {
-            BlockPos door = deserializeBlockPos(buf);
+            Coords door = deserializeCoords(buf);
             doors.add(door);
         }
         return BoundingBoxVillage.from(center, radius, color, spawnsIronGolems, doors);
     }
 
     private static BoundingBox deserializeMobSpawner(PacketBuffer buf) {
-        BlockPos center = deserializeBlockPos(buf);
+        Coords center = deserializeCoords(buf);
         return BoundingBoxMobSpawner.from(center);
     }
 
-    private static BlockPos deserializeBlockPos(PacketBuffer buf) {
+    private static Coords deserializeCoords(PacketBuffer buf) {
         int x = buf.readVarInt();
         int y = buf.readVarInt();
         int z = buf.readVarInt();
-        return new BlockPos(x, y, z);
+        return new Coords(x, y, z);
     }
 }

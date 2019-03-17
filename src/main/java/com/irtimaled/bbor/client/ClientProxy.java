@@ -31,7 +31,7 @@ public class ClientProxy extends CommonProxy {
     public static void toggleActive() {
         active = !active;
         if (active)
-            PlayerData.setActiveY();
+            PlayerCoords.setActiveY();
     }
 
     private static void toggleOuterBoxesOnly() {
@@ -57,7 +57,7 @@ public class ClientProxy extends CommonProxy {
 
     private void render(float partialTicks) {
         EntityPlayer entityPlayer = Minecraft.getInstance().player;
-        PlayerData.setPlayerPosition(partialTicks, entityPlayer);
+        PlayerCoords.setPlayerPosition(partialTicks, entityPlayer);
 
         if (active) {
             renderer.render(DimensionType.getById(entityPlayer.dimension), ConfigManager.outerBoxesOnly.get());

@@ -2,7 +2,7 @@ package com.irtimaled.bbor.client;
 
 import net.minecraft.entity.player.EntityPlayer;
 
-public class PlayerData {
+public class PlayerCoords {
     private static double x;
     private static double y;
     private static double z;

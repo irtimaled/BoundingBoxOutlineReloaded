@@ -1,7 +1,8 @@
 package com.irtimaled.bbor.client.renderers;
 
-import com.irtimaled.bbor.client.PlayerData;
+import com.irtimaled.bbor.client.PlayerCoords;
 import com.irtimaled.bbor.common.models.BoundingBox;
+import com.irtimaled.bbor.common.models.Coords;
 import com.irtimaled.bbor.config.ConfigManager;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
@@ -15,7 +16,24 @@ public abstract class Renderer<T extends BoundingBox> {
     public abstract void render(T boundingBox);
 
     void renderBoundingBox(T boundingBox) {
-        renderCuboid(boundingBox.toAxisAlignedBB(), boundingBox.getColor(), fill());
+        renderCuboid(getAxisAlignedBB(boundingBox), boundingBox.getColor(), fill());
+    }
+
+    AxisAlignedBB getAxisAlignedBB(T boundingBox) {
+        return getAxisAlignedBB(boundingBox, true);
+    }
+
+    AxisAlignedBB getAxisAlignedBB(T boundingBox, boolean extendMaxByOne) {
+        Coords min = boundingBox.getMinCoords();
+        Coords max = boundingBox.getMaxCoords();
+        return getAxisAlignedBB(min, max, extendMaxByOne);
+    }
+
+    AxisAlignedBB getAxisAlignedBB(Coords min, Coords max, boolean extendMaxByOne) {
+        AxisAlignedBB bb = new AxisAlignedBB(min.getX(), min.getY(), min.getZ(), max.getX(), max.getY(), max.getZ());
+        if (extendMaxByOne)
+            return bb.expand(1, 1, 1);
+        return bb;
     }
 
     boolean fill() {
@@ -56,7 +74,7 @@ public abstract class Renderer<T extends BoundingBox> {
         }
         return axisAlignedBB
                 .grow(growXZ, growY, growXZ)
-                .offset(-PlayerData.getX(), -PlayerData.getY(), -PlayerData.getZ());
+                .offset(-PlayerCoords.getX(), -PlayerCoords.getY(), -PlayerCoords.getZ());
     }
 
     private void renderFilledCuboid(AxisAlignedBB aaBB, Color color) {

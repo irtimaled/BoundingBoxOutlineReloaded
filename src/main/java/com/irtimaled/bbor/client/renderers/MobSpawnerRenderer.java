@@ -1,41 +1,37 @@
 package com.irtimaled.bbor.client.renderers;
 
-import com.irtimaled.bbor.client.PlayerData;
+import com.irtimaled.bbor.client.PlayerCoords;
 import com.irtimaled.bbor.common.models.BoundingBoxMobSpawner;
 import com.irtimaled.bbor.common.models.Colors;
+import com.irtimaled.bbor.common.models.Coords;
 import com.irtimaled.bbor.config.ConfigManager;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 
 import java.awt.*;
 
 public class MobSpawnerRenderer extends Renderer<BoundingBoxMobSpawner> {
     @Override
     public void render(BoundingBoxMobSpawner boundingBox) {
-        BlockPos center = boundingBox.getCenter();
+        Coords coords = boundingBox.getCoords();
         Color color = boundingBox.getColor();
-        OffsetPoint centerPoint = new OffsetPoint(center)
-                .add(0.5, 0.5, 0.5);
-        double radius = boundingBox.getRadius();
         if (ConfigManager.renderMobSpawnerSpawnArea.get()) {
             renderBoundingBox(boundingBox);
         } else {
-            renderCuboid(new AxisAlignedBB(center, center).expand(1, 1, 1), color, fill());
+            renderCuboid(getAxisAlignedBB(coords, coords, true), color, fill());
         }
 
         if (!ConfigManager.renderMobSpawnerActivationLines.get()) return;
 
-        OffsetPoint playerPos = new OffsetPoint(PlayerData.getX(), PlayerData.getY(), PlayerData.getZ());
-        double distance = centerPoint.getDistance(playerPos);
-        if (distance <= (radius * 1.25)) {
-            if (distance > radius) {
-                color = Colors.DARK_ORANGE;
-            }
-            if (distance > radius * 1.125) {
-                color = Color.RED;
-            }
+        renderActivationLines(coords);
+    }
 
-            renderLine(centerPoint, playerPos.add(0, 0.1, 0), color);
-        }
+    private void renderActivationLines(Coords coords) {
+        OffsetPoint centerPoint = new OffsetPoint(coords).add(0.5, 0.5, 0.5);
+        OffsetPoint playerPos = new OffsetPoint(PlayerCoords.getX(), PlayerCoords.getY(), PlayerCoords.getZ());
+        double distance = centerPoint.getDistance(playerPos);
+        if (distance > 20.0) return;
+
+        Color color = distance <= 18.0 ? distance <= 16.0 ? Color.GREEN : Colors.DARK_ORANGE : Color.RED;
+        renderLine(centerPoint, playerPos.add(0, 0.1, 0), color);
+
     }
 }

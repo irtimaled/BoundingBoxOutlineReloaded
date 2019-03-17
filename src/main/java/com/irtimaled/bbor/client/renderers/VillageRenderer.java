@@ -1,12 +1,12 @@
 package com.irtimaled.bbor.client.renderers;
 
 import com.irtimaled.bbor.common.models.BoundingBoxVillage;
+import com.irtimaled.bbor.common.models.Coords;
 import com.irtimaled.bbor.config.ConfigManager;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -31,13 +31,9 @@ public class VillageRenderer extends Renderer<BoundingBoxVillage> {
     }
 
     private void renderIronGolemSpawnArea(BoundingBoxVillage boundingBox) {
-        BlockPos center = boundingBox.getCenter();
-        AxisAlignedBB abb = new AxisAlignedBB(new BlockPos(center.getX() - 8,
-                center.getY() - 3,
-                center.getZ() - 8),
-                new BlockPos(center.getX() + 8,
-                        center.getY() + 3,
-                        center.getZ() + 8))
+        Coords center = boundingBox.getCenter();
+        AxisAlignedBB abb = getAxisAlignedBB(center, center, false)
+                .grow(8, 3, 8)
                 .offset(boundingBox.getCenterOffsetX(), 0.0, boundingBox.getCenterOffsetZ());
 
         renderCuboid(abb, boundingBox.getColor(), false);
@@ -56,7 +52,7 @@ public class VillageRenderer extends Renderer<BoundingBoxVillage> {
         int colorB = color.getBlue();
 
         worldRenderer.begin(GL11.GL_LINES, worldRenderer.getVertexFormat());
-        for (BlockPos door : boundingBox.getDoors()) {
+        for (Coords door : boundingBox.getDoors()) {
             OffsetPoint point = new OffsetPoint(door).add(0.5, 0, 0.5);
 
             worldRenderer.pos(point.getX(), point.getY(), point.getZ()).color(colorR, colorG, colorB, 255).endVertex();

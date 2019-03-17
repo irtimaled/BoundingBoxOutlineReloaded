@@ -1,7 +1,7 @@
 package com.irtimaled.bbor.client.renderers;
 
-import com.irtimaled.bbor.client.PlayerData;
-import net.minecraft.util.math.BlockPos;
+import com.irtimaled.bbor.client.PlayerCoords;
+import com.irtimaled.bbor.common.models.Coords;
 
 public class OffsetPoint {
     private final double x;
@@ -14,22 +14,22 @@ public class OffsetPoint {
         this.z = z;
     }
 
-    OffsetPoint(BlockPos blockPos) {
-        this.x = blockPos.getX();
-        this.y = blockPos.getY();
-        this.z = blockPos.getZ();
+    OffsetPoint(Coords coords) {
+        this.x = coords.getX();
+        this.y = coords.getY();
+        this.z = coords.getZ();
     }
 
     double getX() {
-        return x - PlayerData.getX();
+        return x - PlayerCoords.getX();
     }
 
     double getY() {
-        return y - PlayerData.getY();
+        return y - PlayerCoords.getY();
     }
 
     double getZ() {
-        return z - PlayerData.getZ();
+        return z - PlayerCoords.getZ();
     }
 
     public OffsetPoint add(double x, double y, double z) {
@@ -44,9 +44,9 @@ public class OffsetPoint {
     }
 
     public double getDistanceFromPlayer() {
-        double dx = this.x - PlayerData.getX();
-        double dy = this.y - PlayerData.getY();
-        double dz = this.z - PlayerData.getZ();
+        double dx = this.x - PlayerCoords.getX();
+        double dy = this.y - PlayerCoords.getY();
+        double dz = this.z - PlayerCoords.getZ();
         return Math.sqrt(dx * dx + dy * dy + dz * dz);
     }
 }

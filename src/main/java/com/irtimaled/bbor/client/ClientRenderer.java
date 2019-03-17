@@ -6,7 +6,6 @@ import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.models.*;
 import com.irtimaled.bbor.config.ConfigManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.dimension.DimensionType;
@@ -31,21 +30,21 @@ public class ClientRenderer {
         boundingBoxRendererMap.put(BoundingBoxMobSpawner.class, new MobSpawnerRenderer());
     }
 
-    private boolean isWithinRenderDistance(BlockPos minBlockPos, BlockPos maxBlockPos) {
+    private boolean isWithinRenderDistance(Coords minCoords, Coords maxCoords) {
         int renderDistanceBlocks = Minecraft.getInstance().gameSettings.renderDistanceChunks * CHUNK_SIZE;
-        int minX = MathHelper.floor(PlayerData.getX() - renderDistanceBlocks);
-        int maxX = MathHelper.floor(PlayerData.getX() + renderDistanceBlocks);
-        int minZ = MathHelper.floor(PlayerData.getZ() - renderDistanceBlocks);
-        int maxZ = MathHelper.floor(PlayerData.getZ() + renderDistanceBlocks);
+        int minX = MathHelper.floor(PlayerCoords.getX() - renderDistanceBlocks);
+        int maxX = MathHelper.floor(PlayerCoords.getX() + renderDistanceBlocks);
+        int minZ = MathHelper.floor(PlayerCoords.getZ() - renderDistanceBlocks);
+        int maxZ = MathHelper.floor(PlayerCoords.getZ() + renderDistanceBlocks);
 
-        return maxBlockPos.getX() >= minX &&
-                maxBlockPos.getZ() >= minZ &&
-                minBlockPos.getX() <= maxX &&
-                minBlockPos.getZ() <= maxZ;
+        return maxCoords.getX() >= minX &&
+                maxCoords.getZ() >= minZ &&
+                minCoords.getX() <= maxX &&
+                minCoords.getZ() <= maxZ;
     }
 
     private boolean isWithinRenderDistance(BoundingBox boundingBox) {
-        return isWithinRenderDistance(boundingBox.getMinBlockPos(), boundingBox.getMaxBlockPos());
+        return isWithinRenderDistance(boundingBox.getMinCoords(), boundingBox.getMaxCoords());
     }
 
     public void render(DimensionType dimensionType, Boolean outerBoxesOnly) {
@@ -110,15 +109,15 @@ public class ClientRenderer {
     private void addSlimeChunks(Map<BoundingBox, Set<BoundingBox>> boundingBoxes) {
         Minecraft minecraft = Minecraft.getInstance();
         int renderDistanceChunks = minecraft.gameSettings.renderDistanceChunks;
-        int playerChunkX = MathHelper.floor(PlayerData.getX() / 16.0D);
-        int playerChunkZ = MathHelper.floor(PlayerData.getZ() / 16.0D);
+        int playerChunkX = MathHelper.floor(PlayerCoords.getX() / 16.0D);
+        int playerChunkZ = MathHelper.floor(PlayerCoords.getZ() / 16.0D);
         for (int chunkX = playerChunkX - renderDistanceChunks; chunkX <= playerChunkX + renderDistanceChunks; ++chunkX) {
             for (int chunkZ = playerChunkZ - renderDistanceChunks; chunkZ <= playerChunkZ + renderDistanceChunks; ++chunkZ) {
                 if (isSlimeChunk(chunkX, chunkZ)) {
                     ChunkPos chunk = new ChunkPos(chunkX, chunkZ);
-                    BlockPos minBlockPos = new BlockPos(chunk.getXStart(), 1, chunk.getZStart());
-                    BlockPos maxBlockPos = new BlockPos(chunk.getXEnd(), 38, chunk.getZEnd());
-                    boundingBoxes.put(BoundingBoxSlimeChunk.from(minBlockPos, maxBlockPos), null);
+                    Coords minCoords = new Coords(chunk.getXStart(), 1, chunk.getZStart());
+                    Coords maxCoords = new Coords(chunk.getXEnd(), 38, chunk.getZEnd());
+                    boundingBoxes.put(BoundingBoxSlimeChunk.from(minCoords, maxCoords), null);
                 }
             }
         }
@@ -147,22 +146,22 @@ public class ClientRenderer {
     }
 
     private BoundingBox getWorldSpawnBoundingBox(int spawnX, int spawnZ) {
-        BlockPos minBlockPos = new BlockPos(spawnX - 10, 0, spawnZ - 10);
-        BlockPos maxBlockPos = new BlockPos(spawnX + 10, 0, spawnZ + 10);
+        Coords minCoords = new Coords(spawnX - 10, 0, spawnZ - 10);
+        Coords maxCoords = new Coords(spawnX + 10, 0, spawnZ + 10);
 
-        return BoundingBoxWorldSpawn.from(minBlockPos, maxBlockPos, BoundingBoxType.WorldSpawn);
+        return BoundingBoxWorldSpawn.from(minCoords, maxCoords, BoundingBoxType.WorldSpawn);
     }
 
     private BoundingBox buildSpawnChunksBoundingBox(int spawnX, int spawnZ, int size, BoundingBoxType type) {
         double midOffset = CHUNK_SIZE * (size / 2.0);
         double midX = Math.round((float) (spawnX / (double) CHUNK_SIZE)) * (double) CHUNK_SIZE;
         double midZ = Math.round((float) (spawnZ / (double) CHUNK_SIZE)) * (double) CHUNK_SIZE;
-        BlockPos minBlockPos = new BlockPos(midX - midOffset, 0, midZ - midOffset);
+        Coords minCoords = new Coords(midX - midOffset, 0, midZ - midOffset);
         if (spawnX / (double) CHUNK_SIZE % 0.5D == 0.0D && spawnZ / (double) CHUNK_SIZE % 0.5D == 0.0D) {
             midX += (double) CHUNK_SIZE;
             midZ += (double) CHUNK_SIZE;
         }
-        BlockPos maxBlockPos = new BlockPos(midX + midOffset, 0, midZ + midOffset);
-        return BoundingBoxWorldSpawn.from(minBlockPos, maxBlockPos, type);
+        Coords maxCoords = new Coords(midX + midOffset, 0, midZ + midOffset);
+        return BoundingBoxWorldSpawn.from(minCoords, maxCoords, type);
     }
 }

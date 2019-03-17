@@ -11,11 +11,11 @@ import com.irtimaled.bbor.common.messages.InitializeClient;
 import com.irtimaled.bbor.common.messages.RemoveBoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBoxMobSpawner;
+import com.irtimaled.bbor.common.models.Coords;
 import com.irtimaled.bbor.common.models.WorldData;
 import io.netty.channel.local.LocalAddress;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.server.SPacketCustomPayload;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
@@ -149,7 +149,7 @@ public class CommonProxy {
         cache.removeBoundingBox(key);
     }
 
-    private void mobSpawnerBroken(DimensionType dimensionType, BlockPos pos) {
+    private void mobSpawnerBroken(DimensionType dimensionType, Coords pos) {
         BoundingBox boundingBox = BoundingBoxMobSpawner.from(pos);
         removeBoundingBox(dimensionType, boundingBox);
         sendRemoveBoundingBox(dimensionType, boundingBox);
