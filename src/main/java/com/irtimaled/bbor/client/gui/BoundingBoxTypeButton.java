@@ -1,7 +1,6 @@
 package com.irtimaled.bbor.client.gui;
 
 import com.irtimaled.bbor.common.BoundingBoxType;
-import net.minecraft.client.Minecraft;
 
 import java.awt.*;
 
@@ -14,7 +13,7 @@ public class BoundingBoxTypeButton extends BoolSettingButton {
     }
 
     @Override
-    protected void renderBg(Minecraft p_renderBg_1_, int p_renderBg_2_, int p_renderBg_3_) {
+    protected void renderBackground() {
         int left = x + 1;
         int top = y + 1;
         int right = left + width - 2;

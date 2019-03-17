@@ -19,6 +19,6 @@ public class MixinGuiOptions extends GuiScreen {
             if (button.id != 200 && button.y >= top)
                 button.y -= 12;
         }
-        this.addButton(new SettingsScreenButton(200, this.width / 2 - 155, top + 84, 150, 20, "BBOR", this));
+        this.addButton(new SettingsScreenButton(200, this.width / 2 - 155, top + 84, 150, "BBOR", this));
     }
 }

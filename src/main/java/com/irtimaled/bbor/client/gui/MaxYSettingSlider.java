@@ -1,7 +1,6 @@
 package com.irtimaled.bbor.client.gui;
 
 import com.irtimaled.bbor.config.Setting;
-import net.minecraft.util.math.MathHelper;
 
 class MaxYSettingSlider extends IntSettingSlider {
     private final int actualMinValue;
@@ -9,7 +8,7 @@ class MaxYSettingSlider extends IntSettingSlider {
     MaxYSettingSlider(int id, int x, int y, int width, int minValue, Setting<Integer> setting) {
         super(id, x, y, width, minValue - 2, 127, "Max Y", setting);
         this.actualMinValue = minValue;
-        this.sliderValue = getSliderValue();
+        this.setProgress(getSliderValue());
         this.addDisplayValue(-1, "Activated");
         this.addDisplayValue(0, "Player");
         this.addDisplayValue(63, "Sea Level");
@@ -29,6 +28,6 @@ class MaxYSettingSlider extends IntSettingSlider {
         if (value < actualMinValue)
             value = (value - 1) + actualMinValue;
 
-        return MathHelper.clamp((value - minValue) / (double) range, 0d, 1d);
+        return (value - minValue) / (double) range;
     }
 }

@@ -8,9 +8,10 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import org.lwjgl.opengl.GL11;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -27,7 +28,6 @@ public class SettingsScreen extends GuiScreen {
     SettingsScreen(GuiScreen lastScreen, int tabIndex) {
         this.lastScreen = lastScreen;
         this.tabIndex = tabIndex;
-
     }
 
     public static void show() {
@@ -52,8 +52,9 @@ public class SettingsScreen extends GuiScreen {
         for (String label : labels) {
             final int index = column;
             addControl(0, column, y, CONTROLS_WIDTH / columns,
-                    (id, x, y1, width) -> new Button(id, x, y, width, label, index != tabIndex) {
-                        public void onClick(double p_onClick_1_, double p_onClick_3_) {
+                    (id, x, y1, width) -> new AbstractButton(id, x, y, width, label, index != tabIndex) {
+                        @Override
+                        public void onPressed() {
                             Minecraft.getInstance().displayGuiScreen(new SettingsScreen(lastScreen, index));
                         }
                     });
@@ -61,8 +62,9 @@ public class SettingsScreen extends GuiScreen {
         }
 
         //done button
-        addControl(new Button(200, this.width / 2 - 100, getY(5.5), 200, "Done") {
-            public void onClick(double p_onClick_1_, double p_onClick_3_) {
+        addControl(new AbstractButton(200, this.width / 2 - 100, getY(5.5), 200, "Done") {
+            @Override
+            public void onPressed() {
                 ConfigManager.saveConfig();
                 mc.displayGuiScreen(lastScreen);
             }
@@ -83,7 +85,7 @@ public class SettingsScreen extends GuiScreen {
     }
 
     private void buildTab(int tabIndex, CreateControl... createControls) {
-        if(tabIndex != this.tabIndex) return;
+        if (tabIndex != this.tabIndex) return;
 
         int offset = 4;
         int width = (CONTROLS_WIDTH - (2 * offset)) / 3;
@@ -116,12 +118,14 @@ public class SettingsScreen extends GuiScreen {
         this.addTabs("General", "Structures", "Villages");
 
         buildTab(0,
-                (id, x, y, width) -> new Button(id, x, y, width, "Active", this.mc.world != null) {
-                    public void onClick(double p_onClick_1_, double p_onClick_3_) {
+                (id, x, y, width) -> new AbstractButton(id, x, y, width, "Active", this.mc.world != null) {
+                    @Override
+                    public void onPressed() {
                         ClientProxy.toggleActive();
                     }
 
-                    protected int getHoverState(boolean p_getHoverState_1_) {
+                    @Override
+                    protected int getState() {
                         return enabled ? ClientProxy.active ? 2 : 1 : 0;
                     }
                 },
@@ -180,11 +184,11 @@ public class SettingsScreen extends GuiScreen {
         BufferBuilder bufferBuilder = tessellator.getBuffer();
         this.mc.getTextureManager().bindTexture(Gui.OPTIONS_BACKGROUND);
 
-        GlStateManager.disableLighting();
-        GlStateManager.disableFog();
-        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GL11.glDisable(GL11.GL_LIGHTING);
+        GL11.glDisable(GL11.GL_FOG);
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
-        bufferBuilder.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
+        bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
         bufferBuilder.pos((double) 0, (double) bottom, 0.0D)
                 .tex((double) ((float) 0 / 32.0F), (double) ((float) bottom / 32.0F))
                 .color(32, 32, 32, 255)
@@ -203,12 +207,13 @@ public class SettingsScreen extends GuiScreen {
                 .endVertex();
         tessellator.draw();
 
-        GlStateManager.disableDepthTest();
-        GlStateManager.enableBlend();
-        GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ZERO, GlStateManager.DestFactor.ONE);
-        GlStateManager.disableAlphaTest();
-        GlStateManager.shadeModel(7425);
-        GlStateManager.disableTexture2D();
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        GL11.glEnable(GL11.GL_BLEND);
+        OpenGlHelper.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ZERO, GL11.GL_ONE);
+
+        GL11.glDisable(GL11.GL_ALPHA_TEST);
+        GL11.glShadeModel(7425);
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
 
         bufferBuilder.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
         bufferBuilder.pos((double) 0, (double) (top + 4), 0.0D)
@@ -248,15 +253,15 @@ public class SettingsScreen extends GuiScreen {
                 .endVertex();
         tessellator.draw();
 
-        GlStateManager.enableTexture2D();
-        GlStateManager.shadeModel(7424);
-        GlStateManager.enableAlphaTest();
-        GlStateManager.disableBlend();
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glShadeModel(7424);
+        GL11.glEnable(GL11.GL_ALPHA_TEST);
+        GL11.glDisable(GL11.GL_BLEND);
     }
 
     @Override
     public void render(int mouseX, int mouseY, float unknown) {
-        if(this.mc.world == null) {
+        if (this.mc.world == null) {
             this.drawDefaultBackground();
             this.drawScreen(getY(-1), getY(5.5) - 4);
         }

@@ -2,7 +2,7 @@ package com.irtimaled.bbor.client.gui;
 
 import com.irtimaled.bbor.config.Setting;
 
-public class BoolSettingButton extends Button {
+public class BoolSettingButton extends AbstractButton {
     private final Setting<Boolean> setting;
 
     BoolSettingButton(int id, int x, int y, int width, String label, Setting<Boolean> setting) {
@@ -11,12 +11,12 @@ public class BoolSettingButton extends Button {
     }
 
     @Override
-    protected int getHoverState(boolean p_getHoverState_1_) {
+    protected int getState() {
         return setting.get() ? 2 : 1;
     }
 
     @Override
-    public void onClick(double p_onClick_1_, double p_onClick_3_) {
+    public void onPressed() {
         setting.set(!setting.get());
     }
 }
