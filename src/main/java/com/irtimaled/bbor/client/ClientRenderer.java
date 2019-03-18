@@ -3,21 +3,20 @@ package com.irtimaled.bbor.client;
 import com.irtimaled.bbor.client.renderers.*;
 import com.irtimaled.bbor.common.BoundingBoxCache;
 import com.irtimaled.bbor.common.BoundingBoxType;
+import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.models.*;
 import com.irtimaled.bbor.config.ConfigManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.dimension.DimensionType;
 import org.lwjgl.opengl.GL11;
 
 import java.util.*;
 
-import static com.irtimaled.bbor.client.Constants.CHUNK_SIZE;
-
 public class ClientRenderer {
-    private final GetCache getCache;
+    private static final int CHUNK_SIZE = 16;
     private static final Map<Class<? extends BoundingBox>, Renderer> boundingBoxRendererMap = new HashMap<>();
+
+    private final GetCache getCache;
     private long seed;
     private Set<BoundingBox> spawnChunkBoundingBoxes = new HashSet<>();
 
@@ -30,8 +29,10 @@ public class ClientRenderer {
         boundingBoxRendererMap.put(BoundingBoxMobSpawner.class, new MobSpawnerRenderer());
     }
 
-    private boolean isWithinRenderDistance(Coords minCoords, Coords maxCoords) {
-        int renderDistanceBlocks = Minecraft.getInstance().gameSettings.renderDistanceChunks * CHUNK_SIZE;
+    private boolean isWithinRenderDistance(BoundingBox boundingBox) {
+        Coords minCoords = boundingBox.getMinCoords();
+        Coords maxCoords = boundingBox.getMaxCoords();
+        int renderDistanceBlocks = getRenderDistanceChunks() * CHUNK_SIZE;
         int minX = MathHelper.floor(PlayerCoords.getX() - renderDistanceBlocks);
         int maxX = MathHelper.floor(PlayerCoords.getX() + renderDistanceBlocks);
         int minZ = MathHelper.floor(PlayerCoords.getZ() - renderDistanceBlocks);
@@ -41,10 +42,6 @@ public class ClientRenderer {
                 maxCoords.getZ() >= minZ &&
                 minCoords.getX() <= maxX &&
                 minCoords.getZ() <= maxZ;
-    }
-
-    private boolean isWithinRenderDistance(BoundingBox boundingBox) {
-        return isWithinRenderDistance(boundingBox.getMinCoords(), boundingBox.getMaxCoords());
     }
 
     public void render(DimensionType dimensionType, Boolean outerBoxesOnly) {
@@ -107,20 +104,24 @@ public class ClientRenderer {
     }
 
     private void addSlimeChunks(Map<BoundingBox, Set<BoundingBox>> boundingBoxes) {
-        Minecraft minecraft = Minecraft.getInstance();
-        int renderDistanceChunks = minecraft.gameSettings.renderDistanceChunks;
+        int renderDistanceChunks = getRenderDistanceChunks();
         int playerChunkX = MathHelper.floor(PlayerCoords.getX() / 16.0D);
         int playerChunkZ = MathHelper.floor(PlayerCoords.getZ() / 16.0D);
         for (int chunkX = playerChunkX - renderDistanceChunks; chunkX <= playerChunkX + renderDistanceChunks; ++chunkX) {
             for (int chunkZ = playerChunkZ - renderDistanceChunks; chunkZ <= playerChunkZ + renderDistanceChunks; ++chunkZ) {
                 if (isSlimeChunk(chunkX, chunkZ)) {
-                    ChunkPos chunk = new ChunkPos(chunkX, chunkZ);
-                    Coords minCoords = new Coords(chunk.getXStart(), 1, chunk.getZStart());
-                    Coords maxCoords = new Coords(chunk.getXEnd(), 38, chunk.getZEnd());
+                    int chunkXStart = chunkX << 4;
+                    int chunkZStart = chunkZ << 4;
+                    Coords minCoords = new Coords(chunkXStart, 1, chunkZStart);
+                    Coords maxCoords = new Coords(chunkXStart + 15, 38, chunkZStart + 15);
                     boundingBoxes.put(BoundingBoxSlimeChunk.from(minCoords, maxCoords), null);
                 }
             }
         }
+    }
+
+    private int getRenderDistanceChunks() {
+        return Minecraft.getInstance().gameSettings.renderDistanceChunks;
     }
 
     private boolean isSlimeChunk(int chunkX, int chunkZ) {

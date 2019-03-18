@@ -16,22 +16,20 @@ public class MobSpawnerRenderer extends Renderer<BoundingBoxMobSpawner> {
         if (ConfigManager.renderMobSpawnerSpawnArea.get()) {
             renderBoundingBox(boundingBox);
         } else {
-            renderCuboid(getAxisAlignedBB(coords, coords, true), color, fill());
+            renderCuboid(new OffsetBox(coords, coords), color, fill());
         }
 
         if (!ConfigManager.renderMobSpawnerActivationLines.get()) return;
 
-        renderActivationLines(coords);
+        renderActivationLine(new OffsetPoint(coords).offset(0.5, 0.5, 0.5));
     }
 
-    private void renderActivationLines(Coords coords) {
-        OffsetPoint centerPoint = new OffsetPoint(coords).add(0.5, 0.5, 0.5);
+    private void renderActivationLine(OffsetPoint centerPoint) {
         OffsetPoint playerPos = new OffsetPoint(PlayerCoords.getX(), PlayerCoords.getY(), PlayerCoords.getZ());
         double distance = centerPoint.getDistance(playerPos);
-        if (distance > 20.0) return;
-
-        Color color = distance <= 18.0 ? distance <= 16.0 ? Color.GREEN : Colors.DARK_ORANGE : Color.RED;
-        renderLine(centerPoint, playerPos.add(0, 0.1, 0), color);
-
+        if (distance <= 20) {
+            Color color = distance > 18 ? Color.RED : distance > 16 ? Colors.DARK_ORANGE : Color.GREEN;
+            renderLine(centerPoint, playerPos.offset(0, 0.1, 0), color);
+        }
     }
 }
