@@ -4,7 +4,6 @@ import com.irtimaled.bbor.common.EventBus;
 import com.irtimaled.bbor.common.events.ServerTick;
 import com.irtimaled.bbor.common.events.WorldLoaded;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -19,7 +18,7 @@ public class MixinMinecraftServer {
 
     @Inject(method = "initialWorldChunkLoad", at = @At("HEAD"))
     private void initialWorldChunkLoad(CallbackInfo ci) {
-        for (World world : worlds) {
+        for (WorldServer world : worlds) {
             EventBus.publish(new WorldLoaded(world));
         }
     }

@@ -1,15 +1,15 @@
 package com.irtimaled.bbor.common.events;
 
-import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 
 public class WorldLoaded {
-    private final World world;
+    private final WorldServer world;
 
-    public WorldLoaded(World world) {
+    public WorldLoaded(WorldServer world) {
         this.world = world;
     }
 
-    public World getWorld() {
+    public WorldServer getWorld() {
         return world;
     }
 }

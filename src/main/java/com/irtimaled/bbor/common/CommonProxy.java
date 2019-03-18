@@ -11,7 +11,6 @@ import com.irtimaled.bbor.common.messages.InitializeClient;
 import com.irtimaled.bbor.common.messages.PayloadBuilder;
 import com.irtimaled.bbor.common.messages.RemoveBoundingBox;
 import com.irtimaled.bbor.common.models.*;
-import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 
@@ -45,25 +44,23 @@ public class CommonProxy {
         worldData = new WorldData(seed, spawnX, spawnZ);
     }
 
-    private void worldLoaded(World world) {
-        if (world instanceof WorldServer) {
-            int dimensionId = world.dimension.getType().getId();
-            BoundingBoxCache boundingBoxCache = getOrCreateCache(dimensionId);
-            ChunkProcessor chunkProcessor = null;
-            if (dimensionId == Dimensions.OVERWORLD) {
-                setWorldData(world.getSeed(), world.getWorldInfo().getSpawnX(), world.getWorldInfo().getSpawnZ());
-                chunkProcessor = new OverworldChunkProcessor(boundingBoxCache);
-            }
-            if (dimensionId == Dimensions.NETHER) {
-                chunkProcessor = new NetherChunkProcessor(boundingBoxCache);
-            }
-            if (dimensionId == Dimensions.THE_END) {
-                chunkProcessor = new EndChunkProcessor(boundingBoxCache);
-            }
-            Logger.info("create world dimension: %s, %s (seed: %d)", dimensionId, world.getClass().toString(), world.getSeed());
-            chunkProcessors.put(dimensionId, chunkProcessor);
-            villageProcessors.put(dimensionId, new VillageProcessor(dimensionId, boundingBoxCache));
+    private void worldLoaded(WorldServer world) {
+        int dimensionId = world.dimension.getType().getId();
+        BoundingBoxCache boundingBoxCache = getOrCreateCache(dimensionId);
+        ChunkProcessor chunkProcessor = null;
+        if (dimensionId == Dimensions.OVERWORLD) {
+            setWorldData(world.getSeed(), world.getWorldInfo().getSpawnX(), world.getWorldInfo().getSpawnZ());
+            chunkProcessor = new OverworldChunkProcessor(boundingBoxCache);
         }
+        if (dimensionId == Dimensions.NETHER) {
+            chunkProcessor = new NetherChunkProcessor(boundingBoxCache);
+        }
+        if (dimensionId == Dimensions.THE_END) {
+            chunkProcessor = new EndChunkProcessor(boundingBoxCache);
+        }
+        Logger.info("create world dimension: %s, %s (seed: %d)", dimensionId, world.getClass().toString(), world.getSeed());
+        chunkProcessors.put(dimensionId, chunkProcessor);
+        villageProcessors.put(dimensionId, new VillageProcessor(dimensionId, boundingBoxCache));
     }
 
     private void chunkLoaded(Chunk chunk) {
