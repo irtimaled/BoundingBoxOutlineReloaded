@@ -1,20 +1,18 @@
 package com.irtimaled.bbor.common.events;
 
 import com.irtimaled.bbor.common.models.BoundingBoxVillage;
-import net.minecraft.world.dimension.DimensionType;
 
 public class VillageRemoved {
-    private final DimensionType dimensionType;
+    private final int dimensionId;
     private final BoundingBoxVillage village;
 
-    public VillageRemoved(DimensionType dimensionType, BoundingBoxVillage village) {
-
-        this.dimensionType = dimensionType;
+    public VillageRemoved(int dimensionId, BoundingBoxVillage village) {
+        this.dimensionId = dimensionId;
         this.village = village;
     }
 
-    public DimensionType getDimensionType() {
-        return dimensionType;
+    public int getDimensionId() {
+        return dimensionId;
     }
 
     public BoundingBoxVillage getVillage() {

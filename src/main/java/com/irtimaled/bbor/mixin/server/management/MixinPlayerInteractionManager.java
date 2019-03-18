@@ -23,7 +23,7 @@ public class MixinPlayerInteractionManager {
     private void tryHarvestBlock(BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
         Block block = this.world.getBlockState(pos).getBlock();
         if (block instanceof BlockMobSpawner) {
-            EventBus.publish(new MobSpawnerBroken(this.world.dimension.getType(), new Coords(pos)));
+            EventBus.publish(new MobSpawnerBroken(this.world.dimension.getType().getId(), new Coords(pos)));
         }
     }
 }

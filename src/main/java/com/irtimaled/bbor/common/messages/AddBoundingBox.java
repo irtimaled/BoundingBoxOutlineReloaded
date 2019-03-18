@@ -2,7 +2,6 @@ package com.irtimaled.bbor.common.messages;
 
 import com.irtimaled.bbor.client.events.AddBoundingBoxReceived;
 import com.irtimaled.bbor.common.models.BoundingBox;
-import net.minecraft.world.dimension.DimensionType;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -10,11 +9,11 @@ import java.util.Set;
 public class AddBoundingBox {
     public static final String NAME = "bbor:add_bounding_box";
 
-    public static PayloadBuilder getPayload(DimensionType dimensionType, BoundingBox key, Set<BoundingBox> boundingBoxes) {
+    public static PayloadBuilder getPayload(int dimensionId, BoundingBox key, Set<BoundingBox> boundingBoxes) {
         if (!BoundingBoxSerializer.canSerialize(key)) return null;
 
         PayloadBuilder builder = PayloadBuilder.clientBound(NAME)
-                .writeVarInt(dimensionType.getId());
+                .writeVarInt(dimensionId);
         BoundingBoxSerializer.serialize(key, builder);
         if (boundingBoxes != null && boundingBoxes.size() > 1) {
             for (BoundingBox boundingBox : boundingBoxes) {
@@ -36,6 +35,6 @@ public class AddBoundingBox {
         }
         if (boundingBoxes.size() == 0)
             boundingBoxes.add(key);
-        return new AddBoundingBoxReceived(DimensionType.getById(dimensionId), key, boundingBoxes);
+        return new AddBoundingBoxReceived(dimensionId, key, boundingBoxes);
     }
 }

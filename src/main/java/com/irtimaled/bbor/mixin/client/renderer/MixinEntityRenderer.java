@@ -6,7 +6,6 @@ import com.irtimaled.bbor.common.EventBus;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.EntityRenderer;
-import net.minecraft.world.dimension.DimensionType;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -24,6 +23,6 @@ public class MixinEntityRenderer {
     private void render(float partialTicks, long ignored, CallbackInfo ci) {
         EntityPlayerSP player = this.mc.player;
         PlayerCoords.setPlayerPosition(partialTicks, player);
-        EventBus.publish(new Render(DimensionType.getById(player.dimension)));
+        EventBus.publish(new Render(player.dimension));
     }
 }

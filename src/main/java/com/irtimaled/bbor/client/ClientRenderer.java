@@ -3,11 +3,11 @@ package com.irtimaled.bbor.client;
 import com.irtimaled.bbor.client.renderers.*;
 import com.irtimaled.bbor.common.BoundingBoxCache;
 import com.irtimaled.bbor.common.BoundingBoxType;
+import com.irtimaled.bbor.common.Dimensions;
 import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.models.*;
 import com.irtimaled.bbor.config.ConfigManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.dimension.DimensionType;
 import org.lwjgl.opengl.GL11;
 
 import java.util.*;
@@ -44,8 +44,8 @@ public class ClientRenderer {
                 minCoords.getZ() <= maxZ;
     }
 
-    public void render(DimensionType dimensionType, Boolean outerBoxesOnly) {
-        Map<BoundingBox, Set<BoundingBox>> boundingBoxes = getBoundingBoxes(dimensionType);
+    public void render(int dimensionId, Boolean outerBoxesOnly) {
+        Map<BoundingBox, Set<BoundingBox>> boundingBoxes = getBoundingBoxes(dimensionId);
 
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GL11.glLineWidth(2.0f);
@@ -77,9 +77,9 @@ public class ClientRenderer {
         GL11.glEnable(GL11.GL_TEXTURE_2D);
     }
 
-    private Map<BoundingBox, Set<BoundingBox>> getBoundingBoxes(DimensionType dimensionType) {
+    private Map<BoundingBox, Set<BoundingBox>> getBoundingBoxes(int dimensionId) {
         Map<BoundingBox, Set<BoundingBox>> boundingBoxes = new HashMap<>();
-        if (dimensionType == DimensionType.OVERWORLD) {
+        if (dimensionId == Dimensions.OVERWORLD) {
             if (BoundingBoxType.SlimeChunks.shouldRender()) {
                 addSlimeChunks(boundingBoxes);
             }
@@ -91,7 +91,7 @@ public class ClientRenderer {
             }
         }
 
-        BoundingBoxCache cache = getCache.apply(dimensionType);
+        BoundingBoxCache cache = getCache.apply(dimensionId);
         if (cache != null) {
             for (Map.Entry<BoundingBox, Set<BoundingBox>> entry : cache.getBoundingBoxes().entrySet()) {
                 BoundingBox key = entry.getKey();

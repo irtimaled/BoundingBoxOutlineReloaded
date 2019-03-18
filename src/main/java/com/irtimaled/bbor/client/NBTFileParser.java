@@ -3,6 +3,7 @@ package com.irtimaled.bbor.client;
 import com.irtimaled.bbor.Logger;
 import com.irtimaled.bbor.common.BoundingBoxCache;
 import com.irtimaled.bbor.common.BoundingBoxType;
+import com.irtimaled.bbor.common.Dimensions;
 import com.irtimaled.bbor.common.models.BoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBoxStructure;
 import com.irtimaled.bbor.common.models.BoundingBoxVillage;
@@ -11,7 +12,6 @@ import com.irtimaled.bbor.config.ConfigManager;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.world.dimension.DimensionType;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -58,9 +58,9 @@ class NBTFileParser {
     }
 
     private static void populateBoundingBoxCache(File localStructuresFolder, GetCache createCache) {
-        loadOverworldStructures(localStructuresFolder, createCache.apply(DimensionType.OVERWORLD));
-        loadNetherStructures(localStructuresFolder, createCache.apply(DimensionType.NETHER));
-        loadEndStructures(localStructuresFolder, createCache.apply(DimensionType.THE_END));
+        loadOverworldStructures(localStructuresFolder, createCache.apply(Dimensions.OVERWORLD));
+        loadNetherStructures(localStructuresFolder, createCache.apply(Dimensions.NETHER));
+        loadEndStructures(localStructuresFolder, createCache.apply(Dimensions.THE_END));
     }
 
     private static void loadOverworldStructures(File localStructuresFolder, BoundingBoxCache cache) {

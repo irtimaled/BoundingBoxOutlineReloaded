@@ -1,15 +1,13 @@
 package com.irtimaled.bbor.client.events;
 
-import net.minecraft.world.dimension.DimensionType;
-
 public class Render {
-    private DimensionType dimensionType;
+    private final int dimensionId;
 
-    public Render(DimensionType dimensionType) {
-        this.dimensionType = dimensionType;
+    public Render(int dimensionId) {
+        this.dimensionId = dimensionId;
     }
 
-    public DimensionType getDimensionType() {
-        return dimensionType;
+    public int getDimensionId() {
+        return dimensionId;
     }
 }

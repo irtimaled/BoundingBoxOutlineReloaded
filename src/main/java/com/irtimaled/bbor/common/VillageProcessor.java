@@ -6,7 +6,6 @@ import com.irtimaled.bbor.common.models.Coords;
 import net.minecraft.village.Village;
 import net.minecraft.village.VillageCollection;
 import net.minecraft.village.VillageDoorInfo;
-import net.minecraft.world.dimension.DimensionType;
 
 import java.util.*;
 
@@ -14,9 +13,9 @@ class VillageProcessor {
     private final BoundingBoxCache boundingBoxCache;
 
     private Map<Integer, BoundingBoxVillage> villageCache = new HashMap<>();
-    private DimensionType dimensionId;
+    private int dimensionId;
 
-    VillageProcessor(DimensionType dimensionId, BoundingBoxCache boundingBoxCache) {
+    VillageProcessor(int dimensionId, BoundingBoxCache boundingBoxCache) {
         this.dimensionId = dimensionId;
         this.boundingBoxCache = boundingBoxCache;
     }
