@@ -15,7 +15,7 @@ public class MixinGuiOptions extends GuiScreen {
     private void initGui(CallbackInfo ci) {
         //shuffle middle buttons up by 12 px to make space
         int top = this.height / 6 + 42;
-        for(GuiButton button : buttons) {
+        for (GuiButton button : buttons) {
             if (button.id != 200 && button.y >= top)
                 button.y -= 12;
         }

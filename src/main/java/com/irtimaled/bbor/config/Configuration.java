@@ -95,9 +95,9 @@ public class Configuration {
         }
         Map<String, Setting<?>> settings = settingsGroup.get(category);
         Setting<?> setting = settings.get(settingName);
-        if(setting == null && category != FALLBACK_CATEGORY)
+        if (setting == null && category != FALLBACK_CATEGORY)
             setting = getFallbackSetting(settingName, settings);
-        if(setting != null && setting.getType() != type) {
+        if (setting != null && setting.getType() != type) {
             setting = null;
         }
         if (setting == null) {
@@ -120,7 +120,7 @@ public class Configuration {
 
     private <T> char getType(T defaultValue) {
         String[] typeNames = defaultValue.getClass().getName().split("[.]");
-        return typeNames[typeNames.length-1].charAt(0);
+        return typeNames[typeNames.length - 1].charAt(0);
     }
 
     void put(Setting<?> setting) {

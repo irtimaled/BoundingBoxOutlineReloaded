@@ -157,7 +157,7 @@ public class CommonProxy {
     private void serverWorldTick(WorldServer world) {
         int dimensionId = world.dimension.getType().getId();
         VillageProcessor villageProcessor = villageProcessors.get(dimensionId);
-        if(villageProcessor == null) return;
+        if (villageProcessor == null) return;
 
         villageProcessor.process(world.getVillageCollection());
     }
@@ -171,7 +171,7 @@ public class CommonProxy {
     }
 
     protected void clearCaches() {
-        for(VillageProcessor villageProcessor : villageProcessors.values()) {
+        for (VillageProcessor villageProcessor : villageProcessors.values()) {
             villageProcessor.clear();
         }
         villageProcessors.clear();

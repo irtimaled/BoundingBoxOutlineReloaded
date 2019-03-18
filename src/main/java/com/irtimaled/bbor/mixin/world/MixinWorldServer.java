@@ -10,9 +10,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(WorldServer.class)
 public class MixinWorldServer {
-    @Inject(method = "tick", at=@At(value = "INVOKE", target = "Lnet/minecraft/village/VillageCollection;tick()V", shift = At.Shift.AFTER))
+    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/village/VillageCollection;tick()V", shift = At.Shift.AFTER))
     private void afterVillageTick(CallbackInfo ci) {
-        EventBus.publish(new ServerWorldTick((WorldServer)(Object)this));
+        EventBus.publish(new ServerWorldTick((WorldServer) (Object) this));
     }
-
 }

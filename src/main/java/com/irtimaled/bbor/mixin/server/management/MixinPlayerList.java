@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinPlayerList {
     @Inject(method = "playerLoggedIn", at = @At("RETURN"))
     private void playerLoggedIn(EntityPlayerMP player, CallbackInfo ci) {
-        if(player.connection.netManager.getRemoteAddress() instanceof LocalAddress) return;
+        if (player.connection.netManager.getRemoteAddress() instanceof LocalAddress) return;
         EventBus.publish(new PlayerLoggedIn(new ServerPlayer(player)));
     }
 

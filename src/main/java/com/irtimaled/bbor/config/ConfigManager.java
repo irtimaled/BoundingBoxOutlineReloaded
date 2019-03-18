@@ -93,10 +93,9 @@ public class ConfigManager {
         return config;
     }
 
-    public static void saveConfig()
-    {
+    public static void saveConfig() {
         Configuration config = new Configuration(new File(configDir, "BBOutlineReloaded.cfg"));
-        for(Setting<?> setting : settings) {
+        for (Setting<?> setting : settings) {
             config.put(setting);
         }
         config.save();

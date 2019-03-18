@@ -19,5 +19,4 @@ public class OverworldChunkProcessor extends ChunkProcessor {
         supportedStructures.add(BoundingBoxType.Igloo);
         supportedStructures.add(BoundingBoxType.PillagerOutpost);
     }
-
 }

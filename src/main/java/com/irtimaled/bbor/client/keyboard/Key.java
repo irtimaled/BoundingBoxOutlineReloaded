@@ -36,7 +36,6 @@ public class Key extends KeyBinding {
         super.bind(input);
     }
 
-
     private int pressDuration = 0;
 
     @Override

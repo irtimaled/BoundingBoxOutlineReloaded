@@ -14,7 +14,7 @@ public class BoundingBoxCache {
         return cache;
     }
 
-    public void clear() {
+    void clear() {
         cache.clear();
     }
 
@@ -27,12 +27,14 @@ public class BoundingBoxCache {
     }
 
     public void addBoundingBox(BoundingBox key) {
+        if(isCached(key)) return;
+
         Set<BoundingBox> boundingBoxes = new HashSet<>();
         boundingBoxes.add(key);
         addBoundingBoxes(key, boundingBoxes);
     }
 
-    public void removeBoundingBox(BoundingBox key) {
+    void removeBoundingBox(BoundingBox key) {
         cache.remove(key);
     }
 }

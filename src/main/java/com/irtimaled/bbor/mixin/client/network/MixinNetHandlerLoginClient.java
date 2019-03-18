@@ -29,7 +29,7 @@ public abstract class MixinNetHandlerLoginClient {
         }
     }
 
-    @Inject(method = "onDisconnect", at=@At("HEAD"))
+    @Inject(method = "onDisconnect", at = @At("HEAD"))
     private void onDisconnect(CallbackInfo ci) {
         EventBus.publish(new DisconnectedFromRemoteServer());
     }

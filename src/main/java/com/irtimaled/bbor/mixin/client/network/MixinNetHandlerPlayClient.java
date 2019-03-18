@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(NetHandlerPlayClient.class)
 public class MixinNetHandlerPlayClient {
-    @Inject(method = "onDisconnect", at=@At("HEAD"))
+    @Inject(method = "onDisconnect", at = @At("HEAD"))
     private void onDisconnect(CallbackInfo ci) {
         EventBus.publish(new DisconnectedFromRemoteServer());
     }

@@ -39,7 +39,6 @@ public class ServerRunner {
             Method method = URLClassLoader.class
                     .getDeclaredMethod("addURL", URL.class);
             method.setAccessible(true);
-           // addURLHandle = MethodHandles.lookup().unreflect(method);
             addURL = url -> method.invoke(ClassLoader.getSystemClassLoader(), url);
         } catch (ReflectiveOperationException e) {
             throw new AssertionError(e);
@@ -47,12 +46,7 @@ public class ServerRunner {
     }
 
     private static void addURLToClasspath(File file) throws MalformedURLException {
-        //try {
-            addURL.accept(file.toURI().toURL());
-            //addURLHandle.invoke(ClassLoader.getSystemClassLoader(), file.toURI().toURL());
-        //} catch (Throwable t) {
-       //     throw t instanceof RuntimeException ? (RuntimeException) t : new RuntimeException(t);
-       // }
+        addURL.accept(file.toURI().toURL());
     }
 
     public static void run(String version, List<String> args) throws IOException {
@@ -85,5 +79,4 @@ public class ServerRunner {
 
         return target;
     }
-
 }

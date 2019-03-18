@@ -6,5 +6,6 @@ import com.irtimaled.bbor.common.BoundingBoxType;
 public class EndChunkProcessor extends ChunkProcessor {
     public EndChunkProcessor(BoundingBoxCache boundingBoxCache) {
         super(boundingBoxCache);
-        supportedStructures.add(BoundingBoxType.EndCity);}
+        supportedStructures.add(BoundingBoxType.EndCity);
+    }
 }

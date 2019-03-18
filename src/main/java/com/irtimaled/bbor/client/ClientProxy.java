@@ -72,6 +72,4 @@ public class ClientProxy extends CommonProxy {
         super.setWorldData(seed, spawnX, spawnZ);
         renderer.setWorldData(seed, spawnX, spawnZ);
     }
-
-
 }
