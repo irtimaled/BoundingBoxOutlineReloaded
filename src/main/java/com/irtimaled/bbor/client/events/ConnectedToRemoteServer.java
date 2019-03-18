@@ -1,15 +1,15 @@
 package com.irtimaled.bbor.client.events;
 
-import net.minecraft.network.NetworkManager;
+import java.net.InetSocketAddress;
 
 public class ConnectedToRemoteServer {
-    private final NetworkManager networkManager;
+    private final InetSocketAddress internetAddress;
 
-    public ConnectedToRemoteServer(NetworkManager networkManager) {
-        this.networkManager = networkManager;
+    public ConnectedToRemoteServer(InetSocketAddress internetAddress) {
+        this.internetAddress = internetAddress;
     }
 
-    public NetworkManager getNetworkManager() {
-        return networkManager;
+    public InetSocketAddress getInternetAddress() {
+        return internetAddress;
     }
 }

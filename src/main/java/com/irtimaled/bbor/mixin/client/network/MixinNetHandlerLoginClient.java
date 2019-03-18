@@ -12,6 +12,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+
 @Mixin(NetHandlerLoginClient.class)
 public abstract class MixinNetHandlerLoginClient {
     @Shadow
@@ -20,7 +23,10 @@ public abstract class MixinNetHandlerLoginClient {
 
     @Inject(method = "handleLoginSuccess", at = @At(value = "RETURN"))
     private void handleLoginSuccess(CallbackInfo ci) {
-        EventBus.publish(new ConnectedToRemoteServer(this.networkManager));
+        SocketAddress remoteAddress = this.networkManager.getRemoteAddress();
+        if (remoteAddress instanceof InetSocketAddress) {
+            EventBus.publish(new ConnectedToRemoteServer((InetSocketAddress)remoteAddress));
+        }
     }
 
     @Inject(method = "onDisconnect", at=@At("HEAD"))

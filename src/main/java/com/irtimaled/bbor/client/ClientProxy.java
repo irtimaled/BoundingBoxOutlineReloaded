@@ -10,11 +10,9 @@ import com.irtimaled.bbor.config.ConfigManager;
 import com.irtimaled.bbor.config.Setting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.NetworkManager;
 import net.minecraft.world.dimension.DimensionType;
 
 import java.net.InetSocketAddress;
-import java.net.SocketAddress;
 
 public class ClientProxy extends CommonProxy {
     public static final String Name = "Bounding Box Outline Reloaded";
@@ -45,7 +43,7 @@ public class ClientProxy extends CommonProxy {
     public void init() {
         super.init();
         EventBus.subscribe(Render.class, e -> render(e.getPartialTicks()));
-        EventBus.subscribe(ConnectedToRemoteServer.class, e -> connectedToServer(e.getNetworkManager()));
+        EventBus.subscribe(ConnectedToRemoteServer.class, e -> connectedToServer(e.getInternetAddress()));
         EventBus.subscribe(DisconnectedFromRemoteServer.class, e -> disconnectedFromServer());
         EventBus.subscribe(InitializeClientReceived.class, e -> setWorldData(e.getSeed(), e.getSpawnX(), e.getSpawnZ()));
         EventBus.subscribe(AddBoundingBoxReceived.class, e -> runOnCache(e.getDimensionType(), cache -> cache.addBoundingBoxes(e.getKey(), e.getBoundingBoxes())));
@@ -64,12 +62,8 @@ public class ClientProxy extends CommonProxy {
         }
     }
 
-    private void connectedToServer(NetworkManager networkManager) {
-        SocketAddress remoteAddress = networkManager.getRemoteAddress();
-        if (remoteAddress instanceof InetSocketAddress) {
-            InetSocketAddress socketAddress = (InetSocketAddress) remoteAddress;
-            NBTFileParser.loadLocalDatFiles(socketAddress.getHostName(), socketAddress.getPort(), this::setWorldData, this::getOrCreateCache);
-        }
+    private void connectedToServer(InetSocketAddress internetAddress) {
+        NBTFileParser.loadLocalDatFiles(internetAddress.getHostName(), internetAddress.getPort(), this::setWorldData, this::getOrCreateCache);
     }
 
     private void disconnectedFromServer() {
