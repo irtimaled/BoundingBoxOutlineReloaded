@@ -2,30 +2,25 @@ package com.irtimaled.bbor.common.messages;
 
 import com.irtimaled.bbor.client.events.RemoveBoundingBoxReceived;
 import com.irtimaled.bbor.common.models.BoundingBox;
-import io.netty.buffer.Unpooled;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.network.play.server.SPacketCustomPayload;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.dimension.DimensionType;
 
 public class RemoveBoundingBox {
-    public static final ResourceLocation NAME = new ResourceLocation("bbor:remove_bounding_box");
+    public static final String NAME = "bbor:remove_bounding_box";
 
-    public static SPacketCustomPayload getPayload(DimensionType dimensionType, BoundingBox key) {
-        if(!BoundingBoxSerializer.canSerialize(key)) return null;
+    public static PayloadBuilder getPayload(DimensionType dimensionType, BoundingBox key) {
+        if (!BoundingBoxSerializer.canSerialize(key)) return null;
 
-        PacketBuffer buf = new PacketBuffer(Unpooled.buffer());
-        buf.writeVarInt(dimensionType.getId());
-        BoundingBoxSerializer.serialize(key, buf);
-
-        return new SPacketCustomPayload(NAME, buf);
+        PayloadBuilder builder = PayloadBuilder.clientBound(NAME)
+                .writeVarInt(dimensionType.getId());
+        BoundingBoxSerializer.serialize(key, builder);
+        return builder;
     }
 
-    public static RemoveBoundingBoxReceived getEvent(PacketBuffer buf) {
-        DimensionType dimensionType = DimensionType.getById(buf.readVarInt());
-        BoundingBox key = BoundingBoxDeserializer.deserialize(buf);
-        if(key == null) return null;
+    public static RemoveBoundingBoxReceived getEvent(PayloadReader reader) {
+        int dimensionId = reader.readVarInt();
+        BoundingBox key = BoundingBoxDeserializer.deserialize(reader);
+        if (key == null) return null;
 
-        return new RemoveBoundingBoxReceived(dimensionType, key);
+        return new RemoveBoundingBoxReceived(DimensionType.getById(dimensionId), key);
     }
 }

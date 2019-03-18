@@ -8,6 +8,7 @@ import com.irtimaled.bbor.common.chunkProcessors.OverworldChunkProcessor;
 import com.irtimaled.bbor.common.events.*;
 import com.irtimaled.bbor.common.messages.AddBoundingBox;
 import com.irtimaled.bbor.common.messages.InitializeClient;
+import com.irtimaled.bbor.common.messages.PayloadBuilder;
 import com.irtimaled.bbor.common.messages.RemoveBoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBoxMobSpawner;
@@ -15,7 +16,6 @@ import com.irtimaled.bbor.common.models.Coords;
 import com.irtimaled.bbor.common.models.WorldData;
 import io.netty.channel.local.LocalAddress;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.play.server.SPacketCustomPayload;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
@@ -83,7 +83,7 @@ public class CommonProxy {
 
     private void playerLoggedIn(EntityPlayerMP player) {
         if (player.connection.netManager.getRemoteAddress() instanceof LocalAddress) return;
-        player.connection.sendPacket(InitializeClient.getPayload(worldData));
+        player.connection.sendPacket(InitializeClient.getPayload(worldData).build());
     }
 
     private void playerLoggedOut(EntityPlayerMP player) {
@@ -92,12 +92,12 @@ public class CommonProxy {
     }
 
     private void sendRemoveBoundingBox(DimensionType dimensionType, BoundingBox boundingBox) {
-        SPacketCustomPayload payload = RemoveBoundingBox.getPayload(dimensionType, boundingBox);
-        if (payload == null) return;
+        PayloadBuilder payloadBuilder = RemoveBoundingBox.getPayload(dimensionType, boundingBox);
+        if (payloadBuilder == null) return;
 
         for (EntityPlayerMP player : players) {
             if (DimensionType.getById(player.dimension) == dimensionType) {
-                player.connection.sendPacket(payload);
+                player.connection.sendPacket(payloadBuilder.build());
 
                 if (playerBoundingBoxesCache.containsKey(player)) {
                     playerBoundingBoxesCache.get(player).remove(boundingBox);
@@ -121,9 +121,9 @@ public class CommonProxy {
 
         for (BoundingBox key : cacheSubset.keySet()) {
             Set<BoundingBox> boundingBoxes = cacheSubset.get(key);
-            SPacketCustomPayload payload = AddBoundingBox.getPayload(dimensionType, key, boundingBoxes);
-            if (payload != null)
-                player.connection.sendPacket(payload);
+            PayloadBuilder payloadBuilder = AddBoundingBox.getPayload(dimensionType, key, boundingBoxes);
+            if (payloadBuilder != null)
+                player.connection.sendPacket(payloadBuilder.build());
 
             if (!playerBoundingBoxesCache.containsKey(player)) {
                 playerBoundingBoxesCache.put(player, new HashSet<>());

@@ -2,27 +2,21 @@ package com.irtimaled.bbor.common.messages;
 
 import com.irtimaled.bbor.client.events.InitializeClientReceived;
 import com.irtimaled.bbor.common.models.WorldData;
-import io.netty.buffer.Unpooled;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.network.play.server.SPacketCustomPayload;
-import net.minecraft.util.ResourceLocation;
 
 public class InitializeClient {
-    public static final ResourceLocation NAME = new ResourceLocation("bbor:initialize");
+    public static final String NAME = "bbor:initialize";
 
-    public static SPacketCustomPayload getPayload(WorldData worldData) {
-        PacketBuffer buf = new PacketBuffer(Unpooled.buffer());
-        buf.writeLong(worldData.getSeed());
-        buf.writeInt(worldData.getSpawnX());
-        buf.writeInt(worldData.getSpawnZ());
-
-        return new SPacketCustomPayload(NAME, buf);
+    public static PayloadBuilder getPayload(WorldData worldData) {
+        return PayloadBuilder.clientBound(NAME)
+                .writeLong(worldData.getSeed())
+                .writeInt(worldData.getSpawnX())
+                .writeInt(worldData.getSpawnZ());
     }
 
-    public static InitializeClientReceived getEvent(PacketBuffer buf) {
-        long seed = buf.readLong();
-        int spawnX = buf.readInt();
-        int spawnZ = buf.readInt();
+    public static InitializeClientReceived getEvent(PayloadReader reader) {
+        long seed = reader.readLong();
+        int spawnX = reader.readInt();
+        int spawnZ = reader.readInt();
         return new InitializeClientReceived(seed, spawnX, spawnZ);
     }
 }

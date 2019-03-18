@@ -20,7 +20,7 @@ public class MixinCPacketCustomPayload {
 
     @Redirect(method = "processPacket", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/play/INetHandlerPlayServer;processCustomPayload(Lnet/minecraft/network/play/client/CPacketCustomPayload;)V"))
     private void processPacket(INetHandlerPlayServer netHandlerPlayServer, CPacketCustomPayload packet) {
-        if (this.channel.equals(SubscribeToServer.NAME)) {
+        if (this.channel.toString().equals(SubscribeToServer.NAME)) {
             EntityPlayerMP player = ((NetHandlerPlayServer) netHandlerPlayServer).player;
             EventBus.publish(new PlayerSubscribed(player));
         } else {

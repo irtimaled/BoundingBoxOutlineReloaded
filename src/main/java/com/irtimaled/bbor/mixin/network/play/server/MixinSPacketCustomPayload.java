@@ -1,10 +1,7 @@
 package com.irtimaled.bbor.mixin.network.play.server;
 
 import com.irtimaled.bbor.common.EventBus;
-import com.irtimaled.bbor.common.messages.AddBoundingBox;
-import com.irtimaled.bbor.common.messages.InitializeClient;
-import com.irtimaled.bbor.common.messages.RemoveBoundingBox;
-import com.irtimaled.bbor.common.messages.SubscribeToServer;
+import com.irtimaled.bbor.common.messages.*;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayClient;
@@ -25,15 +22,25 @@ public abstract class MixinSPacketCustomPayload {
         PacketBuffer data = null;
         try {
             data = packet.getBufferData();
-            if (InitializeClient.NAME.equals(channel)) {
-                EventBus.publish(InitializeClient.getEvent(data));
-                ((NetHandlerPlayClient) netHandlerPlayClient).sendPacket(SubscribeToServer.getPayload());
-            } else if (AddBoundingBox.NAME.equals(channel)) {
-                EventBus.publish(AddBoundingBox.getEvent(data));
-            } else if (RemoveBoundingBox.NAME.equals(channel)) {
-                EventBus.publish(RemoveBoundingBox.getEvent(data));
-            } else {
-                netHandlerPlayClient.handleCustomPayload(packet);
+            PayloadReader reader = new PayloadReader(data);
+            switch (channel.toString()) {
+                case InitializeClient.NAME: {
+                    EventBus.publish(InitializeClient.getEvent(reader));
+                    ((NetHandlerPlayClient) netHandlerPlayClient).sendPacket(SubscribeToServer.getPayload().build());
+                    break;
+                }
+                case AddBoundingBox.NAME: {
+                    EventBus.publish(AddBoundingBox.getEvent(reader));
+                    break;
+                }
+                case RemoveBoundingBox.NAME: {
+                    EventBus.publish(RemoveBoundingBox.getEvent(reader));
+                    break;
+                }
+                default: {
+                    netHandlerPlayClient.handleCustomPayload(packet);
+                    break;
+                }
             }
         } finally {
             if (data != null)
