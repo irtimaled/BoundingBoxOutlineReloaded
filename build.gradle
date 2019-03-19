@@ -1,11 +1,12 @@
 buildscript {
     repositories {
         jcenter()
-        maven { url 'https://www.dimdev.org/maven/' }
         maven { url 'https://repo.spongepowered.org/maven' }
+        maven { url 'https://jitpack.io' }
+        maven { url 'https://files.minecraftforge.net/maven' }
     }
     dependencies {
-        classpath 'org.dimdev:ForgeGradle:2.3-SNAPSHOT'
+        classpath 'com.github.Irtimaled:ForgeGradle:' + project.mcVersion+ '-SNAPSHOT'
         classpath 'org.spongepowered:mixingradle:0.6-SNAPSHOT'
     }
 }
@@ -24,8 +25,8 @@ targetCompatibility = 1.8
 repositories {
     mavenCentral()
     maven { url 'https://libraries.minecraft.net/' }
-    maven { url 'https://www.dimdev.org/maven/' }
     maven { url 'https://repo.spongepowered.org/maven/' }
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
