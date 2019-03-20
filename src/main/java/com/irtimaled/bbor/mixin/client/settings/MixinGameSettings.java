@@ -16,7 +16,7 @@ import java.io.File;
 @Mixin(GameSettings.class)
 public class MixinGameSettings {
     @Shadow
-    private KeyBinding[] keyBindings;
+    public KeyBinding[] keyBindings;
 
     @Inject(method = "<init>()V", at = @At("RETURN"))
     private void init(CallbackInfo ci) {
