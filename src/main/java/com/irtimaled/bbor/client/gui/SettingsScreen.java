@@ -3,6 +3,7 @@ package com.irtimaled.bbor.client.gui;
 import com.irtimaled.bbor.client.ClientProxy;
 import com.irtimaled.bbor.client.renderers.Renderer;
 import com.irtimaled.bbor.common.BoundingBoxType;
+import com.irtimaled.bbor.common.TypeHelper;
 import com.irtimaled.bbor.config.ConfigManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -38,9 +39,7 @@ public class SettingsScreen extends GuiScreen {
 
     private void addControl(IRenderableControl control) {
         this.controls.add(control);
-        if (control instanceof IGuiEventListener) {
-            this.eventListeners.add((IGuiEventListener) control);
-        }
+        TypeHelper.doIfType(control, IGuiEventListener.class, this.eventListeners::add);
     }
 
     private void addTabs(String... labels) {
@@ -77,8 +76,7 @@ public class SettingsScreen extends GuiScreen {
         int x = getX(width, column, offset);
         int id = controls.size();
         IControl control = createControl.create(id, x, y, width);
-        if (control instanceof IRenderableControl)
-            addControl((IRenderableControl) control);
+        TypeHelper.doIfType(control, IRenderableControl.class, this::addControl);
         return control;
     }
 
@@ -92,12 +90,13 @@ public class SettingsScreen extends GuiScreen {
         for (CreateControl createControl : createControls) {
             int y = getY(row);
             IControl control = this.addControl(offset, column, y, width, createControl);
-            if (control instanceof IRowHeight) {
+            IRowHeight rowHeight = TypeHelper.as(control, IRowHeight.class);
+            if (rowHeight != null) {
                 if (column > 0) {
                     row++;
                     column = 0;
                 } else {
-                    row += ((IRowHeight) control).getRowHeight();
+                    row += rowHeight.getRowHeight();
                 }
             } else {
                 column++;

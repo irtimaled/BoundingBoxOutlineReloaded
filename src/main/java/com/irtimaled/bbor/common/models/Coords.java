@@ -1,6 +1,7 @@
 package com.irtimaled.bbor.common.models;
 
 import com.irtimaled.bbor.common.MathHelper;
+import com.irtimaled.bbor.common.TypeHelper;
 import net.minecraft.util.math.BlockPos;
 
 public class Coords {
@@ -42,14 +43,12 @@ public class Coords {
             return true;
         }
 
-        if (!(other instanceof Coords)) {
-            return false;
-        }
-
-        Coords coords = (Coords)other;
-        return this.getX() == coords.getX() &&
+        Coords coords = TypeHelper.as(other, Coords.class);
+        return coords != null &&
+                this.getX() == coords.getX() &&
                 this.getY() == coords.getY() &&
                 this.getZ() == coords.getZ();
+
     }
 
     @Override

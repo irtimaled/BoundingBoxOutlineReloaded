@@ -1,5 +1,7 @@
 package com.irtimaled.bbor.server;
 
+import com.irtimaled.bbor.common.TypeHelper;
+
 import java.util.function.Consumer;
 
 public interface ThrowableConsumer<T> extends Consumer<T> {
@@ -8,7 +10,7 @@ public interface ThrowableConsumer<T> extends Consumer<T> {
         try {
             acceptThrows(elem);
         } catch (final Throwable t) {
-            throw t instanceof RuntimeException ? (RuntimeException) t : new RuntimeException(t);
+            throw TypeHelper.as(t, RuntimeException.class, () -> new RuntimeException(t));
         }
     }
 

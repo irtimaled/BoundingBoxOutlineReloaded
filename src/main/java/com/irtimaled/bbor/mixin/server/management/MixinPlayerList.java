@@ -1,6 +1,7 @@
 package com.irtimaled.bbor.mixin.server.management;
 
 import com.irtimaled.bbor.common.EventBus;
+import com.irtimaled.bbor.common.TypeHelper;
 import com.irtimaled.bbor.common.events.PlayerLoggedIn;
 import com.irtimaled.bbor.common.events.PlayerLoggedOut;
 import com.irtimaled.bbor.common.models.ServerPlayer;
@@ -16,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinPlayerList {
     @Inject(method = "playerLoggedIn", at = @At("RETURN"))
     private void playerLoggedIn(EntityPlayerMP player, CallbackInfo ci) {
-        if (player.connection.netManager.getRemoteAddress() instanceof LocalAddress) return;
+        if (TypeHelper.as(player.connection.netManager.getRemoteAddress(), LocalAddress.class) != null) return;
         EventBus.publish(new PlayerLoggedIn(new ServerPlayer(player)));
     }
 

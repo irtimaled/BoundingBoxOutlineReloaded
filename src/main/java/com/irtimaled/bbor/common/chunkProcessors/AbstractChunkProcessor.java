@@ -2,6 +2,7 @@ package com.irtimaled.bbor.common.chunkProcessors;
 
 import com.irtimaled.bbor.common.BoundingBoxCache;
 import com.irtimaled.bbor.common.BoundingBoxType;
+import com.irtimaled.bbor.common.TypeHelper;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBoxMobSpawner;
 import com.irtimaled.bbor.common.models.BoundingBoxStructure;
@@ -53,8 +54,9 @@ public abstract class AbstractChunkProcessor {
     private void addMobSpawners(Chunk chunk) {
         Collection<TileEntity> tileEntities = chunk.getTileEntityMap().values();
         for (TileEntity tileEntity : tileEntities) {
-            if (tileEntity instanceof TileEntityMobSpawner) {
-                Coords coords = new Coords(tileEntity.getPos());
+            TileEntityMobSpawner spawner = TypeHelper.as(tileEntity, TileEntityMobSpawner.class);
+            if (spawner != null) {
+                Coords coords = new Coords(spawner.getPos());
                 boundingBoxCache.addBoundingBox(BoundingBoxMobSpawner.from(coords));
             }
         }
