@@ -3,9 +3,6 @@ package com.irtimaled.bbor.client.renderers;
 import com.irtimaled.bbor.common.models.BoundingBoxVillage;
 import com.irtimaled.bbor.common.models.Coords;
 import com.irtimaled.bbor.config.ConfigManager;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -35,29 +32,24 @@ public class VillageRenderer extends AbstractRenderer<BoundingBoxVillage> {
         OffsetBox bb = new OffsetBox(offsetCenter, offsetCenter)
                 .grow(8, 3, 8);
 
-        renderCuboid(bb, boundingBox.getColor(), false);
+        renderUnfilledCuboid(bb, boundingBox.getColor());
     }
 
     private void renderVillageDoors(BoundingBoxVillage boundingBox) {
         OffsetPoint center = new OffsetPoint(boundingBox.getCenter())
                 .offset(boundingBox.getCenterOffsetX(), 0.0, boundingBox.getCenterOffsetZ());
         Color color = boundingBox.getColor();
-        int colorR = color.getRed();
-        int colorG = color.getGreen();
-        int colorB = color.getBlue();
 
         GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder worldRenderer = tessellator.getBuffer();
-
-        worldRenderer.begin(GL11.GL_LINES, worldRenderer.getVertexFormat());
+        Renderer renderer = Renderer.startLines()
+                .setColor(color);
         for (Coords door : boundingBox.getDoors()) {
             OffsetPoint point = new OffsetPoint(door).offset(0.5, 0, 0.5);
 
-            worldRenderer.pos(point.getX(), point.getY(), point.getZ()).color(colorR, colorG, colorB, 255).endVertex();
-            worldRenderer.pos(center.getX(), center.getY(), center.getZ()).color(colorR, colorG, colorB, 255).endVertex();
+            renderer.addPoint(point)
+                    .addPoint(center);
         }
-        tessellator.draw();
+        renderer.render();
     }
 
     private void renderBoundingBoxVillageAsSphere(BoundingBoxVillage boundingBox) {
@@ -65,26 +57,19 @@ public class VillageRenderer extends AbstractRenderer<BoundingBoxVillage> {
                 .offset(boundingBox.getCenterOffsetX(), 0.0, boundingBox.getCenterOffsetZ());
         int radius = boundingBox.getRadius();
         Color color = boundingBox.getColor();
-        renderSphere(center, radius, color);
-    }
-
-    private void renderSphere(OffsetPoint center, double radius, Color color) {
-        GL11.glEnable(GL11.GL_POINT_SMOOTH);
-        GL11.glPointSize(ConfigManager.villageSphereDotSize.get());
-
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder worldRenderer = tessellator.getBuffer();
-        worldRenderer.begin(GL11.GL_POINTS, DefaultVertexFormats.POSITION_COLOR);
-        for (OffsetPoint point : buildPoints(center, radius)) {
-            worldRenderer.pos(point.getX(), point.getY(), point.getZ())
-                    .color(color.getRed(), color.getGreen(), color.getBlue(), 255)
-                    .endVertex();
-        }
-        tessellator.draw();
-    }
-
-    private Set<OffsetPoint> buildPoints(OffsetPoint center, double radius) {
         int density = ConfigManager.villageSphereDensity.get();
+        int dotSize = ConfigManager.villageSphereDotSize.get();
+
+        GL11.glEnable(GL11.GL_POINT_SMOOTH);
+        GL11.glPointSize(dotSize);
+        Renderer renderer = Renderer.startPoints()
+                .setColor(color);
+        buildPoints(center, (double) radius, density)
+                .forEach(renderer::addPoint);
+        renderer.render();
+    }
+
+    private Set<OffsetPoint> buildPoints(OffsetPoint center, double radius, int density) {
         int segments = 24 + (density * 8);
 
         Set<OffsetPoint> points = new HashSet<>(segments * segments);

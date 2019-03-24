@@ -1,16 +1,14 @@
 package com.irtimaled.bbor.client.gui;
 
 import com.irtimaled.bbor.client.ClientProxy;
+import com.irtimaled.bbor.client.renderers.Renderer;
 import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.config.ConfigManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.IGuiEventListener;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.lwjgl.opengl.GL11;
 
 import java.util.HashSet;
@@ -180,32 +178,20 @@ public class SettingsScreen extends GuiScreen {
     }
 
     private void drawScreen(int top, int bottom) {
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder bufferBuilder = tessellator.getBuffer();
         this.mc.getTextureManager().bindTexture(Gui.OPTIONS_BACKGROUND);
 
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glDisable(GL11.GL_FOG);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
-        bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-        bufferBuilder.pos((double) 0, (double) bottom, 0.0D)
-                .tex((double) ((float) 0 / 32.0F), (double) ((float) bottom / 32.0F))
-                .color(32, 32, 32, 255)
-                .endVertex();
-        bufferBuilder.pos((double) this.width, (double) bottom, 0.0D)
-                .tex((double) ((float) this.width / 32.0F), (double) ((float) bottom / 32.0F))
-                .color(32, 32, 32, 255)
-                .endVertex();
-        bufferBuilder.pos((double) this.width, (double) top, 0.0D)
-                .tex((double) ((float) this.width / 32.0F), (double) ((float) top / 32.0F))
-                .color(32, 32, 32, 255)
-                .endVertex();
-        bufferBuilder.pos((double) 0, (double) top, 0.0D)
-                .tex((double) ((float) 0 / 32.0F), (double) ((float) top / 32.0F))
-                .color(32, 32, 32, 255)
-                .endVertex();
-        tessellator.draw();
+        Renderer.startTextured()
+                .setColor(32, 32, 32)
+                .setAlpha(255)
+                .addPoint(0, bottom, 0, 0, bottom / 32.0F)
+                .addPoint(this.width, bottom, 0, this.width / 32.0F, bottom / 32.0F)
+                .addPoint(this.width, top, 0, this.width / 32.0F, top / 32.0F)
+                .addPoint(0, top, 0, 0, top / 32.0F)
+                .render();
 
         GL11.glDisable(GL11.GL_DEPTH_TEST);
         GL11.glEnable(GL11.GL_BLEND);
@@ -215,43 +201,23 @@ public class SettingsScreen extends GuiScreen {
         GL11.glShadeModel(7425);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
 
-        bufferBuilder.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-        bufferBuilder.pos((double) 0, (double) (top + 4), 0.0D)
-                .tex(0.0D, 1.0D)
-                .color(0, 0, 0, 0)
-                .endVertex();
-        bufferBuilder.pos((double) this.width, (double) (top + 4), 0.0D)
-                .tex(1.0D, 1.0D)
-                .color(0, 0, 0, 0)
-                .endVertex();
-        bufferBuilder.pos((double) this.width, (double) top, 0.0D)
-                .tex(1.0D, 0.0D)
-                .color(0, 0, 0, 255)
-                .endVertex();
-        bufferBuilder.pos((double) 0, (double) top, 0.0D)
-                .tex(0.0D, 0.0D)
-                .color(0, 0, 0, 255)
-                .endVertex();
-        tessellator.draw();
+        Renderer.startTextured()
+                .setAlpha(0)
+                .addPoint(0, top + 4, 0, 0, 1)
+                .addPoint(this.width, top + 4, 0, 1, 1)
+                .setAlpha(255)
+                .addPoint(this.width, top, 0, 1, 0)
+                .addPoint(0, top, 0, 0, 0)
+                .render();
 
-        bufferBuilder.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-        bufferBuilder.pos((double) 0, (double) bottom, 0.0D)
-                .tex(0.0D, 1.0D)
-                .color(0, 0, 0, 255)
-                .endVertex();
-        bufferBuilder.pos((double) this.width, (double) bottom, 0.0D)
-                .tex(1.0D, 1.0D)
-                .color(0, 0, 0, 255)
-                .endVertex();
-        bufferBuilder.pos((double) this.width, (double) (bottom - 4), 0.0D)
-                .tex(1.0D, 0.0D)
-                .color(0, 0, 0, 0)
-                .endVertex();
-        bufferBuilder.pos((double) 0, (double) (bottom - 4), 0.0D)
-                .tex(0.0D, 0.0D)
-                .color(0, 0, 0, 0)
-                .endVertex();
-        tessellator.draw();
+        Renderer.startTextured()
+                .setAlpha(255)
+                .addPoint(0, bottom, 0, 0, 1)
+                .addPoint(this.width, bottom, 0, 1, 1)
+                .setAlpha(0)
+                .addPoint(this.width, bottom - 4, 0, 1, 0)
+                .addPoint(0, bottom - 4, 0, 0, 0)
+                .render();
 
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glShadeModel(7424);

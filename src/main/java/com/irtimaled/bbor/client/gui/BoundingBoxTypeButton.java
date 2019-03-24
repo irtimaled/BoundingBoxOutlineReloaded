@@ -20,17 +20,21 @@ public class BoundingBoxTypeButton extends BoolSettingButton {
         int bottom = top + height - 2;
 
         // top & left
-        drawRect(left, top, right, top + 1, color.getRGB());
-        drawRect(left, top, left + 1, bottom, color.getRGB());
+        drawRectangle(left, top, right, top + 1, color);
+        drawRectangle(left, top, left + 1, bottom, color);
 
         Color darker = color.darker();
         // bottom left & top right
-        drawRect(left, bottom - 2, left + 1, bottom, darker.getRGB());
-        drawRect(right - 1, top, right, top + 1, darker.getRGB());
+        drawRectangle(left, bottom - 2, left + 1, bottom, darker);
+        drawRectangle(right - 1, top, right, top + 1, darker);
 
         Color darkest = darker.darker();
         // bottom & right
-        drawRect(left + 1, bottom - 2, right, bottom, darkest.getRGB());
-        drawRect(right - 1, top + 1, right, bottom, darkest.getRGB());
+        drawRectangle(left + 1, bottom - 2, right, bottom, darkest);
+        drawRectangle(right - 1, top + 1, right, bottom, darkest);
+    }
+
+    private void drawRectangle(int left, int top, int right, int bottom, Color color) {
+        drawRect(left, top, right, bottom, color.getRGB());
     }
 }

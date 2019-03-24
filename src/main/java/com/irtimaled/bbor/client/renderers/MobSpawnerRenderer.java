@@ -5,6 +5,7 @@ import com.irtimaled.bbor.common.models.BoundingBoxMobSpawner;
 import com.irtimaled.bbor.common.models.Colors;
 import com.irtimaled.bbor.common.models.Coords;
 import com.irtimaled.bbor.config.ConfigManager;
+import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 
@@ -16,7 +17,7 @@ public class MobSpawnerRenderer extends AbstractRenderer<BoundingBoxMobSpawner> 
         if (ConfigManager.renderMobSpawnerSpawnArea.get()) {
             renderBoundingBox(boundingBox);
         } else {
-            renderCuboid(new OffsetBox(coords, coords), color, fill());
+            renderCuboid(new OffsetBox(coords, coords), color);
         }
 
         if (!ConfigManager.renderMobSpawnerActivationLines.get()) return;
@@ -29,7 +30,9 @@ public class MobSpawnerRenderer extends AbstractRenderer<BoundingBoxMobSpawner> 
         double distance = centerPoint.getDistance(playerPos);
         if (distance <= 20) {
             Color color = distance > 18 ? Color.RED : distance > 16 ? Colors.DARK_ORANGE : Color.GREEN;
-            renderLine(centerPoint, playerPos.offset(0, 0.1, 0), color);
+
+            GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+            Renderer.startLines().setColor(color).addPoint(centerPoint).addPoint(playerPos.offset(0, 0.1, 0)).render();
         }
     }
 }

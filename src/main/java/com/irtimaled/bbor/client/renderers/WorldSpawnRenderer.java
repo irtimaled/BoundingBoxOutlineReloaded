@@ -16,7 +16,6 @@ public class WorldSpawnRenderer extends AbstractRenderer<BoundingBoxWorldSpawn> 
 
         double y = PlayerCoords.getMaxY(ConfigManager.worldSpawnMaxY.get()) + 0.001F;
 
-        OffsetBox bb = new OffsetBox(minCoords.getX(), y, minCoords.getZ(), maxCoords.getX(), y, maxCoords.getZ());
-        renderCuboid(bb, color, false);
+        renderUnfilledCuboid(new OffsetBox(minCoords.getX(), y, minCoords.getZ(), maxCoords.getX(), y, maxCoords.getZ()), color);
     }
 }
