@@ -6,6 +6,7 @@ import com.irtimaled.bbor.common.models.Coords;
 import net.minecraft.village.Village;
 import net.minecraft.village.VillageCollection;
 import net.minecraft.village.VillageDoorInfo;
+import net.minecraft.world.WorldServer;
 
 import java.util.*;
 
@@ -20,9 +21,10 @@ class VillageProcessor {
         this.boundingBoxCache = boundingBoxCache;
     }
 
-    void process(VillageCollection villageCollection) {
+    void process(WorldServer world) {
         Map<Integer, BoundingBoxVillage> oldVillages = new HashMap<>(villageCache);
         Map<Integer, BoundingBoxVillage> newVillages = new HashMap<>();
+        VillageCollection villageCollection = world.getVillageCollection();
         for (Village village : villageCollection.getVillageList()) {
             int villageId = village.hashCode();
             BoundingBoxVillage newVillage = oldVillages.get(villageId);

@@ -3,6 +3,7 @@ package com.irtimaled.bbor.client;
 import com.irtimaled.bbor.client.events.*;
 import com.irtimaled.bbor.client.gui.SettingsScreen;
 import com.irtimaled.bbor.client.keyboard.KeyListener;
+import com.irtimaled.bbor.common.BoundingBoxCache;
 import com.irtimaled.bbor.common.CommonProxy;
 import com.irtimaled.bbor.common.EventBus;
 import com.irtimaled.bbor.common.VillageColorCache;
@@ -39,12 +40,12 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void init() {
         super.init();
-        EventBus.subscribe(Render.class, e -> render(e.getDimensionId()));
-        EventBus.subscribe(ConnectedToRemoteServer.class, e -> connectedToServer(e.getInternetAddress()));
+        EventBus.subscribe(Render.class, this::render);
+        EventBus.subscribe(ConnectedToRemoteServer.class, this::connectedToServer);
         EventBus.subscribe(DisconnectedFromRemoteServer.class, e -> disconnectedFromServer());
-        EventBus.subscribe(InitializeClientReceived.class, e -> setWorldData(e.getSeed(), e.getSpawnX(), e.getSpawnZ()));
-        EventBus.subscribe(AddBoundingBoxReceived.class, e -> addBoundingBox(e.getDimensionId(), e.getKey(), e.getBoundingBoxes()));
-        EventBus.subscribe(RemoveBoundingBoxReceived.class, e -> removeBoundingBox(e.getDimensionId(), e.getKey()));
+        EventBus.subscribe(InitializeClientReceived.class, this::onInitializeClientReceived);
+        EventBus.subscribe(AddBoundingBoxReceived.class, this::addBoundingBox);
+        EventBus.subscribe(RemoveBoundingBoxReceived.class, this::onRemoveBoundingBoxReceived);
 
         renderer = new ClientRenderer(this::getCache);
         KeyListener.init();
@@ -56,7 +57,8 @@ public class ClientProxy extends CommonProxy {
         }
     }
 
-    private void connectedToServer(InetSocketAddress internetAddress) {
+    private void connectedToServer(ConnectedToRemoteServer event) {
+        InetSocketAddress internetAddress = event.getInternetAddress();
         NBTFileParser.loadLocalDatFiles(internetAddress.getHostName(), internetAddress.getPort(), this::setWorldData, this::getOrCreateCache);
     }
 
@@ -65,6 +67,24 @@ public class ClientProxy extends CommonProxy {
         if (ConfigManager.keepCacheBetweenSessions.get()) return;
         VillageColorCache.clear();
         clearCaches();
+    }
+
+    private void addBoundingBox(AddBoundingBoxReceived event) {
+        BoundingBoxCache cache = getCache(event.getDimensionId());
+        if (cache == null) return;
+
+        cache.addBoundingBoxes(event.getKey(), event.getBoundingBoxes());
+    }
+
+    private void onRemoveBoundingBoxReceived(RemoveBoundingBoxReceived event) {
+        super.removeBoundingBox(event.getDimensionId(), event.getKey());
+    }
+
+    private void onInitializeClientReceived(InitializeClientReceived event) {
+        long seed = event.getSeed();
+        int spawnX = event.getSpawnX();
+        int spawnZ = event.getSpawnZ();
+        setWorldData(seed, spawnX, spawnZ);
     }
 
     @Override

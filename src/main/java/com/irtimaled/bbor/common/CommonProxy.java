@@ -10,9 +10,10 @@ import com.irtimaled.bbor.common.messages.AddBoundingBox;
 import com.irtimaled.bbor.common.messages.InitializeClient;
 import com.irtimaled.bbor.common.messages.PayloadBuilder;
 import com.irtimaled.bbor.common.messages.RemoveBoundingBox;
-import com.irtimaled.bbor.common.models.*;
-import net.minecraft.world.WorldServer;
-import net.minecraft.world.chunk.Chunk;
+import com.irtimaled.bbor.common.models.AbstractBoundingBox;
+import com.irtimaled.bbor.common.models.BoundingBoxMobSpawner;
+import com.irtimaled.bbor.common.models.ServerPlayer;
+import com.irtimaled.bbor.common.models.WorldData;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -29,55 +30,63 @@ public class CommonProxy {
     private final Map<Integer, BoundingBoxCache> dimensionCache = new ConcurrentHashMap<>();
 
     public void init() {
-        EventBus.subscribe(WorldLoaded.class, e -> worldLoaded(e.getWorld()));
-        EventBus.subscribe(ChunkLoaded.class, e -> chunkLoaded(e.getChunk()));
-        EventBus.subscribe(MobSpawnerBroken.class, e -> mobSpawnerBroken(e.getDimensionId(), e.getPos()));
-        EventBus.subscribe(PlayerLoggedIn.class, e -> playerLoggedIn(e.getPlayer()));
-        EventBus.subscribe(PlayerLoggedOut.class, e -> playerLoggedOut(e.getPlayer()));
-        EventBus.subscribe(PlayerSubscribed.class, e -> sendBoundingBoxes(e.getPlayer()));
-        EventBus.subscribe(ServerWorldTick.class, e -> serverWorldTick(e.getWorld()));
+        EventBus.subscribe(WorldLoaded.class, this::worldLoaded);
+        EventBus.subscribe(ChunkLoaded.class, this::chunkLoaded);
+        EventBus.subscribe(MobSpawnerBroken.class, this::mobSpawnerBroken);
+        EventBus.subscribe(PlayerLoggedIn.class, this::playerLoggedIn);
+        EventBus.subscribe(PlayerLoggedOut.class, this::playerLoggedOut);
+        EventBus.subscribe(PlayerSubscribed.class, this::onPlayerSubscribed);
+        EventBus.subscribe(ServerWorldTick.class, this::serverWorldTick);
         EventBus.subscribe(ServerTick.class, e -> serverTick());
-        EventBus.subscribe(VillageRemoved.class, e -> sendRemoveBoundingBox(e.getDimensionId(), e.getVillage()));
+        EventBus.subscribe(VillageRemoved.class, this::onVillageRemoved);
     }
 
     protected void setWorldData(long seed, int spawnX, int spawnZ) {
         worldData = new WorldData(seed, spawnX, spawnZ);
     }
 
-    private void worldLoaded(WorldServer world) {
-        int dimensionId = world.dimension.getType().getId();
+    private void worldLoaded(WorldLoaded event) {
+        int dimensionId = event.getDimensionId();
+        long seed = event.getSeed();
         BoundingBoxCache boundingBoxCache = getOrCreateCache(dimensionId);
         AbstractChunkProcessor chunkProcessor = null;
-        if (dimensionId == Dimensions.OVERWORLD) {
-            setWorldData(world.getSeed(), world.getWorldInfo().getSpawnX(), world.getWorldInfo().getSpawnZ());
-            chunkProcessor = new OverworldChunkProcessor(boundingBoxCache);
+        switch (dimensionId) {
+            case Dimensions.OVERWORLD:
+                setWorldData(seed, event.getSpawnX(), event.getSpawnZ());
+                chunkProcessor = new OverworldChunkProcessor(boundingBoxCache);
+                break;
+            case Dimensions.NETHER:
+                chunkProcessor = new NetherChunkProcessor(boundingBoxCache);
+                break;
+            case Dimensions.THE_END:
+                chunkProcessor = new EndChunkProcessor(boundingBoxCache);
+                break;
         }
-        if (dimensionId == Dimensions.NETHER) {
-            chunkProcessor = new NetherChunkProcessor(boundingBoxCache);
-        }
-        if (dimensionId == Dimensions.THE_END) {
-            chunkProcessor = new EndChunkProcessor(boundingBoxCache);
-        }
-        Logger.info("create world dimension: %s, %s (seed: %d)", dimensionId, world.getClass().toString(), world.getSeed());
+        Logger.info("create world dimension: %s (seed: %d)", dimensionId, seed);
         chunkProcessors.put(dimensionId, chunkProcessor);
         villageProcessors.put(dimensionId, new VillageProcessor(dimensionId, boundingBoxCache));
     }
 
-    private void chunkLoaded(Chunk chunk) {
-        int dimensionId = chunk.getWorld().dimension.getType().getId();
-        AbstractChunkProcessor chunkProcessor = chunkProcessors.get(dimensionId);
-        if (chunkProcessor != null) {
-            chunkProcessor.process(chunk);
-        }
+    private void chunkLoaded(ChunkLoaded event) {
+        AbstractChunkProcessor chunkProcessor = chunkProcessors.get(event.getDimensionId());
+        if (chunkProcessor == null) return;
+
+        chunkProcessor.process(event.getChunk());
     }
 
-    private void playerLoggedIn(ServerPlayer player) {
+    private void playerLoggedIn(PlayerLoggedIn event) {
+        ServerPlayer player = event.getPlayer();
         player.sendPacket(InitializeClient.getPayload(worldData));
     }
 
-    private void playerLoggedOut(ServerPlayer player) {
+    private void playerLoggedOut(PlayerLoggedOut event) {
+        ServerPlayer player = event.getPlayer();
         players.remove(player);
         playerBoundingBoxesCache.remove(player);
+    }
+
+    private void onVillageRemoved(VillageRemoved event) {
+        sendRemoveBoundingBox(event.getDimensionId(), event.getVillage());
     }
 
     private void sendRemoveBoundingBox(int dimensionId, AbstractBoundingBox boundingBox) {
@@ -95,7 +104,8 @@ public class CommonProxy {
         }
     }
 
-    private void sendBoundingBoxes(ServerPlayer player) {
+    private void onPlayerSubscribed(PlayerSubscribed event) {
+        ServerPlayer player = event.getPlayer();
         players.add(player);
         sendToPlayer(player, getCache(player.getDimensionId()));
     }
@@ -128,13 +138,6 @@ public class CommonProxy {
         return cacheSubset;
     }
 
-    protected void addBoundingBox(int dimensionId, AbstractBoundingBox key, Set<AbstractBoundingBox> boundingBoxes) {
-        BoundingBoxCache cache = getCache(dimensionId);
-        if (cache == null) return;
-
-        cache.addBoundingBoxes(key, boundingBoxes);
-    }
-
     protected void removeBoundingBox(int dimensionId, AbstractBoundingBox key) {
         BoundingBoxCache cache = getCache(dimensionId);
         if (cache == null) return;
@@ -142,8 +145,9 @@ public class CommonProxy {
         cache.removeBoundingBox(key);
     }
 
-    private void mobSpawnerBroken(int dimensionId, Coords pos) {
-        AbstractBoundingBox boundingBox = BoundingBoxMobSpawner.from(pos);
+    private void mobSpawnerBroken(MobSpawnerBroken event) {
+        int dimensionId = event.getDimensionId();
+        AbstractBoundingBox boundingBox = BoundingBoxMobSpawner.from(event.getPos());
         removeBoundingBox(dimensionId, boundingBox);
         sendRemoveBoundingBox(dimensionId, boundingBox);
     }
@@ -154,12 +158,11 @@ public class CommonProxy {
         }
     }
 
-    private void serverWorldTick(WorldServer world) {
-        int dimensionId = world.dimension.getType().getId();
-        VillageProcessor villageProcessor = villageProcessors.get(dimensionId);
+    private void serverWorldTick(ServerWorldTick event) {
+        VillageProcessor villageProcessor = villageProcessors.get(event.getDimensionId());
         if (villageProcessor == null) return;
 
-        villageProcessor.process(world.getVillageCollection());
+        villageProcessor.process(event.getWorld());
     }
 
     protected BoundingBoxCache getCache(int dimensionId) {
