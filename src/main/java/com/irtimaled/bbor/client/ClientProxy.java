@@ -8,8 +8,6 @@ import com.irtimaled.bbor.common.EventBus;
 import com.irtimaled.bbor.common.VillageColorCache;
 import com.irtimaled.bbor.config.ConfigManager;
 import com.irtimaled.bbor.config.Setting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.dimension.DimensionType;
 
 import java.net.InetSocketAddress;
@@ -42,7 +40,7 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void init() {
         super.init();
-        EventBus.subscribe(Render.class, e -> render(e.getPartialTicks()));
+        EventBus.subscribe(Render.class, e -> render(e.getDimensionType()));
         EventBus.subscribe(ConnectedToRemoteServer.class, e -> connectedToServer(e.getInternetAddress()));
         EventBus.subscribe(DisconnectedFromRemoteServer.class, e -> disconnectedFromServer());
         EventBus.subscribe(InitializeClientReceived.class, e -> setWorldData(e.getSeed(), e.getSpawnX(), e.getSpawnZ()));
@@ -53,12 +51,9 @@ public class ClientProxy extends CommonProxy {
         KeyListener.init();
     }
 
-    private void render(float partialTicks) {
-        EntityPlayer entityPlayer = Minecraft.getInstance().player;
-        PlayerCoords.setPlayerPosition(partialTicks, entityPlayer);
-
+    private void render(DimensionType dimensionType) {
         if (active) {
-            renderer.render(DimensionType.getById(entityPlayer.dimension), ConfigManager.outerBoxesOnly.get());
+            renderer.render(dimensionType, ConfigManager.outerBoxesOnly.get());
         }
     }
 

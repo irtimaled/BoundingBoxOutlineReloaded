@@ -10,12 +10,7 @@ import com.irtimaled.bbor.common.messages.AddBoundingBox;
 import com.irtimaled.bbor.common.messages.InitializeClient;
 import com.irtimaled.bbor.common.messages.PayloadBuilder;
 import com.irtimaled.bbor.common.messages.RemoveBoundingBox;
-import com.irtimaled.bbor.common.models.BoundingBox;
-import com.irtimaled.bbor.common.models.BoundingBoxMobSpawner;
-import com.irtimaled.bbor.common.models.Coords;
-import com.irtimaled.bbor.common.models.WorldData;
-import io.netty.channel.local.LocalAddress;
-import net.minecraft.entity.player.EntityPlayerMP;
+import com.irtimaled.bbor.common.models.*;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
@@ -29,8 +24,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 public class CommonProxy {
-    private Set<EntityPlayerMP> players = new HashSet<>();
-    private Map<EntityPlayerMP, Set<BoundingBox>> playerBoundingBoxesCache = new HashMap<>();
+    private Set<ServerPlayer> players = new HashSet<>();
+    private Map<ServerPlayer, Set<BoundingBox>> playerBoundingBoxesCache = new HashMap<>();
     private Map<DimensionType, VillageProcessor> villageProcessors = new HashMap<>();
     private Map<DimensionType, ChunkProcessor> chunkProcessors = new HashMap<>();
     private WorldData worldData = null;
@@ -81,23 +76,22 @@ public class CommonProxy {
         }
     }
 
-    private void playerLoggedIn(EntityPlayerMP player) {
-        if (player.connection.netManager.getRemoteAddress() instanceof LocalAddress) return;
-        player.connection.sendPacket(InitializeClient.getPayload(worldData).build());
+    private void playerLoggedIn(ServerPlayer player) {
+        player.sendPacket(InitializeClient.getPayload(worldData));
     }
 
-    private void playerLoggedOut(EntityPlayerMP player) {
+    private void playerLoggedOut(ServerPlayer player) {
         players.remove(player);
         playerBoundingBoxesCache.remove(player);
     }
 
     private void sendRemoveBoundingBox(DimensionType dimensionType, BoundingBox boundingBox) {
-        PayloadBuilder payloadBuilder = RemoveBoundingBox.getPayload(dimensionType, boundingBox);
-        if (payloadBuilder == null) return;
+        PayloadBuilder payload = RemoveBoundingBox.getPayload(dimensionType, boundingBox);
+        if (payload == null) return;
 
-        for (EntityPlayerMP player : players) {
-            if (DimensionType.getById(player.dimension) == dimensionType) {
-                player.connection.sendPacket(payloadBuilder.build());
+        for (ServerPlayer player : players) {
+            if (player.getDimensionType() == dimensionType) {
+                player.sendPacket(payload);
 
                 if (playerBoundingBoxesCache.containsKey(player)) {
                     playerBoundingBoxesCache.get(player).remove(boundingBox);
@@ -106,24 +100,24 @@ public class CommonProxy {
         }
     }
 
-    private void sendBoundingBoxes(EntityPlayerMP player) {
-        DimensionType dimensionType = DimensionType.getById(player.dimension);
+    private void sendBoundingBoxes(ServerPlayer player) {
+        DimensionType dimensionType = player.getDimensionType();
         players.add(player);
         sendToPlayer(player, getCache(dimensionType));
     }
 
-    private void sendToPlayer(EntityPlayerMP player, BoundingBoxCache boundingBoxCache) {
+    private void sendToPlayer(ServerPlayer player, BoundingBoxCache boundingBoxCache) {
         if (boundingBoxCache == null) return;
 
         Map<BoundingBox, Set<BoundingBox>> cacheSubset = getBoundingBoxMap(player, boundingBoxCache.getBoundingBoxes());
 
-        DimensionType dimensionType = DimensionType.getById(player.dimension);
+        DimensionType dimensionType = player.getDimensionType();
 
         for (BoundingBox key : cacheSubset.keySet()) {
             Set<BoundingBox> boundingBoxes = cacheSubset.get(key);
-            PayloadBuilder payloadBuilder = AddBoundingBox.getPayload(dimensionType, key, boundingBoxes);
-            if (payloadBuilder != null)
-                player.connection.sendPacket(payloadBuilder.build());
+            PayloadBuilder payload = AddBoundingBox.getPayload(dimensionType, key, boundingBoxes);
+            if (payload != null)
+                player.sendPacket(payload);
 
             if (!playerBoundingBoxesCache.containsKey(player)) {
                 playerBoundingBoxesCache.put(player, new HashSet<>());
@@ -132,7 +126,7 @@ public class CommonProxy {
         }
     }
 
-    private Map<BoundingBox, Set<BoundingBox>> getBoundingBoxMap(EntityPlayerMP player, Map<BoundingBox, Set<BoundingBox>> boundingBoxMap) {
+    private Map<BoundingBox, Set<BoundingBox>> getBoundingBoxMap(ServerPlayer player, Map<BoundingBox, Set<BoundingBox>> boundingBoxMap) {
         Map<BoundingBox, Set<BoundingBox>> cacheSubset = new HashMap<>();
         for (BoundingBox key : boundingBoxMap.keySet()) {
             if (!playerBoundingBoxesCache.containsKey(player) || !playerBoundingBoxesCache.get(player).contains(key)) {
@@ -156,8 +150,8 @@ public class CommonProxy {
     }
 
     private void serverTick() {
-        for (EntityPlayerMP player : players) {
-            DimensionType dimensionType = DimensionType.getById(player.dimension);
+        for (ServerPlayer player : players) {
+            DimensionType dimensionType = player.getDimensionType();
             sendToPlayer(player, getCache(dimensionType));
         }
     }

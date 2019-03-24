@@ -8,7 +8,7 @@ public class PlayerCoords {
     private static double z;
     private static double activeY;
 
-    static void setPlayerPosition(double partialTicks, EntityPlayer entityPlayer) {
+    public static void setPlayerPosition(double partialTicks, EntityPlayer entityPlayer) {
         x = entityPlayer.lastTickPosX + (entityPlayer.posX - entityPlayer.lastTickPosX) * partialTicks;
         y = entityPlayer.lastTickPosY + (entityPlayer.posY - entityPlayer.lastTickPosY) * partialTicks;
         z = entityPlayer.lastTickPosZ + (entityPlayer.posZ - entityPlayer.lastTickPosZ) * partialTicks;

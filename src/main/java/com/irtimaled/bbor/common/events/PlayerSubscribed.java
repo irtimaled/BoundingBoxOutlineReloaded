@@ -1,15 +1,15 @@
 package com.irtimaled.bbor.common.events;
 
-import net.minecraft.entity.player.EntityPlayerMP;
+import com.irtimaled.bbor.common.models.ServerPlayer;
 
 public class PlayerSubscribed {
-    private final EntityPlayerMP player;
+    private final ServerPlayer player;
 
-    public PlayerSubscribed(EntityPlayerMP player) {
+    public PlayerSubscribed(ServerPlayer player) {
         this.player = player;
     }
 
-    public EntityPlayerMP getPlayer() {
+    public ServerPlayer getPlayer() {
         return player;
     }
 }

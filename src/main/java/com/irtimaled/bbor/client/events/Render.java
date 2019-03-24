@@ -1,13 +1,15 @@
 package com.irtimaled.bbor.client.events;
 
-public class Render {
-    private final float partialTicks;
+import net.minecraft.world.dimension.DimensionType;
 
-    public Render(float partialTicks) {
-        this.partialTicks = partialTicks;
+public class Render {
+    private DimensionType dimensionType;
+
+    public Render(DimensionType dimensionType) {
+        this.dimensionType = dimensionType;
     }
 
-    public float getPartialTicks() {
-        return partialTicks;
+    public DimensionType getDimensionType() {
+        return dimensionType;
     }
 }
