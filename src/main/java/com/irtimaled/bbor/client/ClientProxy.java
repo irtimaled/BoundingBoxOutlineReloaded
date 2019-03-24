@@ -24,6 +24,8 @@ public class ClientProxy extends CommonProxy {
                 .onKeyPressHandler(ClientProxy::toggleOuterBoxesOnly);
     }
 
+    private boolean ready;
+
     public static void toggleActive() {
         active = !active;
         if (active)
@@ -51,10 +53,10 @@ public class ClientProxy extends CommonProxy {
         KeyListener.init();
     }
 
-    private void render(int dimensionId) {
-        if (active) {
-            renderer.render(dimensionId, ConfigManager.outerBoxesOnly.get());
-        }
+    private void render(Render event) {
+        if (!active || !ready) return;
+
+        renderer.render(event.getDimensionId(), ConfigManager.outerBoxesOnly.get());
     }
 
     private void connectedToServer(ConnectedToRemoteServer event) {
@@ -63,6 +65,7 @@ public class ClientProxy extends CommonProxy {
     }
 
     private void disconnectedFromServer() {
+        ready = false;
         active = false;
         if (ConfigManager.keepCacheBetweenSessions.get()) return;
         VillageColorCache.clear();
@@ -91,5 +94,6 @@ public class ClientProxy extends CommonProxy {
     protected void setWorldData(long seed, int spawnX, int spawnZ) {
         super.setWorldData(seed, spawnX, spawnZ);
         renderer.setWorldData(seed, spawnX, spawnZ);
+        ready = true;
     }
 }
