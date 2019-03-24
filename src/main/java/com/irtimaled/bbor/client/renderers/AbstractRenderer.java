@@ -1,6 +1,6 @@
 package com.irtimaled.bbor.client.renderers;
 
-import com.irtimaled.bbor.common.models.BoundingBox;
+import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.config.ConfigManager;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
@@ -9,7 +9,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 
-public abstract class Renderer<T extends BoundingBox> {
+public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
     public abstract void render(T boundingBox);
 
     void renderBoundingBox(T boundingBox) {

@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 
 class BoundingBoxSerializer {
-    private static final Map<Class, BiConsumer<BoundingBox, PayloadBuilder>> serializers = new HashMap<>();
+    private static final Map<Class, BiConsumer<AbstractBoundingBox, PayloadBuilder>> serializers = new HashMap<>();
 
     static {
         serializers.put(BoundingBoxVillage.class, (bb, pb) -> serializeVillage((BoundingBoxVillage) bb, pb));
@@ -15,12 +15,12 @@ class BoundingBoxSerializer {
         serializers.put(BoundingBoxMobSpawner.class, (bb, pb) -> serializeMobSpawner((BoundingBoxMobSpawner) bb, pb));
     }
 
-    static boolean canSerialize(BoundingBox key) {
+    static boolean canSerialize(AbstractBoundingBox key) {
         return serializers.containsKey(key.getClass());
     }
 
-    static void serialize(BoundingBox boundingBox, PayloadBuilder builder) {
-        BiConsumer<BoundingBox, PayloadBuilder> serializer = serializers.get(boundingBox.getClass());
+    static void serialize(AbstractBoundingBox boundingBox, PayloadBuilder builder) {
+        BiConsumer<AbstractBoundingBox, PayloadBuilder> serializer = serializers.get(boundingBox.getClass());
         if (serializer == null) return;
 
         serializer.accept(boundingBox, builder);

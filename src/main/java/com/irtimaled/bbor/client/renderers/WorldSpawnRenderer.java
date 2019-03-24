@@ -7,7 +7,7 @@ import com.irtimaled.bbor.config.ConfigManager;
 
 import java.awt.*;
 
-public class WorldSpawnRenderer extends Renderer<BoundingBoxWorldSpawn> {
+public class WorldSpawnRenderer extends AbstractRenderer<BoundingBoxWorldSpawn> {
     @Override
     public void render(BoundingBoxWorldSpawn boundingBox) {
         Color color = boundingBox.getColor();

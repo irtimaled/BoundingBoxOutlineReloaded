@@ -1,6 +1,6 @@
 package com.irtimaled.bbor.config;
 
-public class Setting<T> extends SettingBase {
+public class Setting<T> extends AbstractSetting {
     private T value;
 
     public Setting(char type, T value) {

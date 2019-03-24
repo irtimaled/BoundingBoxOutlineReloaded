@@ -1,7 +1,7 @@
 package com.irtimaled.bbor.common;
 
 import com.irtimaled.bbor.Logger;
-import com.irtimaled.bbor.common.chunkProcessors.ChunkProcessor;
+import com.irtimaled.bbor.common.chunkProcessors.AbstractChunkProcessor;
 import com.irtimaled.bbor.common.chunkProcessors.EndChunkProcessor;
 import com.irtimaled.bbor.common.chunkProcessors.NetherChunkProcessor;
 import com.irtimaled.bbor.common.chunkProcessors.OverworldChunkProcessor;
@@ -22,9 +22,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class CommonProxy {
     private Set<ServerPlayer> players = new HashSet<>();
-    private Map<ServerPlayer, Set<BoundingBox>> playerBoundingBoxesCache = new HashMap<>();
+    private Map<ServerPlayer, Set<AbstractBoundingBox>> playerBoundingBoxesCache = new HashMap<>();
     private Map<Integer, VillageProcessor> villageProcessors = new HashMap<>();
-    private Map<Integer, ChunkProcessor> chunkProcessors = new HashMap<>();
+    private Map<Integer, AbstractChunkProcessor> chunkProcessors = new HashMap<>();
     private WorldData worldData = null;
     private final Map<Integer, BoundingBoxCache> dimensionCache = new ConcurrentHashMap<>();
 
@@ -47,7 +47,7 @@ public class CommonProxy {
     private void worldLoaded(WorldServer world) {
         int dimensionId = world.dimension.getType().getId();
         BoundingBoxCache boundingBoxCache = getOrCreateCache(dimensionId);
-        ChunkProcessor chunkProcessor = null;
+        AbstractChunkProcessor chunkProcessor = null;
         if (dimensionId == Dimensions.OVERWORLD) {
             setWorldData(world.getSeed(), world.getWorldInfo().getSpawnX(), world.getWorldInfo().getSpawnZ());
             chunkProcessor = new OverworldChunkProcessor(boundingBoxCache);
@@ -65,7 +65,7 @@ public class CommonProxy {
 
     private void chunkLoaded(Chunk chunk) {
         int dimensionId = chunk.getWorld().dimension.getType().getId();
-        ChunkProcessor chunkProcessor = chunkProcessors.get(dimensionId);
+        AbstractChunkProcessor chunkProcessor = chunkProcessors.get(dimensionId);
         if (chunkProcessor != null) {
             chunkProcessor.process(chunk);
         }
@@ -80,7 +80,7 @@ public class CommonProxy {
         playerBoundingBoxesCache.remove(player);
     }
 
-    private void sendRemoveBoundingBox(int dimensionId, BoundingBox boundingBox) {
+    private void sendRemoveBoundingBox(int dimensionId, AbstractBoundingBox boundingBox) {
         PayloadBuilder payload = RemoveBoundingBox.getPayload(dimensionId, boundingBox);
         if (payload == null) return;
 
@@ -103,10 +103,10 @@ public class CommonProxy {
     private void sendToPlayer(ServerPlayer player, BoundingBoxCache boundingBoxCache) {
         if (boundingBoxCache == null) return;
 
-        Map<BoundingBox, Set<BoundingBox>> cacheSubset = getBoundingBoxMap(player, boundingBoxCache.getBoundingBoxes());
+        Map<AbstractBoundingBox, Set<AbstractBoundingBox>> cacheSubset = getBoundingBoxMap(player, boundingBoxCache.getBoundingBoxes());
 
-        for (BoundingBox key : cacheSubset.keySet()) {
-            Set<BoundingBox> boundingBoxes = cacheSubset.get(key);
+        for (AbstractBoundingBox key : cacheSubset.keySet()) {
+            Set<AbstractBoundingBox> boundingBoxes = cacheSubset.get(key);
             PayloadBuilder payload = AddBoundingBox.getPayload(player.getDimensionId(), key, boundingBoxes);
             if (payload != null)
                 player.sendPacket(payload);
@@ -118,9 +118,9 @@ public class CommonProxy {
         }
     }
 
-    private Map<BoundingBox, Set<BoundingBox>> getBoundingBoxMap(ServerPlayer player, Map<BoundingBox, Set<BoundingBox>> boundingBoxMap) {
-        Map<BoundingBox, Set<BoundingBox>> cacheSubset = new HashMap<>();
-        for (BoundingBox key : boundingBoxMap.keySet()) {
+    private Map<AbstractBoundingBox, Set<AbstractBoundingBox>> getBoundingBoxMap(ServerPlayer player, Map<AbstractBoundingBox, Set<AbstractBoundingBox>> boundingBoxMap) {
+        Map<AbstractBoundingBox, Set<AbstractBoundingBox>> cacheSubset = new HashMap<>();
+        for (AbstractBoundingBox key : boundingBoxMap.keySet()) {
             if (!playerBoundingBoxesCache.containsKey(player) || !playerBoundingBoxesCache.get(player).contains(key)) {
                 cacheSubset.put(key, boundingBoxMap.get(key));
             }
@@ -128,14 +128,14 @@ public class CommonProxy {
         return cacheSubset;
     }
 
-    protected void addBoundingBox(int dimensionId, BoundingBox key, Set<BoundingBox> boundingBoxes) {
+    protected void addBoundingBox(int dimensionId, AbstractBoundingBox key, Set<AbstractBoundingBox> boundingBoxes) {
         BoundingBoxCache cache = getCache(dimensionId);
         if (cache == null) return;
 
         cache.addBoundingBoxes(key, boundingBoxes);
     }
 
-    protected void removeBoundingBox(int dimensionId, BoundingBox key) {
+    protected void removeBoundingBox(int dimensionId, AbstractBoundingBox key) {
         BoundingBoxCache cache = getCache(dimensionId);
         if (cache == null) return;
 
@@ -143,7 +143,7 @@ public class CommonProxy {
     }
 
     private void mobSpawnerBroken(int dimensionId, Coords pos) {
-        BoundingBox boundingBox = BoundingBoxMobSpawner.from(pos);
+        AbstractBoundingBox boundingBox = BoundingBoxMobSpawner.from(pos);
         removeBoundingBox(dimensionId, boundingBox);
         sendRemoveBoundingBox(dimensionId, boundingBox);
     }

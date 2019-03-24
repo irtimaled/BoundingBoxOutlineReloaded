@@ -7,7 +7,7 @@ import com.irtimaled.bbor.common.VillageHelper;
 import java.awt.*;
 import java.util.Set;
 
-public class BoundingBoxVillage extends BoundingBox {
+public class BoundingBoxVillage extends AbstractBoundingBox {
     private final Coords center;
     private final Integer radius;
     private final boolean spawnsIronGolems;

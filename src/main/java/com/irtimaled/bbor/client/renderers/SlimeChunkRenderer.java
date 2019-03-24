@@ -6,7 +6,7 @@ import com.irtimaled.bbor.config.ConfigManager;
 
 import java.awt.*;
 
-public class SlimeChunkRenderer extends Renderer<BoundingBoxSlimeChunk> {
+public class SlimeChunkRenderer extends AbstractRenderer<BoundingBoxSlimeChunk> {
     @Override
     public void render(BoundingBoxSlimeChunk boundingBox) {
         OffsetBox bb = new OffsetBox(boundingBox.getMinCoords(), boundingBox.getMaxCoords());

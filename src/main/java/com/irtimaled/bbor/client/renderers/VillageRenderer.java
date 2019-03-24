@@ -12,7 +12,7 @@ import java.awt.*;
 import java.util.HashSet;
 import java.util.Set;
 
-public class VillageRenderer extends Renderer<BoundingBoxVillage> {
+public class VillageRenderer extends AbstractRenderer<BoundingBoxVillage> {
     @Override
     public void render(BoundingBoxVillage boundingBox) {
         if (ConfigManager.renderVillageAsSphere.get()) {

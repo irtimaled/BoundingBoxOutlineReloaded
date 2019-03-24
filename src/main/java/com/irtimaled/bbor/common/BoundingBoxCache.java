@@ -1,6 +1,6 @@
 package com.irtimaled.bbor.common;
 
-import com.irtimaled.bbor.common.models.BoundingBox;
+import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -8,9 +8,9 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class BoundingBoxCache {
-    private Map<BoundingBox, Set<BoundingBox>> cache = new ConcurrentHashMap<>();
+    private Map<AbstractBoundingBox, Set<AbstractBoundingBox>> cache = new ConcurrentHashMap<>();
 
-    public Map<BoundingBox, Set<BoundingBox>> getBoundingBoxes() {
+    public Map<AbstractBoundingBox, Set<AbstractBoundingBox>> getBoundingBoxes() {
         return cache;
     }
 
@@ -18,23 +18,23 @@ public class BoundingBoxCache {
         cache.clear();
     }
 
-    public boolean isCached(BoundingBox key) {
+    public boolean isCached(AbstractBoundingBox key) {
         return cache.containsKey(key);
     }
 
-    public void addBoundingBoxes(BoundingBox key, Set<BoundingBox> boundingBoxes) {
+    public void addBoundingBoxes(AbstractBoundingBox key, Set<AbstractBoundingBox> boundingBoxes) {
         cache.put(key, boundingBoxes);
     }
 
-    public void addBoundingBox(BoundingBox key) {
+    public void addBoundingBox(AbstractBoundingBox key) {
         if(isCached(key)) return;
 
-        Set<BoundingBox> boundingBoxes = new HashSet<>();
+        Set<AbstractBoundingBox> boundingBoxes = new HashSet<>();
         boundingBoxes.add(key);
         addBoundingBoxes(key, boundingBoxes);
     }
 
-    void removeBoundingBox(BoundingBox key) {
+    void removeBoundingBox(AbstractBoundingBox key) {
         cache.remove(key);
     }
 }

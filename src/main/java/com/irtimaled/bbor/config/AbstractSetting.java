@@ -1,13 +1,13 @@
 package com.irtimaled.bbor.config;
 
-public abstract class SettingBase {
+public abstract class AbstractSetting {
     String comment;
     String category;
     String name;
 
     private final char type;
 
-    public SettingBase(char type) {
+    public AbstractSetting(char type) {
         this.type = type;
     }
 

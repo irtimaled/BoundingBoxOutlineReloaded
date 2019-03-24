@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 class BoundingBoxDeserializer {
-    static BoundingBox deserialize(PayloadReader reader) {
+    static AbstractBoundingBox deserialize(PayloadReader reader) {
         if (!reader.isReadable(2)) return null;
 
         char type = reader.readChar();
@@ -23,7 +23,7 @@ class BoundingBoxDeserializer {
         return null;
     }
 
-    private static BoundingBox deserializeStructure(PayloadReader reader) {
+    private static AbstractBoundingBox deserializeStructure(PayloadReader reader) {
         BoundingBoxType type = BoundingBoxType.getByNameHash(reader.readInt());
         if (type == null) return null;
         Coords minCoords = reader.readCoords();
@@ -31,7 +31,7 @@ class BoundingBoxDeserializer {
         return BoundingBoxStructure.from(minCoords, maxCoords, type);
     }
 
-    private static BoundingBox deserializeVillage(PayloadReader reader) {
+    private static AbstractBoundingBox deserializeVillage(PayloadReader reader) {
         Coords center = reader.readCoords();
         int radius = reader.readVarInt();
         boolean spawnsIronGolems = reader.readBoolean();
@@ -43,7 +43,7 @@ class BoundingBoxDeserializer {
         return BoundingBoxVillage.from(center, radius, color, spawnsIronGolems, doors);
     }
 
-    private static BoundingBox deserializeMobSpawner(PayloadReader reader) {
+    private static AbstractBoundingBox deserializeMobSpawner(PayloadReader reader) {
         return BoundingBoxMobSpawner.from(reader.readCoords());
     }
 }

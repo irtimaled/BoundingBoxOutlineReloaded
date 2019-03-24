@@ -2,7 +2,7 @@ package com.irtimaled.bbor.common.models;
 
 import com.irtimaled.bbor.common.BoundingBoxType;
 
-public class BoundingBoxWorldSpawn extends BoundingBox {
+public class BoundingBoxWorldSpawn extends AbstractBoundingBox {
     private BoundingBoxWorldSpawn(Coords minCoords, Coords maxCoords, BoundingBoxType type) {
         super(minCoords, maxCoords, type);
     }

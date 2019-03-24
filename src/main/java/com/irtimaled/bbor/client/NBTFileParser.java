@@ -4,7 +4,7 @@ import com.irtimaled.bbor.Logger;
 import com.irtimaled.bbor.common.BoundingBoxCache;
 import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.Dimensions;
-import com.irtimaled.bbor.common.models.BoundingBox;
+import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBoxStructure;
 import com.irtimaled.bbor.common.models.BoundingBoxVillage;
 import com.irtimaled.bbor.common.models.Coords;
@@ -95,8 +95,8 @@ class NBTFileParser {
         int loadedStructureCount = 0;
         for (Object key : features.getKeySet()) {
             NBTTagCompound feature = features.getCompoundTag((String) key);
-            BoundingBox structure = buildStructure(feature, type);
-            Set<BoundingBox> boundingBoxes = new HashSet<>();
+            AbstractBoundingBox structure = buildStructure(feature, type);
+            Set<AbstractBoundingBox> boundingBoxes = new HashSet<>();
             NBTTagCompound[] children = getChildCompoundTags(feature, "Children");
             for (NBTTagCompound child : children) {
                 if (id.equals(child.getString("id")) || id.equals("*"))
@@ -129,7 +129,7 @@ class NBTFileParser {
             int radius = village.getInteger("Radius");
             int population = village.getInteger("PopSize");
             Set<Coords> doors = getDoors(village);
-            BoundingBox boundingBox = BoundingBoxVillage.from(center, radius, village.hashCode(), population, doors);
+            AbstractBoundingBox boundingBox = BoundingBoxVillage.from(center, radius, village.hashCode(), population, doors);
             cache.addBoundingBox(boundingBox);
         }
 

@@ -1,12 +1,12 @@
 package com.irtimaled.bbor.client.events;
 
-import com.irtimaled.bbor.common.models.BoundingBox;
+import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 
 public class RemoveBoundingBoxReceived {
     private final int dimensionId;
-    private final BoundingBox key;
+    private final AbstractBoundingBox key;
 
-    public RemoveBoundingBoxReceived(int dimensionId, BoundingBox key) {
+    public RemoveBoundingBoxReceived(int dimensionId, AbstractBoundingBox key) {
         this.dimensionId = dimensionId;
         this.key = key;
     }
@@ -15,7 +15,7 @@ public class RemoveBoundingBoxReceived {
         return dimensionId;
     }
 
-    public BoundingBox getKey() {
+    public AbstractBoundingBox getKey() {
         return key;
     }
 }

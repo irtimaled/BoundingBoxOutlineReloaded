@@ -2,7 +2,7 @@ package com.irtimaled.bbor.common.chunkProcessors;
 
 import com.irtimaled.bbor.common.BoundingBoxCache;
 import com.irtimaled.bbor.common.BoundingBoxType;
-import com.irtimaled.bbor.common.models.BoundingBox;
+import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBoxMobSpawner;
 import com.irtimaled.bbor.common.models.BoundingBoxStructure;
 import com.irtimaled.bbor.common.models.Coords;
@@ -18,10 +18,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class ChunkProcessor {
+public abstract class AbstractChunkProcessor {
     Set<BoundingBoxType> supportedStructures = new HashSet<>();
 
-    ChunkProcessor(BoundingBoxCache boundingBoxCache) {
+    AbstractChunkProcessor(BoundingBoxCache boundingBoxCache) {
         this.boundingBoxCache = boundingBoxCache;
     }
 
@@ -34,17 +34,17 @@ public class ChunkProcessor {
         MutableBoundingBox bb = structureStart.getBoundingBox();
         if (bb == null) return;
 
-        BoundingBox boundingBox = buildStructure(bb, type);
+        AbstractBoundingBox boundingBox = buildStructure(bb, type);
         if (boundingBoxCache.isCached(boundingBox)) return;
 
-        Set<BoundingBox> structureBoundingBoxes = new HashSet<>();
+        Set<AbstractBoundingBox> structureBoundingBoxes = new HashSet<>();
         for (StructurePiece structureComponent : structureStart.getComponents()) {
             structureBoundingBoxes.add(buildStructure(structureComponent.getBoundingBox(), type));
         }
         boundingBoxCache.addBoundingBoxes(boundingBox, structureBoundingBoxes);
     }
 
-    private BoundingBox buildStructure(MutableBoundingBox bb, BoundingBoxType type) {
+    private AbstractBoundingBox buildStructure(MutableBoundingBox bb, BoundingBoxType type) {
         Coords min = new Coords(bb.minX, bb.minY, bb.minZ);
         Coords max = new Coords(bb.maxX, bb.maxY, bb.maxZ);
         return BoundingBoxStructure.from(min, max, type);

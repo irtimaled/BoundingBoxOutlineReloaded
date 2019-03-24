@@ -8,7 +8,7 @@ import com.irtimaled.bbor.config.ConfigManager;
 
 import java.awt.*;
 
-public class MobSpawnerRenderer extends Renderer<BoundingBoxMobSpawner> {
+public class MobSpawnerRenderer extends AbstractRenderer<BoundingBoxMobSpawner> {
     @Override
     public void render(BoundingBoxMobSpawner boundingBox) {
         Coords coords = boundingBox.getCoords();

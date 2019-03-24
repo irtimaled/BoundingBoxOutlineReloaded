@@ -1,15 +1,15 @@
 package com.irtimaled.bbor.client.events;
 
-import com.irtimaled.bbor.common.models.BoundingBox;
+import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 
 import java.util.Set;
 
 public class AddBoundingBoxReceived {
     private final int dimensionId;
-    private final BoundingBox key;
-    private final Set<BoundingBox> boundingBoxes;
+    private final AbstractBoundingBox key;
+    private final Set<AbstractBoundingBox> boundingBoxes;
 
-    public AddBoundingBoxReceived(int dimensionId, BoundingBox key, Set<BoundingBox> boundingBoxes) {
+    public AddBoundingBoxReceived(int dimensionId, AbstractBoundingBox key, Set<AbstractBoundingBox> boundingBoxes) {
         this.dimensionId = dimensionId;
         this.key = key;
         this.boundingBoxes = boundingBoxes;
@@ -19,11 +19,11 @@ public class AddBoundingBoxReceived {
         return dimensionId;
     }
 
-    public BoundingBox getKey() {
+    public AbstractBoundingBox getKey() {
         return key;
     }
 
-    public Set<BoundingBox> getBoundingBoxes() {
+    public Set<AbstractBoundingBox> getBoundingBoxes() {
         return boundingBoxes;
     }
 }

@@ -4,12 +4,12 @@ import com.irtimaled.bbor.common.BoundingBoxType;
 
 import java.awt.*;
 
-public abstract class BoundingBox {
+public abstract class AbstractBoundingBox {
     private final Coords minCoords;
     private final Coords maxCoords;
     private final BoundingBoxType type;
 
-    protected BoundingBox(Coords minCoords, Coords maxCoords, BoundingBoxType type) {
+    protected AbstractBoundingBox(Coords minCoords, Coords maxCoords, BoundingBoxType type) {
         this.minCoords = minCoords;
         this.maxCoords = maxCoords;
         this.type = type;
@@ -32,7 +32,7 @@ public abstract class BoundingBox {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        BoundingBox other = (BoundingBox) obj;
+        AbstractBoundingBox other = (AbstractBoundingBox) obj;
         return minCoords.equals(other.minCoords) && maxCoords.equals(other.maxCoords);
     }
 

@@ -3,7 +3,7 @@ package com.irtimaled.bbor.common.chunkProcessors;
 import com.irtimaled.bbor.common.BoundingBoxCache;
 import com.irtimaled.bbor.common.BoundingBoxType;
 
-public class OverworldChunkProcessor extends ChunkProcessor {
+public class OverworldChunkProcessor extends AbstractChunkProcessor {
     public OverworldChunkProcessor(BoundingBoxCache boundingBoxCache) {
         super(boundingBoxCache);
         supportedStructures.add(BoundingBoxType.DesertTemple);

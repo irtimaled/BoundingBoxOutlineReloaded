@@ -14,11 +14,11 @@ import java.util.*;
 
 public class ClientRenderer {
     private static final int CHUNK_SIZE = 16;
-    private static final Map<Class<? extends BoundingBox>, Renderer> boundingBoxRendererMap = new HashMap<>();
+    private static final Map<Class<? extends AbstractBoundingBox>, AbstractRenderer> boundingBoxRendererMap = new HashMap<>();
 
     private final GetCache getCache;
     private long seed;
-    private Set<BoundingBox> spawnChunkBoundingBoxes = new HashSet<>();
+    private Set<AbstractBoundingBox> spawnChunkBoundingBoxes = new HashSet<>();
 
     ClientRenderer(GetCache getCache) {
         this.getCache = getCache;
@@ -29,7 +29,7 @@ public class ClientRenderer {
         boundingBoxRendererMap.put(BoundingBoxMobSpawner.class, new MobSpawnerRenderer());
     }
 
-    private boolean isWithinRenderDistance(BoundingBox boundingBox) {
+    private boolean isWithinRenderDistance(AbstractBoundingBox boundingBox) {
         Coords minCoords = boundingBox.getMinCoords();
         Coords maxCoords = boundingBox.getMaxCoords();
         int renderDistanceBlocks = getRenderDistanceChunks() * CHUNK_SIZE;
@@ -45,7 +45,7 @@ public class ClientRenderer {
     }
 
     public void render(int dimensionId, Boolean outerBoxesOnly) {
-        Map<BoundingBox, Set<BoundingBox>> boundingBoxes = getBoundingBoxes(dimensionId);
+        Map<AbstractBoundingBox, Set<AbstractBoundingBox>> boundingBoxes = getBoundingBoxes(dimensionId);
 
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GL11.glLineWidth(2.0f);
@@ -55,15 +55,15 @@ public class ClientRenderer {
         if (ConfigManager.alwaysVisible.get()) {
             GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
         }
-        for (Map.Entry<BoundingBox, Set<BoundingBox>> entry : boundingBoxes.entrySet()) {
-            BoundingBox key = entry.getKey();
+        for (Map.Entry<AbstractBoundingBox, Set<AbstractBoundingBox>> entry : boundingBoxes.entrySet()) {
+            AbstractBoundingBox key = entry.getKey();
             if (!key.shouldRender()) continue;
 
-            Renderer renderer = boundingBoxRendererMap.get(key.getClass());
+            AbstractRenderer renderer = boundingBoxRendererMap.get(key.getClass());
             if (renderer == null) continue;
 
             if (!outerBoxesOnly) {
-                Set<BoundingBox> children = entry.getValue();
+                Set<AbstractBoundingBox> children = entry.getValue();
                 if (children != null) {
                     children.forEach(renderer::render);
                     continue;
@@ -77,14 +77,14 @@ public class ClientRenderer {
         GL11.glEnable(GL11.GL_TEXTURE_2D);
     }
 
-    private Map<BoundingBox, Set<BoundingBox>> getBoundingBoxes(int dimensionId) {
-        Map<BoundingBox, Set<BoundingBox>> boundingBoxes = new HashMap<>();
+    private Map<AbstractBoundingBox, Set<AbstractBoundingBox>> getBoundingBoxes(int dimensionId) {
+        Map<AbstractBoundingBox, Set<AbstractBoundingBox>> boundingBoxes = new HashMap<>();
         if (dimensionId == Dimensions.OVERWORLD) {
             if (BoundingBoxType.SlimeChunks.shouldRender()) {
                 addSlimeChunks(boundingBoxes);
             }
 
-            for (BoundingBox boundingBox : spawnChunkBoundingBoxes) {
+            for (AbstractBoundingBox boundingBox : spawnChunkBoundingBoxes) {
                 if (boundingBox.shouldRender() && isWithinRenderDistance(boundingBox)) {
                     boundingBoxes.put(boundingBox, null);
                 }
@@ -93,8 +93,8 @@ public class ClientRenderer {
 
         BoundingBoxCache cache = getCache.apply(dimensionId);
         if (cache != null) {
-            for (Map.Entry<BoundingBox, Set<BoundingBox>> entry : cache.getBoundingBoxes().entrySet()) {
-                BoundingBox key = entry.getKey();
+            for (Map.Entry<AbstractBoundingBox, Set<AbstractBoundingBox>> entry : cache.getBoundingBoxes().entrySet()) {
+                AbstractBoundingBox key = entry.getKey();
                 if (key.shouldRender() && isWithinRenderDistance(key)) {
                     boundingBoxes.put(key, entry.getValue());
                 }
@@ -103,7 +103,7 @@ public class ClientRenderer {
         return boundingBoxes;
     }
 
-    private void addSlimeChunks(Map<BoundingBox, Set<BoundingBox>> boundingBoxes) {
+    private void addSlimeChunks(Map<AbstractBoundingBox, Set<AbstractBoundingBox>> boundingBoxes) {
         int renderDistanceChunks = getRenderDistanceChunks();
         int playerChunkX = MathHelper.floor(PlayerCoords.getX() / 16.0D);
         int playerChunkZ = MathHelper.floor(PlayerCoords.getZ() / 16.0D);
@@ -138,22 +138,22 @@ public class ClientRenderer {
         spawnChunkBoundingBoxes = getSpawnChunkBoundingBoxes(spawnX, spawnZ);
     }
 
-    private Set<BoundingBox> getSpawnChunkBoundingBoxes(int spawnX, int spawnZ) {
-        Set<BoundingBox> boundingBoxes = new HashSet<>();
+    private Set<AbstractBoundingBox> getSpawnChunkBoundingBoxes(int spawnX, int spawnZ) {
+        Set<AbstractBoundingBox> boundingBoxes = new HashSet<>();
         boundingBoxes.add(getWorldSpawnBoundingBox(spawnX, spawnZ));
         boundingBoxes.add(buildSpawnChunksBoundingBox(spawnX, spawnZ, 12, BoundingBoxType.SpawnChunks));
         boundingBoxes.add(buildSpawnChunksBoundingBox(spawnX, spawnZ, 16, BoundingBoxType.LazySpawnChunks));
         return boundingBoxes;
     }
 
-    private BoundingBox getWorldSpawnBoundingBox(int spawnX, int spawnZ) {
+    private AbstractBoundingBox getWorldSpawnBoundingBox(int spawnX, int spawnZ) {
         Coords minCoords = new Coords(spawnX - 10, 0, spawnZ - 10);
         Coords maxCoords = new Coords(spawnX + 10, 0, spawnZ + 10);
 
         return BoundingBoxWorldSpawn.from(minCoords, maxCoords, BoundingBoxType.WorldSpawn);
     }
 
-    private BoundingBox buildSpawnChunksBoundingBox(int spawnX, int spawnZ, int size, BoundingBoxType type) {
+    private AbstractBoundingBox buildSpawnChunksBoundingBox(int spawnX, int spawnZ, int size, BoundingBoxType type) {
         double midOffset = CHUNK_SIZE * (size / 2.0);
         double midX = Math.round((float) (spawnX / (double) CHUNK_SIZE)) * (double) CHUNK_SIZE;
         double midZ = Math.round((float) (spawnZ / (double) CHUNK_SIZE)) * (double) CHUNK_SIZE;
