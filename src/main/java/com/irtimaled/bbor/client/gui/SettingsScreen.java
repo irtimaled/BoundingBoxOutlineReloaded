@@ -39,7 +39,7 @@ public class SettingsScreen extends GuiScreen {
 
     private void addControl(IRenderableControl control) {
         this.controls.add(control);
-        TypeHelper.doIfType(control, IGuiEventListener.class, this.eventListeners::add);
+        TypeHelper.doIfType(control, IGuiEventListener.class, this.children::add);
     }
 
     private void addTabs(String... labels) {

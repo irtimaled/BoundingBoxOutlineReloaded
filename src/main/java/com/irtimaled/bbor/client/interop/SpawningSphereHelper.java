@@ -60,7 +60,7 @@ public class SpawningSphereHelper {
         BlockPos pos = new BlockPos(x, y, z);
         Biome biome = world.getBiome(pos);
         return  biome.getSpawningChance() > 0 &&
-                !biome.getSpawnableList(EnumCreatureType.MONSTER).isEmpty() &&
+                !biome.getSpawns(EnumCreatureType.MONSTER).isEmpty() &&
                 isSpawnable(pos, world);
     }
 
