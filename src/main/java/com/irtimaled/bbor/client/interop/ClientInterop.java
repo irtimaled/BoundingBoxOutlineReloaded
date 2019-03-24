@@ -16,7 +16,7 @@ public class ClientInterop {
 
     public static void render(float partialTicks, EntityPlayerSP player) {
         PlayerCoords.setPlayerPosition(partialTicks, player);
-        EventBus.publish(new Render(player.dimension));
+        EventBus.publish(new Render(player.dimension.getId()));
     }
 
     public static boolean interceptChatMessage(String message) {
