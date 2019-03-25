@@ -73,7 +73,7 @@ public class ClientProxy extends CommonProxy {
     }
 
     private void addBoundingBox(AddBoundingBoxReceived event) {
-        BoundingBoxCache cache = getCache(event.getDimensionId());
+        BoundingBoxCache cache = getOrCreateCache(event.getDimensionId());
         if (cache == null) return;
 
         cache.addBoundingBoxes(event.getKey(), event.getBoundingBoxes());
