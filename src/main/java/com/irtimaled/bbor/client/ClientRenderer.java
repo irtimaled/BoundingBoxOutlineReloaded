@@ -157,12 +157,14 @@ public class ClientRenderer {
         double midOffset = CHUNK_SIZE * (size / 2.0);
         double midX = Math.round((float) (spawnX / (double) CHUNK_SIZE)) * (double) CHUNK_SIZE;
         double midZ = Math.round((float) (spawnZ / (double) CHUNK_SIZE)) * (double) CHUNK_SIZE;
-        Coords minCoords = new Coords(midX - midOffset, 0, midZ - midOffset);
-        if (spawnX / (double) CHUNK_SIZE % 0.5D == 0.0D && spawnZ / (double) CHUNK_SIZE % 0.5D == 0.0D) {
-            midX += (double) CHUNK_SIZE;
-            midZ += (double) CHUNK_SIZE;
-        }
         Coords maxCoords = new Coords(midX + midOffset, 0, midZ + midOffset);
+        if ((spawnX / (double) CHUNK_SIZE) % 1.0D == 0.5D) {
+            midX -= (double) CHUNK_SIZE;
+        }
+        if ((spawnZ / (double) CHUNK_SIZE) % 1.0D == 0.5D) {
+            midZ -= (double) CHUNK_SIZE;
+        }
+        Coords minCoords = new Coords(midX - midOffset, 0, midZ - midOffset);
         return BoundingBoxWorldSpawn.from(minCoords, maxCoords, type);
     }
 }
