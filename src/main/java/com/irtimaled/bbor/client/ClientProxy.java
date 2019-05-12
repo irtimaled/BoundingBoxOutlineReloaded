@@ -48,6 +48,7 @@ public class ClientProxy extends CommonProxy {
         EventBus.subscribe(InitializeClientReceived.class, this::onInitializeClientReceived);
         EventBus.subscribe(AddBoundingBoxReceived.class, this::addBoundingBox);
         EventBus.subscribe(RemoveBoundingBoxReceived.class, this::onRemoveBoundingBoxReceived);
+        EventBus.subscribe(UpdateWorldSpawnReceived.class, this::onUpdateWorldSpawnReceived);
 
         renderer = new ClientRenderer(this::getCache);
         KeyListener.init();
@@ -90,10 +91,22 @@ public class ClientProxy extends CommonProxy {
         setWorldData(seed, spawnX, spawnZ);
     }
 
+    private void onUpdateWorldSpawnReceived(UpdateWorldSpawnReceived event) {
+        int spawnX = event.getSpawnX();
+        int spawnZ = event.getSpawnZ();
+        setWorldSpawn(spawnX, spawnZ);
+    }
+
     @Override
     protected void setWorldData(long seed, int spawnX, int spawnZ) {
         super.setWorldData(seed, spawnX, spawnZ);
         renderer.setWorldData(seed, spawnX, spawnZ);
         ready = true;
+    }
+
+    @Override
+    protected void setWorldSpawn(int spawnX, int spawnZ) {
+        super.setWorldSpawn(spawnX, spawnZ);
+        renderer.setWorldSpawn(spawnX, spawnZ);
     }
 }

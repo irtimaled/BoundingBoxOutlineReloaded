@@ -45,6 +45,10 @@ public class CommonProxy {
         worldData = new WorldData(seed, spawnX, spawnZ);
     }
 
+    protected void setWorldSpawn(int spawnX, int spawnZ) {
+        worldData = new WorldData(worldData.getSeed(), spawnX, spawnZ);
+    }
+
     private void worldLoaded(WorldLoaded event) {
         int dimensionId = event.getDimensionId();
         long seed = event.getSeed();

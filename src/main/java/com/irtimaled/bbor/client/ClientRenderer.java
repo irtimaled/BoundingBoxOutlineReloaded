@@ -138,6 +138,10 @@ public class ClientRenderer {
         spawnChunkBoundingBoxes = getSpawnChunkBoundingBoxes(spawnX, spawnZ);
     }
 
+    void setWorldSpawn(int spawnX, int spawnZ) {
+        spawnChunkBoundingBoxes = getSpawnChunkBoundingBoxes(spawnX, spawnZ);
+    }
+
     private Set<AbstractBoundingBox> getSpawnChunkBoundingBoxes(int spawnX, int spawnZ) {
         Set<AbstractBoundingBox> boundingBoxes = new HashSet<>();
         boundingBoxes.add(getWorldSpawnBoundingBox(spawnX, spawnZ));

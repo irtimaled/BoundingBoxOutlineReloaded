@@ -18,6 +18,7 @@
     "client.gui.MixinGuiOptions",
     "client.renderer.MixinEntityRenderer",
     "network.play.server.MixinSPacketCustomPayload",
+    "network.play.server.MixinSPacketSpawnPosition",
     "client.multiplayer.MixinWorldClient",
     "client.network.MixinNetHandlerLoginClient",
     "client.network.MixinNetHandlerPlayClient",
