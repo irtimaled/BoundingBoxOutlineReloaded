@@ -66,9 +66,9 @@ public class ClientProxy extends CommonProxy {
     }
 
     private void disconnectedFromServer() {
-        ready = false;
         active = false;
         if (ConfigManager.keepCacheBetweenSessions.get()) return;
+        ready = false;
         VillageColorCache.clear();
         clearCaches();
     }
