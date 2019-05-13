@@ -1,0 +1,10 @@
+{
+  "id": "bbor",
+  "name": "Bounding Box Outline Reloaded",
+  "authors": [
+    "Irtimaled"
+  ],
+  "listeners": [
+    "com.irtimaled.bbor.rift.Loader"
+  ]
+}

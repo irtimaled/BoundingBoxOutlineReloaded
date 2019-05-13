@@ -30,6 +30,7 @@ repositories {
 }
 
 dependencies {
+    implementation('com.github.Chocohead:Rift:f76cf44d887d290782590c99770876393c924333:dev') { transitive = false }
     implementation('org.spongepowered:mixin:0.7.11-SNAPSHOT') { transitive = false }
     implementation('net.minecraft:launchwrapper:1.12') { transitive = false }
     implementation 'org.ow2.asm:asm:6.2'
@@ -82,7 +83,7 @@ jar {
             'Main-Class': 'com.irtimaled.bbor.Main'
     )
 
-    classifier = 'vanilla'
+    classifier = 'rift'
 }
 
 artifacts {
