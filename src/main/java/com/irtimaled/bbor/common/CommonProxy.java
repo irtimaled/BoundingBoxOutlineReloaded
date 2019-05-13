@@ -22,7 +22,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CommonProxy {
-    private Set<ServerPlayer> players = new HashSet<>();
+    private Set<ServerPlayer> players = ConcurrentHashMap.newKeySet();
     private Map<ServerPlayer, Set<AbstractBoundingBox>> playerBoundingBoxesCache = new HashMap<>();
     private Map<Integer, VillageProcessor> villageProcessors = new HashMap<>();
     private Map<Integer, AbstractChunkProcessor> chunkProcessors = new HashMap<>();
