@@ -23,8 +23,7 @@ public class MixinPlayerInteractionManager {
     @Inject(method = "tryHarvestBlock", at = @At("HEAD"))
     private void tryHarvestBlock(BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
         Block block = this.world.getBlockState(pos).getBlock();
-        TypeHelper.doIfType(block, BlockMobSpawner.class, ms -> {
-            EventBus.publish(new MobSpawnerBroken(this.world.dimension.getType().getId(), new Coords(pos)));
-        });
+        TypeHelper.doIfType(block, BlockMobSpawner.class, ms ->
+                EventBus.publish(new MobSpawnerBroken(this.world.dimension.getType().getId(), new Coords(pos))));
     }
 }

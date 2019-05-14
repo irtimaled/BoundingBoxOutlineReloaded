@@ -14,8 +14,7 @@ import java.io.File;
 public class MixinDedicatedServer {
     @Inject(method = "init", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/dedicated/DedicatedServer;loadAllWorlds(Ljava/lang/String;Ljava/lang/String;JLnet/minecraft/world/WorldType;Lcom/google/gson/JsonElement;)V"))
     private void init(CallbackInfoReturnable<Boolean> cir) {
-        File gameDir = ((DedicatedServer) (Object) this).getDataDirectory();
-        ConfigManager.loadConfig(gameDir);
+        ConfigManager.loadConfig(new File("."));
         new CommonProxy().init();
     }
 }

@@ -108,6 +108,7 @@ public class SettingsScreen extends GuiScreen {
         }
     }
 
+    @Override
     protected void initGui() {
         this.title = ClientProxy.Name;
 
