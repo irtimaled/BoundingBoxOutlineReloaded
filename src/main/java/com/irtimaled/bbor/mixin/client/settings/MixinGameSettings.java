@@ -14,9 +14,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.io.File;
 
 @Mixin(GameSettings.class)
-public class MixinGameSettings {
+public abstract class MixinGameSettings {
     @Shadow
     public KeyBinding[] keyBindings;
+
+    @Shadow
+    public abstract void loadOptions();
 
     @Inject(method = "<init>()V", at = @At("RETURN"))
     private void init(CallbackInfo ci) {
@@ -30,5 +33,6 @@ public class MixinGameSettings {
     @Inject(method = "<init>(Lnet/minecraft/client/Minecraft;Ljava/io/File;)V", at = @At("RETURN"))
     private void init(Minecraft minecraft, File file, CallbackInfo ci) {
         keyBindings = getKeysAll();
+        this.loadOptions();
     }
 }
