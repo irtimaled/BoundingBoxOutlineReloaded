@@ -26,13 +26,9 @@ public class ServerRunner {
             "https://libraries.minecraft.net/net/minecraft/launchwrapper/1.12/launchwrapper-1.12.jar"
     };
 
-    //private static final MethodHandle addURLHandle;
-
     private static final ThrowableConsumer<URL> addURL;
 
     static {
-        VANILLA_SERVER_JARS.put("1.13.2", "https://launcher.mojang.com/v1/objects/3737db93722a9e39eeada7c27e7aca28b144ffa7/server.jar");
-        VANILLA_SERVER_JARS.put("1.13.1", "https://launcher.mojang.com/v1/objects/fe123682e9cb30031eae351764f653500b7396c9/server.jar");
         VANILLA_SERVER_JARS.put("1.13", "https://launcher.mojang.com/v1/objects/d0caafb8438ebd206f99930cfaecfa6c9a13dca0/server.jar");
 
         try {
