@@ -133,9 +133,8 @@ public class ClientRenderer {
         return r.nextInt(10) == 0;
     }
 
-    void setWorldData(long seed, int spawnX, int spawnZ) {
+    void setSeed(long seed) {
         this.seed = seed;
-        spawnChunkBoundingBoxes = getSpawnChunkBoundingBoxes(spawnX, spawnZ);
     }
 
     void setWorldSpawn(int spawnX, int spawnZ) {
@@ -170,5 +169,9 @@ public class ClientRenderer {
         }
         Coords minCoords = new Coords(midX - midOffset, 0, midZ - midOffset);
         return BoundingBoxWorldSpawn.from(minCoords, maxCoords, type);
+    }
+
+    void clear() {
+        spawnChunkBoundingBoxes = new HashSet<>();
     }
 }

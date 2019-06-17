@@ -16,7 +16,7 @@ public class MixinMinecraft {
     @Inject(method = "<init>", at = @At("RETURN"))
     private void constructor(GameConfiguration configuration, CallbackInfo ci) {
         ConfigManager.loadConfig(configuration.folderInfo.gameDir);
-        clientProxy = new ClientProxy();
+        clientProxy = ClientProxy.getInstance();
     }
 
     @Inject(method = "init", at = @At("RETURN"))

@@ -24,6 +24,16 @@ public class ClientProxy extends CommonProxy {
                 .onKeyPressHandler(ClientProxy::toggleOuterBoxesOnly);
     }
 
+    private static ClientProxy instance;
+    public static ClientProxy getInstance() {
+        if(instance == null)
+            instance = new ClientProxy();
+        return instance;
+    }
+
+    private ClientProxy() {
+    }
+
     private boolean ready;
 
     public static void toggleActive() {
@@ -71,6 +81,7 @@ public class ClientProxy extends CommonProxy {
         ready = false;
         VillageColorCache.clear();
         clearCaches();
+        renderer.clear();
     }
 
     private void addBoundingBox(AddBoundingBoxReceived event) {
@@ -85,22 +96,23 @@ public class ClientProxy extends CommonProxy {
     }
 
     private void onInitializeClientReceived(InitializeClientReceived event) {
-        long seed = event.getSeed();
-        int spawnX = event.getSpawnX();
-        int spawnZ = event.getSpawnZ();
-        setWorldData(seed, spawnX, spawnZ);
+        setWorldSpawn(event.getSpawnX(), event.getSpawnZ());
+        setSeed(event.getSeed());
     }
 
     private void onUpdateWorldSpawnReceived(UpdateWorldSpawnReceived event) {
-        int spawnX = event.getSpawnX();
-        int spawnZ = event.getSpawnZ();
-        setWorldSpawn(spawnX, spawnZ);
+        setWorldSpawn(event.getSpawnX(), event.getSpawnZ());
+    }
+
+    private void setWorldData(long seed, int spawnX, int spawnZ) {
+        setWorldSpawn(spawnX,spawnZ);
+        setSeed(seed);
     }
 
     @Override
-    protected void setWorldData(long seed, int spawnX, int spawnZ) {
-        super.setWorldData(seed, spawnX, spawnZ);
-        renderer.setWorldData(seed, spawnX, spawnZ);
+    public void setSeed(long seed) {
+        super.setSeed(seed);
+        renderer.setSeed(seed);
         ready = true;
     }
 

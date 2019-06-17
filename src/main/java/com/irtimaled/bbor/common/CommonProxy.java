@@ -13,12 +13,8 @@ import com.irtimaled.bbor.common.messages.RemoveBoundingBox;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBoxMobSpawner;
 import com.irtimaled.bbor.common.models.ServerPlayer;
-import com.irtimaled.bbor.common.models.WorldData;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CommonProxy {
@@ -26,8 +22,10 @@ public class CommonProxy {
     private Map<ServerPlayer, Set<AbstractBoundingBox>> playerBoundingBoxesCache = new HashMap<>();
     private Map<Integer, VillageProcessor> villageProcessors = new HashMap<>();
     private Map<Integer, AbstractChunkProcessor> chunkProcessors = new HashMap<>();
-    private WorldData worldData = null;
     private final Map<Integer, BoundingBoxCache> dimensionCache = new ConcurrentHashMap<>();
+    private Long seed = null;
+    private Integer spawnX = null;
+    private Integer spawnZ = null;
 
     public void init() {
         EventBus.subscribe(WorldLoaded.class, this::worldLoaded);
@@ -41,12 +39,13 @@ public class CommonProxy {
         EventBus.subscribe(VillageRemoved.class, this::onVillageRemoved);
     }
 
-    protected void setWorldData(long seed, int spawnX, int spawnZ) {
-        worldData = new WorldData(seed, spawnX, spawnZ);
+    protected void setSeed(long seed) {
+        this.seed = seed;
     }
 
     protected void setWorldSpawn(int spawnX, int spawnZ) {
-        worldData = new WorldData(worldData.getSeed(), spawnX, spawnZ);
+        this.spawnX = spawnX;
+        this.spawnZ = spawnZ;
     }
 
     private void worldLoaded(WorldLoaded event) {
@@ -56,7 +55,8 @@ public class CommonProxy {
         AbstractChunkProcessor chunkProcessor = null;
         switch (dimensionId) {
             case Dimensions.OVERWORLD:
-                setWorldData(seed, event.getSpawnX(), event.getSpawnZ());
+                setSeed(seed);
+                setWorldSpawn(event.getSpawnX(), event.getSpawnZ());
                 chunkProcessor = new OverworldChunkProcessor(boundingBoxCache);
                 break;
             case Dimensions.NETHER:
@@ -79,8 +79,11 @@ public class CommonProxy {
     }
 
     private void playerLoggedIn(PlayerLoggedIn event) {
+        if (seed == null || spawnX == null || spawnZ == null) {
+            return;
+        }
         ServerPlayer player = event.getPlayer();
-        player.sendPacket(InitializeClient.getPayload(worldData));
+        player.sendPacket(InitializeClient.getPayload(seed, spawnX, spawnZ));
     }
 
     private void playerLoggedOut(PlayerLoggedOut event) {

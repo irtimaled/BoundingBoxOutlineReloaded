@@ -1,16 +1,15 @@
 package com.irtimaled.bbor.common.messages;
 
 import com.irtimaled.bbor.client.events.InitializeClientReceived;
-import com.irtimaled.bbor.common.models.WorldData;
 
 public class InitializeClient {
     public static final String NAME = "bbor:initialize";
 
-    public static PayloadBuilder getPayload(WorldData worldData) {
+    public static PayloadBuilder getPayload(long seed, int spawnX, int spawnZ) {
         return PayloadBuilder.clientBound(NAME)
-                .writeLong(worldData.getSeed())
-                .writeInt(worldData.getSpawnX())
-                .writeInt(worldData.getSpawnZ());
+                .writeLong(seed)
+                .writeInt(spawnX)
+                .writeInt(spawnZ);
     }
 
     public static InitializeClientReceived getEvent(PayloadReader reader) {

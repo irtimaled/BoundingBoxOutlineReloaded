@@ -15,6 +15,7 @@
   ],
   "client": [
     "client.MixinMinecraft",
+    "client.entity.MixinEntityPlayerSP",
     "client.gui.MixinGuiOptions",
     "client.renderer.MixinEntityRenderer",
     "network.play.server.MixinSPacketCustomPayload",
