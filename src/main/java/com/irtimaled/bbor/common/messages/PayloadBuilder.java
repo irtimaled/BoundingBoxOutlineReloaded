@@ -6,28 +6,23 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.client.CPacketCustomPayload;
 import net.minecraft.network.play.server.SPacketCustomPayload;
-import net.minecraft.util.ResourceLocation;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.BiFunction;
 
 public class PayloadBuilder {
-    private static Map<String, ResourceLocation> packetNames = new HashMap<>();
-
     static PayloadBuilder clientBound(String name) {
-        return new PayloadBuilder(packetNames.computeIfAbsent(name, ResourceLocation::new), SPacketCustomPayload::new);
+        return new PayloadBuilder(name, SPacketCustomPayload::new);
     }
 
     static PayloadBuilder serverBound(String name) {
-        return new PayloadBuilder(packetNames.computeIfAbsent(name, ResourceLocation::new), CPacketCustomPayload::new);
+        return new PayloadBuilder(name, CPacketCustomPayload::new);
     }
 
-    private final ResourceLocation name;
-    private final BiFunction<ResourceLocation, PacketBuffer, Packet<?>> packetBuilder;
+    private final String name;
+    private final BiFunction<String, PacketBuffer, Packet<?>> packetBuilder;
     private final PacketBuffer buffer;
 
-    private PayloadBuilder(ResourceLocation name, BiFunction<ResourceLocation, PacketBuffer, Packet<?>> packetBuilder) {
+    private PayloadBuilder(String name, BiFunction<String, PacketBuffer, Packet<?>> packetBuilder) {
         this.name = name;
         this.buffer = new PacketBuffer(Unpooled.buffer());
         this.packetBuilder = packetBuilder;

@@ -25,8 +25,5 @@
     "client.settings.MixinKeyBinding",
     "network.play.server.MixinSPacketCustomPayload",
     "network.play.server.MixinSPacketSpawnPosition"
-  ],
-  "server": [
-    "server.dedicated.MixinDedicatedServer"
   ]
 }

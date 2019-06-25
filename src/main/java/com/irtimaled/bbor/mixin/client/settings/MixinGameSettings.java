@@ -1,8 +1,8 @@
 package com.irtimaled.bbor.mixin.client.settings;
 
 import com.irtimaled.bbor.client.keyboard.KeyListener;
-import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
 import org.apache.commons.lang3.ArrayUtils;
 import org.spongepowered.asm.mixin.Mixin;

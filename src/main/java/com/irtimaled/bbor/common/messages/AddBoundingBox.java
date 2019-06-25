@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class AddBoundingBox {
-    public static final String NAME = "bbor:add_bounding_box";
+    public static final String NAME = "bbor:addbb";
 
     public static PayloadBuilder getPayload(int dimensionId, AbstractBoundingBox key, Set<AbstractBoundingBox> boundingBoxes) {
         if (!BoundingBoxSerializer.canSerialize(key)) return null;

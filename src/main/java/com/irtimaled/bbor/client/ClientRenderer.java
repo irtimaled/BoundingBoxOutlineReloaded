@@ -121,7 +121,7 @@ public class ClientRenderer {
     }
 
     private int getRenderDistanceChunks() {
-        return Minecraft.getInstance().gameSettings.renderDistanceChunks;
+        return Minecraft.getMinecraft().gameSettings.renderDistanceChunks;
     }
 
     private boolean isSlimeChunk(int chunkX, int chunkZ) {

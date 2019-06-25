@@ -8,7 +8,7 @@ public class ServerWorldTick {
 
     public ServerWorldTick(WorldServer world) {
         this.world = world;
-        this.dimensionId = world.getDimension().getType().getId();
+        this.dimensionId = world.provider.getDimensionType().getId();
     }
 
     public WorldServer getWorld() {

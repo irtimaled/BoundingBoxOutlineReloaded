@@ -15,11 +15,11 @@ abstract class AbstractButton extends GuiButton implements IRenderableControl {
 
     @Override
     public void render(int mouseX, int mouseY) {
-        super.render(mouseX, mouseY, 0f);
+        super.drawButton(Minecraft.getMinecraft(), mouseX, mouseY, 0f);
     }
 
     @Override
-    protected void renderBg(Minecraft p_renderBg_1_, int p_renderBg_2_, int p_renderBg_3_) {
+    protected void mouseDragged(Minecraft mc, int mouseX, int mouseY) {
         renderBackground();
     }
 
@@ -36,9 +36,12 @@ abstract class AbstractButton extends GuiButton implements IRenderableControl {
     }
 
     @Override
-    public void onClick(double mouseX, double mouseY) {
-        super.onClick(mouseX, mouseY);
-        onPressed();
+    public boolean mousePressed(Minecraft mc, int mouseX, int mouseY) {
+        if (super.mousePressed(mc, mouseX, mouseY)) {
+            onPressed();
+            return true;
+        }
+        return false;
     }
 
     protected abstract void onPressed();
