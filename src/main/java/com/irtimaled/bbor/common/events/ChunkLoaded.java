@@ -8,7 +8,7 @@ public class ChunkLoaded {
 
     public ChunkLoaded(Chunk chunk) {
         this.chunk = chunk;
-        this.dimensionId = chunk.getWorld().getDimension().getType().getId();
+        this.dimensionId = chunk.getWorld().provider.getDimensionType().getId();
     }
 
     public Chunk getChunk() {

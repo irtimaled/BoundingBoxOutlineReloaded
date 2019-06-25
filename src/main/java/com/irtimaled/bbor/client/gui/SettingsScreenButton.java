@@ -13,6 +13,6 @@ public class SettingsScreenButton extends AbstractButton {
 
     @Override
     public void onPressed() {
-        Minecraft.getInstance().displayGuiScreen(screen);
+        Minecraft.getMinecraft().displayGuiScreen(screen);
     }
 }

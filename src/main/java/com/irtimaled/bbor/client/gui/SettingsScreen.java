@@ -7,8 +7,8 @@ import com.irtimaled.bbor.common.TypeHelper;
 import com.irtimaled.bbor.config.ConfigManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.renderer.OpenGlHelper;
 import org.lwjgl.opengl.GL11;
 
@@ -30,7 +30,7 @@ public class SettingsScreen extends GuiScreen {
     }
 
     public static void show() {
-        Minecraft.getInstance().displayGuiScreen(new SettingsScreen(null, 0));
+        Minecraft.getMinecraft().displayGuiScreen(new SettingsScreen(null, 0));
     }
 
     private int getY(double row) {
@@ -39,7 +39,7 @@ public class SettingsScreen extends GuiScreen {
 
     private void addControl(IRenderableControl control) {
         this.controls.add(control);
-        TypeHelper.doIfType(control, IGuiEventListener.class, this.eventListeners::add);
+        TypeHelper.doIfType(control, GuiButton.class, this.buttonList::add);
     }
 
     private void addTabs(String... labels) {
@@ -52,7 +52,7 @@ public class SettingsScreen extends GuiScreen {
                     (id, x, y1, width) -> new AbstractButton(id, x, y, width, label, index != tabIndex) {
                         @Override
                         public void onPressed() {
-                            Minecraft.getInstance().displayGuiScreen(new SettingsScreen(lastScreen, index));
+                            Minecraft.getMinecraft().displayGuiScreen(new SettingsScreen(lastScreen, index));
                         }
                     });
             column++;
@@ -109,7 +109,7 @@ public class SettingsScreen extends GuiScreen {
     }
 
     @Override
-    protected void initGui() {
+    public void initGui() {
         this.title = ClientProxy.Name;
 
         this.controls = new HashSet<>();
@@ -152,9 +152,9 @@ public class SettingsScreen extends GuiScreen {
                 (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Monuments", BoundingBoxType.OceanMonument),
                 (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Igloos", BoundingBoxType.Igloo),
 
-                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Ocean Ruins", BoundingBoxType.OceanRuin),
-                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Buried Treasure", BoundingBoxType.BuriedTreasure),
-                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Shipwrecks", BoundingBoxType.Shipwreck),
+                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Ocean Ruins", BoundingBoxType.OceanRuin, false),
+                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Buried Treasure", BoundingBoxType.BuriedTreasure, false),
+                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Shipwrecks", BoundingBoxType.Shipwreck, false),
 
                 (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Pillager Outposts", BoundingBoxType.PillagerOutpost, false),
                 (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Strongholds", BoundingBoxType.Stronghold),
@@ -194,8 +194,7 @@ public class SettingsScreen extends GuiScreen {
                 .render();
 
         GL11.glDisable(GL11.GL_DEPTH_TEST);
-        GL11.glEnable(GL11.GL_BLEND);
-        OpenGlHelper.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ZERO, GL11.GL_ONE);
+        OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ZERO, GL11.GL_ONE);
 
         GL11.glDisable(GL11.GL_ALPHA_TEST);
         GL11.glShadeModel(7425);
@@ -222,12 +221,12 @@ public class SettingsScreen extends GuiScreen {
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glShadeModel(7424);
         GL11.glEnable(GL11.GL_ALPHA_TEST);
-        OpenGlHelper.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+        OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
         GL11.glDisable(GL11.GL_BLEND);
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float unknown) {
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         if (this.mc.world == null) {
             this.drawDefaultBackground();
             this.drawScreen(getY(-1), getY(5.5) - 4);

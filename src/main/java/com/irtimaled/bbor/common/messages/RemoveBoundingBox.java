@@ -4,7 +4,7 @@ import com.irtimaled.bbor.client.events.RemoveBoundingBoxReceived;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 
 public class RemoveBoundingBox {
-    public static final String NAME = "bbor:remove_bounding_box";
+    public static final String NAME = "bbor:removebb";
 
     public static PayloadBuilder getPayload(int dimensionId, AbstractBoundingBox key) {
         if (!BoundingBoxSerializer.canSerialize(key)) return null;

@@ -15,17 +15,16 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(SPacketCustomPayload.class)
 public abstract class MixinSPacketCustomPayload {
     @Shadow
-    private ResourceLocation channel;
+    private String channel;
 
     @Redirect(method = "processPacket", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/play/INetHandlerPlayClient;handleCustomPayload(Lnet/minecraft/network/play/server/SPacketCustomPayload;)V"))
     private void processPacket(INetHandlerPlayClient netHandlerPlayClient, SPacketCustomPayload packet) {
-        String channelName = channel.toString();
-        if (channelName.startsWith("bbor:")) {
+        if (this.channel.startsWith("bbor:")) {
             PacketBuffer data = null;
             try {
                 data = packet.getBufferData();
                 PayloadReader reader = new PayloadReader(data);
-                switch (channelName) {
+                switch (this.channel) {
                     case InitializeClient.NAME: {
                         EventBus.publish(InitializeClient.getEvent(reader));
                         ((NetHandlerPlayClient) netHandlerPlayClient).sendPacket(SubscribeToServer.getPayload().build());

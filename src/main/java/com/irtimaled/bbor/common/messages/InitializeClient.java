@@ -3,7 +3,7 @@ package com.irtimaled.bbor.common.messages;
 import com.irtimaled.bbor.client.events.InitializeClientReceived;
 
 public class InitializeClient {
-    public static final String NAME = "bbor:initialize";
+    public static final String NAME = "bbor:init";
 
     public static PayloadBuilder getPayload(long seed, int spawnX, int spawnZ) {
         return PayloadBuilder.clientBound(NAME)

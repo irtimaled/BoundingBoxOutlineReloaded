@@ -7,6 +7,7 @@ import org.lwjgl.opengl.GL11;
 
 abstract class AbstractSlider extends GuiButton implements IRenderableControl {
     double progress;
+    private boolean dragging = false;
 
     AbstractSlider(int id, int x, int y, int width) {
         super(id, x, y, width, 20, "");
@@ -14,11 +15,14 @@ abstract class AbstractSlider extends GuiButton implements IRenderableControl {
 
     @Override
     public void render(int mouseX, int mouseY) {
-        super.render(mouseX, mouseY, 0f);
+        super.drawButton(Minecraft.getMinecraft(), mouseX, mouseY, 0f);
     }
 
     @Override
-    protected void renderBg(Minecraft minecraft, int mouseX, int mouseY) {
+    protected void mouseDragged(Minecraft minecraft, int mouseX, int mouseY) {
+        if (dragging) {
+            changeProgress(mouseX);
+        }
         minecraft.getTextureManager().bindTexture(BUTTON_TEXTURES);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         this.drawTexturedModalRect(this.x + (int) (this.progress * (double) (this.width - 8)), this.y, 0, 66, 4, 20);
@@ -46,16 +50,20 @@ abstract class AbstractSlider extends GuiButton implements IRenderableControl {
         return 0;
     }
 
+
     @Override
-    protected void onDrag(double mouseX, double mouseY, double deltaX, double deltaY) {
-        changeProgress(mouseX);
-        super.onDrag(mouseX, mouseY, deltaX, deltaY);
+    public boolean mousePressed(Minecraft mc, int mouseX, int mouseY) {
+        if (super.mousePressed(mc, mouseX, mouseY)) {
+            changeProgress(mouseX);
+            dragging = true;
+            return true;
+        }
+        return false;
     }
 
     @Override
-    public void onClick(double mouseX, double mouseY) {
-        changeProgress(mouseX);
-        super.onClick(mouseX, mouseY);
+    public void mouseReleased(int mouseX, int mouseY) {
+        dragging = false;
     }
 
     protected abstract void updateText();

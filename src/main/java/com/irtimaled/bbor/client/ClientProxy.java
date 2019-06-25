@@ -15,10 +15,10 @@ public class ClientProxy extends CommonProxy {
     public static boolean active;
 
     static {
-        KeyListener.register("Toggle Active", 0x42, Name)
+        KeyListener.register("Toggle Active", 0x30, Name)
                 .onKeyPressHandler(ClientProxy::toggleActive)
                 .onLongKeyPressHandler(60, SettingsScreen::show);
-        KeyListener.register("Toggle Outer Box Only", 0x4f, Name)
+        KeyListener.register("Toggle Outer Box Only", 0x18, Name)
                 .onKeyPressHandler(ClientProxy::toggleOuterBoxesOnly);
     }
 
@@ -49,7 +49,6 @@ public class ClientProxy extends CommonProxy {
         EventBus.subscribe(SeedCommandTyped.class, this::onSeedCommandTyped);
 
         renderer = new ClientRenderer(this::getCache);
-        KeyListener.init();
     }
 
     private void render(Render event) {

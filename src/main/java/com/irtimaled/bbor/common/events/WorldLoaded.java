@@ -11,7 +11,7 @@ public class WorldLoaded {
 
     public WorldLoaded(WorldServer world) {
         WorldInfo info = world.getWorldInfo();
-        this.dimensionId = world.getDimension().getType().getId();
+        this.dimensionId = world.provider.getDimensionType().getId();
         this.seed = info.getSeed();
         this.spawnX = info.getSpawnX();
         this.spawnZ = info.getSpawnZ();

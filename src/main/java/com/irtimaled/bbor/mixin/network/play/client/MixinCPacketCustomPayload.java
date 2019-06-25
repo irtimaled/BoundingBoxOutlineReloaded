@@ -14,11 +14,11 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(CPacketCustomPayload.class)
 public class MixinCPacketCustomPayload {
     @Shadow
-    private ResourceLocation channel;
+    private String channel;
 
     @Redirect(method = "processPacket", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/play/INetHandlerPlayServer;processCustomPayload(Lnet/minecraft/network/play/client/CPacketCustomPayload;)V"))
     private void processPacket(INetHandlerPlayServer netHandlerPlayServer, CPacketCustomPayload packet) {
-        if (this.channel.toString().equals(SubscribeToServer.NAME)) {
+        if (this.channel.equals(SubscribeToServer.NAME)) {
             CommonInterop.playerSubscribed(((NetHandlerPlayServer) netHandlerPlayServer).player);
         } else {
             netHandlerPlayServer.processCustomPayload(packet);
