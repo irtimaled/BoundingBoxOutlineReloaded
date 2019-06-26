@@ -1,0 +1,18 @@
+[
+  {
+    "modid": "bbor",
+    "name": "BoundingBoxOutlineReloaded",
+    "description": "Shows the bounding boxes of structures and features.",
+    "version": "${version}",
+    "mcversion": "${mcVersion}",
+    "url": "https://www.minecraftforum.net/forums/mapping-and-modding-java-edition/minecraft-mods/2345401",
+    "updateUrl": "",
+    "authorList": [
+      "irtimaled"
+    ],
+    "credits": "Thanks to 4poc & KaboPC.",
+    "logoFile": "",
+    "screenshots": [],
+    "dependencies": []
+  }
+]

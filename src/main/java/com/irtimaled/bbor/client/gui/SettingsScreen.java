@@ -24,7 +24,7 @@ public class SettingsScreen extends GuiScreen {
     private String title;
     private Set<IRenderableControl> controls = new HashSet<>();
 
-    SettingsScreen(GuiScreen lastScreen, int tabIndex) {
+    public SettingsScreen(GuiScreen lastScreen, int tabIndex) {
         this.lastScreen = lastScreen;
         this.tabIndex = tabIndex;
     }
