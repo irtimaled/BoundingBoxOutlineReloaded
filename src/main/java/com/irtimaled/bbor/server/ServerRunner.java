@@ -29,6 +29,7 @@ public class ServerRunner {
     private static final ThrowableConsumer<URL> addURL;
 
     static {
+        VANILLA_SERVER_JARS.put("1.14.3", "https://launcher.mojang.com/v1/objects/d0d0fe2b1dc6ab4c65554cb734270872b72dadd6/server.jar");
         VANILLA_SERVER_JARS.put("1.14.2", "https://launcher.mojang.com/v1/objects/808be3869e2ca6b62378f9f4b33c946621620019/server.jar");
         VANILLA_SERVER_JARS.put("1.14.1", "https://launcher.mojang.com/v1/objects/ed76d597a44c5266be2a7fcd77a8270f1f0bc118/server.jar");
         VANILLA_SERVER_JARS.put("1.14", "https://launcher.mojang.com/v1/objects/f1a0073671057f01aa843443fef34330281333ce/server.jar");

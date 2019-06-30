@@ -38,7 +38,7 @@ dependencies {
 
 minecraft {
     version = project.mcVersion
-    mappings = 'snapshot_20190624'
+    mappings = 'snapshot_20190802'
     runDir = 'run'
     tweakClass = 'com.irtimaled.bbor.launch.ClientTweaker'
     makeObfSourceJar = false

@@ -19,7 +19,7 @@ public class MixinMinecraftServer {
     @Final
     private Map<DimensionType, ServerWorld> worlds;
 
-    @Inject(method = "func_213186_a", at = @At("HEAD"))
+    @Inject(method = "loadInitialChunks", at = @At("HEAD"))
     private void initialWorldChunkLoad(CallbackInfo ci) {
         CommonInterop.loadWorlds(worlds.values());
     }
