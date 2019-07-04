@@ -40,7 +40,7 @@ public class Installer {
 
                     String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 
-                    contents = contents.replace("\n  \"profiles\": {", "\n  \"profiles\": {\n" +
+                    contents = contents.replaceAll("(\n\\s*\"profiles\"\\s*:\\s*\\{)", "$1\n" +
                             "    " + identifier + ": {\n" +
                             "      \"name\": \"Bounding Box Outline Reloaded\",\n" +
                             "      \"type\": \"custom\",\n" +
