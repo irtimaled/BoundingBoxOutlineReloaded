@@ -2,6 +2,7 @@ package com.irtimaled.bbor.client.keyboard;
 
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.util.InputMappings;
+import net.minecraftforge.client.settings.KeyModifier;
 
 class CustomKeyBinding extends KeyBinding {
     private final Key key;
@@ -12,13 +13,13 @@ class CustomKeyBinding extends KeyBinding {
     }
 
     @Override
-    public void bind(InputMappings.Input input) {
-        super.bind(input);
+    public void setKeyModifierAndCode(KeyModifier keyModifier, InputMappings.Input input) {
+        super.setKeyModifierAndCode(keyModifier, input);
         int keyCode = input.getKeyCode();
         key.updateKeyCode(keyCode);
     }
 
-    public Key getKey() {
+    public Key getCustomKey() {
         return key;
     }
 }

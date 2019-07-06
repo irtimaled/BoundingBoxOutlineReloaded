@@ -1,19 +1,17 @@
 buildscript {
     repositories {
         jcenter()
-        maven { url 'https://repo.spongepowered.org/maven' }
-        maven { url 'https://jitpack.io' }
+        mavenCentral()
         maven { url 'https://files.minecraftforge.net/maven' }
     }
     dependencies {
-        classpath 'com.github.Irtimaled:ForgeGradle:2.6-SNAPSHOT'
-        classpath 'org.spongepowered:mixingradle:0.6-SNAPSHOT'
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
     }
 }
 
-apply plugin: 'net.minecraftforge.gradle.tweaker-client'
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'eclipse'
 apply plugin: 'java'
-apply plugin: 'org.spongepowered.mixin'
 
 group 'com.irtimaled'
 version project.buildVersion + '-' + project.mcVersion
@@ -22,61 +20,39 @@ archivesBaseName = 'BBOutlineReloaded'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-repositories {
-    mavenCentral()
-    maven { url 'https://libraries.minecraft.net/' }
-    maven { url 'https://repo.spongepowered.org/maven/' }
-    maven { url 'https://jitpack.io' }
+minecraft {
+    mappings channel: 'snapshot', version: '20200524-1.15.1'
+    runs {
+        client {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.console.level', 'debug'
+            mods {
+                bbor {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        server {
+            workingDirectory project.file('run')
+            property 'forge.logging.console.level', 'debug'
+            mods {
+                bbor {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
 }
 
 dependencies {
-    implementation('org.spongepowered:mixin:0.8') { transitive = false }
-    implementation('net.minecraft:launchwrapper:1.12') { transitive = false }
-    implementation 'org.ow2.asm:asm-tree:6.2'
-    implementation 'org.ow2.asm:asm-commons:6.2'
-    implementation "org.ow2.asm:asm-util:6.2"
-}
-
-minecraft {
-    version = project.mcVersion
-    mappings = 'snapshot_20200524'
-    runDir = 'run'
-    tweakClass = 'com.irtimaled.bbor.launch.ClientTweaker'
-    makeObfSourceJar = false
-    clientJvmArgs = ['-XstartOnFirstThread']
-}
-
-mixin {
-    defaultObfuscationEnv notch
-    add sourceSets.main, 'mixins.bbor.refmap.json'
-}
-
-sourceSets {
-    main
-    debug {
-        compileClasspath += main.compileClasspath
-    }
-}
-
-processResources {
-    filesMatching('profile.json') {
-        expand([
-                'version'      : project.version,
-                'mcVersion'    : project.mcVersion,
-                'tweakClass'   : project.minecraft.tweakClass,
-                'formattedTime': new Date().format("yyyy-MM-dd'T'HH:mm:ss'-08:00'")
-        ])
-    }
-
-    inputs.property "version", project.version
-    inputs.property "mcVersion", project.mcVersion
+    minecraft 'net.minecraftforge:forge:1.15.2-31.2.0'
 }
 
 jar {
-    finalizedBy reobfJar
     manifest {
         attributes([
-                "Main-Class": "com.irtimaled.bbor.Main",
                 "Specification-Title": "bbor",
                 "Specification-Vendor": "Irtimaled",
                 "Specification-Version": "1", // We are version 1 of ourselves
@@ -87,9 +63,7 @@ jar {
         ])
     }
 
-    classifier = 'vanilla'
+    classifier = 'forge'
 }
 
-artifacts {
-    archives jar
-}
+jar.finalizedBy('reobfJar')
