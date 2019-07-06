@@ -1,0 +1,25 @@
+modLoader="javafml" #mandatory
+loaderVersion="[26,)" #mandatory (24 is current forge version)
+
+[[mods]] #mandatory
+modId="bbor" #mandatory
+version="${file.jarVersion}" #mandatory
+displayName="BoundingBoxOutlineReloaded" #mandatory
+displayURL="http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/2345401" #optional
+credits="Thanks to 4poc & KaboPC." #optional
+authors="irtimaled" #optional
+description="Shows the bounding boxes of structures and features."
+
+[[dependencies.bbor]] #optional
+    modId="forge" #mandatory
+    mandatory=true #mandatory
+    versionRange="[26,)" #mandatory
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.bbor]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.14.4]"
+    ordering="NONE"
+    side="BOTH"
