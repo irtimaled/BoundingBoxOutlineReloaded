@@ -1,6 +1,6 @@
 package com.irtimaled.bbor.mixin.client.entity;
 
-import com.irtimaled.bbor.client.ClientProxy;
+import com.irtimaled.bbor.client.interop.ClientInterop;
 import net.minecraft.client.entity.EntityPlayerSP;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -11,24 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class MixinEntityPlayerSP {
     @Inject(method = "sendChatMessage", at = @At("HEAD"), cancellable = true)
     private void sendChatMessage(String message, CallbackInfo ci) {
-        if(message.startsWith("/bbor:seed")) {
-            if(message.length()<11) return;
-
-            String argument = message.substring(11);
-            Long seed = parseNumericSeed(argument);
-            if(seed == null) {
-                seed = (long) argument.hashCode();
-            }
-            ClientProxy.getInstance().setSeed(seed);
+        if(ClientInterop.interceptChatMessage(message))
             ci.cancel();
-        }
-    }
-
-    private Long parseNumericSeed(String argument) {
-        try {
-            return Long.parseLong(argument);
-        } catch (final NumberFormatException ex) {
-           return null;
-        }
     }
 }

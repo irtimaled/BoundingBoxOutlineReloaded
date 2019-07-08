@@ -1,8 +1,6 @@
 package com.irtimaled.bbor.mixin.server;
 
-import com.irtimaled.bbor.common.EventBus;
-import com.irtimaled.bbor.common.events.ServerTick;
-import com.irtimaled.bbor.common.events.WorldLoaded;
+import com.irtimaled.bbor.common.interop.CommonInterop;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.WorldServer;
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,13 +16,11 @@ public class MixinMinecraftServer {
 
     @Inject(method = "initialWorldChunkLoad", at = @At("HEAD"))
     private void initialWorldChunkLoad(CallbackInfo ci) {
-        for (WorldServer world : worlds) {
-            EventBus.publish(new WorldLoaded(world));
-        }
+        CommonInterop.loadWorlds(worlds);
     }
 
     @Inject(method = "tick", at = @At("RETURN"))
     private void tick(CallbackInfo ci) {
-        EventBus.publish(new ServerTick());
+        CommonInterop.tick();
     }
 }

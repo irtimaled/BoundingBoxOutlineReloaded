@@ -1,7 +1,7 @@
 package com.irtimaled.bbor.mixin.client;
 
 import com.irtimaled.bbor.client.ClientProxy;
-import com.irtimaled.bbor.config.ConfigManager;
+import com.irtimaled.bbor.common.interop.CommonInterop;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.main.GameConfiguration;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,8 +15,8 @@ public class MixinMinecraft {
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void constructor(GameConfiguration configuration, CallbackInfo ci) {
-        ConfigManager.loadConfig(configuration.folderInfo.gameDir);
-        clientProxy = ClientProxy.getInstance();
+        CommonInterop.init();
+        clientProxy = new ClientProxy();
     }
 
     @Inject(method = "init", at = @At("RETURN"))

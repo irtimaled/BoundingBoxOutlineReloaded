@@ -24,16 +24,6 @@ public class ClientProxy extends CommonProxy {
                 .onKeyPressHandler(ClientProxy::toggleOuterBoxesOnly);
     }
 
-    private static ClientProxy instance;
-    public static ClientProxy getInstance() {
-        if(instance == null)
-            instance = new ClientProxy();
-        return instance;
-    }
-
-    private ClientProxy() {
-    }
-
     private boolean ready;
 
     public static void toggleActive() {
@@ -59,6 +49,7 @@ public class ClientProxy extends CommonProxy {
         EventBus.subscribe(AddBoundingBoxReceived.class, this::addBoundingBox);
         EventBus.subscribe(RemoveBoundingBoxReceived.class, this::onRemoveBoundingBoxReceived);
         EventBus.subscribe(UpdateWorldSpawnReceived.class, this::onUpdateWorldSpawnReceived);
+        EventBus.subscribe(SeedCommandTyped.class, this::onSeedCommandTyped);
 
         renderer = new ClientRenderer(this::getCache);
         KeyListener.init();
@@ -107,6 +98,10 @@ public class ClientProxy extends CommonProxy {
     private void setWorldData(long seed, int spawnX, int spawnZ) {
         setWorldSpawn(spawnX,spawnZ);
         setSeed(seed);
+    }
+
+    private void onSeedCommandTyped(SeedCommandTyped event) {
+        setSeed(event.getSeed());
     }
 
     @Override

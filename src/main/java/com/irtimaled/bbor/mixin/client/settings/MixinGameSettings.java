@@ -21,18 +21,9 @@ public abstract class MixinGameSettings {
     @Shadow
     public abstract void loadOptions();
 
-    @Inject(method = "<init>()V", at = @At("RETURN"))
-    private void init(CallbackInfo ci) {
-        keyBindings = getKeysAll();
-    }
-
-    private KeyBinding[] getKeysAll() {
-        return ArrayUtils.addAll(keyBindings, KeyListener.keyBindings());
-    }
-
     @Inject(method = "<init>(Lnet/minecraft/client/Minecraft;Ljava/io/File;)V", at = @At("RETURN"))
     private void init(Minecraft minecraft, File file, CallbackInfo ci) {
-        keyBindings = getKeysAll();
+        keyBindings = ArrayUtils.addAll(keyBindings, KeyListener.keyBindings());
         this.loadOptions();
     }
 }
