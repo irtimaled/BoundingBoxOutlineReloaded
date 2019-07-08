@@ -12,7 +12,7 @@ public class BoolSettingButton extends AbstractButton {
 
     @Override
     protected int getState() {
-        return setting.get() ? 2 : 1;
+        return enabled ? setting.get() ? 2 : 1 : 0;
     }
 
     @Override

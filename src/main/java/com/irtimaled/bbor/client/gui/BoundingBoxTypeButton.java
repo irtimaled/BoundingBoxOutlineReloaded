@@ -12,8 +12,15 @@ public class BoundingBoxTypeButton extends BoolSettingButton {
         color = type.getColor();
     }
 
+    public BoundingBoxTypeButton(int id, int x, int y, int width, String label, BoundingBoxType type, boolean enabled) {
+        this(id, x, y, width, label, type);
+        this.enabled = enabled;
+    }
+
     @Override
     protected void renderBackground() {
+        if(!enabled) return;
+
         int left = x + 1;
         int top = y + 1;
         int right = left + width - 2;
