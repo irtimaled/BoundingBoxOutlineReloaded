@@ -222,6 +222,7 @@ public class SettingsScreen extends GuiScreen {
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glShadeModel(7424);
         GL11.glEnable(GL11.GL_ALPHA_TEST);
+        OpenGlHelper.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
         GL11.glDisable(GL11.GL_BLEND);
     }
 
