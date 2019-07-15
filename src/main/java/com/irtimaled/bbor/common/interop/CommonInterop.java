@@ -28,8 +28,12 @@ public class CommonInterop {
 
     public static void loadWorlds(WorldServer[] worlds) {
         for (WorldServer world : worlds) {
-            EventBus.publish(new WorldLoaded(world));
+            loadWorld(world);
         }
+    }
+
+    public static void loadWorld(WorldServer world) {
+        EventBus.publish(new WorldLoaded(world));
     }
 
     public static void tick() {
