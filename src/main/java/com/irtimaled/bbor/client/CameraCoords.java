@@ -5,7 +5,7 @@ import net.minecraft.util.math.Vec3d;
 
 public class CameraCoords {
     private static Vec3d getCameraPos() {
-        return Minecraft.getInstance().gameRenderer.func_215316_n().func_216785_c();
+        return Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView();
     }
 
     public static double getX() {

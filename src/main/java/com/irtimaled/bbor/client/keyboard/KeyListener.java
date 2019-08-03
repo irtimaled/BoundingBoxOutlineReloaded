@@ -25,7 +25,7 @@ public class KeyListener {
     }
 
     private static void onKeyEvent(long windowHandle, int keyCode, int scanCode, int action, int modifiers) {
-        if (windowHandle == mainWindowHandle && minecraft.currentScreen == null && keyCode != -1 && !InputMappings.func_216506_a(mainWindowHandle, 292)) {
+        if (windowHandle == mainWindowHandle && minecraft.currentScreen == null && keyCode != -1 && !InputMappings.isKeyDown(mainWindowHandle, 292)) {
             InputMappings.Input input = InputMappings.getInputByCode(keyCode, scanCode);
             for (Key key : keys) {
                 if (key.getInput() == input) {
