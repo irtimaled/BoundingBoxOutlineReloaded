@@ -5,25 +5,25 @@ import com.irtimaled.bbor.common.models.Coords;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
+import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.command.ServerCommandSource;
 
 class BoxCommandBuilder {
-    static LiteralArgumentBuilder<CommandSource> build(String command) {
-        return Commands.literal(command)
-                .then(Commands.literal(ArgumentNames.ADD)
-                        .then(Commands.argument(ArgumentNames.FROM, Arguments.coords())
-                                .then(Commands.argument(ArgumentNames.TO, Arguments.coords())
+    static LiteralArgumentBuilder<ServerCommandSource> build(String command) {
+        return CommandManager.literal(command)
+                .then(CommandManager.literal(ArgumentNames.ADD)
+                        .then(CommandManager.argument(ArgumentNames.FROM, Arguments.coords())
+                                .then(CommandManager.argument(ArgumentNames.TO, Arguments.coords())
                                         .executes(BoxCommandBuilder::addBox))))
-                .then(Commands.literal(ArgumentNames.CLEAR)
+                .then(CommandManager.literal(ArgumentNames.CLEAR)
                         .executes(context -> {
                             CustomBoxProvider.clear();
 
                             CommandHelper.feedback(context, "bbor.commands.box.cleared.all");
                             return 0;
                         })
-                        .then(Commands.argument(ArgumentNames.FROM, Arguments.coords())
-                                .then(Commands.argument(ArgumentNames.TO, Arguments.coords())
+                        .then(CommandManager.argument(ArgumentNames.FROM, Arguments.coords())
+                                .then(CommandManager.argument(ArgumentNames.TO, Arguments.coords())
                                         .executes(context -> {
                                             Coords from = Arguments.getCoords(context, ArgumentNames.FROM);
                                             Coords to = Arguments.getCoords(context, ArgumentNames.TO);
@@ -39,7 +39,7 @@ class BoxCommandBuilder {
                                         }))));
     }
 
-    private static int addBox(CommandContext<CommandSource> context) throws CommandSyntaxException {
+    private static int addBox(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         Coords from = Arguments.getCoords(context, ArgumentNames.FROM);
         Coords to = Arguments.getCoords(context, ArgumentNames.TO);
         Coords minCoords = getMinCoords(from, to);

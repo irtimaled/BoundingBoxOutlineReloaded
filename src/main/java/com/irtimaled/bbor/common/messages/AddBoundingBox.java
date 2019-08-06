@@ -45,7 +45,7 @@ public class AddBoundingBox {
         if (name.equals(NAME)) return reader.readDimensionId();
 
         int dimensionRawId = reader.readVarInt();
-        DimensionType dimensionType = DimensionType.getById(dimensionRawId);
+        DimensionType dimensionType = DimensionType.byRawId(dimensionRawId);
         return DimensionId.from(dimensionType);
     }
 }

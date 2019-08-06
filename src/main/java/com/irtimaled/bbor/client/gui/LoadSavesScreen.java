@@ -1,9 +1,9 @@
 package com.irtimaled.bbor.client.gui;
 
 import com.irtimaled.bbor.client.interop.ClientInterop;
-import net.minecraft.client.AnvilConverterException;
-import net.minecraft.world.storage.SaveFormat;
-import net.minecraft.world.storage.WorldSummary;
+import net.minecraft.world.level.storage.LevelStorage;
+import net.minecraft.world.level.storage.LevelStorageException;
+import net.minecraft.world.level.storage.LevelSummary;
 
 import java.util.List;
 
@@ -18,11 +18,11 @@ public class LoadSavesScreen extends ListScreen {
     protected ControlList buildList(int top, int bottom) {
         controlList = new SelectableControlList(this.width, this.height, top, bottom);
         try {
-            final SaveFormat saveLoader = this.minecraft.getSaveLoader();
-            List<WorldSummary> saveList = saveLoader.getSaveList();
+            final LevelStorage saveLoader = this.minecraft.getLevelStorage();
+            List<LevelSummary> saveList = saveLoader.getLevelList();
             saveList.sort(null);
             saveList.forEach(world -> controlList.add(new WorldSaveRow(world, saveLoader, controlList::setSelectedEntry)));
-        } catch (AnvilConverterException e) {
+        } catch (LevelStorageException e) {
             e.printStackTrace();
         }
         return controlList;

@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "id": "bbor",
+  "name": "BoundingBoxOutlineReloaded",
+  "description": "Shows the bounding boxes of structures and features.",
+  "authors": [
+    "Irtimaled"
+  ],
+  "version": "$version",
+  "mixins": [
+    "mixins.bbor.json"
+  ]
+}

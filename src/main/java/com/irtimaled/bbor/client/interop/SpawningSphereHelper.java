@@ -4,7 +4,7 @@ import com.irtimaled.bbor.client.models.BoundingBoxSpawningSphere;
 import com.irtimaled.bbor.client.models.Point;
 import com.irtimaled.bbor.common.models.Coords;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -22,7 +22,7 @@ public class SpawningSphereHelper {
         int minY = Math.max(1, blockY - height);
         int maxY = Math.min(255, blockY + height);
 
-        World world = Minecraft.getInstance().world;
+        World world = MinecraftClient.getInstance().world;
         for (int x = minX; x < maxX; x++) {
             for (int z = minZ; z < maxZ; z++) {
                 double closestX = x + 0.5D;

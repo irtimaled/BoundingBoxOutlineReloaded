@@ -8,9 +8,9 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
-import net.minecraft.command.ISuggestionProvider;
+import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.command.CommandSource;
+import net.minecraft.server.command.ServerCommandSource;
 
 import java.util.function.Function;
 
@@ -22,8 +22,8 @@ public class ConfigCommand {
     private static final String VALUE = "value";
     private static final String RESET = "reset";
 
-    public static void register(CommandDispatcher<ISuggestionProvider> commandDispatcher) {
-        LiteralArgumentBuilder command = Commands.literal(COMMAND)
+    public static void register(CommandDispatcher<CommandSource> commandDispatcher) {
+        LiteralArgumentBuilder command = CommandManager.literal(COMMAND)
                 .then(buildCommands(GET, ConfigCommand::getCommandForSetting))
                 .then(buildCommands(ArgumentNames.SET, ConfigCommand::setCommandForSetting))
                 .then(buildCommands(RESET, ConfigCommand::resetCommandForSetting)
@@ -32,12 +32,12 @@ public class ConfigCommand {
                             ConfigManager.saveConfig();
                             return 0;
                         }))
-                .then(Commands.literal(SAVE)
+                .then(CommandManager.literal(SAVE)
                         .executes(context -> {
                             ConfigManager.saveConfig();
                             return 0;
                         }))
-                .then(Commands.literal(SHOW_GUI)
+                .then(CommandManager.literal(SHOW_GUI)
                         .executes(context -> {
                             SettingsScreen.show();
                             return 0;
@@ -46,8 +46,8 @@ public class ConfigCommand {
         commandDispatcher.register(command);
     }
 
-    private static LiteralArgumentBuilder<CommandSource> resetCommandForSetting(Setting<?> setting) {
-        return Commands.literal(setting.getName())
+    private static LiteralArgumentBuilder<ServerCommandSource> resetCommandForSetting(Setting<?> setting) {
+        return CommandManager.literal(setting.getName())
                 .executes(context -> {
                     setting.reset();
                     ConfigManager.saveConfig();
@@ -55,27 +55,27 @@ public class ConfigCommand {
                 });
     }
 
-    private interface CommandBuilder extends Function<Setting<?>, LiteralArgumentBuilder<CommandSource>> {
+    private interface CommandBuilder extends Function<Setting<?>, LiteralArgumentBuilder<ServerCommandSource>> {
     }
 
-    private static LiteralArgumentBuilder<CommandSource> buildCommands(String commandName, CommandBuilder commandBuilder) {
-        LiteralArgumentBuilder<CommandSource> command = Commands.literal(commandName);
+    private static LiteralArgumentBuilder<ServerCommandSource> buildCommands(String commandName, CommandBuilder commandBuilder) {
+        LiteralArgumentBuilder<ServerCommandSource> command = CommandManager.literal(commandName);
         for (Setting<?> setting : ConfigManager.getSettings()) {
             command.then(commandBuilder.apply(setting));
         }
         return command;
     }
 
-    private static LiteralArgumentBuilder<CommandSource> getCommandForSetting(Setting<?> setting) {
-        return Commands.literal(setting.getName())
+    private static LiteralArgumentBuilder<ServerCommandSource> getCommandForSetting(Setting<?> setting) {
+        return CommandManager.literal(setting.getName())
                 .executes(context -> {
                     CommandHelper.feedback(context, "%s: %s", setting.getName(), setting.get());
                     return 0;
                 });
     }
 
-    private static LiteralArgumentBuilder<CommandSource> setCommandForSetting(Setting<?> setting) {
-        LiteralArgumentBuilder<CommandSource> command = Commands.literal(setting.getName());
+    private static LiteralArgumentBuilder<ServerCommandSource> setCommandForSetting(Setting<?> setting) {
+        LiteralArgumentBuilder<ServerCommandSource> command = CommandManager.literal(setting.getName());
         switch (setting.getType()) {
             case 'B':
                 buildSetSettingCommand(command, (Setting<Boolean>) setting, Arguments.bool(), Boolean.class);
@@ -93,18 +93,18 @@ public class ConfigCommand {
         return command;
     }
 
-    private static <T> void buildSetSettingCommand(LiteralArgumentBuilder<CommandSource> command,
+    private static <T> void buildSetSettingCommand(LiteralArgumentBuilder<ServerCommandSource> command,
                                                    Setting<T> setting, ArgumentType<T> argument, Class<T> clazz) {
-        Command<CommandSource> setSettingCommand = context -> {
+        Command<ServerCommandSource> setSettingCommand = context -> {
             setting.set(context.getArgument(VALUE, clazz));
             if (CommandHelper.lastNodeIsLiteral(context, SAVE)) {
                 ConfigManager.saveConfig();
             }
             return 0;
         };
-        command.then(Commands.argument(VALUE, argument)
+        command.then(CommandManager.argument(VALUE, argument)
                 .executes(setSettingCommand)
-                .then(Commands.literal(SAVE)
+                .then(CommandManager.literal(SAVE)
                         .executes(setSettingCommand)));
     }
 }

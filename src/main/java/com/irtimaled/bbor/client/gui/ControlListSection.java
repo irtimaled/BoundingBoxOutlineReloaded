@@ -1,6 +1,6 @@
 package com.irtimaled.bbor.client.gui;
 
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.MinecraftClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,7 @@ public class ControlListSection extends ControlListEntry implements IControlSet 
     private static final int TITLE_HEIGHT = 16;
     private final String title;
     private final List<AbstractControl> controls = new ArrayList<>();
-    private final Minecraft minecraft = Minecraft.getInstance();
+    private final MinecraftClient minecraft = MinecraftClient.getInstance();
     private final int titleHeight;
     private int height;
     private IControl focused;
@@ -37,7 +37,7 @@ public class ControlListSection extends ControlListEntry implements IControlSet 
     }
 
     private int columnCount() {
-        switch (minecraft.getLanguageManager().getCurrentLanguage().getCode()) {
+        switch (minecraft.getLanguageManager().getLanguage().getCode()) {
             case "en_au":
             case "en_us":
             case "en_gb":
@@ -52,7 +52,7 @@ public class ControlListSection extends ControlListEntry implements IControlSet 
         int y = this.getY();
         int top = y;
         if (this.title != null) {
-            this.minecraft.fontRenderer.drawString(this.title, x + 4, y + ((TITLE_HEIGHT - this.minecraft.fontRenderer.FONT_HEIGHT) / 1.5f), 16777215);
+            this.minecraft.textRenderer.draw(this.title, x + 4, y + ((TITLE_HEIGHT - this.minecraft.textRenderer.fontHeight) / 1.5f), 16777215);
             top += titleHeight;
         }
 

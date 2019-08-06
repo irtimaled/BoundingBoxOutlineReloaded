@@ -1,18 +1,18 @@
 package com.irtimaled.bbor.client.gui;
 
 import com.irtimaled.bbor.client.config.Setting;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.client.resource.language.I18n;
 
 class MaxYSettingSlider extends IntSettingSlider {
     private final int actualMinValue;
 
     MaxYSettingSlider(int width, int minValue, Setting<Integer> setting) {
-        super(width, minValue - 2, 127, I18n.format("bbor.options.maxY", "%s"), setting);
+        super(width, minValue - 2, 127, I18n.translate("bbor.options.maxY", "%s"), setting);
         this.actualMinValue = minValue;
         this.setInitialPosition();
-        this.addDisplayValue(-1, I18n.format("bbor.options.maxY.activated"));
-        this.addDisplayValue(0, I18n.format("bbor.options.maxY.player"));
-        this.addDisplayValue(63, I18n.format("bbor.options.maxY.seaLevel"));
+        this.addDisplayValue(-1, I18n.translate("bbor.options.maxY.activated"));
+        this.addDisplayValue(0, I18n.translate("bbor.options.maxY.player"));
+        this.addDisplayValue(63, I18n.translate("bbor.options.maxY.seaLevel"));
     }
 
     @Override

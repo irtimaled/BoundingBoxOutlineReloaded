@@ -1,10 +1,10 @@
 package com.irtimaled.bbor.client.gui;
 
-import net.minecraft.client.gui.IGuiEventListener;
+import net.minecraft.client.gui.Element;
 
 import java.util.List;
 
-public interface IControlSet extends IFocusableControl, IGuiEventListener {
+public interface IControlSet extends IFocusableControl, Element {
     List<? extends IControl> controls();
 
     IControl getFocused();

@@ -4,18 +4,18 @@ import com.irtimaled.bbor.common.EventBus;
 import com.irtimaled.bbor.common.events.*;
 import com.irtimaled.bbor.common.models.DimensionId;
 import com.irtimaled.bbor.common.models.ServerPlayer;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.ServerPlayNetHandler;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.gen.feature.structure.StructureStart;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.network.ClientConnection;
+import net.minecraft.server.network.ServerPlayNetworkHandler;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.structure.StructureStart;
+import net.minecraft.world.chunk.WorldChunk;
 
 import java.util.Collection;
 import java.util.Map;
 
 public class CommonInterop {
-    public static void chunkLoaded(Chunk chunk) {
+    public static void chunkLoaded(WorldChunk chunk) {
         DimensionId dimensionId = DimensionId.from(chunk.getWorld().getDimension().getType());
         Map<String, StructureStart> structures = chunk.getStructureStarts();
         if (structures.size() > 0) EventBus.publish(new StructuresLoaded(structures, dimensionId));
@@ -36,11 +36,11 @@ public class CommonInterop {
     }
 
     public static void playerLoggedIn(ServerPlayerEntity player) {
-        ServerPlayNetHandler connection = player.connection;
+        ServerPlayNetworkHandler connection = player.networkHandler;
         if (connection == null) return;
 
-        NetworkManager networkManager = connection.netManager;
-        if (networkManager.isLocalChannel()) return;
+        ClientConnection networkManager = connection.connection;
+        if (networkManager.isLocal()) return;
 
         EventBus.publish(new PlayerLoggedIn(new ServerPlayer(player)));
     }

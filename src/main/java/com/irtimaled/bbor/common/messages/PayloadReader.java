@@ -2,12 +2,12 @@ package com.irtimaled.bbor.common.messages;
 
 import com.irtimaled.bbor.common.models.Coords;
 import com.irtimaled.bbor.common.models.DimensionId;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.PacketByteBuf;
 
 public class PayloadReader {
-    private final PacketBuffer buffer;
+    private final PacketByteBuf buffer;
 
-    public PayloadReader(PacketBuffer buffer) {
+    public PayloadReader(PacketByteBuf buffer) {
         this.buffer = buffer;
     }
 
@@ -43,6 +43,6 @@ public class PayloadReader {
     }
 
     DimensionId readDimensionId() {
-        return DimensionId.from(buffer.readResourceLocation());
+        return DimensionId.from(buffer.readIdentifier());
     }
 }

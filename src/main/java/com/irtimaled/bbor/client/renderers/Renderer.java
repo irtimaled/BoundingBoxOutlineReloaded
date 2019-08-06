@@ -1,32 +1,32 @@
 package com.irtimaled.bbor.client.renderers;
 
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexFormat;
+import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.render.Tessellator;
+import net.minecraft.client.render.VertexFormat;
+import net.minecraft.client.render.VertexFormats;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 
 public class Renderer {
     static Renderer startLines() {
-        return new Renderer(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
+        return new Renderer(GL11.GL_LINES, VertexFormats.POSITION_COLOR);
     }
 
     static Renderer startCircle() {
-        return new Renderer(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION_COLOR);
+        return new Renderer(GL11.GL_LINE_LOOP, VertexFormats.POSITION_COLOR);
     }
 
     static Renderer startQuads() {
-        return new Renderer(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+        return new Renderer(GL11.GL_QUADS, VertexFormats.POSITION_COLOR);
     }
 
     static Renderer startPoints() {
-        return new Renderer(GL11.GL_POINTS, DefaultVertexFormats.POSITION_COLOR);
+        return new Renderer(GL11.GL_POINTS, VertexFormats.POSITION_COLOR);
     }
 
     public static Renderer startTextured() {
-        return new Renderer(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+        return new Renderer(GL11.GL_QUADS, VertexFormats.POSITION_TEXTURE_COLOR);
     }
 
     private final Tessellator tessellator;
@@ -92,11 +92,11 @@ public class Renderer {
     }
 
     private void pos(double x, double y, double z) {
-        bufferBuilder.pos(x, y, z);
+        bufferBuilder.vertex(x, y, z);
     }
 
     private void tex(double u, double v) {
-        bufferBuilder.tex(u, v);
+        bufferBuilder.texture(u, v);
     }
 
     private void color() {
@@ -104,6 +104,6 @@ public class Renderer {
     }
 
     private void end() {
-        bufferBuilder.endVertex();
+        bufferBuilder.next();
     }
 }

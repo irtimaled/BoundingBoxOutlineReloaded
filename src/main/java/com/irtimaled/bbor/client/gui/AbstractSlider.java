@@ -1,7 +1,7 @@
 package com.irtimaled.bbor.client.gui;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.SoundHandler;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.sound.SoundManager;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.opengl.GL11;
 
@@ -72,11 +72,11 @@ abstract class AbstractSlider extends AbstractControl {
     }
 
     @Override
-    public void playDownSound(SoundHandler soundHandler) {
+    public void playDownSound(SoundManager soundHandler) {
     }
 
     @Override
     public void onRelease(double mouseX, double mouseY) {
-        super.playDownSound(Minecraft.getInstance().getSoundHandler());
+        super.playDownSound(MinecraftClient.getInstance().getSoundManager());
     }
 }
