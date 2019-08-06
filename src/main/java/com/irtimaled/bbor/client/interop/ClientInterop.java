@@ -33,6 +33,10 @@ public class ClientInterop {
         ClientRenderer.render(DimensionId.from(player.dimension));
     }
 
+    public static void renderDeferred() {
+        ClientRenderer.renderDeferred();
+    }
+
     public static boolean interceptChatMessage(String message) {
         if (message.startsWith("/bbor:")) {
             ClientPlayNetworkHandler connection = MinecraftClient.getInstance().getNetworkHandler();

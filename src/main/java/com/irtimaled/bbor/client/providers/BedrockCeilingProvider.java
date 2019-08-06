@@ -2,7 +2,6 @@ package com.irtimaled.bbor.client.providers;
 
 import com.irtimaled.bbor.client.Player;
 import com.irtimaled.bbor.client.config.BoundingBoxTypeHelper;
-import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.interop.BedrockCeilingHelper;
 import com.irtimaled.bbor.client.interop.ClientInterop;
 import com.irtimaled.bbor.client.models.BoundingBoxBedrockCeiling;
