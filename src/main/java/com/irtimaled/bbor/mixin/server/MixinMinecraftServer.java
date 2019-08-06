@@ -2,8 +2,8 @@ package com.irtimaled.bbor.mixin.server;
 
 import com.irtimaled.bbor.common.interop.CommonInterop;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.ServerWorld;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.server.ServerWorld;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
