@@ -2,8 +2,8 @@ package com.irtimaled.bbor.mixin.server;
 
 import com.irtimaled.bbor.common.interop.CommonInterop;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.world.server.ServerWorld;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -19,7 +19,7 @@ public class MixinMinecraftServer {
     @Final
     private Map<DimensionType, ServerWorld> worlds;
 
-    @Inject(method = "loadInitialChunks", at = @At("HEAD"))
+    @Inject(method = "prepareStartRegion", at = @At("HEAD"))
     private void initialWorldChunkLoad(CallbackInfo ci) {
         CommonInterop.loadWorlds(worlds.values());
     }

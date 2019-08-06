@@ -1,7 +1,7 @@
 package com.irtimaled.bbor.client.keyboard;
 
-import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.client.util.InputMappings;
+import net.minecraft.client.options.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 
 class CustomKeyBinding extends KeyBinding {
     private final Key key;
@@ -12,8 +12,8 @@ class CustomKeyBinding extends KeyBinding {
     }
 
     @Override
-    public void bind(InputMappings.Input input) {
-        super.bind(input);
+    public void setKeyCode(InputUtil.KeyCode input) {
+        super.setKeyCode(input);
         int keyCode = input.getKeyCode();
         key.updateKeyCode(keyCode);
     }

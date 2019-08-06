@@ -1,6 +1,6 @@
 package com.irtimaled.bbor.client.keyboard;
 
-import net.minecraft.client.util.InputMappings;
+import net.minecraft.client.util.InputUtil;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -78,7 +78,7 @@ public class Key {
     }
 
     public Key register(String keyName) {
-        InputMappings.Input input = InputMappings.getInputByName(keyName);
+        InputUtil.KeyCode input = InputUtil.fromName(keyName);
         Key key = new Key(input.getKeyCode());
         subKeys.add(key);
         return key;

@@ -1,17 +1,17 @@
 package com.irtimaled.bbor.client.gui;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.widget.Widget;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.widget.AbstractButtonWidget;
 
 import java.awt.*;
 
-abstract class AbstractControl extends Widget implements IControl {
+abstract class AbstractControl extends AbstractButtonWidget implements IControl {
     private static final int PADDING = 4;
-    protected final Minecraft minecraft;
+    protected final MinecraftClient minecraft;
 
     AbstractControl(int x, int y, int width, String name) {
         super(x, y, width, 20, name);
-        this.minecraft = Minecraft.getInstance();
+        this.minecraft = MinecraftClient.getInstance();
     }
 
     @Override
@@ -36,7 +36,7 @@ abstract class AbstractControl extends Widget implements IControl {
     }
 
     @Override
-    protected void renderBg(Minecraft minecraft, int mouseX, int mouseY) {
+    protected void renderBg(MinecraftClient minecraft, int mouseX, int mouseY) {
         if (active) renderBackground(mouseX, mouseY);
     }
 

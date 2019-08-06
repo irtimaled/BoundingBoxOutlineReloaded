@@ -1,6 +1,6 @@
 package com.irtimaled.bbor.client.gui;
 
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.MinecraftClient;
 
 abstract class AbstractButton extends AbstractControl {
     AbstractButton(int x, int y, int width, String name) {
@@ -24,7 +24,7 @@ abstract class AbstractButton extends AbstractControl {
             if (key != 257 && key != 32 && key != 335) {
                 return false;
             } else {
-                this.playDownSound(Minecraft.getInstance().getSoundHandler());
+                this.playDownSound(MinecraftClient.getInstance().getSoundManager());
                 this.onPressed();
                 return true;
             }
