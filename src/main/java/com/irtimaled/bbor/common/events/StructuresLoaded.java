@@ -1,7 +1,7 @@
 package com.irtimaled.bbor.common.events;
 
 import com.irtimaled.bbor.common.models.DimensionId;
-import net.minecraft.world.gen.feature.structure.StructureStart;
+import net.minecraft.structure.StructureStart;
 
 import java.util.Map;
 

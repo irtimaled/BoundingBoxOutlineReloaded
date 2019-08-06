@@ -3,9 +3,9 @@ package com.irtimaled.bbor.common;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBoxCuboid;
 import com.irtimaled.bbor.common.models.Coords;
-import net.minecraft.util.math.MutableBoundingBox;
-import net.minecraft.world.gen.feature.structure.StructurePiece;
-import net.minecraft.world.gen.feature.structure.StructureStart;
+import net.minecraft.structure.StructurePiece;
+import net.minecraft.structure.StructureStart;
+import net.minecraft.util.math.BlockBox;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -28,20 +28,20 @@ class StructureProcessor {
         StructureStart structureStart = structureMap.get(type.getName());
         if (structureStart == null) return;
 
-        MutableBoundingBox bb = structureStart.getBoundingBox();
+        BlockBox bb = structureStart.getBoundingBox();
         if (bb == null) return;
 
         AbstractBoundingBox boundingBox = buildStructure(bb, type);
         if (boundingBoxCache.isCached(boundingBox)) return;
 
         Set<AbstractBoundingBox> structureBoundingBoxes = new HashSet<>();
-        for (StructurePiece structureComponent : structureStart.getComponents()) {
+        for (StructurePiece structureComponent : structureStart.getChildren()) {
             structureBoundingBoxes.add(buildStructure(structureComponent.getBoundingBox(), type));
         }
         boundingBoxCache.addBoundingBoxes(boundingBox, structureBoundingBoxes);
     }
 
-    private AbstractBoundingBox buildStructure(MutableBoundingBox bb, BoundingBoxType type) {
+    private AbstractBoundingBox buildStructure(BlockBox bb, BoundingBoxType type) {
         Coords min = new Coords(bb.minX, bb.minY, bb.minZ);
         Coords max = new Coords(bb.maxX, bb.maxY, bb.maxZ);
         return BoundingBoxCuboid.from(min, max, type);

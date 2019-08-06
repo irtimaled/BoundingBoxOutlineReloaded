@@ -3,16 +3,16 @@ package com.irtimaled.bbor.client.commands;
 import com.irtimaled.bbor.client.providers.SlimeChunkProvider;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import net.minecraft.command.Commands;
-import net.minecraft.command.ISuggestionProvider;
+import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.command.CommandSource;
 
 public class SeedCommand {
     private static final String COMMAND = "bbor:seed";
     private static final String SEED = "seed";
 
-    public static void register(CommandDispatcher<ISuggestionProvider> commandDispatcher) {
-        LiteralArgumentBuilder command = Commands.literal(COMMAND)
-                .then(Commands.argument(SEED, Arguments.string())
+    public static void register(CommandDispatcher<CommandSource> commandDispatcher) {
+        LiteralArgumentBuilder command = CommandManager.literal(COMMAND)
+                .then(CommandManager.argument(SEED, Arguments.string())
                         .executes(context -> {
                             String argument = Arguments.getString(context, SEED);
                             handleSeedCommand(argument);

@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FlowerForestProvider implements IBoundingBoxProvider<BoundingBoxFlowerForest>, ICachingProvider {
-    public static final int FLOWER_FOREST_BIOME_ID = Registry.BIOME.getId(Biomes.FLOWER_FOREST);
+    public static final int FLOWER_FOREST_BIOME_ID = Registry.BIOME.getRawId(Biomes.FLOWER_FOREST);
     private static Coords lastPlayerCoords = null;
     private static Integer lastRenderDistance = null;
     private static Map<Coords, BoundingBoxFlowerForest> lastBoundingBoxes = new HashMap<>();

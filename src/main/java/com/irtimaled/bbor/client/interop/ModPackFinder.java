@@ -1,27 +1,27 @@
 package com.irtimaled.bbor.client.interop;
 
-import net.minecraft.resources.IPackFinder;
-import net.minecraft.resources.IResourcePack;
-import net.minecraft.resources.ResourcePackInfo;
-import net.minecraft.resources.VanillaPack;
+import net.minecraft.resource.DefaultResourcePack;
+import net.minecraft.resource.ResourcePack;
+import net.minecraft.resource.ResourcePackProfile;
+import net.minecraft.resource.ResourcePackProvider;
 
 import java.util.Map;
 
-public class ModPackFinder implements IPackFinder {
+public class ModPackFinder implements ResourcePackProvider {
     private static final String BBOR = "bbor";
-    private final IResourcePack modPack;
+    private final ResourcePack modPack;
 
     public ModPackFinder() {
-        modPack = new VanillaPack(BBOR);
+        modPack = new DefaultResourcePack(BBOR);
     }
 
     @Override
-    public <T extends ResourcePackInfo> void addPackInfosToMap(Map<String, T> map, ResourcePackInfo.IFactory<T> factory) {
-        T resourcePackInfo = ResourcePackInfo.createResourcePack(BBOR,
+    public <T extends ResourcePackProfile> void register(Map<String, T> map, ResourcePackProfile.Factory<T> factory) {
+        T resourcePackInfo = ResourcePackProfile.of(BBOR,
                 true,
                 () -> this.modPack,
                 factory,
-                ResourcePackInfo.Priority.BOTTOM);
+                ResourcePackProfile.InsertionPosition.BOTTOM);
         if (resourcePackInfo != null) {
             map.put(BBOR, resourcePackInfo);
         }

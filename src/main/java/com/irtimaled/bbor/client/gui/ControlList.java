@@ -3,13 +3,13 @@ package com.irtimaled.bbor.client.gui;
 import com.irtimaled.bbor.client.renderers.RenderHelper;
 import com.irtimaled.bbor.client.renderers.Renderer;
 import com.irtimaled.bbor.common.MathHelper;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawableHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ControlList extends AbstractGui implements IControlSet {
+public class ControlList extends DrawableHelper implements IControlSet {
     public static final int CONTROLS_WIDTH = 310;
     protected static final int PADDING = 8;
 
@@ -17,7 +17,7 @@ public class ControlList extends AbstractGui implements IControlSet {
     protected final List<ControlListEntry> entries = new ArrayList<>();
     private final int scrollBarLeft;
     private final int listHeight;
-    private final Minecraft minecraft;
+    private final MinecraftClient minecraft;
     private final int width;
     private final int height;
     private final int top;
@@ -31,7 +31,7 @@ public class ControlList extends AbstractGui implements IControlSet {
     private boolean isDragging;
 
     ControlList(int width, int height, int top, int bottom) {
-        this.minecraft = Minecraft.getInstance();
+        this.minecraft = MinecraftClient.getInstance();
         this.width = width;
         this.scrollBarLeft = width - 6;
         this.height = height;
@@ -185,7 +185,7 @@ public class ControlList extends AbstractGui implements IControlSet {
     }
 
     private void drawListBackground() {
-        this.minecraft.getTextureManager().bindTexture(AbstractGui.BACKGROUND_LOCATION);
+        this.minecraft.getTextureManager().bindTexture(DrawableHelper.BACKGROUND_LOCATION);
         Renderer.startTextured()
                 .setColor(32, 32, 32)
                 .setAlpha(255)
@@ -214,7 +214,7 @@ public class ControlList extends AbstractGui implements IControlSet {
     }
 
     private void overlayBackground(int top, int bottom) {
-        this.minecraft.getTextureManager().bindTexture(AbstractGui.BACKGROUND_LOCATION);
+        this.minecraft.getTextureManager().bindTexture(DrawableHelper.BACKGROUND_LOCATION);
         Renderer.startTextured()
                 .setColor(64, 64, 64)
                 .setAlpha(255)

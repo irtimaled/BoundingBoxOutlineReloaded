@@ -2,10 +2,10 @@ package com.irtimaled.bbor.client.gui;
 
 import com.irtimaled.bbor.Versions;
 import com.irtimaled.bbor.client.interop.ClientInterop;
-import net.minecraft.client.gui.IGuiEventListener;
+import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.client.resource.language.I18n;
+import net.minecraft.text.LiteralText;
 
 public abstract class ListScreen extends Screen {
     private final Screen lastScreen;
@@ -16,7 +16,7 @@ public abstract class ListScreen extends Screen {
     private SearchField searchField;
 
     ListScreen(Screen lastScreen) {
-        super(new StringTextComponent("Bounding Box Outline Reloaded"));
+        super(new LiteralText("Bounding Box Outline Reloaded"));
         this.lastScreen = lastScreen;
     }
 
@@ -32,7 +32,7 @@ public abstract class ListScreen extends Screen {
     protected void init() {
         this.controlList = this.buildList(48, this.height - 28);
         this.searchField = new SearchField(this.font, this.width / 2 - 100, 22, 200, 20, this.controlList);
-        this.doneButton = new AbstractButton(this.width / 2 - 100, this.height - 24, 200, I18n.format("gui.done")) {
+        this.doneButton = new AbstractButton(this.width / 2 - 100, this.height - 24, 200, I18n.translate("gui.done")) {
             @Override
             public void onPressed() {
                 onDoneClicked();
@@ -54,7 +54,7 @@ public abstract class ListScreen extends Screen {
     protected void render(int mouseX, int mouseY) {
         this.controlList.render(mouseX, mouseY);
 
-        this.drawCenteredString(this.font, this.title.getUnformattedComponentText(), this.width / 2, 8, 16777215);
+        this.drawCenteredString(this.font, this.title.asString(), this.width / 2, 8, 16777215);
         this.searchField.render(mouseX, mouseY);
         this.doneButton.render(mouseX, mouseY);
 
@@ -94,9 +94,9 @@ public abstract class ListScreen extends Screen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        for (IGuiEventListener control : this.children()) {
+        for (Element control : this.children()) {
             if (control.mouseClicked(mouseX, mouseY, button)) {
-                IGuiEventListener focused = getFocused();
+                Element focused = getFocused();
                 if (focused instanceof IFocusableControl && focused != control) {
                     ((IFocusableControl) focused).clearFocus();
                 }

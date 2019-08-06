@@ -8,13 +8,13 @@ import com.irtimaled.bbor.client.models.BoundingBoxSpawnableBlocks;
 import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.models.DimensionId;
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.MinecraftClient;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public class SpawnableBlocksProvider implements IBoundingBoxProvider<BoundingBoxSpawnableBlocks>, ICachingProvider {
-    public static final Minecraft minecraft = Minecraft.getInstance();
+    public static final MinecraftClient minecraft = MinecraftClient.getInstance();
     private static Long lastGameTime = null;
 
     private static Set<BoundingBoxSpawnableBlocks> lastBoundingBox = null;
@@ -38,7 +38,7 @@ public class SpawnableBlocksProvider implements IBoundingBoxProvider<BoundingBox
 
     @Override
     public Iterable<BoundingBoxSpawnableBlocks> get(DimensionId dimensionId) {
-        long gameTime = minecraft.world.getGameTime();
+        long gameTime = minecraft.world.getTime();
         if (lastBoundingBox == null || (!((Long) gameTime).equals(lastGameTime) && gameTime % 2L == 0L)) {
             lastGameTime = gameTime;
             lastBoundingBox = getSpawnableBlocks();

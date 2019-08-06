@@ -1,8 +1,8 @@
 package com.irtimaled.bbor.client.gui;
 
 import com.irtimaled.bbor.common.MathHelper;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.SoundHandler;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.sound.SoundManager;
 
 abstract class AbstractSlider extends AbstractControl {
     private final int optionCount;
@@ -70,11 +70,11 @@ abstract class AbstractSlider extends AbstractControl {
     }
 
     @Override
-    public void playDownSound(SoundHandler soundHandler) {
+    public void playDownSound(SoundManager soundHandler) {
     }
 
     @Override
     public void onRelease(double mouseX, double mouseY) {
-        super.playDownSound(Minecraft.getInstance().getSoundHandler());
+        super.playDownSound(MinecraftClient.getInstance().getSoundManager());
     }
 }

@@ -4,8 +4,8 @@ import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.models.Point;
 import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 
 import java.awt.*;
 import java.util.function.Supplier;
@@ -121,14 +121,14 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
     }
 
     void renderText(OffsetPoint offsetPoint, String... texts) {
-        FontRenderer fontRenderer = Minecraft.getInstance().fontRenderer;
+        TextRenderer fontRenderer = MinecraftClient.getInstance().textRenderer;
 
         RenderHelper.beforeRenderFont(offsetPoint);
-        float top = -(fontRenderer.FONT_HEIGHT * texts.length) / 2f;
+        float top = -(fontRenderer.fontHeight * texts.length) / 2f;
         for (String text : texts) {
             float left = fontRenderer.getStringWidth(text) / 2f;
-            fontRenderer.drawString(text, -left, top, -1);
-            top += fontRenderer.FONT_HEIGHT;
+            fontRenderer.draw(text, -left, top, -1);
+            top += fontRenderer.fontHeight;
         }
         RenderHelper.afterRenderFont();
     }

@@ -1,10 +1,10 @@
 package com.irtimaled.bbor.client.renderers;
 
 import com.irtimaled.bbor.client.Camera;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexFormat;
+import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.render.Tessellator;
+import net.minecraft.client.render.VertexFormat;
+import net.minecraft.client.render.VertexFormats;
 
 import java.awt.*;
 
@@ -12,23 +12,23 @@ public class Renderer {
     private final int glMode;
 
     static Renderer startLines() {
-        return new Renderer(RenderHelper.LINES, DefaultVertexFormats.POSITION_COLOR);
+        return new Renderer(RenderHelper.LINES, VertexFormats.POSITION_COLOR);
     }
 
     static Renderer startLineLoop() {
-        return new Renderer(RenderHelper.LINE_LOOP, DefaultVertexFormats.POSITION_COLOR);
+        return new Renderer(RenderHelper.LINE_LOOP, VertexFormats.POSITION_COLOR);
     }
 
     static Renderer startQuads() {
-        return new Renderer(RenderHelper.QUADS, DefaultVertexFormats.POSITION_COLOR);
+        return new Renderer(RenderHelper.QUADS, VertexFormats.POSITION_COLOR);
     }
 
     static Renderer startPoints() {
-        return new Renderer(RenderHelper.POINTS, DefaultVertexFormats.POSITION_COLOR);
+        return new Renderer(RenderHelper.POINTS, VertexFormats.POSITION_COLOR);
     }
 
     public static Renderer startTextured() {
-        return new Renderer(RenderHelper.QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+        return new Renderer(RenderHelper.QUADS, VertexFormats.POSITION_TEXTURE_COLOR);
     }
 
     private static final Tessellator tessellator = new Tessellator(2097152);
@@ -90,17 +90,17 @@ public class Renderer {
 
     public void render() {
         if (glMode == RenderHelper.QUADS) {
-            bufferBuilder.sortVertexData((float) Camera.getX(), (float) Camera.getY(), (float) Camera.getZ());
+            bufferBuilder.sortQuads((float) Camera.getX(), (float) Camera.getY(), (float) Camera.getZ());
         }
         tessellator.draw();
     }
 
     private void pos(double x, double y, double z) {
-        bufferBuilder.pos(x, y, z);
+        bufferBuilder.vertex(x, y, z);
     }
 
     private void tex(double u, double v) {
-        bufferBuilder.tex(u, v);
+        bufferBuilder.texture(u, v);
     }
 
     private void color() {
@@ -108,6 +108,6 @@ public class Renderer {
     }
 
     private void end() {
-        bufferBuilder.endVertex();
+        bufferBuilder.next();
     }
 }

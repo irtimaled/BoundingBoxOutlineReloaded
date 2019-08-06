@@ -5,29 +5,29 @@ import com.irtimaled.bbor.client.providers.CustomSphereProvider;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
+import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.command.ServerCommandSource;
 
 class SphereCommandBuilder {
     public static final String RADIUS = "radius";
 
-    static LiteralArgumentBuilder<CommandSource> build(String command) {
-        return Commands.literal(command)
-                .then(Commands.literal(ArgumentNames.ADD)
-                        .then(Commands.argument(ArgumentNames.POS, Arguments.point())
-                                .then(Commands.argument(RADIUS, Arguments.integer())
+    static LiteralArgumentBuilder<ServerCommandSource> build(String command) {
+        return CommandManager.literal(command)
+                .then(CommandManager.literal(ArgumentNames.ADD)
+                        .then(CommandManager.argument(ArgumentNames.POS, Arguments.point())
+                                .then(CommandManager.argument(RADIUS, Arguments.integer())
                                         .executes(SphereCommandBuilder::addSphere)))
-                        .then(Commands.argument(RADIUS, Arguments.integer())
+                        .then(CommandManager.argument(RADIUS, Arguments.integer())
                                 .executes(SphereCommandBuilder::addSphere)))
-                .then(Commands.literal(ArgumentNames.CLEAR)
+                .then(CommandManager.literal(ArgumentNames.CLEAR)
                         .executes(context -> {
                             CustomSphereProvider.clear();
 
                             CommandHelper.feedback(context, "bbor.commands.sphere.cleared.all");
                             return 0;
                         })
-                        .then(Commands.argument(ArgumentNames.FROM, Arguments.coords())
-                                .then(Commands.argument(ArgumentNames.TO, Arguments.coords())
+                        .then(CommandManager.argument(ArgumentNames.FROM, Arguments.coords())
+                                .then(CommandManager.argument(ArgumentNames.TO, Arguments.coords())
                                         .executes(context -> {
                                             Point pos = Arguments.getPoint(context, ArgumentNames.POS).snapXZ(0.5d);
                                             boolean removed = CustomSphereProvider.remove(pos);
@@ -39,7 +39,7 @@ class SphereCommandBuilder {
                                         }))));
     }
 
-    private static int addSphere(CommandContext<CommandSource> context) throws CommandSyntaxException {
+    private static int addSphere(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         Point pos = Arguments.getPoint(context, ArgumentNames.POS).snapXZ(0.5d);
         int radius = Arguments.getInteger(context, RADIUS);
         CustomSphereProvider.add(pos, radius);

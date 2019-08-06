@@ -2,7 +2,7 @@ package com.irtimaled.bbor.client.renderers;
 
 import com.irtimaled.bbor.client.config.ConfigManager;
 import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.MinecraftClient;
 import org.lwjgl.opengl.GL11;
 
 public class RenderHelper {
@@ -20,7 +20,7 @@ public class RenderHelper {
         enableDepthTest();
 
         if (ConfigManager.alwaysVisible.get()) {
-            GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT, Minecraft.IS_RUNNING_ON_MAC);
+            GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT, MinecraftClient.IS_SYSTEM_MAC);
         }
     }
 
