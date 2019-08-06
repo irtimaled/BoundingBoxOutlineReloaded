@@ -13,9 +13,9 @@ public class Player {
     private static DimensionId dimensionId;
 
     public static void setPosition(double partialTicks, ClientPlayerEntity player) {
-        x = player.prevX + (player.x - player.prevX) * partialTicks;
-        y = player.prevY + (player.y - player.prevY) * partialTicks;
-        z = player.prevZ + (player.z - player.prevZ) * partialTicks;
+        x = player.prevX + (player.getX() - player.prevX) * partialTicks;
+        y = player.prevY + (player.getY() - player.prevY) * partialTicks;
+        z = player.prevZ + (player.getZ() - player.prevZ) * partialTicks;
         dimensionId = DimensionId.from(player.dimension);
     }
 

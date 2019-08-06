@@ -1,5 +1,6 @@
 package com.irtimaled.bbor.common;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -42,5 +43,27 @@ public class ReflectionHelper {
             return field;
         }
         return null;
+    }
+
+    public static <T, R> Function<T, R> getPrivateInstanceBuilder(Class<R> clazz, Class<T> parameter) {
+        Constructor<R> constructor = findConstructor(clazz, parameter);
+        if (constructor == null) return obj -> null;
+
+        constructor.setAccessible(true);
+        return obj -> {
+            try {
+                return (R) constructor.newInstance(obj);
+            } catch (Exception ignored) {
+                return null;
+            }
+        };
+    }
+
+    private static <T> Constructor<T> findConstructor(Class<T> clazz, Class<?>... parameters) {
+        try {
+            return clazz.getDeclaredConstructor(parameters);
+        } catch (NoSuchMethodException ignored) {
+            return null;
+        }
     }
 }

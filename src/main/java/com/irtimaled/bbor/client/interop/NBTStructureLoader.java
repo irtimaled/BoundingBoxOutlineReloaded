@@ -1,6 +1,7 @@
 package com.irtimaled.bbor.client.interop;
 
 import com.irtimaled.bbor.common.EventBus;
+import com.irtimaled.bbor.common.ReflectionHelper;
 import com.irtimaled.bbor.common.events.StructuresLoaded;
 import com.irtimaled.bbor.common.models.DimensionId;
 import net.minecraft.nbt.CompoundTag;
@@ -22,6 +23,7 @@ import net.minecraft.world.storage.RegionBasedStorage;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Function;
 
 class NBTStructureLoader {
     private final DimensionId dimensionId;
@@ -108,7 +110,6 @@ class NBTStructureLoader {
             super(null,
                     0,
                     0,
-                    null,
                     new BlockBox(compound.getIntArray("BB")),
                     0,
                     0);
@@ -137,24 +138,28 @@ class NBTStructureLoader {
         }
 
         @Override
-        public boolean generate(IWorld iWorld, Random random, BlockBox blockBox, ChunkPos chunkPos) {
+        public boolean generate(IWorld iWorld, ChunkGenerator<?> chunkGenerator, Random random, BlockBox blockBox, ChunkPos chunkPos) {
             return false;
         }
     }
 
     private static class ChunkLoader {
+        private static final Function<File, RegionBasedStorage> creator =
+                ReflectionHelper.getPrivateInstanceBuilder(RegionBasedStorage.class, File.class);
+
         private final RegionBasedStorage regionFileCache;
 
         public ChunkLoader(File file) {
-            this.regionFileCache = new RegionBasedStorage(file) {
-            };
+            this.regionFileCache = creator.apply(file);
         }
 
         public CompoundTag readChunk(int chunkX, int chunkZ) throws IOException {
+            if (regionFileCache == null) return null;
             return regionFileCache.getTagAt(new ChunkPos(chunkX, chunkZ));
         }
 
         public void close() throws IOException {
+            if (regionFileCache == null) return;
             regionFileCache.close();
         }
     }
