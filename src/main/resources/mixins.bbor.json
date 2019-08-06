@@ -6,25 +6,25 @@
   "package": "com.irtimaled.bbor.mixin",
   "refmap": "mixins.bbor.refmap.json",
   "mixins": [
-    "world.chunk.MixinChunk",
-    "world.MixinWorldServer",
     "network.play.client.MixinCPacketCustomPayload",
-    "server.management.MixinPlayerList",
+    "server.MixinMinecraftServer",
     "server.management.MixinPlayerInteractionManager",
-    "server.MixinMinecraftServer"
+    "server.management.MixinPlayerList",
+    "world.MixinWorldServer",
+    "world.chunk.MixinChunk"
   ],
   "client": [
     "client.MixinMinecraft",
     "client.entity.MixinEntityPlayerSP",
     "client.gui.MixinGuiOptions",
-    "client.renderer.MixinEntityRenderer",
-    "network.play.server.MixinSPacketCustomPayload",
-    "network.play.server.MixinSPacketSpawnPosition",
     "client.multiplayer.MixinWorldClient",
     "client.network.MixinNetHandlerLoginClient",
     "client.network.MixinNetHandlerPlayClient",
+    "client.renderer.MixinEntityRenderer",
+    "client.settings.MixinGameSettings",
     "client.settings.MixinKeyBinding",
-    "client.settings.MixinGameSettings"
+    "network.play.server.MixinSPacketCustomPayload",
+    "network.play.server.MixinSPacketSpawnPosition"
   ],
   "server": [
     "server.dedicated.MixinDedicatedServer"

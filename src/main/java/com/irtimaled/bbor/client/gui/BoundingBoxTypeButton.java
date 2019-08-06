@@ -19,7 +19,7 @@ public class BoundingBoxTypeButton extends BoolSettingButton {
 
     @Override
     protected void renderBackground() {
-        if(!enabled) return;
+        if (!enabled) return;
 
         int left = x + 1;
         int top = y + 1;

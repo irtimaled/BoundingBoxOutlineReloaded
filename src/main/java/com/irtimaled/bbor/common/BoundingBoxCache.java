@@ -27,7 +27,7 @@ public class BoundingBoxCache {
     }
 
     public void addBoundingBox(AbstractBoundingBox key) {
-        if(isCached(key)) return;
+        if (isCached(key)) return;
 
         Set<AbstractBoundingBox> boundingBoxes = new HashSet<>();
         boundingBoxes.add(key);

@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class MixinEntityPlayerSP {
     @Inject(method = "sendChatMessage", at = @At("HEAD"), cancellable = true)
     private void sendChatMessage(String message, CallbackInfo ci) {
-        if(ClientInterop.interceptChatMessage(message))
+        if (ClientInterop.interceptChatMessage(message))
             ci.cancel();
     }
 }

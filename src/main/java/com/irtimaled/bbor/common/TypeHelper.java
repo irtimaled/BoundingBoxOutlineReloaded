@@ -14,7 +14,7 @@ public class TypeHelper {
 
     public static <T> void doIfType(Object value, Class<T> clazz, Consumer<T> consumer) {
         T typedValue = as(value, clazz);
-        if(typedValue == null) return;
+        if (typedValue == null) return;
         consumer.accept(typedValue);
     }
 }

@@ -6,7 +6,6 @@ import com.irtimaled.bbor.client.events.Render;
 import com.irtimaled.bbor.client.events.SeedCommandTyped;
 import com.irtimaled.bbor.common.EventBus;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.network.NetworkManager;
 
 public class ClientInterop {
     public static void disconnectedFromRemoteServer() {

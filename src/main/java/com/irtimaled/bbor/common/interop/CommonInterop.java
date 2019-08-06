@@ -59,7 +59,7 @@ public class CommonInterop {
     }
 
     public static void tryHarvestBlock(Block block, BlockPos pos, World world) {
-        if(block instanceof BlockMobSpawner) {
+        if (block instanceof BlockMobSpawner) {
             EventBus.publish(new MobSpawnerBroken(world.dimension.getType().getId(), new Coords(pos)));
         }
     }

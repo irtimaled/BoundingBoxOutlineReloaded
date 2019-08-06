@@ -51,7 +51,7 @@ public class Renderer {
         return this;
     }
 
-    public Renderer setAlpha(int alpha){
+    public Renderer setAlpha(int alpha) {
         this.alpha = alpha;
         return this;
     }
@@ -85,7 +85,7 @@ public class Renderer {
     }
 
     private void tex(double u, double v) {
-        bufferBuilder.tex(u,v);
+        bufferBuilder.tex(u, v);
     }
 
     private void color() {
