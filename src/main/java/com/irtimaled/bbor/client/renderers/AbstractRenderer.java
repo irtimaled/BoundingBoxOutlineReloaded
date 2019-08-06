@@ -3,10 +3,10 @@ package com.irtimaled.bbor.client.renderers;
 import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.models.Point;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
-import com.mojang.blaze3d.platform.GLX;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
 
@@ -125,7 +125,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
         GL11.glScalef(-0.0175F, -0.0175F, 0.0175F);
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_BLEND);
-        GLX.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
         GL11.glDepthMask(true);
         float top = -(fontRenderer.fontHeight * texts.length) / 2f;

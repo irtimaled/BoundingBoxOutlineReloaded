@@ -16,7 +16,7 @@ public class KeyListener {
     public static final String Category = "Bounding Box Outline Reloaded";
 
     public static void init() {
-        mainWindowHandle = minecraft.window.getHandle();
+        mainWindowHandle = minecraft.getWindow().getHandle();
         GLFW.glfwSetKeyCallback(mainWindowHandle, KeyListener::onKeyEvent);
     }
 
