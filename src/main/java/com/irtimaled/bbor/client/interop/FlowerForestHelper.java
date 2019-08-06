@@ -10,6 +10,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.gen.feature.DecoratedFeatureConfig;
+import net.minecraft.world.gen.feature.FeatureConfig;
 import net.minecraft.world.gen.feature.FlowerFeature;
 
 import java.util.HashMap;
@@ -21,6 +22,7 @@ public class FlowerForestHelper {
 
     private static final Map<BlockState, Setting<HexColor>> flowerColorMap = new HashMap<>();
     private static final FlowerFeature flowersFeature;
+    private static final FeatureConfig flowersConfig;
 
     static {
         flowerColorMap.put(Blocks.DANDELION.getDefaultState(), ConfigManager.colorFlowerForestDandelion);
@@ -37,12 +39,13 @@ public class FlowerForestHelper {
 
         DecoratedFeatureConfig config = (DecoratedFeatureConfig) Biomes.FLOWER_FOREST.getFlowerFeatures().get(0).config;
         flowersFeature = (FlowerFeature) config.feature.feature;
+        flowersConfig = config.feature.config;
     }
 
     public static Setting<HexColor> getFlowerColorAtPos(Coords coords) {
         int x = coords.getX();
         int z = coords.getZ();
-        BlockState blockState = flowersFeature.getFlowerToPlace(random, new BlockPos(x, coords.getY(), z));
+        BlockState blockState = flowersFeature.getFlowerToPlace(random, new BlockPos(x, coords.getY(), z), flowersConfig);
         return flowerColorMap.get(blockState);
     }
 

@@ -30,16 +30,10 @@ public class LineRenderer extends AbstractRenderer<BoundingBoxLine> {
                 .render();
 
         if (!ConfigManager.fill.get()) return;
-
-        RenderHelper.polygonModeFill();
-        RenderHelper.enableBlend();
-        Renderer.startQuads()
+        RenderQueue.deferRendering(() -> Renderer.startQuads()
                 .setColor(color)
                 .setAlpha(30)
                 .addPoints(cornerPoints)
-                .render();
-        RenderHelper.disableBlend();
-        RenderHelper.enablePolygonOffsetLine();
-        RenderHelper.polygonOffsetMinusOne();
+                .render());
     }
 }

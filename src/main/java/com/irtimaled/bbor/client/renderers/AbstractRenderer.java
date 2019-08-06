@@ -6,6 +6,7 @@ import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
 import java.util.function.Supplier;
@@ -111,13 +112,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
 
     void renderFilledFaces(OffsetPoint min, OffsetPoint max, Color color, int alpha) {
         if (!ConfigManager.fill.get()) return;
-
-        RenderHelper.polygonModeFill();
-        RenderHelper.enableBlend();
-        renderFaces(min, max, color, alpha, Renderer::startQuads);
-        RenderHelper.disableBlend();
-        RenderHelper.enablePolygonOffsetLine();
-        RenderHelper.polygonOffsetMinusOne();
+        RenderQueue.deferRendering(() -> renderFaces(min, max, color, alpha, Renderer::startQuads));
     }
 
     void renderText(OffsetPoint offsetPoint, String... texts) {

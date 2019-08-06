@@ -97,6 +97,17 @@ public class ClientRenderer {
         RenderHelper.afterRender();
     }
 
+    public static void renderDeferred() {
+        RenderHelper.beforeRender();
+        RenderHelper.polygonModeFill();
+        RenderHelper.enableBlend();
+        RenderQueue.renderDeferred();
+        RenderHelper.disableBlend();
+        RenderHelper.enablePolygonOffsetLine();
+        RenderHelper.polygonOffsetMinusOne();
+        RenderHelper.afterRender();
+    }
+
     public static Stream<AbstractBoundingBox> getBoundingBoxes(DimensionId dimensionId) {
         Stream.Builder<AbstractBoundingBox> boundingBoxes = Stream.builder();
         for (IBoundingBoxProvider<?> provider : providers) {
