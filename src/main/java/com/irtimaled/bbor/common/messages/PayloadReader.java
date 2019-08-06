@@ -2,7 +2,7 @@ package com.irtimaled.bbor.common.messages;
 
 import com.irtimaled.bbor.common.models.Coords;
 import com.irtimaled.bbor.common.models.DimensionId;
-import net.minecraft.util.PacketByteBuf;
+import net.minecraft.network.PacketByteBuf;
 
 public class PayloadReader {
     private final PacketByteBuf buffer;

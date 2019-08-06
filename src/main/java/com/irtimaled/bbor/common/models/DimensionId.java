@@ -1,23 +1,32 @@
 package com.irtimaled.bbor.common.models;
 
+import com.irtimaled.bbor.common.ReflectionHelper;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.dimension.DimensionType;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 
 public class DimensionId {
+    private static final Function<DimensionType, Optional<RegistryKey<DimensionType>>> getRegistryKey =
+            ReflectionHelper.getPrivateFieldGetter(DimensionType.class, Optional.class);
+    private static final Map<Identifier, DimensionType> typeMap = new HashMap<>();
     private static final Map<Identifier, DimensionId> dimensionIdMap = new HashMap<>();
 
     public static DimensionId from(DimensionType dimensionType) {
-        return from(DimensionType.getId(dimensionType));
+        Identifier value = getRegistryKey.apply(dimensionType).get().getValue();
+        typeMap.put(value, dimensionType);
+        return from(value);
     }
 
     public static DimensionId from(Identifier value) {
         return dimensionIdMap.computeIfAbsent(value, DimensionId::new);
     }
 
-    public static DimensionId OVERWORLD = DimensionId.from(DimensionType.OVERWORLD);
+    public static DimensionId OVERWORLD = DimensionId.from(DimensionType.getDefaultDimensionType());
 
     private final Identifier value;
 
@@ -30,7 +39,7 @@ public class DimensionId {
     }
 
     public DimensionType getDimensionType() {
-        return DimensionType.byId(value);
+        return typeMap.get(value);
     }
 
     @Override

@@ -16,8 +16,8 @@ import java.util.Map;
 
 public class CommonInterop {
     public static void chunkLoaded(WorldChunk chunk) {
-        DimensionId dimensionId = DimensionId.from(chunk.getWorld().getDimension().getType());
-        Map<String, StructureStart> structures = chunk.getStructureStarts();
+        DimensionId dimensionId = DimensionId.from(chunk.getWorld().getDimension());
+        Map<String, StructureStart<?>> structures = chunk.getStructureStarts();
         if (structures.size() > 0) EventBus.publish(new StructuresLoaded(structures, dimensionId));
     }
 
@@ -39,7 +39,7 @@ public class CommonInterop {
         ServerPlayNetworkHandler connection = player.networkHandler;
         if (connection == null) return;
 
-        ClientConnection networkManager = connection.client;
+        ClientConnection networkManager = connection.connection;
         if (networkManager.isLocal()) return;
 
         EventBus.publish(new PlayerLoggedIn(new ServerPlayer(player)));

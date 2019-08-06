@@ -1,6 +1,7 @@
 package com.irtimaled.bbor.client.gui;
 
 import com.irtimaled.bbor.client.interop.ClientInterop;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.world.level.storage.LevelStorage;
 import net.minecraft.world.level.storage.LevelStorageException;
 import net.minecraft.world.level.storage.LevelSummary;
@@ -18,7 +19,7 @@ public class LoadSavesScreen extends ListScreen {
     protected ControlList buildList(int top, int bottom) {
         controlList = new SelectableControlList(this.width, this.height, top, bottom);
         try {
-            final LevelStorage saveLoader = this.minecraft.getLevelStorage();
+            final LevelStorage saveLoader = this.client.getLevelStorage();
             List<LevelSummary> saveList = saveLoader.getLevelList();
             saveList.sort(null);
             saveList.forEach(world -> controlList.add(new WorldSaveRow(world, saveLoader, controlList::setSelectedEntry)));
@@ -34,10 +35,10 @@ public class LoadSavesScreen extends ListScreen {
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float unknown) {
+    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float unknown) {
         ControlListEntry selectedEntry = getSelectedEntry();
         this.setCanExit(selectedEntry != null && selectedEntry.isVisible());
-        super.render(mouseX, mouseY, unknown);
+        super.render(matrixStack, mouseX, mouseY, unknown);
     }
 
     private ControlListEntry getSelectedEntry() {

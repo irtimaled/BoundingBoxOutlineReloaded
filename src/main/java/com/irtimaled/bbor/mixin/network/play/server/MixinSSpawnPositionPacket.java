@@ -1,7 +1,7 @@
 package com.irtimaled.bbor.mixin.network.play.server;
 
 import com.irtimaled.bbor.client.interop.ClientInterop;
-import net.minecraft.client.network.packet.PlayerSpawnPositionS2CPacket;
+import net.minecraft.network.packet.s2c.play.PlayerSpawnPositionS2CPacket;
 import net.minecraft.util.math.BlockPos;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
