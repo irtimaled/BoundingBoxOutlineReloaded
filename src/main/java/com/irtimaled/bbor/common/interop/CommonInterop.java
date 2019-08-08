@@ -55,7 +55,7 @@ public class CommonInterop {
     }
 
     public static void playerLoggedOut(EntityPlayerMP player) {
-        EventBus.publish(new PlayerLoggedOut(new ServerPlayer(player)));
+        EventBus.publish(new PlayerLoggedOut(player.getEntityId()));
     }
 
     public static void tryHarvestBlock(Block block, BlockPos pos, World world) {

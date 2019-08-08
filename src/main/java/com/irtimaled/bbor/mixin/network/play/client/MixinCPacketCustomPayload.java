@@ -4,6 +4,7 @@ import com.irtimaled.bbor.common.EventBus;
 import com.irtimaled.bbor.common.events.PlayerSubscribed;
 import com.irtimaled.bbor.common.messages.SubscribeToServer;
 import com.irtimaled.bbor.common.models.ServerPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.play.INetHandlerPlayServer;
 import net.minecraft.network.play.client.CPacketCustomPayload;
@@ -21,8 +22,8 @@ public class MixinCPacketCustomPayload {
     @Redirect(method = "processPacket", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/play/INetHandlerPlayServer;processCustomPayload(Lnet/minecraft/network/play/client/CPacketCustomPayload;)V"))
     private void processPacket(INetHandlerPlayServer netHandlerPlayServer, CPacketCustomPayload packet) {
         if (this.channel.toString().equals(SubscribeToServer.NAME)) {
-            ServerPlayer player = new ServerPlayer(((NetHandlerPlayServer) netHandlerPlayServer).player);
-            EventBus.publish(new PlayerSubscribed(player));
+            EntityPlayerMP player = ((NetHandlerPlayServer) netHandlerPlayServer).player;
+            EventBus.publish(new PlayerSubscribed(player.getEntityId(), new ServerPlayer(player)));
         } else {
             netHandlerPlayServer.processCustomPayload(packet);
         }

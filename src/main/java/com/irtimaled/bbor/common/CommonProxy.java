@@ -21,8 +21,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CommonProxy {
-    private Set<ServerPlayer> players = ConcurrentHashMap.newKeySet();
-    private Map<ServerPlayer, Set<AbstractBoundingBox>> playerBoundingBoxesCache = new HashMap<>();
+    private Map<Integer, ServerPlayer> players = new ConcurrentHashMap<>();
+    private Map<Integer, Set<AbstractBoundingBox>> playerBoundingBoxesCache = new HashMap<>();
     private Map<Integer, VillageProcessor> villageProcessors = new HashMap<>();
     private Map<Integer, AbstractChunkProcessor> chunkProcessors = new HashMap<>();
     private final Map<Integer, BoundingBoxCache> dimensionCache = new ConcurrentHashMap<>();
@@ -90,9 +90,9 @@ public class CommonProxy {
     }
 
     private void playerLoggedOut(PlayerLoggedOut event) {
-        ServerPlayer player = event.getPlayer();
-        players.remove(player);
-        playerBoundingBoxesCache.remove(player);
+        int playerId = event.getPlayerId();
+        players.remove(playerId);
+        playerBoundingBoxesCache.remove(playerId);
     }
 
     private void onVillageRemoved(VillageRemoved event) {
@@ -103,49 +103,45 @@ public class CommonProxy {
         PayloadBuilder payload = RemoveBoundingBox.getPayload(dimensionId, boundingBox);
         if (payload == null) return;
 
-        for (ServerPlayer player : players) {
+        for (Map.Entry<Integer, ServerPlayer> playerEntry : players.entrySet()) {
+            int playerId = playerEntry.getKey();
+            ServerPlayer player = playerEntry.getValue();
             if (player.getDimensionId() == dimensionId) {
                 player.sendPacket(payload);
 
-                if (playerBoundingBoxesCache.containsKey(player)) {
-                    playerBoundingBoxesCache.get(player).remove(boundingBox);
+                if (playerBoundingBoxesCache.containsKey(playerId)) {
+                    playerBoundingBoxesCache.get(playerId).remove(boundingBox);
                 }
             }
         }
     }
 
     private void onPlayerSubscribed(PlayerSubscribed event) {
+        int playerId = event.getPlayerId();
         ServerPlayer player = event.getPlayer();
-        players.add(player);
-        sendToPlayer(player, getCache(player.getDimensionId()));
+        players.put(playerId, player);
+        sendToPlayer(playerId, player);
     }
 
-    private void sendToPlayer(ServerPlayer player, BoundingBoxCache boundingBoxCache) {
+    private void sendToPlayer(int playerId, ServerPlayer player) {
+        BoundingBoxCache boundingBoxCache = getCache(player.getDimensionId());
         if (boundingBoxCache == null) return;
 
-        Map<AbstractBoundingBox, Set<AbstractBoundingBox>> cacheSubset = getBoundingBoxMap(player, boundingBoxCache.getBoundingBoxes());
+        Set<AbstractBoundingBox> playerBoundingBoxes = playerBoundingBoxesCache.computeIfAbsent(playerId, k -> new HashSet<>());
 
-        for (AbstractBoundingBox key : cacheSubset.keySet()) {
-            Set<AbstractBoundingBox> boundingBoxes = cacheSubset.get(key);
+        Map<AbstractBoundingBox, Set<AbstractBoundingBox>> boundingBoxMap = boundingBoxCache.getBoundingBoxes();
+        for (AbstractBoundingBox key : boundingBoxMap.keySet()) {
+            if (playerBoundingBoxes.contains(key)) {
+                continue;
+            }
+
+            Set<AbstractBoundingBox> boundingBoxes = boundingBoxMap.get(key);
             PayloadBuilder payload = AddBoundingBox.getPayload(player.getDimensionId(), key, boundingBoxes);
             if (payload != null)
                 player.sendPacket(payload);
 
-            if (!playerBoundingBoxesCache.containsKey(player)) {
-                playerBoundingBoxesCache.put(player, new HashSet<>());
-            }
-            playerBoundingBoxesCache.get(player).add(key);
+            playerBoundingBoxes.add(key);
         }
-    }
-
-    private Map<AbstractBoundingBox, Set<AbstractBoundingBox>> getBoundingBoxMap(ServerPlayer player, Map<AbstractBoundingBox, Set<AbstractBoundingBox>> boundingBoxMap) {
-        Map<AbstractBoundingBox, Set<AbstractBoundingBox>> cacheSubset = new HashMap<>();
-        for (AbstractBoundingBox key : boundingBoxMap.keySet()) {
-            if (!playerBoundingBoxesCache.containsKey(player) || !playerBoundingBoxesCache.get(player).contains(key)) {
-                cacheSubset.put(key, boundingBoxMap.get(key));
-            }
-        }
-        return cacheSubset;
     }
 
     protected void removeBoundingBox(int dimensionId, AbstractBoundingBox key) {
@@ -163,8 +159,11 @@ public class CommonProxy {
     }
 
     private void serverTick() {
-        for (ServerPlayer player : players) {
-            sendToPlayer(player, getCache(player.getDimensionId()));
+        for (Map.Entry<Integer, ServerPlayer> playerEntry : players.entrySet()) {
+            int playerId = playerEntry.getKey();
+            ServerPlayer player = playerEntry.getValue();
+
+            sendToPlayer(playerId, player);
         }
     }
 

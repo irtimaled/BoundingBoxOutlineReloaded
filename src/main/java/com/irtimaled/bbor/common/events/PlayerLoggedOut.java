@@ -1,15 +1,13 @@
 package com.irtimaled.bbor.common.events;
 
-import com.irtimaled.bbor.common.models.ServerPlayer;
-
 public class PlayerLoggedOut {
-    private final ServerPlayer player;
+    private int playerId;
 
-    public PlayerLoggedOut(ServerPlayer player) {
-        this.player = player;
+    public PlayerLoggedOut(int playerId) {
+        this.playerId = playerId;
     }
 
-    public ServerPlayer getPlayer() {
-        return player;
+    public int getPlayerId() {
+        return playerId;
     }
 }
