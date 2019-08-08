@@ -1,15 +1,22 @@
 package com.irtimaled.bbor.client.interop;
 
 import com.irtimaled.bbor.client.PlayerCoords;
-import com.irtimaled.bbor.client.events.DisconnectedFromRemoteServer;
-import com.irtimaled.bbor.client.events.Render;
-import com.irtimaled.bbor.client.events.SeedCommandTyped;
-import com.irtimaled.bbor.client.events.UpdateWorldSpawnReceived;
+import com.irtimaled.bbor.client.events.*;
 import com.irtimaled.bbor.common.EventBus;
+import com.irtimaled.bbor.common.TypeHelper;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.network.NetworkManager;
 import net.minecraft.util.math.BlockPos;
 
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+
 public class ClientInterop {
+    public static void connectedToRemoteServer(NetworkManager networkManager) {
+        SocketAddress remoteAddress = networkManager.getRemoteAddress();
+        TypeHelper.doIfType(remoteAddress, InetSocketAddress.class, inetSocketAddress -> EventBus.publish(new ConnectedToRemoteServer(inetSocketAddress)));
+    }
+
     public static void disconnectedFromRemoteServer() {
         EventBus.publish(new DisconnectedFromRemoteServer());
     }

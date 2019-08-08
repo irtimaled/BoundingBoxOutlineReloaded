@@ -108,10 +108,23 @@ Another option to configure is to open the config/BBOutlineReloaded.cfg file wit
 
 ## Bounding boxes when connected to servers
 
-There are a couple of options when you want bounding boxes to show whilst accessing servers:-
+There are a few options when you want bounding boxes to show whilst accessing servers:-
 
 - Use a modded server - Ensure the server is running with this mod loaded (as described above), and connect to the server with a client with this mod loaded. 
 - Keep cache - With the "Keep Cache Between Sessions" config setting enabled, Open a copy of the world in single player and move around to capture all the structures you want in the cache. Once you are happy with the structures you have cached, quit the single player game and connect to the server without closing Minecraft. You will see all the structures from the cache.
+- Load dat files(*) - Copy the dat files listed below into config/BBOutlineReloaded/{host}/{port} and these will be loaded when you connect to the vanilla server. {host} is the name or ip you use to connect to the server; {port} is the port you specify when connecting. The mod will load any/all of following files:-
+  - level.dat; include this for world spawn, spawn and slime chunks to be rendered.
+  - Fortress.dat; include this for Nether Fortresses to be rendered.
+  - EndCities.dat; include this for EndCities to be rendered.
+  - Mineshaft.dat; include this for Mineshafts to be rendered.
+  - Monument.dat; include this for Ocean Monuments to be rendered.
+  - Stronghold.dat; include this for Strongholds to be rendered.
+  - Mansion.dat; include this for Mansions to be rendered.
+  - Temple.dat; include this for Desert & Jungle Temples and witch huts to be rendered.
+
+(*) This is becoming more and more irrelevant as dat files are being phased out, and this feature may be removed/replaced in the future.
+
+It is also possible to include the villages.dat, villages_end.dat & villages_nether.dat files and it will render villages however these files only contain the villages that were loaded when the files were copied and will not handle any changes that occur with villages such as when doors are added/removed or villager population changes.
 
 ## Links
 - Forge - [Download](https://files.minecraftforge.net/)
