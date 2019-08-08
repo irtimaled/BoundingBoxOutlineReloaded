@@ -10,6 +10,8 @@ import com.irtimaled.bbor.common.VillageColorCache;
 import com.irtimaled.bbor.config.ConfigManager;
 import com.irtimaled.bbor.config.Setting;
 
+import java.net.InetSocketAddress;
+
 public class ClientProxy extends CommonProxy {
     public static final String Name = "Bounding Box Outline Reloaded";
     public static boolean active;
@@ -41,6 +43,7 @@ public class ClientProxy extends CommonProxy {
     public void init() {
         super.init();
         EventBus.subscribe(Render.class, this::render);
+        EventBus.subscribe(ConnectedToRemoteServer.class, this::connectedToServer);
         EventBus.subscribe(DisconnectedFromRemoteServer.class, e -> disconnectedFromServer());
         EventBus.subscribe(InitializeClientReceived.class, this::onInitializeClientReceived);
         EventBus.subscribe(AddBoundingBoxReceived.class, this::addBoundingBox);
@@ -55,6 +58,16 @@ public class ClientProxy extends CommonProxy {
         if (!active || !ready) return;
 
         renderer.render(event.getDimensionId(), ConfigManager.outerBoxesOnly.get());
+    }
+
+    private void connectedToServer(ConnectedToRemoteServer event) {
+        InetSocketAddress internetAddress = event.getInternetAddress();
+        NBTFileParser.loadLocalDatFiles(internetAddress.getHostName(), internetAddress.getPort(), this::setWorldData, this::getOrCreateCache);
+    }
+
+    private void setWorldData(long seed, int spawnX, int spawnZ) {
+        setWorldSpawn(spawnX, spawnZ);
+        setSeed(seed);
     }
 
     private void disconnectedFromServer() {
