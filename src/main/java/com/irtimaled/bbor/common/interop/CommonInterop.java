@@ -58,6 +58,10 @@ public class CommonInterop {
         EventBus.publish(new PlayerLoggedOut(player.getEntityId()));
     }
 
+    public static void playerSubscribed(EntityPlayerMP player) {
+        EventBus.publish(new PlayerSubscribed(player.getEntityId(), new ServerPlayer(player)));
+    }
+
     public static void tryHarvestBlock(Block block, BlockPos pos, World world) {
         if (block instanceof BlockMobSpawner) {
             EventBus.publish(new MobSpawnerBroken(world.dimension.getType().getId(), new Coords(pos)));
