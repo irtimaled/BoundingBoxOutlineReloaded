@@ -4,8 +4,10 @@ import com.irtimaled.bbor.client.PlayerCoords;
 import com.irtimaled.bbor.client.events.DisconnectedFromRemoteServer;
 import com.irtimaled.bbor.client.events.Render;
 import com.irtimaled.bbor.client.events.SeedCommandTyped;
+import com.irtimaled.bbor.client.events.UpdateWorldSpawnReceived;
 import com.irtimaled.bbor.common.EventBus;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.util.math.BlockPos;
 
 public class ClientInterop {
     public static void disconnectedFromRemoteServer() {
@@ -38,5 +40,9 @@ public class ClientInterop {
         } catch (final NumberFormatException ex) {
             return null;
         }
+    }
+
+    public static void updateWorldSpawnReceived(BlockPos blockPos) {
+        EventBus.publish(new UpdateWorldSpawnReceived(blockPos.getX(), blockPos.getZ()));
     }
 }
