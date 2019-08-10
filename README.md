@@ -30,7 +30,7 @@ This mod highlights in a variety of colours and styles the different structures 
 - Mob Spawners; bright green boxes show where mob spawners are, where mobs will be spawned, and red/orange/green lines help the player see if a spawner is nearby and activated.
 - Pillager Outposts; grey boxes outline where crossbow wielding pillagers will spawn. Beware of bad omens tho!
 
-(*) Due to how Minecraft generates these structures they will initially float above where they should be, however upon re-logging they should drop down to the correct height. Unfortunately (or fortunately?) buried treasure will always appear at y-90 (unless Mojang change something that is!)
+(*) Prior to 1.14.4, due to how Minecraft generates these structures they will initially float above where they should be, however upon re-loading the world they should drop down to the correct height. Unfortunately (or fortunately?) buried treasure will always appear at y-90. This works as expected in 1.14.4.
 
 ## How it works
 
