@@ -1,6 +1,6 @@
 {
   "required": true,
-  "minVersion": "0.7.11",
+  "minVersion": "0.7.4",
   "compatibilityLevel": "JAVA_8",
   "target": "@env(DEFAULT)",
   "package": "com.irtimaled.bbor.mixin",
