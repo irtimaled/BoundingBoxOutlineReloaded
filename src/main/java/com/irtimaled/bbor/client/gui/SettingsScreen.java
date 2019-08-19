@@ -156,18 +156,18 @@ public class SettingsScreen extends GuiScreen {
                 (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Buried Treasure", BoundingBoxType.BuriedTreasure),
                 (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Shipwrecks", BoundingBoxType.Shipwreck),
 
-                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Pillager Outposts", BoundingBoxType.PillagerOutpost, false),
                 (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Strongholds", BoundingBoxType.Stronghold),
                 (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Mineshafts", BoundingBoxType.MineShaft),
+                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Pillager Outposts", BoundingBoxType.PillagerOutpost, false),
 
+                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Villages", BoundingBoxType.Village),
                 (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Fortresses", BoundingBoxType.NetherFortress),
                 (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "End Cities", BoundingBoxType.EndCity));
         buildTab(2,
-                (id, x, y, width) -> new BoolSettingButton(id, x, y, width, "Villages", ConfigManager.drawVillages),
+                (id, x, y, width) -> new BoolSettingButton(id, x, y, width, "Village Spheres", ConfigManager.drawVillageSpheres),
                 (id, x, y, width) -> new BoolSettingButton(id, x, y, width, "Door Lines", ConfigManager.drawVillageDoors),
                 (id, x, y, width) -> new BoolSettingButton(id, x, y, width, "Golem Spawn", ConfigManager.drawIronGolemSpawnArea),
 
-                (id, x, y, width) -> new BoolSettingButton(id, x, y, width, "Render Sphere", ConfigManager.renderVillageAsSphere),
                 (id, x, y, width) -> new IntSettingSlider(id, x, y, width, 1, 5, "Dot Size", ConfigManager.villageSphereDotSize),
                 (id, x, y, width) -> new IntSettingSlider(id, x, y, width, 1, 5, "Density", ConfigManager.villageSphereDensity)
                         .addDisplayValue(1, "Fewest")

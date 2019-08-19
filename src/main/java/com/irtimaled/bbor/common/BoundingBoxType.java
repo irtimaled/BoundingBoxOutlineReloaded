@@ -24,13 +24,14 @@ public class BoundingBoxType {
     public final static BoundingBoxType EndCity = register(Color.MAGENTA, "EndCity", ConfigManager.drawEndCities);
     public final static BoundingBoxType Mansion = register(Colors.BROWN, "Mansion", ConfigManager.drawMansions);
     public final static BoundingBoxType Igloo = register(Color.WHITE, "Igloo", ConfigManager.drawIgloos);
-    public final static BoundingBoxType PillagerOutpost = register(Color.GRAY, "Pillager_Outpost", ConfigManager.drawPillagerOutposts);
+    public final static BoundingBoxType PillagerOutpost = register(Color.DARK_GRAY, "Pillager_Outpost", ConfigManager.drawPillagerOutposts);
     public final static BoundingBoxType WorldSpawn = register(Color.RED, "World_Spawn", ConfigManager.drawWorldSpawn);
     public final static BoundingBoxType SpawnChunks = register(Color.RED, "Spawn_Chunks", ConfigManager.drawWorldSpawn);
     public final static BoundingBoxType LazySpawnChunks = register(Color.RED, "Lazy_Chunks", ConfigManager.drawLazySpawnChunks);
     public final static BoundingBoxType MobSpawner = register(Color.GREEN, "Mob_Spawner", ConfigManager.drawMobSpawners);
     public final static BoundingBoxType SlimeChunks = register(Colors.DARK_GREEN, "Slime_Chunks", ConfigManager.drawSlimeChunks);
-    public final static BoundingBoxType Village = register(null, "Village", ConfigManager.drawVillages);
+    public final static BoundingBoxType Village = register(Colors.PURPLE, "Village", ConfigManager.drawVillages);
+    public final static BoundingBoxType VillageSpheres = register(null, "Village Sphere", ConfigManager.drawVillageSpheres);
 
     private static BoundingBoxType register(Color color, String name, Setting<Boolean> shouldRenderSetting) {
         return structureTypeMap.computeIfAbsent(name.hashCode(), k -> new BoundingBoxType(color, name, shouldRenderSetting));

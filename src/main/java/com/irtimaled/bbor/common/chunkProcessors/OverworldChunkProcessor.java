@@ -6,6 +6,7 @@ import com.irtimaled.bbor.common.BoundingBoxType;
 public class OverworldChunkProcessor extends AbstractChunkProcessor {
     public OverworldChunkProcessor(BoundingBoxCache boundingBoxCache) {
         super(boundingBoxCache);
+        supportedStructures.add(BoundingBoxType.Village);
         supportedStructures.add(BoundingBoxType.DesertTemple);
         supportedStructures.add(BoundingBoxType.JungleTemple);
         supportedStructures.add(BoundingBoxType.WitchHut);

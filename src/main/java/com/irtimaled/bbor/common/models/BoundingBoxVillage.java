@@ -18,7 +18,7 @@ public class BoundingBoxVillage extends AbstractBoundingBox {
     private int villageHash;
 
     private BoundingBoxVillage(Coords center, Integer radius, Color color, boolean spawnsIronGolems, Set<Coords> doors, Coords minCoords, Coords maxCoords) {
-        super(minCoords, maxCoords, BoundingBoxType.Village);
+        super(minCoords, maxCoords, BoundingBoxType.VillageSpheres);
         this.center = center;
         this.radius = radius;
         this.color = color;

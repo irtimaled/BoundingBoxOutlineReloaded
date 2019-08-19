@@ -18,7 +18,6 @@ public class ConfigManager {
     public static Setting<Boolean> drawNetherFortresses;
     public static Setting<Boolean> drawOceanMonuments;
     public static Setting<Boolean> alwaysVisible;
-    public static Setting<Boolean> renderVillageAsSphere;
     public static Setting<Boolean> drawIronGolemSpawnArea;
     public static Setting<Boolean> drawVillageDoors;
     public static Setting<Boolean> drawSlimeChunks;
@@ -40,6 +39,7 @@ public class ConfigManager {
     public static Setting<Boolean> outerBoxesOnly;
     public static Setting<Integer> villageSphereDotSize;
     public static Setting<Integer> villageSphereDensity;
+    public static Setting<Boolean> drawVillageSpheres;
 
     public static void loadConfig(File mcConfigDir) {
         configDir = new File(mcConfigDir, "config");
@@ -51,13 +51,13 @@ public class ConfigManager {
         alwaysVisible = setup(config, "general", "alwaysVisible", false, "If set to true boxes will be visible even through other blocks.");
         keepCacheBetweenSessions = setup(config, "general", "keepCacheBetweenSessions", false, "If set to true bounding box caches will be kept between sessions.");
 
-        drawVillages = setup(config, "villages", "drawVillages", true, "If set to true village bounding boxes are drawn.");
-        renderVillageAsSphere = setup(config, "villages", "renderVillageAsSphere", true, "If set to true villages will be drawn as a sphere. (default:true)");
+        drawVillageSpheres = setup(config, "villages", "drawVillageSpheres", true, "If set to true village bounding spheres are drawn.");
         drawIronGolemSpawnArea = setup(config, "villages", "drawIronGolemSpawnArea", true, "If set to true the iron golem spawn area of the village will be drawn. (default:true)");
         drawVillageDoors = setup(config, "villages", "drawVillageDoors", false, "If set to true lines between the village centre and doors will be drawn. (default:false)");
         villageSphereDotSize = setup(config, "villages", "villageSphereDotSize", 2, "The size of the dots used when rendering village as sphere.");
         villageSphereDensity = setup(config, "villages", "villageSphereDensity", 3, "The density of the dots used when rendering village as sphere.");
 
+        drawVillages = setup(config, "structures", "drawVillages", false, "If set to true village bounding boxes will be drawn.");
         drawDesertTemples = setup(config, "structures", "drawDesertTemples", true, "If set to true desert temple bounding boxes are drawn.");
         drawJungleTemples = setup(config, "structures", "drawJungleTemples", true, "If set to true jungle temple bounding boxes are drawn.");
         drawWitchHuts = setup(config, "structures", "drawWitchHuts", true, "If set to true witch hut bounding boxes are drawn.");

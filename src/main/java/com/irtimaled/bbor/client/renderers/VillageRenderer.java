@@ -12,11 +12,7 @@ import java.util.Set;
 public class VillageRenderer extends AbstractRenderer<BoundingBoxVillage> {
     @Override
     public void render(BoundingBoxVillage boundingBox) {
-        if (ConfigManager.renderVillageAsSphere.get()) {
-            renderBoundingBoxVillageAsSphere(boundingBox);
-        } else {
-            renderBoundingBox(boundingBox);
-        }
+        renderBoundingBoxVillageAsSphere(boundingBox);
         if (ConfigManager.drawIronGolemSpawnArea.get() &&
                 boundingBox.getSpawnsIronGolems()) {
             renderIronGolemSpawnArea(boundingBox);
