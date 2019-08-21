@@ -7,6 +7,7 @@ public class ClientTweaker extends Tweaker {
     @Override
     protected void addOptions(List<String> args, File gameDir, File assetsDir, String profile) {
         addArg("--assetsDir", assetsDir.getPath());
+        addArg("--version", profile);
     }
 
     @Override
