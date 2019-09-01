@@ -30,24 +30,24 @@ public class Installer {
 
             try {
                 File profilesJson = new File(minecraftFolder, "launcher_profiles.json");
-                if (profilesJson.exists()) { // TODO: use gson instead
+                if (profilesJson.exists()) {
                     String identifier = "\"bbor-" + mcVersion + "\"";
                     String contents = new String(Files.readAllBytes(profilesJson.toPath()));
                     if (contents.contains(identifier)) {
-                        contents = contents.replaceAll(",\n *" + identifier + ": \\{[^}]*},", ",");
-                        contents = contents.replaceAll(",?\n *" + identifier + ": \\{[^}]*},?", "");
+                        contents = contents.replaceAll(",\n?\\s*" + identifier + "\\s*:\\s*\\{[^}]*},", ",");
+                        contents = contents.replaceAll(",?\n?\\s*" + identifier + "\\s*:\\s*\\{[^}]*},?", "");
                     }
 
                     String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 
-                    contents = contents.replaceAll("(\n\\s*\"profiles\"\\s*:\\s*\\{)", "$1\n" +
+                    contents = contents.replaceAll("([}],\n?\\s*\"profiles\"\\s*:\\s*[{]\n?)", "$1" +
                             "    " + identifier + ": {\n" +
                             "      \"name\": \"Bounding Box Outline Reloaded\",\n" +
                             "      \"type\": \"custom\",\n" +
                             "      \"created\": \"" + date + "T00:00:00.000Z\",\n" +
                             "      \"lastUsed\": \"2100-01-01T00:00:00.000Z\",\n" +
                             "      \"lastVersionId\": \"BBOR-" + version + "\"\n" +
-                            "    },");
+                            "    },\n");
 
                     Files.write(profilesJson.toPath(), contents.getBytes());
                 }
