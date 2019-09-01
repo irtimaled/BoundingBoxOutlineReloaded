@@ -28,7 +28,7 @@ class BoundingBoxDeserializer {
         if (type == null) return null;
         Coords minCoords = reader.readCoords();
         Coords maxCoords = reader.readCoords();
-        return BoundingBoxStructure.from(minCoords, maxCoords, type);
+        return BoundingBoxCuboid.from(minCoords, maxCoords, type);
     }
 
     private static AbstractBoundingBox deserializeVillage(PayloadReader reader) {

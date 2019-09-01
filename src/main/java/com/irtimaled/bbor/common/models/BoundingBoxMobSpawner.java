@@ -2,7 +2,7 @@ package com.irtimaled.bbor.common.models;
 
 import com.irtimaled.bbor.common.BoundingBoxType;
 
-public class BoundingBoxMobSpawner extends AbstractBoundingBox {
+public class BoundingBoxMobSpawner extends BoundingBoxCuboid {
     private final Coords coords;
 
     private BoundingBoxMobSpawner(Coords coords, Coords minCoords, Coords maxCoords) {

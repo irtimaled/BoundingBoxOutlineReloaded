@@ -6,8 +6,6 @@ import com.irtimaled.bbor.config.ConfigManager;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
-import java.util.HashSet;
-import java.util.Set;
 
 public class VillageRenderer extends AbstractRenderer<BoundingBoxVillage> {
     @Override
@@ -56,34 +54,6 @@ public class VillageRenderer extends AbstractRenderer<BoundingBoxVillage> {
         int density = ConfigManager.villageSphereDensity.get();
         int dotSize = ConfigManager.villageSphereDotSize.get();
 
-        GL11.glEnable(GL11.GL_POINT_SMOOTH);
-        GL11.glPointSize(dotSize);
-        Renderer renderer = Renderer.startPoints()
-                .setColor(color);
-        buildPoints(center, (double) radius, density)
-                .forEach(renderer::addPoint);
-        renderer.render();
-    }
-
-    private Set<OffsetPoint> buildPoints(OffsetPoint center, double radius, int density) {
-        int segments = 24 + (density * 8);
-
-        Set<OffsetPoint> points = new HashSet<>(segments * segments);
-        double tau = 6.283185307179586D;
-        double pi = tau / 2D;
-
-        double thetaSegment = pi / (double) segments;
-        double phiSegment = tau / (double) segments;
-
-        for (double phi = 0.0D; phi < tau; phi += phiSegment) {
-            for (double theta = 0.0D; theta < pi; theta += thetaSegment) {
-                double dx = radius * Math.sin(phi) * Math.cos(theta);
-                double dz = radius * Math.sin(phi) * Math.sin(theta);
-                double dy = radius * Math.cos(phi);
-
-                points.add(center.offset(dx, dy, dz));
-            }
-        }
-        return points;
+        renderSphere(center, radius, color, density, dotSize);
     }
 }

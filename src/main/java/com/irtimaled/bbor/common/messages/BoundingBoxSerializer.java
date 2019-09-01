@@ -11,7 +11,7 @@ class BoundingBoxSerializer {
 
     static {
         serializers.put(BoundingBoxVillage.class, (bb, pb) -> serializeVillage((BoundingBoxVillage) bb, pb));
-        serializers.put(BoundingBoxStructure.class, (bb, pb) -> serializeStructure((BoundingBoxStructure) bb, pb));
+        serializers.put(BoundingBoxCuboid.class, (bb, pb) -> serializeStructure((BoundingBoxCuboid)bb, pb));
         serializers.put(BoundingBoxMobSpawner.class, (bb, pb) -> serializeMobSpawner((BoundingBoxMobSpawner) bb, pb));
     }
 
@@ -37,7 +37,7 @@ class BoundingBoxSerializer {
         }
     }
 
-    private static void serializeStructure(BoundingBoxStructure boundingBox, PayloadBuilder builder) {
+    private static void serializeStructure(BoundingBoxCuboid boundingBox, PayloadBuilder builder) {
         builder.writeChar('S')
                 .writeInt(boundingBox.getTypeName().hashCode())
                 .writeCoords(boundingBox.getMinCoords())

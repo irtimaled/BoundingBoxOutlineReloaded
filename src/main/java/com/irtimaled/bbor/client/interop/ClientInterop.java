@@ -6,6 +6,7 @@ import com.irtimaled.bbor.client.events.Render;
 import com.irtimaled.bbor.client.events.SeedCommandTyped;
 import com.irtimaled.bbor.client.events.UpdateWorldSpawnReceived;
 import com.irtimaled.bbor.common.EventBus;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.util.math.BlockPos;
 
@@ -44,5 +45,9 @@ public class ClientInterop {
 
     public static void updateWorldSpawnReceived(BlockPos blockPos) {
         EventBus.publish(new UpdateWorldSpawnReceived(blockPos.getX(), blockPos.getZ()));
+    }
+
+    public static int getRenderDistanceChunks() {
+        return Minecraft.getInstance().gameSettings.renderDistanceChunks;
     }
 }

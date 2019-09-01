@@ -4,8 +4,8 @@ import com.irtimaled.bbor.common.BoundingBoxCache;
 import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.TypeHelper;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
+import com.irtimaled.bbor.common.models.BoundingBoxCuboid;
 import com.irtimaled.bbor.common.models.BoundingBoxMobSpawner;
-import com.irtimaled.bbor.common.models.BoundingBoxStructure;
 import com.irtimaled.bbor.common.models.Coords;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityMobSpawner;
@@ -48,7 +48,7 @@ public abstract class AbstractChunkProcessor {
     private AbstractBoundingBox buildStructure(MutableBoundingBox bb, BoundingBoxType type) {
         Coords min = new Coords(bb.minX, bb.minY, bb.minZ);
         Coords max = new Coords(bb.maxX, bb.maxY, bb.maxZ);
-        return BoundingBoxStructure.from(min, max, type);
+        return BoundingBoxCuboid.from(min, max, type);
     }
 
     private void addMobSpawners(Chunk chunk) {
