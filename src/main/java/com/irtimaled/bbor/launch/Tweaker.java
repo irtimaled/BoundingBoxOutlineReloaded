@@ -11,22 +11,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Tweaker implements ITweaker {
-    public List<String> args;
+    private List<String> args;
 
     @Override
     public void acceptOptions(List<String> args, File gameDir, File assetsDir, String profile) {
-        this.args = new ArrayList<>(args);
+        this.args = new ArrayList<>();
         addOptions(args, gameDir, assetsDir, profile);
     }
 
-    protected void addArg(String name, String value) {
-        args.add(name);
+    void addArg(String name, String value) {
         if (value != null) {
+            args.add(name);
             args.add(value);
         }
     }
 
     protected void addOptions(List<String> args, File gameDir, File assetsDir, String profile) {
+        this.args.addAll(args);
     }
 
     @Override
