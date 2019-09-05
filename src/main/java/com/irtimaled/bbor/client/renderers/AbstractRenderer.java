@@ -84,6 +84,15 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
         renderer.render();
     }
 
+    void renderLine(OffsetPoint startPoint, OffsetPoint endPoint, Color color) {
+        GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+        Renderer.startLines()
+                .setColor(color)
+                .addPoint(startPoint)
+                .addPoint(endPoint)
+                .render();
+    }
+
     void renderSphere(OffsetPoint center, double radius, Color color, int density, int dotSize) {
         GL11.glEnable(GL11.GL_POINT_SMOOTH);
         GL11.glPointSize(dotSize);
