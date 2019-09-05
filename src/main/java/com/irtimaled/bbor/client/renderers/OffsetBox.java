@@ -25,13 +25,17 @@ class OffsetBox {
         return new OffsetBox(min.offset(-x, -y, -z), max.offset(x, y, z));
     }
 
+    OffsetBox offset(double x, double y, double z) {
+        return new OffsetBox(min.offset(x, y, z), max.offset(x, y, z));
+    }
+
+
     OffsetBox nudge() {
         double growXZ = 0.001F;
-        double growY = 0;
-        if (min.getY() != max.getY()) {
-            growY = growXZ;
+        if (min.getY() == max.getY()) {
+            return grow(growXZ, 0, growXZ).offset(0, growXZ, 0);
         }
-        return grow(growXZ, growY, growXZ);
+        return grow(growXZ, growXZ, growXZ);
     }
 
     OffsetPoint getMin() {
