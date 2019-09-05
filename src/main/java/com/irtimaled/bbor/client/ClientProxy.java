@@ -26,11 +26,14 @@ public class ClientProxy extends CommonProxy {
 
     public static void toggleActive() {
         active = !active;
-        if (active)
-            PlayerCoords.setActiveY();
+        if (!active) return;
+
+        PlayerCoords.setActiveY();
     }
 
     private static void toggleOuterBoxesOnly() {
+        if(!active) return;
+
         Setting<Boolean> outerBoxesOnly = ConfigManager.outerBoxesOnly;
         outerBoxesOnly.set(!outerBoxesOnly.get());
     }
