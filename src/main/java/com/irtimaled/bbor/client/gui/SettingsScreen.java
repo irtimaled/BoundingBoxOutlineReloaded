@@ -1,6 +1,7 @@
 package com.irtimaled.bbor.client.gui;
 
 import com.irtimaled.bbor.client.ClientProxy;
+import com.irtimaled.bbor.client.ClientRenderer;
 import com.irtimaled.bbor.client.renderers.Renderer;
 import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.TypeHelper;
@@ -110,7 +111,7 @@ public class SettingsScreen extends GuiScreen {
 
     @Override
     protected void initGui() {
-        this.title = ClientProxy.Name;
+        this.title = "Bounding Box Outline Reloaded";
 
         this.controls = new HashSet<>();
         this.addTabs("General", "Structures", "Villages");
@@ -119,12 +120,12 @@ public class SettingsScreen extends GuiScreen {
                 (id, x, y, width) -> new AbstractButton(id, x, y, width, "Active", this.mc.world != null) {
                     @Override
                     public void onPressed() {
-                        ClientProxy.toggleActive();
+                        ClientRenderer.toggleActive();
                     }
 
                     @Override
                     protected int getState() {
-                        return enabled ? ClientProxy.active ? 2 : 1 : 0;
+                        return enabled ? ClientRenderer.getActive() ? 2 : 1 : 0;
                     }
                 },
                 (id, x, y, width) -> new BoolSettingButton(id, x, y, width, "Outer Box Only", ConfigManager.outerBoxesOnly),

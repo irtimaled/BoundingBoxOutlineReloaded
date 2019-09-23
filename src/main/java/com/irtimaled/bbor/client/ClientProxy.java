@@ -2,41 +2,25 @@ package com.irtimaled.bbor.client;
 
 import com.irtimaled.bbor.client.events.*;
 import com.irtimaled.bbor.client.gui.SettingsScreen;
+import com.irtimaled.bbor.client.keyboard.Key;
 import com.irtimaled.bbor.client.keyboard.KeyListener;
 import com.irtimaled.bbor.common.BoundingBoxCache;
 import com.irtimaled.bbor.common.CommonProxy;
 import com.irtimaled.bbor.common.EventBus;
 import com.irtimaled.bbor.common.VillageColorCache;
 import com.irtimaled.bbor.config.ConfigManager;
-import com.irtimaled.bbor.config.Setting;
 
 public class ClientProxy extends CommonProxy {
-    public static final String Name = "Bounding Box Outline Reloaded";
-    public static boolean active;
-
     static {
-        KeyListener.register("Toggle Active", 0x42, Name)
-                .onKeyPressHandler(ClientProxy::toggleActive)
-                .onLongKeyPressHandler(60, SettingsScreen::show);
-        KeyListener.register("Toggle Outer Box Only", 0x4f, Name)
-                .onKeyPressHandler(ClientProxy::toggleOuterBoxesOnly);
+        Key mainKey = KeyListener.register("Toggle Active", "key.keyboard.b")
+                .onKeyPressHandler(ClientRenderer::toggleActive);
+        mainKey.register("key.keyboard.g")
+                .onKeyPressHandler(SettingsScreen::show);
+        mainKey.register("key.keyboard.o")
+                .onKeyPressHandler(() -> ConfigManager.Toggle(ConfigManager.outerBoxesOnly));
     }
 
     private boolean ready;
-
-    public static void toggleActive() {
-        active = !active;
-        if (!active) return;
-
-        PlayerCoords.setActiveY();
-    }
-
-    private static void toggleOuterBoxesOnly() {
-        if(!active) return;
-
-        Setting<Boolean> outerBoxesOnly = ConfigManager.outerBoxesOnly;
-        outerBoxesOnly.set(!outerBoxesOnly.get());
-    }
 
     private ClientRenderer renderer;
 
@@ -56,13 +40,13 @@ public class ClientProxy extends CommonProxy {
     }
 
     private void render(Render event) {
-        if (!active || !ready) return;
+        if (!ready) return;
 
-        renderer.render(event.getDimensionId(), ConfigManager.outerBoxesOnly.get());
+        renderer.render(event.getDimensionId());
     }
 
     private void disconnectedFromServer() {
-        active = false;
+        ClientRenderer.deactivate();
         if (ConfigManager.keepCacheBetweenSessions.get()) return;
         ready = false;
         VillageColorCache.clear();

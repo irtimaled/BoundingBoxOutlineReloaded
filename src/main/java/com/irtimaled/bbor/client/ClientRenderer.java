@@ -16,6 +16,23 @@ public class ClientRenderer {
     private static final int CHUNK_SIZE = 16;
     private static final Map<Class<? extends AbstractBoundingBox>, AbstractRenderer> boundingBoxRendererMap = new HashMap<>();
 
+    private static boolean active;
+
+    public static boolean getActive() {
+        return active;
+    }
+
+    public static void toggleActive() {
+        active = !active;
+        if (!active) return;
+
+        PlayerCoords.setActiveY();
+    }
+
+    static void deactivate() {
+        active = false;
+    }
+
     private final GetCache getCache;
     private long seed;
     private Set<AbstractBoundingBox> spawnChunkBoundingBoxes = new HashSet<>();
@@ -39,7 +56,9 @@ public class ClientRenderer {
         return boundingBox.intersectsBounds(minX, minZ, maxX, maxZ);
     }
 
-    public void render(int dimensionId, Boolean outerBoxesOnly) {
+    public void render(int dimensionId) {
+        if(!active) return;
+
         Map<AbstractBoundingBox, Set<AbstractBoundingBox>> boundingBoxes = getBoundingBoxes(dimensionId);
 
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -50,6 +69,8 @@ public class ClientRenderer {
         if (ConfigManager.alwaysVisible.get()) {
             GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
         }
+
+        Boolean outerBoxesOnly = ConfigManager.outerBoxesOnly.get();
         for (Map.Entry<AbstractBoundingBox, Set<AbstractBoundingBox>> entry : boundingBoxes.entrySet()) {
             AbstractBoundingBox key = entry.getKey();
             if (!key.shouldRender()) continue;

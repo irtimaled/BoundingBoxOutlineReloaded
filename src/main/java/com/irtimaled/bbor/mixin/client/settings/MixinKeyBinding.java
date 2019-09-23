@@ -1,6 +1,6 @@
 package com.irtimaled.bbor.mixin.client.settings;
 
-import com.irtimaled.bbor.client.ClientProxy;
+import com.irtimaled.bbor.client.keyboard.KeyListener;
 import net.minecraft.client.settings.KeyBinding;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,6 +15,6 @@ public class MixinKeyBinding {
     private static Map<String, Integer> CATEGORY_ORDER;
 
     static {
-        CATEGORY_ORDER.put(ClientProxy.Name, 0);
+        CATEGORY_ORDER.put(KeyListener.Category, 0);
     }
 }

@@ -1,5 +1,6 @@
 package com.irtimaled.bbor.client.gui;
 
+import com.irtimaled.bbor.config.ConfigManager;
 import com.irtimaled.bbor.config.Setting;
 
 public class BoolSettingButton extends AbstractButton {
@@ -17,6 +18,6 @@ public class BoolSettingButton extends AbstractButton {
 
     @Override
     public void onPressed() {
-        setting.set(!setting.get());
+        ConfigManager.Toggle(setting);
     }
 }

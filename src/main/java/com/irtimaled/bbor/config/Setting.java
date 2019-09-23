@@ -3,7 +3,7 @@ package com.irtimaled.bbor.config;
 public class Setting<T> extends AbstractSetting {
     private T value;
 
-    public Setting(char type, T value) {
+    Setting(char type, T value) {
         super(type);
         this.value = value;
     }

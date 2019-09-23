@@ -1,16 +1,18 @@
 package com.irtimaled.bbor.client.keyboard;
 
-import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.util.InputMappings;
 
-public class Key extends KeyBinding {
-    private InputMappings.Input input;
-    private KeyHandler onKeyPress;
-    private KeyHandler onLongKeyPress;
-    private int longPressDuration;
+import java.util.HashSet;
+import java.util.Set;
 
-    Key(String description, int keyCode, String category) {
-        super(description, keyCode, category);
+public class Key {
+    private int keyCode;
+    private KeyHandler onKeyPress;
+    private Set<Key> subKeys = new HashSet<>();
+    private boolean triggeredSincePress;
+
+    Key(int keyCode) {
+        this.keyCode = keyCode;
     }
 
     public Key onKeyPressHandler(KeyHandler onKeyPress) {
@@ -18,52 +20,67 @@ public class Key extends KeyBinding {
         return this;
     }
 
-    public Key onLongKeyPressHandler(int duration, KeyHandler onLongKeyPress) {
-        this.longPressDuration = duration;
-        this.onLongKeyPress = onLongKeyPress;
-        return this;
-    }
-
-    InputMappings.Input getInput() {
-        if (input == null)
-            return getDefault();
-        return input;
-    }
-
-    @Override
-    public void bind(InputMappings.Input input) {
-        this.input = input;
-        super.bind(input);
+    void updateKeyCode(int keyCode) {
+        this.keyCode = keyCode;
     }
 
     private int pressDuration = 0;
 
-    @Override
-    public boolean isPressed() {
-        return pressDuration == 1;
+    private void runHandler(KeyHandler onKeyPress) {
+        triggeredSincePress = true;
+        onKeyPress.handle();
     }
 
-    void release() {
-        if (onKeyPress != null && (onLongKeyPress == null || pressDuration < longPressDuration)) {
-            onKeyPress.handle();
+    private void press() {
+        for (Key subKey : subKeys) {
+            subKey.triggeredSincePress = false;
         }
-
-        pressDuration = 0;
-    }
-
-    void repeat() {
-        if (onLongKeyPress == null) return;
-
-        if (pressDuration <= longPressDuration) {
-            pressDuration++;
-        }
-
-        if (pressDuration == longPressDuration) {
-            onLongKeyPress.handle();
-        }
-    }
-
-    void press() {
+        triggeredSincePress = false;
         pressDuration++;
+    }
+
+    private void release() {
+        try {
+            for (Key subKey : subKeys) {
+                if (subKey.pressDuration > 0) {
+                    subKey.release();
+                    return;
+                }
+                if (subKey.triggeredSincePress) {
+                    return;
+                }
+            }
+            if (onKeyPress != null && pressDuration > 0) {
+                runHandler(onKeyPress);
+            }
+        } finally {
+            pressDuration = 0;
+        }
+    }
+
+    boolean handleKeyEvent(int keyCode, boolean isPressed) {
+        if (this.keyCode == keyCode) {
+            if (isPressed) {
+                press();
+            } else {
+                release();
+            }
+            return true;
+        } else if (this.pressDuration > 0) {
+            for (Key subKey : subKeys) {
+                if (subKey.handleKeyEvent(keyCode, isPressed)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public Key register(String keyName) {
+        InputMappings.Input input = InputMappings.getInputByName(keyName);
+        Key key = new Key(input.getKeyCode());
+        subKeys.add(key);
+        return key;
     }
 }
