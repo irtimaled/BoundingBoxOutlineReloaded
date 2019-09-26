@@ -33,6 +33,7 @@ public class BoundingBoxType {
     public final static BoundingBoxType Village = register(Colors.PURPLE, "Village", ConfigManager.drawVillages);
     public final static BoundingBoxType VillageSpheres = register(null, "Village Sphere", ConfigManager.drawVillageSpheres);
     public final static BoundingBoxType AFKSphere = register(Color.RED, "AFK Sphere", ConfigManager.drawAFKSpheres);
+    public final static BoundingBoxType Beacon = register(Color.WHITE, "Beacon", ConfigManager.drawBeacons);
 
     private static BoundingBoxType register(Color color, String name, Setting<Boolean> shouldRenderSetting) {
         return structureTypeMap.computeIfAbsent(name.hashCode(), k -> new BoundingBoxType(color, name, shouldRenderSetting));

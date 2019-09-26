@@ -36,7 +36,8 @@ public class ClientProxy extends CommonProxy {
         renderer = new ClientRenderer(this::getCache)
                 .registerProvider(new SlimeChunkProvider())
                 .registerProvider(new WorldSpawnProvider())
-                .registerProvider(new SpawningSphereProvider());
+                .registerProvider(new SpawningSphereProvider())
+                .registerProvider(new BeaconProvider());
 
         KeyListener.init();
     }
@@ -51,6 +52,7 @@ public class ClientProxy extends CommonProxy {
         SlimeChunkProvider.clear();
         WorldSpawnProvider.clear();
         SpawningSphereProvider.clear();
+        BeaconProvider.clear();
         VillageColorCache.clear();
         clearCaches();
     }
