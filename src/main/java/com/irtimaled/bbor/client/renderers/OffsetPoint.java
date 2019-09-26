@@ -1,45 +1,45 @@
 package com.irtimaled.bbor.client.renderers;
 
 import com.irtimaled.bbor.client.PlayerCoords;
+import com.irtimaled.bbor.client.models.Point;
 import com.irtimaled.bbor.common.models.Coords;
 
 class OffsetPoint {
-    private final double x;
-    private final double y;
-    private final double z;
+    private final Point point;
 
     OffsetPoint(double x, double y, double z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        this(new Point(x, y, z));
     }
 
-    OffsetPoint(Coords Coords) {
-        this.x = Coords.getX();
-        this.y = Coords.getY();
-        this.z = Coords.getZ();
+    OffsetPoint(Coords coords) {
+        this(new Point(coords));
+    }
+
+    private OffsetPoint(Point point) {
+        this.point = point;
     }
 
     double getX() {
-        return x - PlayerCoords.getX();
+        return point.getX() - PlayerCoords.getX();
     }
 
     double getY() {
-        return y - PlayerCoords.getY();
+        return point.getY() - PlayerCoords.getY();
     }
 
     double getZ() {
-        return z - PlayerCoords.getZ();
+        return point.getZ() - PlayerCoords.getZ();
     }
 
     OffsetPoint offset(double x, double y, double z) {
-        return new OffsetPoint(this.x + x, this.y + y, this.z + z);
+        return new OffsetPoint(point.offset(x, y, z));
     }
 
-    double getDistance(OffsetPoint point) {
-        double dx = this.x - point.x;
-        double dy = this.y - point.y;
-        double dz = this.z - point.z;
-        return Math.sqrt(dx * dx + dy * dy + dz * dz);
+    double getDistance(OffsetPoint offsetPoint) {
+        return this.point.getDistance(offsetPoint.point);
+    }
+
+    Point getPoint() {
+        return this.point;
     }
 }

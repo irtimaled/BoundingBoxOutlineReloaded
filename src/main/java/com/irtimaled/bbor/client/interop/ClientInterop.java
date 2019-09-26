@@ -2,6 +2,7 @@ package com.irtimaled.bbor.client.interop;
 
 import com.irtimaled.bbor.client.PlayerCoords;
 import com.irtimaled.bbor.client.commands.SeedCommand;
+import com.irtimaled.bbor.client.commands.SpawningSphereCommand;
 import com.irtimaled.bbor.client.events.DisconnectedFromRemoteServer;
 import com.irtimaled.bbor.client.events.Render;
 import com.irtimaled.bbor.client.events.UpdateWorldSpawnReceived;
@@ -66,5 +67,6 @@ public class ClientInterop {
 
     public static void registerClientCommands(CommandDispatcher<ISuggestionProvider> commandDispatcher) {
         SeedCommand.register(commandDispatcher);
+        SpawningSphereCommand.register(commandDispatcher);
     }
 }

@@ -11,6 +11,7 @@ public class BoundingBoxSphere extends AbstractBoundingBox {
     private final int maxZ;
 
     private Double centerOffsetX = 0d;
+    private Double centerOffsetY = 0d;
     private Double centerOffsetZ = 0d;
 
     protected BoundingBoxSphere(BoundingBoxType type, Coords center, Integer radius) {
@@ -49,12 +50,17 @@ public class BoundingBoxSphere extends AbstractBoundingBox {
         return centerOffsetX;
     }
 
+    public Double getCenterOffsetY() {
+        return centerOffsetY;
+    }
+
     public Double getCenterOffsetZ() {
         return centerOffsetZ;
     }
 
-    void setCenterOffsets(double x, double z) {
+    void setCenterOffsets(double x, double y, double z) {
         this.centerOffsetX = x;
+        this.centerOffsetY = y;
         this.centerOffsetZ = z;
     }
 }

@@ -40,6 +40,9 @@ public class ConfigManager {
     public static Setting<Integer> villageSphereDotSize;
     public static Setting<Integer> villageSphereDensity;
     public static Setting<Boolean> drawVillageSpheres;
+    public static Setting<Boolean> drawAFKSpheres;
+    public static Setting<Boolean> renderAFKSpawnableBlocks;
+    public static Setting<Integer> afkSpawnableBlocksRenderDistance;
 
     public static void loadConfig(File mcConfigDir) {
         configDir = new File(mcConfigDir, "config");
@@ -83,6 +86,10 @@ public class ConfigManager {
         drawMobSpawners = setup(config, "mobSpawners", "drawMobSpawners", true, "If set to true mob spawners will be drawn.");
         renderMobSpawnerSpawnArea = setup(config, "mobSpawners", "renderMobSpawnerSpawnArea", true, "If set to true a box to show the maximum possible spawn area (10x10x4) for a spawner will be drawn");
         renderMobSpawnerActivationLines = setup(config, "mobSpawners", "renderMobSpawnerActivationLines", true, "If set to true a red/orange/green line will be drawn to show if the spawner is active");
+
+        drawAFKSpheres = setup(config, "afkSpot", "drawAFKSpheres", true, "If set to true afk spot spheres will be drawn.");
+        renderAFKSpawnableBlocks = setup(config, "afkSpot", "renderAFKSpawnableBlocks", true, "If set to true boxes to show spawnable blocks within the AFK sphere will be drawn.");
+        afkSpawnableBlocksRenderDistance = setup(config, "afkSpot", "afkSpawnableBlocksRenderDistance", 3, "The distance from the player where spawnable blocks within the AFK sphere will be drawn.");
 
         config.save();
     }

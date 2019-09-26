@@ -2,6 +2,9 @@ package com.irtimaled.bbor.client.renderers;
 
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.config.ConfigManager;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.OpenGlHelper;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -91,6 +94,35 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
                 .addPoint(startPoint)
                 .addPoint(endPoint)
                 .render();
+    }
+
+    void renderText(OffsetPoint offsetPoint, String... texts) {
+        FontRenderer fontRenderer = Minecraft.getInstance().fontRenderer;
+
+        GL11.glPushMatrix();
+        GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
+        GL11.glTranslated(offsetPoint.getX(), offsetPoint.getY() + 0.002D, offsetPoint.getZ());
+        GL11.glNormal3f(0.0F, 1.0F, 0.0F);
+        GL11.glRotatef(0.0F, 0.0F, 1.0F, 0.0F);
+        GL11.glRotatef(90.0F, 1.0F, 0.0F, 0.0F);
+        GL11.glScalef(-0.0175F, -0.0175F, 0.0175F);
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+
+        GL11.glEnable(GL11.GL_BLEND);
+        OpenGlHelper.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GL11.glDepthMask(true);
+        float top = -(fontRenderer.FONT_HEIGHT * texts.length) / 2f;
+        for (String text : texts) {
+            float left = fontRenderer.getStringWidth(text) / 2f;
+            fontRenderer.drawString(text, -left, top, -1);
+            top += fontRenderer.FONT_HEIGHT;
+        }
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glDisable(GL11.GL_BLEND);
+        GL11.glPopMatrix();
     }
 
     void renderSphere(OffsetPoint center, double radius, Color color, int density, int dotSize) {

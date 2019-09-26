@@ -32,6 +32,7 @@ public class BoundingBoxType {
     public final static BoundingBoxType SlimeChunks = register(Colors.DARK_GREEN, "Slime_Chunks", ConfigManager.drawSlimeChunks);
     public final static BoundingBoxType Village = register(Colors.PURPLE, "Village", ConfigManager.drawVillages);
     public final static BoundingBoxType VillageSpheres = register(null, "Village Sphere", ConfigManager.drawVillageSpheres);
+    public final static BoundingBoxType AFKSphere = register(Color.RED, "AFK Sphere", ConfigManager.drawAFKSpheres);
 
     private static BoundingBoxType register(Color color, String name, Setting<Boolean> shouldRenderSetting) {
         return structureTypeMap.computeIfAbsent(name.hashCode(), k -> new BoundingBoxType(color, name, shouldRenderSetting));

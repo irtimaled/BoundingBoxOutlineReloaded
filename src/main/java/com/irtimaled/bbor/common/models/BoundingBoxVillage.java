@@ -54,7 +54,7 @@ public class BoundingBoxVillage extends BoundingBoxSphere {
 
             processedFirstDoor = true;
         }
-        setCenterOffsets(Math.abs(maxX - minX) % 2 == 0 ? 0.5 : (minX < 0 ? 0 : 1), Math.abs(maxZ - minZ) % 2 == 0 ? 0.5 : (minZ < 0 ? 0 : 1));
+        setCenterOffsets(Math.abs(maxX - minX) % 2 == 0 ? 0.5 : (minX < 0 ? 0 : 1), 0.0d, Math.abs(maxZ - minZ) % 2 == 0 ? 0.5 : (minZ < 0 ? 0 : 1));
     }
 
     public Color getColor() {

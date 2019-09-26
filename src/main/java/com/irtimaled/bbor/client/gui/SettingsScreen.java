@@ -1,6 +1,5 @@
 package com.irtimaled.bbor.client.gui;
 
-import com.irtimaled.bbor.client.ClientProxy;
 import com.irtimaled.bbor.client.ClientRenderer;
 import com.irtimaled.bbor.client.renderers.Renderer;
 import com.irtimaled.bbor.common.BoundingBoxType;
@@ -131,8 +130,6 @@ public class SettingsScreen extends GuiScreen {
                 (id, x, y, width) -> new BoolSettingButton(id, x, y, width, "Outer Box Only", ConfigManager.outerBoxesOnly),
                 (id, x, y, width) -> new BoolSettingButton(id, x, y, width, "Fill", ConfigManager.fill),
 
-                (id, x, y, width) -> (IRowHeight) () -> 0.5,
-
                 (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Spawn Chunks", BoundingBoxType.WorldSpawn),
                 (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Lazy Chunks", BoundingBoxType.LazySpawnChunks),
                 (id, x, y, width) -> new MaxYSettingSlider(id, x, y, width, 39, ConfigManager.worldSpawnMaxY),
@@ -143,7 +140,14 @@ public class SettingsScreen extends GuiScreen {
 
                 (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Mob Spawners", BoundingBoxType.MobSpawner),
                 (id, x, y, width) -> new BoolSettingButton(id, x, y, width, "Spawn Area", ConfigManager.renderMobSpawnerSpawnArea),
-                (id, x, y, width) -> new BoolSettingButton(id, x, y, width, "Activation Lines", ConfigManager.renderMobSpawnerActivationLines));
+                (id, x, y, width) -> new BoolSettingButton(id, x, y, width, "Activation Lines", ConfigManager.renderMobSpawnerActivationLines),
+
+                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Spawn Sphere", BoundingBoxType.AFKSphere),
+                (id, x, y, width) -> new BoolSettingButton(id, x, y, width, "Spawnable Blocks", ConfigManager.renderAFKSpawnableBlocks),
+                (id, x, y, width) -> new IntSettingSlider(id, x, y, width, 1, 3, "Distance", ConfigManager.afkSpawnableBlocksRenderDistance)
+                        .addDisplayValue(1, "Nearest")
+                        .addDisplayValue(2, "Nearer")
+                        .addDisplayValue(3, "Normal"));
         buildTab(1,
                 (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Desert Temples", BoundingBoxType.DesertTemple),
                 (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Jungle Temples", BoundingBoxType.JungleTemple),
