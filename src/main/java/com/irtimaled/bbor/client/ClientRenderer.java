@@ -1,22 +1,25 @@
 package com.irtimaled.bbor.client;
 
 import com.irtimaled.bbor.client.interop.ClientInterop;
+import com.irtimaled.bbor.client.providers.IBoundingBoxProvider;
 import com.irtimaled.bbor.client.renderers.*;
 import com.irtimaled.bbor.common.BoundingBoxCache;
-import com.irtimaled.bbor.common.BoundingBoxType;
-import com.irtimaled.bbor.common.Dimensions;
 import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.models.*;
 import com.irtimaled.bbor.config.ConfigManager;
 import org.lwjgl.opengl.GL11;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class ClientRenderer {
     private static final int CHUNK_SIZE = 16;
     private static final Map<Class<? extends AbstractBoundingBox>, AbstractRenderer> boundingBoxRendererMap = new HashMap<>();
 
     private static boolean active;
+    private Set<IBoundingBoxProvider> providers = new HashSet<>();
 
     public static boolean getActive() {
         return active;
@@ -34,16 +37,24 @@ public class ClientRenderer {
     }
 
     private final GetCache getCache;
-    private long seed;
-    private Set<AbstractBoundingBox> spawnChunkBoundingBoxes = new HashSet<>();
 
     ClientRenderer(GetCache getCache) {
         this.getCache = getCache;
-        boundingBoxRendererMap.put(BoundingBoxVillage.class, new VillageRenderer());
-        boundingBoxRendererMap.put(BoundingBoxSlimeChunk.class, new SlimeChunkRenderer());
-        boundingBoxRendererMap.put(BoundingBoxWorldSpawn.class, new WorldSpawnRenderer());
-        boundingBoxRendererMap.put(BoundingBoxCuboid.class, new CuboidRenderer());
-        boundingBoxRendererMap.put(BoundingBoxMobSpawner.class, new MobSpawnerRenderer());
+        registerRenderer(BoundingBoxVillage.class, new VillageRenderer());
+        registerRenderer(BoundingBoxSlimeChunk.class, new SlimeChunkRenderer());
+        registerRenderer(BoundingBoxWorldSpawn.class, new WorldSpawnRenderer());
+        registerRenderer(BoundingBoxCuboid.class, new CuboidRenderer());
+        registerRenderer(BoundingBoxMobSpawner.class, new MobSpawnerRenderer());
+    }
+
+    public <T extends AbstractBoundingBox> ClientRenderer registerProvider(IBoundingBoxProvider<T> provider) {
+        this.providers.add(provider);
+        return this;
+    }
+
+    public <T extends AbstractBoundingBox> ClientRenderer registerRenderer(Class<? extends T> type, AbstractRenderer<T> renderer) {
+        boundingBoxRendererMap.put(type, renderer);
+        return this;
     }
 
     private boolean isWithinRenderDistance(AbstractBoundingBox boundingBox) {
@@ -80,7 +91,7 @@ public class ClientRenderer {
 
             if (!outerBoxesOnly) {
                 Set<AbstractBoundingBox> children = entry.getValue();
-                if (children != null) {
+                if (children != null && children.size() > 0) {
                     children.forEach(renderer::render);
                     continue;
                 }
@@ -95,15 +106,9 @@ public class ClientRenderer {
 
     private Map<AbstractBoundingBox, Set<AbstractBoundingBox>> getBoundingBoxes(int dimensionId) {
         Map<AbstractBoundingBox, Set<AbstractBoundingBox>> boundingBoxes = new HashMap<>();
-        if (dimensionId == Dimensions.OVERWORLD) {
-            if (BoundingBoxType.SlimeChunks.shouldRender()) {
-                addSlimeChunks(boundingBoxes);
-            }
-
-            for (AbstractBoundingBox boundingBox : spawnChunkBoundingBoxes) {
-                if (boundingBox.shouldRender() && isWithinRenderDistance(boundingBox)) {
-                    boundingBoxes.put(boundingBox, null);
-                }
+        for(IBoundingBoxProvider<?> provider: providers) {
+            for (AbstractBoundingBox boundingBox : provider.get(dimensionId)) {
+                boundingBoxes.put(boundingBox, null);
             }
         }
 
@@ -117,73 +122,5 @@ public class ClientRenderer {
             }
         }
         return boundingBoxes;
-    }
-
-    private void addSlimeChunks(Map<AbstractBoundingBox, Set<AbstractBoundingBox>> boundingBoxes) {
-        int renderDistanceChunks = ClientInterop.getRenderDistanceChunks();
-        int playerChunkX = MathHelper.floor(PlayerCoords.getX() / 16.0D);
-        int playerChunkZ = MathHelper.floor(PlayerCoords.getZ() / 16.0D);
-        for (int chunkX = playerChunkX - renderDistanceChunks; chunkX <= playerChunkX + renderDistanceChunks; ++chunkX) {
-            for (int chunkZ = playerChunkZ - renderDistanceChunks; chunkZ <= playerChunkZ + renderDistanceChunks; ++chunkZ) {
-                if (isSlimeChunk(chunkX, chunkZ)) {
-                    int chunkXStart = chunkX << 4;
-                    int chunkZStart = chunkZ << 4;
-                    Coords minCoords = new Coords(chunkXStart, 1, chunkZStart);
-                    Coords maxCoords = new Coords(chunkXStart + 15, 38, chunkZStart + 15);
-                    boundingBoxes.put(BoundingBoxSlimeChunk.from(minCoords, maxCoords), null);
-                }
-            }
-        }
-    }
-
-    private boolean isSlimeChunk(int chunkX, int chunkZ) {
-        Random r = new Random(seed +
-                (long) (chunkX * chunkX * 4987142) +
-                (long) (chunkX * 5947611) +
-                (long) (chunkZ * chunkZ) * 4392871L +
-                (long) (chunkZ * 389711) ^ 987234911L);
-        return r.nextInt(10) == 0;
-    }
-
-    void setSeed(long seed) {
-        this.seed = seed;
-    }
-
-    void setWorldSpawn(int spawnX, int spawnZ) {
-        spawnChunkBoundingBoxes = getSpawnChunkBoundingBoxes(spawnX, spawnZ);
-    }
-
-    private Set<AbstractBoundingBox> getSpawnChunkBoundingBoxes(int spawnX, int spawnZ) {
-        Set<AbstractBoundingBox> boundingBoxes = new HashSet<>();
-        boundingBoxes.add(getWorldSpawnBoundingBox(spawnX, spawnZ));
-        boundingBoxes.add(buildSpawnChunksBoundingBox(spawnX, spawnZ, 12, BoundingBoxType.SpawnChunks));
-        boundingBoxes.add(buildSpawnChunksBoundingBox(spawnX, spawnZ, 16, BoundingBoxType.LazySpawnChunks));
-        return boundingBoxes;
-    }
-
-    private AbstractBoundingBox getWorldSpawnBoundingBox(int spawnX, int spawnZ) {
-        Coords minCoords = new Coords(spawnX - 10, 0, spawnZ - 10);
-        Coords maxCoords = new Coords(spawnX + 10, 0, spawnZ + 10);
-
-        return BoundingBoxWorldSpawn.from(minCoords, maxCoords, BoundingBoxType.WorldSpawn);
-    }
-
-    private AbstractBoundingBox buildSpawnChunksBoundingBox(int spawnX, int spawnZ, int size, BoundingBoxType type) {
-        double midOffset = CHUNK_SIZE * (size / 2.0);
-        double midX = Math.round((float) (spawnX / (double) CHUNK_SIZE)) * (double) CHUNK_SIZE;
-        double midZ = Math.round((float) (spawnZ / (double) CHUNK_SIZE)) * (double) CHUNK_SIZE;
-        Coords maxCoords = new Coords(midX + midOffset, 0, midZ + midOffset);
-        if ((spawnX / (double) CHUNK_SIZE) % 1.0D == 0.5D) {
-            midX -= (double) CHUNK_SIZE;
-        }
-        if ((spawnZ / (double) CHUNK_SIZE) % 1.0D == 0.5D) {
-            midZ -= (double) CHUNK_SIZE;
-        }
-        Coords minCoords = new Coords(midX - midOffset, 0, midZ - midOffset);
-        return BoundingBoxWorldSpawn.from(minCoords, maxCoords, type);
-    }
-
-    void clear() {
-        spawnChunkBoundingBoxes = new HashSet<>();
     }
 }

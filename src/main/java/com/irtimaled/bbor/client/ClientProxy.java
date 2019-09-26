@@ -4,6 +4,7 @@ import com.irtimaled.bbor.client.events.*;
 import com.irtimaled.bbor.client.gui.SettingsScreen;
 import com.irtimaled.bbor.client.keyboard.Key;
 import com.irtimaled.bbor.client.keyboard.KeyListener;
+import com.irtimaled.bbor.client.providers.*;
 import com.irtimaled.bbor.common.BoundingBoxCache;
 import com.irtimaled.bbor.common.CommonProxy;
 import com.irtimaled.bbor.common.EventBus;
@@ -20,8 +21,6 @@ public class ClientProxy extends CommonProxy {
                 .onKeyPressHandler(() -> ConfigManager.Toggle(ConfigManager.outerBoxesOnly));
     }
 
-    private boolean ready;
-
     private ClientRenderer renderer;
 
     @Override
@@ -33,25 +32,25 @@ public class ClientProxy extends CommonProxy {
         EventBus.subscribe(AddBoundingBoxReceived.class, this::addBoundingBox);
         EventBus.subscribe(RemoveBoundingBoxReceived.class, this::onRemoveBoundingBoxReceived);
         EventBus.subscribe(UpdateWorldSpawnReceived.class, this::onUpdateWorldSpawnReceived);
-        EventBus.subscribe(SeedCommandTyped.class, this::onSeedCommandTyped);
 
-        renderer = new ClientRenderer(this::getCache);
+        renderer = new ClientRenderer(this::getCache)
+                .registerProvider(new SlimeChunkProvider())
+                .registerProvider(new WorldSpawnProvider());
+
         KeyListener.init();
     }
 
     private void render(Render event) {
-        if (!ready) return;
-
         renderer.render(event.getDimensionId());
     }
 
     private void disconnectedFromServer() {
         ClientRenderer.deactivate();
         if (ConfigManager.keepCacheBetweenSessions.get()) return;
-        ready = false;
+        SlimeChunkProvider.clear();
+        WorldSpawnProvider.clear();
         VillageColorCache.clear();
         clearCaches();
-        renderer.clear();
     }
 
     private void addBoundingBox(AddBoundingBoxReceived event) {
@@ -74,20 +73,15 @@ public class ClientProxy extends CommonProxy {
         setWorldSpawn(event.getSpawnX(), event.getSpawnZ());
     }
 
-    private void onSeedCommandTyped(SeedCommandTyped event) {
-        setSeed(event.getSeed());
-    }
-
     @Override
     public void setSeed(long seed) {
         super.setSeed(seed);
-        renderer.setSeed(seed);
-        ready = true;
+        SlimeChunkProvider.setSeed(seed);
     }
 
     @Override
     protected void setWorldSpawn(int spawnX, int spawnZ) {
         super.setWorldSpawn(spawnX, spawnZ);
-        renderer.setWorldSpawn(spawnX, spawnZ);
+        WorldSpawnProvider.setWorldSpan(spawnX, spawnZ);
     }
 }

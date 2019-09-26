@@ -3,8 +3,8 @@ package com.irtimaled.bbor.client.interop;
 import com.irtimaled.bbor.client.PlayerCoords;
 import com.irtimaled.bbor.client.events.DisconnectedFromRemoteServer;
 import com.irtimaled.bbor.client.events.Render;
-import com.irtimaled.bbor.client.events.SeedCommandTyped;
 import com.irtimaled.bbor.client.events.UpdateWorldSpawnReceived;
+import com.irtimaled.bbor.client.providers.SlimeChunkProvider;
 import com.irtimaled.bbor.common.EventBus;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -28,7 +28,7 @@ public class ClientInterop {
                 if (seed == null) {
                     seed = (long) argument.hashCode();
                 }
-                EventBus.publish(new SeedCommandTyped(seed));
+                SlimeChunkProvider.setSeed(seed);
             }
             return true;
         }
