@@ -24,6 +24,7 @@
     "client.settings.MixinGameSettings",
     "client.settings.MixinKeyBinding",
     "network.play.server.MixinSPacketChat",
+    "network.play.server.MixinSPacketCommandList",
     "network.play.server.MixinSPacketCustomPayload",
     "network.play.server.MixinSPacketSpawnPosition"
   ],
