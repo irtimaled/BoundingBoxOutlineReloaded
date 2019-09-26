@@ -44,6 +44,7 @@ public class ConfigManager {
     public static Setting<Boolean> renderAFKSpawnableBlocks;
     public static Setting<Integer> afkSpawnableBlocksRenderDistance;
     public static Setting<Boolean> drawBeacons;
+    public static Setting<Boolean> drawCustomBoxes;
 
     public static void loadConfig(File mcConfigDir) {
         configDir = new File(mcConfigDir, "config");
@@ -55,6 +56,7 @@ public class ConfigManager {
         alwaysVisible = setup(config, "general", "alwaysVisible", false, "If set to true boxes will be visible even through other blocks.");
         keepCacheBetweenSessions = setup(config, "general", "keepCacheBetweenSessions", false, "If set to true bounding box caches will be kept between sessions.");
         drawBeacons = setup(config, "general", "drawBeacons", true, "If set to true beacon bounding boxes will be drawn.");
+        drawCustomBoxes = setup(config, "general", "drawCustomBoxes", true, "If set to true custom bounding boxes will be drawn.");
 
         drawVillageSpheres = setup(config, "villages", "drawVillageSpheres", true, "If set to true village bounding spheres are drawn.");
         drawIronGolemSpawnArea = setup(config, "villages", "drawIronGolemSpawnArea", true, "If set to true the iron golem spawn area of the village will be drawn. (default:true)");

@@ -2,6 +2,7 @@ package com.irtimaled.bbor.client.interop;
 
 import com.irtimaled.bbor.client.PlayerCoords;
 import com.irtimaled.bbor.client.commands.BeaconCommand;
+import com.irtimaled.bbor.client.commands.BoxCommand;
 import com.irtimaled.bbor.client.commands.SeedCommand;
 import com.irtimaled.bbor.client.commands.SpawningSphereCommand;
 import com.irtimaled.bbor.client.events.DisconnectedFromRemoteServer;
@@ -70,5 +71,6 @@ public class ClientInterop {
         SeedCommand.register(commandDispatcher);
         SpawningSphereCommand.register(commandDispatcher);
         BeaconCommand.register(commandDispatcher);
+        BoxCommand.register(commandDispatcher);
     }
 }

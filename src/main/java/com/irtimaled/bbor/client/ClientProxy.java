@@ -37,7 +37,8 @@ public class ClientProxy extends CommonProxy {
                 .registerProvider(new SlimeChunkProvider())
                 .registerProvider(new WorldSpawnProvider())
                 .registerProvider(new SpawningSphereProvider())
-                .registerProvider(new BeaconProvider());
+                .registerProvider(new BeaconProvider())
+                .registerProvider(new CustomBoxProvider());
 
         KeyListener.init();
     }
@@ -53,6 +54,7 @@ public class ClientProxy extends CommonProxy {
         WorldSpawnProvider.clear();
         SpawningSphereProvider.clear();
         BeaconProvider.clear();
+        CustomBoxProvider.clear();
         VillageColorCache.clear();
         clearCaches();
     }
