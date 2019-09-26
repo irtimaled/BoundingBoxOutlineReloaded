@@ -6,9 +6,12 @@ import com.irtimaled.bbor.client.events.Render;
 import com.irtimaled.bbor.client.events.UpdateWorldSpawnReceived;
 import com.irtimaled.bbor.client.providers.SlimeChunkProvider;
 import com.irtimaled.bbor.common.EventBus;
+import com.irtimaled.bbor.common.TypeHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
 
 public class ClientInterop {
     public static void disconnectedFromRemoteServer() {
@@ -49,5 +52,17 @@ public class ClientInterop {
 
     public static int getRenderDistanceChunks() {
         return Minecraft.getInstance().gameSettings.renderDistanceChunks;
+    }
+
+    public static void handleSeedMessage(ITextComponent chatComponent) {
+        TypeHelper.doIfType(chatComponent, TextComponentTranslation.class, message -> {
+            if (!message.getKey().equals("commands.seed.success")) return;
+
+            try {
+                long seed = Long.parseLong(message.getFormatArgs()[0].toString());
+                SlimeChunkProvider.setSeed(seed);
+            } catch (Exception ignored) {
+            }
+        });
     }
 }
