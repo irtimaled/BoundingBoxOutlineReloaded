@@ -47,6 +47,7 @@ public class ClientRenderer {
         registerRenderer(BoundingBoxMobSpawner.class, new MobSpawnerRenderer());
         registerRenderer(BoundingBoxSpawningSphere.class, new SpawningSphereRenderer());
         registerRenderer(BoundingBoxBeacon.class, new CuboidRenderer());
+        registerRenderer(BoundingBoxBiomeBorder.class, new BiomeBorderRenderer());
     }
 
     public <T extends AbstractBoundingBox> ClientRenderer registerProvider(IBoundingBoxProvider<T> provider) {

@@ -18,30 +18,19 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
     public abstract void render(T boundingBox);
 
     void renderCuboid(OffsetBox bb, Color color) {
+        OffsetBox nudge = bb.nudge();
         if (ConfigManager.fill.get()) {
-            renderFilledCuboid(bb, color);
+            renderFilledFaces(nudge.getMin(), nudge.getMax(), color, 30);
         }
-        renderUnfilledCuboid(bb, color);
+        renderOutlinedCuboid(nudge, color);
     }
 
-    private void renderFilledCuboid(OffsetBox bb, Color color) {
-        GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
-        GL11.glEnable(GL11.GL_BLEND);
-        renderCuboid(bb.nudge(), color, 30);
-        GL11.glDisable(GL11.GL_BLEND);
-        GL11.glEnable(GL11.GL_POLYGON_OFFSET_LINE);
-        GL11.glPolygonOffset(-1.f, -1.f);
-    }
-
-    void renderUnfilledCuboid(OffsetBox bb, Color color) {
+    void renderOutlinedCuboid(OffsetBox bb, Color color) {
         GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
-        renderCuboid(bb.nudge(), color, 255);
+        renderFaces(bb.getMin(), bb.getMax(), color, 255);
     }
 
-    private void renderCuboid(OffsetBox box, Color color, int alpha) {
-        OffsetPoint min = box.getMin();
-        OffsetPoint max = box.getMax();
-
+    private void renderFaces(OffsetPoint min, OffsetPoint max, Color color, int alpha) {
         double minX = min.getX();
         double minY = min.getY();
         double minZ = min.getZ();
@@ -52,37 +41,47 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
 
         Renderer renderer = Renderer.startQuads()
                 .setColor(color)
-                .setAlpha(alpha)
-                .addPoint(minX, minY, minZ)
-                .addPoint(maxX, minY, minZ)
-                .addPoint(maxX, minY, maxZ)
-                .addPoint(minX, minY, maxZ);
+                .setAlpha(alpha);
 
-        if (minY != maxY) {
-            renderer.addPoint(minX, maxY, minZ)
-                    .addPoint(maxX, maxY, minZ)
-                    .addPoint(maxX, maxY, maxZ)
-                    .addPoint(minX, maxY, maxZ)
-
-                    .addPoint(minX, minY, maxZ)
-                    .addPoint(minX, maxY, maxZ)
-                    .addPoint(maxX, maxY, maxZ)
-                    .addPoint(maxX, minY, maxZ)
-
-                    .addPoint(minX, minY, minZ)
-                    .addPoint(minX, maxY, minZ)
-                    .addPoint(maxX, maxY, minZ)
-                    .addPoint(maxX, minY, minZ)
-
-                    .addPoint(minX, minY, minZ)
-                    .addPoint(minX, minY, maxZ)
-                    .addPoint(minX, maxY, maxZ)
-                    .addPoint(minX, maxY, minZ)
-
+        if(minX != maxX && minZ != maxZ) {
+            renderer.addPoint(minX, minY, minZ)
                     .addPoint(maxX, minY, minZ)
                     .addPoint(maxX, minY, maxZ)
+                    .addPoint(minX, minY, maxZ);
+
+            if (minY != maxY) {
+                renderer.addPoint(minX, maxY, minZ)
+                        .addPoint(maxX, maxY, minZ)
+                        .addPoint(maxX, maxY, maxZ)
+                        .addPoint(minX, maxY, maxZ);
+            }
+        }
+
+        if(minX != maxX && minY != maxY) {
+            renderer.addPoint(minX, minY, maxZ)
+                    .addPoint(minX, maxY, maxZ)
                     .addPoint(maxX, maxY, maxZ)
-                    .addPoint(maxX, maxY, minZ);
+                    .addPoint(maxX, minY, maxZ);
+
+            if(minZ != maxZ) {
+                renderer.addPoint(minX, minY, minZ)
+                        .addPoint(minX, maxY, minZ)
+                        .addPoint(maxX, maxY, minZ)
+                        .addPoint(maxX, minY, minZ);
+            }
+        }
+        if(minY != maxY && minZ != maxZ) {
+            renderer.addPoint(minX, minY, minZ)
+                    .addPoint(minX, minY, maxZ)
+                    .addPoint(minX, maxY, maxZ)
+                    .addPoint(minX, maxY, minZ);
+
+            if(minX != maxX) {
+                renderer.addPoint(maxX, minY, minZ)
+                        .addPoint(maxX, minY, maxZ)
+                        .addPoint(maxX, maxY, maxZ)
+                        .addPoint(maxX, maxY, minZ);
+            }
         }
         renderer.render();
     }
@@ -94,6 +93,15 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
                 .addPoint(startPoint)
                 .addPoint(endPoint)
                 .render();
+    }
+
+    void renderFilledFaces(OffsetPoint min, OffsetPoint max, Color color, int alpha) {
+        GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
+        GL11.glEnable(GL11.GL_BLEND);
+        renderFaces(min, max, color, alpha);
+        GL11.glDisable(GL11.GL_BLEND);
+        GL11.glEnable(GL11.GL_POLYGON_OFFSET_LINE);
+        GL11.glPolygonOffset(-1.f, -1.f);
     }
 
     void renderText(OffsetPoint offsetPoint, String... texts) {

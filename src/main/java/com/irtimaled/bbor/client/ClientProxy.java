@@ -39,6 +39,7 @@ public class ClientProxy extends CommonProxy {
                 .registerProvider(new SpawningSphereProvider())
                 .registerProvider(new BeaconProvider())
                 .registerProvider(new CustomBoxProvider())
+                .registerProvider(new BiomeBorderProvider())
                 .registerProvider(new CacheProvider(this::getCache));
 
         KeyListener.init();
@@ -56,6 +57,7 @@ public class ClientProxy extends CommonProxy {
         SpawningSphereProvider.clear();
         BeaconProvider.clear();
         CustomBoxProvider.clear();
+        BiomeBorderProvider.clear();
         VillageColorCache.clear();
         clearCaches();
     }

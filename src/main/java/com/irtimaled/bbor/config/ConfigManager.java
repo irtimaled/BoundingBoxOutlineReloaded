@@ -45,6 +45,9 @@ public class ConfigManager {
     public static Setting<Integer> afkSpawnableBlocksRenderDistance;
     public static Setting<Boolean> drawBeacons;
     public static Setting<Boolean> drawCustomBoxes;
+    public static Setting<Boolean> drawBiomeBorders;
+    public static Setting<Boolean> renderOnlyCurrentBiome;
+    public static Setting<Integer> biomeBordersRenderDistance;
 
     public static void loadConfig(File mcConfigDir) {
         configDir = new File(mcConfigDir, "config");
@@ -57,6 +60,9 @@ public class ConfigManager {
         keepCacheBetweenSessions = setup(config, "general", "keepCacheBetweenSessions", false, "If set to true bounding box caches will be kept between sessions.");
         drawBeacons = setup(config, "general", "drawBeacons", true, "If set to true beacon bounding boxes will be drawn.");
         drawCustomBoxes = setup(config, "general", "drawCustomBoxes", true, "If set to true custom bounding boxes will be drawn.");
+        drawBiomeBorders = setup(config, "biomeBorders", "drawBiomeBorders", true, "If set to true biome borders will be drawn.");
+        renderOnlyCurrentBiome = setup(config, "biomeBorders", "renderOnlyCurrentBiome", true, "If set to true only the biome border for the current biome will be drawn.");
+        biomeBordersRenderDistance = setup(config, "biomeBorders", "biomeBordersRenderDistance", 3, "The distance from the player where biome borders will be drawn.");
 
         drawVillageSpheres = setup(config, "villages", "drawVillageSpheres", true, "If set to true village bounding spheres are drawn.");
         drawIronGolemSpawnArea = setup(config, "villages", "drawIronGolemSpawnArea", true, "If set to true the iron golem spawn area of the village will be drawn. (default:true)");

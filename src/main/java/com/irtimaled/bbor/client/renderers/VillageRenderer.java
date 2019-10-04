@@ -26,7 +26,7 @@ public class VillageRenderer extends AbstractRenderer<BoundingBoxVillage> {
         OffsetBox bb = new OffsetBox(offsetCenter, offsetCenter)
                 .grow(8, 3, 8);
 
-        renderUnfilledCuboid(bb, boundingBox.getColor());
+        renderOutlinedCuboid(bb.nudge(), boundingBox.getColor());
     }
 
     private void renderVillageDoors(BoundingBoxVillage boundingBox) {

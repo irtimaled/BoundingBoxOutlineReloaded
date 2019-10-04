@@ -33,6 +33,7 @@ public class BoundingBoxType {
     public final static BoundingBoxType Village = register(Colors.PURPLE, "Village", ConfigManager.drawVillages);
     public final static BoundingBoxType VillageSpheres = register(null, "Village Sphere", ConfigManager.drawVillageSpheres);
     public final static BoundingBoxType AFKSphere = register(Color.RED, "AFK Sphere", ConfigManager.drawAFKSpheres);
+    public final static BoundingBoxType BiomeBorder = register(Color.GREEN, "Biome Border", ConfigManager.drawBiomeBorders);
     public final static BoundingBoxType Beacon = register(Color.WHITE, "Beacon", ConfigManager.drawBeacons);
     public final static BoundingBoxType Custom = register(Color.WHITE, "Custom", ConfigManager.drawCustomBoxes);
 

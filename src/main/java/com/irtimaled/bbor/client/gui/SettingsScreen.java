@@ -147,6 +147,13 @@ public class SettingsScreen extends GuiScreen {
                 (id, x, y, width) -> new IntSettingSlider(id, x, y, width, 1, 3, "Distance", ConfigManager.afkSpawnableBlocksRenderDistance)
                         .addDisplayValue(1, "Nearest")
                         .addDisplayValue(2, "Nearer")
+                        .addDisplayValue(3, "Normal"),
+
+                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Biome Borders", BoundingBoxType.BiomeBorder),
+                (id, x, y, width) -> new BoolSettingButton(id, x, y, width, "Only This Biome", ConfigManager.renderOnlyCurrentBiome),
+                (id, x, y, width) -> new IntSettingSlider(id, x, y, width, 1, 3, "Distance", ConfigManager.biomeBordersRenderDistance)
+                        .addDisplayValue(1, "Nearest")
+                        .addDisplayValue(2, "Nearer")
                         .addDisplayValue(3, "Normal"));
         buildTab(1,
                 (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Desert Temples", BoundingBoxType.DesertTemple),
