@@ -38,7 +38,8 @@ public class ClientProxy extends CommonProxy {
                 .registerProvider(new WorldSpawnProvider())
                 .registerProvider(new SpawningSphereProvider())
                 .registerProvider(new BeaconProvider())
-                .registerProvider(new CustomBoxProvider());
+                .registerProvider(new CustomBoxProvider())
+                .registerProvider(new CacheProvider(this::getCache));
 
         KeyListener.init();
     }

@@ -72,7 +72,7 @@ public class ClientRenderer {
     public void render(int dimensionId) {
         if(!active) return;
 
-        Map<AbstractBoundingBox, Set<AbstractBoundingBox>> boundingBoxes = getBoundingBoxes(dimensionId);
+        Set<AbstractBoundingBox> boundingBoxes = getBoundingBoxes(dimensionId);
 
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GL11.glLineWidth(2.0f);
@@ -83,21 +83,12 @@ public class ClientRenderer {
             GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
         }
 
-        Boolean outerBoxesOnly = ConfigManager.outerBoxesOnly.get();
-        for (Map.Entry<AbstractBoundingBox, Set<AbstractBoundingBox>> entry : boundingBoxes.entrySet()) {
-            AbstractBoundingBox key = entry.getKey();
-            if (!key.shouldRender()) continue;
+        for (AbstractBoundingBox key : boundingBoxes) {
+            if (!key.shouldRender() || !isWithinRenderDistance(key)) continue;
 
             AbstractRenderer renderer = boundingBoxRendererMap.get(key.getClass());
             if (renderer == null) continue;
 
-            if (!outerBoxesOnly) {
-                Set<AbstractBoundingBox> children = entry.getValue();
-                if (children != null && children.size() > 0) {
-                    children.forEach(renderer::render);
-                    continue;
-                }
-            }
             renderer.render(key);
         }
 
@@ -106,21 +97,11 @@ public class ClientRenderer {
         GL11.glEnable(GL11.GL_TEXTURE_2D);
     }
 
-    private Map<AbstractBoundingBox, Set<AbstractBoundingBox>> getBoundingBoxes(int dimensionId) {
-        Map<AbstractBoundingBox, Set<AbstractBoundingBox>> boundingBoxes = new HashMap<>();
+    private Set<AbstractBoundingBox> getBoundingBoxes(int dimensionId) {
+        Set<AbstractBoundingBox> boundingBoxes = new HashSet<>();
         for(IBoundingBoxProvider<?> provider: providers) {
             for (AbstractBoundingBox boundingBox : provider.get(dimensionId)) {
-                boundingBoxes.put(boundingBox, null);
-            }
-        }
-
-        BoundingBoxCache cache = getCache.apply(dimensionId);
-        if (cache != null) {
-            for (Map.Entry<AbstractBoundingBox, Set<AbstractBoundingBox>> entry : cache.getBoundingBoxes().entrySet()) {
-                AbstractBoundingBox key = entry.getKey();
-                if (key.shouldRender() && isWithinRenderDistance(key)) {
-                    boundingBoxes.put(key, entry.getValue());
-                }
+                boundingBoxes.add(boundingBox);
             }
         }
         return boundingBoxes;
