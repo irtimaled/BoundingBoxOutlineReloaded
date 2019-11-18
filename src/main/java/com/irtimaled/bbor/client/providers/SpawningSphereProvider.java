@@ -11,11 +11,11 @@ public class SpawningSphereProvider implements IBoundingBoxProvider<BoundingBoxS
     private static BoundingBoxSpawningSphere spawningSphere;
     private static Integer dimensionId;
 
-    public static void setSphere() {
-        Coords coords = PlayerCoords.get();
-        double xOffset = snapToNearestHalf(PlayerCoords.getX() -coords.getX());
-        double yOffset = PlayerCoords.getY()- coords.getY();
-        double zOffset = snapToNearestHalf(PlayerCoords.getZ()-coords.getZ());
+    public static void setSphere(double x, double y, double z) {
+        Coords coords = new Coords(x, y, z);
+        double xOffset = snapToNearestHalf(x -coords.getX());
+        double yOffset = y- coords.getY();
+        double zOffset = snapToNearestHalf(z-coords.getZ());
 
         if(spawningSphere != null && spawningSphere.isCenter(coords, xOffset, yOffset, zOffset)) {
             return;
