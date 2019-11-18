@@ -16,10 +16,11 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.network.NetHandlerPlayClient;
+import net.minecraft.command.CommandSource;
 import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.*;
+import net.minecraft.util.text.event.ClickEvent;
 
 public class ClientInterop {
     public static void disconnectedFromRemoteServer() {
@@ -36,13 +37,33 @@ public class ClientInterop {
             NetHandlerPlayClient connection = Minecraft.getInstance().getConnection();
             if (connection != null) {
                 CommandDispatcher<ISuggestionProvider> commandDispatcher = connection.func_195515_i();
+                CommandSource commandSource = Minecraft.getInstance().player.getCommandSource();
                 try {
-                    commandDispatcher.execute(message.substring(1), Minecraft.getInstance().player.getCommandSource());
-                } catch (CommandSyntaxException ignored) {
+                    commandDispatcher.execute(message.substring(1), commandSource);
+                } catch (CommandSyntaxException exception) {
+                    commandSource.sendErrorMessage(TextComponentUtils.toTextComponent(exception.getRawMessage()));
+                    if (exception.getInput() != null && exception.getCursor() >= 0) {
+                        ITextComponent suggestion = new TextComponentString("")
+                                .applyTextStyle(TextFormatting.GRAY)
+                                .applyTextStyle(style -> style.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, message)));
+                        int textLength = Math.min(exception.getInput().length(), exception.getCursor());
+                        if (textLength > 10) {
+                            suggestion.appendText("...");
+                        }
+
+                        suggestion.appendText(exception.getInput().substring(Math.max(0, textLength - 10), textLength));
+                        if (textLength < exception.getInput().length()) {
+                            suggestion.appendSibling(new TextComponentString(exception.getInput().substring(textLength))
+                                    .applyTextStyles(TextFormatting.RED, TextFormatting.UNDERLINE));
+                        }
+
+                        suggestion.appendSibling(new TextComponentTranslation("command.context.here")
+                                .applyTextStyles(TextFormatting.RED, TextFormatting.ITALIC));
+                        commandSource.sendErrorMessage(suggestion);
+                    }
                 }
             }
             return true;
-
         }
         return false;
     }

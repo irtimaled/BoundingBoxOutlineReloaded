@@ -2,20 +2,26 @@ package com.irtimaled.bbor.client.commands;
 
 import com.irtimaled.bbor.client.providers.SlimeChunkProvider;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import net.minecraft.command.Commands;
 import net.minecraft.command.ISuggestionProvider;
+import net.minecraft.util.text.TextComponentString;
 
 public class SeedCommand {
     public static void register(CommandDispatcher<ISuggestionProvider> commandDispatcher) {
         LiteralArgumentBuilder command = Commands.literal("bbor:seed")
                 .then(Commands.argument("seed", StringArgumentType.string())
-                        .executes((context) -> {
+                        .executes(context -> {
                             String argument = StringArgumentType.getString(context, "seed");
                             handleSeedCommand(argument);
                             return 0;
-                        }));
+                        }))
+                .executes(context -> {
+                    throw INCOMPLETE_COMMAND.createWithContext(new StringReader(context.getInput()));
+                });
         commandDispatcher.register(command);
     }
 
@@ -34,4 +40,8 @@ public class SeedCommand {
             return null;
         }
     }
+
+    private static final SimpleCommandExceptionType INCOMPLETE_COMMAND =
+            new SimpleCommandExceptionType(new TextComponentString("Missing argument (expected seed)"));
+
 }

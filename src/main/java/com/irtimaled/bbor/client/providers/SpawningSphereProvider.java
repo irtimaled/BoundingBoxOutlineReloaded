@@ -32,14 +32,16 @@ public class SpawningSphereProvider implements IBoundingBoxProvider<BoundingBoxS
         return floor / 4.0;
     }
 
-    public static void clear() {
+    public static boolean clear() {
         if(spawningSphere != null) {
             spawningSphere = null;
             dimensionId = null;
+            return true;
         }
+        return false;
     }
 
-    public static void recalculateSpawnableSpacesCount() {
+    public static int recalculateSpawnableSpacesCount() {
         if (spawningSphere != null) {
             Point sphereCenter = new Point(spawningSphere.getCenter())
                     .offset(spawningSphere.getCenterOffsetX(),
@@ -47,7 +49,9 @@ public class SpawningSphereProvider implements IBoundingBoxProvider<BoundingBoxS
                             spawningSphere.getCenterOffsetZ());
             int spawnableSpacesCount = getSpawnableSpacesCount(sphereCenter);
             spawningSphere.setSpawnableCount(spawnableSpacesCount);
+            return spawnableSpacesCount;
         }
+        return -1;
     }
 
     private static int getSpawnableSpacesCount(Point center) {

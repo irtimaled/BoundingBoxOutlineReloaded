@@ -30,9 +30,9 @@ public class BeaconProvider implements IBoundingBoxProvider<BoundingBoxBeacon> {
         getCache(dimensionId).put(coords, beacon);
     }
 
-    public static void remove(Coords coords) {
+    public static boolean remove(Coords coords) {
         int dimensionId = PlayerCoords.getDimensionId();
-        getCache(dimensionId).remove(coords);
+        return getCache(dimensionId).remove(coords) != null;
     }
 
     public static void clear() {

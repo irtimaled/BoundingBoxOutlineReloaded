@@ -36,10 +36,10 @@ public class CustomBoxProvider implements IBoundingBoxProvider<BoundingBoxCuboid
         getCache(dimensionId).put(cacheKey, cuboid);
     }
 
-    public static void remove(Coords minCoords, Coords maxCoords) {
+    public static boolean remove(Coords minCoords, Coords maxCoords) {
         int dimensionId = PlayerCoords.getDimensionId();
         int cacheKey = getHashKey(minCoords, maxCoords);
-        getCache(dimensionId).remove(cacheKey);
+        return getCache(dimensionId).remove(cacheKey) != null;
     }
 
     public static void clear() {
