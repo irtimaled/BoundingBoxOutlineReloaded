@@ -7,8 +7,11 @@ import com.irtimaled.bbor.common.TypeHelper;
 import com.irtimaled.bbor.common.models.Coords;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import net.minecraft.client.Minecraft;
+import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.command.arguments.BlockPosArgument;
@@ -31,22 +34,14 @@ public class BeaconCommand {
                         .then(Commands.argument(POS, BlockPosArgument.blockPos())
                                 .executes(context -> {
                                     BlockPos pos = BlockPosArgument.getBlockPos(context, POS);
-                                    TileEntity tileEntity = Minecraft.getInstance().world.getTileEntity(pos);
-                                    TileEntityBeacon beacon = TypeHelper.as(tileEntity, TileEntityBeacon.class);
-                                    if(beacon == null) {
-                                        Vec3i playerPosition = new Vec3i(PlayerCoords.getX(), PlayerCoords.getY(), PlayerCoords.getZ());
-                                        if (pos.getDistance(playerPosition) > ClientInterop.getRenderDistanceChunks()*16) {
-                                            throw POS_UNLOADED.create();
-                                        }
-
-                                        throw POS_NOT_BEACON.create();
-                                    }
-                                    BeaconProvider.add(new Coords(pos), beacon.getLevels());
-
-                                    String feedback = getPosBasedFeedback("Beacon added", pos);
-                                    CommandHelper.feedback(context, feedback);
+                                    AddValidBeacon(context, pos);
                                     return 0;
-                                })))
+                                }))
+                        .executes(context -> {
+                            BlockPos pos = new BlockPos(PlayerCoords.getX(), PlayerCoords.getY() - 1, PlayerCoords.getZ());
+                            AddValidBeacon(context, pos);
+                            return 0;
+                        }))
                 .then(Commands.literal(CLEAR)
                         .executes(context -> {
                             BeaconProvider.clear();
@@ -68,6 +63,23 @@ public class BeaconCommand {
                     throw INCOMPLETE_COMMAND.create();
                 });
         commandDispatcher.register(command);
+    }
+
+    private static void AddValidBeacon(CommandContext<CommandSource> context, BlockPos pos) throws CommandSyntaxException {
+        TileEntity tileEntity = Minecraft.getInstance().world.getTileEntity(pos);
+        TileEntityBeacon beacon = TypeHelper.as(tileEntity, TileEntityBeacon.class);
+        if(beacon == null) {
+            Vec3i playerPosition = new Vec3i(PlayerCoords.getX(), PlayerCoords.getY(), PlayerCoords.getZ());
+            if (pos.getDistance(playerPosition) > ClientInterop.getRenderDistanceChunks()*16) {
+                throw POS_UNLOADED.create();
+            }
+
+            throw POS_NOT_BEACON.create();
+        }
+        BeaconProvider.add(new Coords(pos), beacon.getLevels());
+
+        String feedback = getPosBasedFeedback("Beacon added", pos);
+        CommandHelper.feedback(context, feedback);
     }
 
     private static String getPosBasedFeedback(String prefix, BlockPos pos) {
