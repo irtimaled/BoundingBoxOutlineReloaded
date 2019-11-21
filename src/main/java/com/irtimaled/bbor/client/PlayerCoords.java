@@ -14,7 +14,7 @@ public class PlayerCoords {
         x = entityPlayer.lastTickPosX + (entityPlayer.posX - entityPlayer.lastTickPosX) * partialTicks;
         y = entityPlayer.lastTickPosY + (entityPlayer.posY - entityPlayer.lastTickPosY) * partialTicks;
         z = entityPlayer.lastTickPosZ + (entityPlayer.posZ - entityPlayer.lastTickPosZ) * partialTicks;
-        dimensionId = entityPlayer.dimension;
+        dimensionId = entityPlayer.dimension.getId();
     }
 
     static void setActiveY() {

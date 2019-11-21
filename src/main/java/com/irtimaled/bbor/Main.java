@@ -12,7 +12,6 @@ public class Main {
             ServerRunner.run("@MC_VERSION@", Arrays.asList(args).subList(1, args.length));
         } else {
             Installer.install("@VERSION@", "@MC_VERSION@");
-
         }
     }
 }

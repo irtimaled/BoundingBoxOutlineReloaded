@@ -16,6 +16,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 
 import java.io.File;
+import java.util.Collection;
 
 public class CommonInterop {
     public static void init() {
@@ -26,7 +27,7 @@ public class CommonInterop {
         EventBus.publish(new ChunkLoaded(chunk));
     }
 
-    public static void loadWorlds(WorldServer[] worlds) {
+    public static void loadWorlds(Collection<WorldServer> worlds) {
         for (WorldServer world : worlds) {
             loadWorld(world);
         }
