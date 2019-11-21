@@ -36,7 +36,7 @@ public class ControlListSection extends ControlListEntry {
     }
 
     private int columnCount() {
-        switch (minecraft.getLanguageManager().getCurrentLanguage().getLanguageCode()){
+        switch (minecraft.getLanguageManager().getCurrentLanguage().getCode()){
             case "en_au":
             case "en_us":
             case "en_gb": return 3;

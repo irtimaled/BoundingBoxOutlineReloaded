@@ -34,10 +34,6 @@ public class PayloadReader {
         return buffer.readChar();
     }
 
-    boolean readBoolean() {
-        return buffer.readBoolean();
-    }
-
     Coords readCoords() {
         int x = readVarInt();
         int y = readVarInt();

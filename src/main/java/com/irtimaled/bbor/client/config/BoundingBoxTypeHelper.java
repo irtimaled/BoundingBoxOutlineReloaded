@@ -41,7 +41,6 @@ public class BoundingBoxTypeHelper {
         registerType(BoundingBoxType.Igloo, ConfigManager.drawIgloos, ConfigManager.colorIgloos);
         registerType(BoundingBoxType.PillagerOutpost, ConfigManager.drawPillagerOutposts, ConfigManager.colorPillagerOutposts);
         registerType(BoundingBoxType.Village, ConfigManager.drawVillages, ConfigManager.colorVillages);
-        registerType(BoundingBoxType.VillageSpheres, ConfigManager.drawVillageSpheres, ConfigManager.colorVillages);
         registerType(BoundingBoxType.NetherFossil, ConfigManager.drawNetherFossils, ConfigManager.colorNetherFossils);
         registerType(BoundingBoxType.BastionRemnant, ConfigManager.drawBastionRemnants, ConfigManager.colorBastionRemnants);
         registerType(BoundingBoxType.RuinedPortal, ConfigManager.drawRuinedPortals, ConfigManager.colorRuinedPortals);

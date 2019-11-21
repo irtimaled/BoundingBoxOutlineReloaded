@@ -1,18 +1,19 @@
 package com.irtimaled.bbor.client.gui;
 
 import com.irtimaled.bbor.client.interop.ClientInterop;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.StringTextComponent;
 
-public abstract class ListScreen extends GuiScreen {
-    private final GuiScreen lastScreen;
+public abstract class ListScreen extends Screen {
+    private final Screen lastScreen;
 
     private AbstractButton doneButton;
-    private String title;
     private ControlList controlList;
     private SearchField searchField;
 
-    ListScreen(GuiScreen lastScreen) {
+    ListScreen(Screen lastScreen) {
+        super(new StringTextComponent("Bounding Box Outline Reloaded"));
         this.lastScreen = lastScreen;
     }
 
@@ -25,10 +26,9 @@ public abstract class ListScreen extends GuiScreen {
     }
 
     @Override
-    protected void initGui() {
-        this.title = "Bounding Box Outline Reloaded";
+    protected void init() {
         this.controlList = new ControlList(this.width, this.height, 48, this.height - 28);
-        this.searchField = new SearchField(this.fontRenderer, this.width / 2 - 100, 22, 200, 20, this.controlList);
+        this.searchField = new SearchField(this.font, this.width / 2 - 100, 22, 200, 20, this.controlList);
         this.doneButton = new AbstractButton(this.width / 2 - 100, this.height - 24, 200, I18n.format("gui.done")) {
             @Override
             public void onPressed() {
@@ -52,7 +52,7 @@ public abstract class ListScreen extends GuiScreen {
     protected void render(int mouseX, int mouseY) {
         this.controlList.render(mouseX, mouseY);
 
-        this.drawCenteredString(this.fontRenderer, this.title, this.width / 2, 8, 16777215);
+        this.drawCenteredString(this.font, this.title.getUnformattedComponentText(), this.width / 2, 8, 16777215);
         this.searchField.render(mouseX, mouseY);
         this.doneButton.render(mouseX, mouseY);
     }
@@ -73,12 +73,12 @@ public abstract class ListScreen extends GuiScreen {
     }
 
     @Override
-    public boolean mouseScrolled(double scrollAmount) {
-        return this.controlList.mouseScrolled(scrollAmount);
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollAmount) {
+        return this.controlList.mouseScrolled(mouseX, mouseY, scrollAmount);
     }
 
     @Override
-    public void onGuiClosed() {
+    public void removed() {
         this.controlList.close();
     }
 

@@ -33,7 +33,6 @@ public class BoundingBoxType {
     public static final BoundingBoxType Igloo = register("Igloo");
     public static final BoundingBoxType PillagerOutpost = register("Pillager_Outpost");
     public static final BoundingBoxType Village = register("Village");
-    public static final BoundingBoxType VillageSpheres = register("Village Sphere");
     public static final BoundingBoxType NetherFossil = register("Nether_Fossil");
     public static final BoundingBoxType BastionRemnant = register("Bastion_Remnant");
     public static final BoundingBoxType RuinedPortal = register("Ruined_Portal");

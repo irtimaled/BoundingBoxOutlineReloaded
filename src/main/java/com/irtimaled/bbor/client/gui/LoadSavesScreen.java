@@ -2,7 +2,7 @@ package com.irtimaled.bbor.client.gui;
 
 import com.irtimaled.bbor.client.interop.ClientInterop;
 import net.minecraft.client.AnvilConverterException;
-import net.minecraft.world.storage.ISaveFormat;
+import net.minecraft.world.storage.SaveFormat;
 import net.minecraft.world.storage.WorldSummary;
 
 import java.util.List;
@@ -17,7 +17,7 @@ public class LoadSavesScreen extends ListScreen {
         ControlList controlList = this.getControlList();
         controlList.showSelectionBox();
         try {
-            final ISaveFormat saveLoader = this.mc.getSaveLoader();
+            final SaveFormat saveLoader = this.minecraft.getSaveLoader();
             List<WorldSummary> saveList = saveLoader.getSaveList();
             saveList.sort(null);
             saveList.forEach(world -> controlList.add(new WorldSaveRow(world, saveLoader)));
@@ -34,7 +34,7 @@ public class LoadSavesScreen extends ListScreen {
     @Override
     public void render(int mouseX, int mouseY, float unknown) {
         ControlListEntry selectedEntry = this.getControlList().getSelectedEntry();
-        this.getDoneButton().enabled = selectedEntry != null && selectedEntry.getVisible();
+        this.getDoneButton().active = selectedEntry != null && selectedEntry.getVisible();
         super.render(mouseX, mouseY, unknown);
     }
 }

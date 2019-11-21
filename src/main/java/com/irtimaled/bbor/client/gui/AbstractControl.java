@@ -1,16 +1,16 @@
 package com.irtimaled.bbor.client.gui;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.widget.Widget;
 
 import java.awt.*;
 
-abstract class AbstractControl extends GuiButton implements IControl {
+abstract class AbstractControl extends Widget implements IControl {
     private static final int PADDING = 4;
     protected final Minecraft minecraft;
 
     AbstractControl(int x, int y, int width, String name) {
-        super(0, x, y, width, 20, name);
+        super(x, y, width, 20, name);
         this.minecraft = Minecraft.getInstance();
     }
 
@@ -41,7 +41,7 @@ abstract class AbstractControl extends GuiButton implements IControl {
 
     @Override
     protected void renderBg(Minecraft minecraft, int mouseX, int mouseY) {
-        if (enabled) renderBackground(mouseX, mouseY);
+        if (active) renderBackground(mouseX, mouseY);
     }
 
     protected void renderBackground(int mouseX, int mouseY) {
@@ -59,13 +59,13 @@ abstract class AbstractControl extends GuiButton implements IControl {
 
     @Override
     public void filter(String lowerValue) {
-        String lowerString = this.displayString.toLowerCase();
+        String lowerString = this.getMessage().toLowerCase();
         this.setVisible(lowerValue.equals("") ||
                 lowerString.startsWith(lowerValue) ||
                 lowerString.contains(" " + lowerValue));
     }
 
     void drawRectangle(int left, int top, int right, int bottom, Color color) {
-        drawRect(left, top, right, bottom, color.getRGB());
+        fill(left, top, right, bottom, color.getRGB());
     }
 }

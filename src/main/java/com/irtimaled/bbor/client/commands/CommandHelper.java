@@ -1,14 +1,15 @@
 package com.irtimaled.bbor.client.commands;
 
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.context.ParsedCommandNode;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.minecraft.command.CommandSource;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 
 class CommandHelper {
     static void feedback(CommandContext<CommandSource> context, String format, Object... values) {
-        context.getSource().sendFeedback(new TextComponentTranslation(format, values), false);
+        context.getSource().sendFeedback(new TranslationTextComponent(format, values), false);
     }
 
     static boolean lastNodeIsLiteral(CommandContext<CommandSource> context, String literal) {
@@ -21,7 +22,8 @@ class CommandHelper {
     }
 
     private static CommandNode getLastNode(CommandContext<CommandSource> context) {
-        CommandNode[] nodes = context.getNodes().keySet().toArray(new CommandNode[0]);
-        return nodes[nodes.length-1];
+        ParsedCommandNode[] nodes = context.getNodes().toArray(new ParsedCommandNode[0]);
+        if (nodes.length == 0) return null;
+        return nodes[nodes.length - 1].getNode();
     }
 }

@@ -7,16 +7,16 @@ abstract class AbstractButton extends AbstractControl {
 
     AbstractButton(int x, int y, int width, String name, boolean enabled) {
         this(x, y, width, name);
-        this.enabled = enabled;
+        this.active = enabled;
     }
 
     @Override
-    protected int getHoverState(boolean p_getHoverState_1_) {
+    protected int getYImage(boolean p_getHoverState_1_) {
         return getState();
     }
 
     protected int getState() {
-        return this.enabled ? this.hovered ? 2 : 1 : 0;
+        return this.active ? this.isHovered ? 2 : 1 : 0;
     }
 
     @Override

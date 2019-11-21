@@ -47,7 +47,7 @@ class IntSettingSlider extends AbstractSlider {
 
     @Override
     protected void updateText() {
-        this.displayString = this.getDisplayValue();
+        this.setMessage(this.getDisplayValue());
     }
 
     @Override

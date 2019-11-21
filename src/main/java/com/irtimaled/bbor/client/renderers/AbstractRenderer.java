@@ -3,9 +3,9 @@ package com.irtimaled.bbor.client.renderers;
 import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.common.models.Point;
+import com.mojang.blaze3d.platform.GLX;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.OpenGlHelper;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -125,7 +125,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
         GL11.glEnable(GL11.GL_TEXTURE_2D);
 
         GL11.glEnable(GL11.GL_BLEND);
-        OpenGlHelper.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+        GLX.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
         GL11.glDisable(GL11.GL_DEPTH_TEST);
         GL11.glEnable(GL11.GL_DEPTH_TEST);

@@ -2,22 +2,22 @@ package com.irtimaled.bbor.client.interop;
 
 import com.irtimaled.bbor.common.EventBus;
 import com.irtimaled.bbor.common.events.StructuresLoaded;
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MutableBoundingBox;
 import net.minecraft.world.IWorld;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.storage.RegionFileCache;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraft.world.gen.feature.structure.LegacyStructureDataUtil;
 import net.minecraft.world.gen.feature.structure.StructurePiece;
 import net.minecraft.world.gen.feature.structure.StructureStart;
 import net.minecraft.world.gen.feature.template.TemplateManager;
-import net.minecraft.world.storage.ISaveHandler;
-import net.minecraft.world.storage.WorldSavedDataStorage;
+import net.minecraft.world.storage.DimensionSavedDataManager;
+import net.minecraft.world.storage.SaveHandler;
 
-import java.io.DataInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -27,10 +27,11 @@ class NBTStructureLoader {
     private final Set<String> loadedChunks = new HashSet<>();
 
     private LegacyStructureDataUtil legacyStructureDataUtil = null;
-    private ISaveHandler saveHandler = null;
+    private SaveHandler saveHandler = null;
     private File chunkSaveLocation = null;
+    private ChunkLoader chunkLoader;
 
-    NBTStructureLoader(int dimensionId, ISaveHandler saveHandler, File worldDirectory) {
+    NBTStructureLoader(int dimensionId, SaveHandler saveHandler, File worldDirectory) {
         this.dimensionId = dimensionId;
         this.configure(saveHandler, worldDirectory);
     }
@@ -39,36 +40,42 @@ class NBTStructureLoader {
         this.saveHandler = null;
         this.chunkSaveLocation = null;
         this.loadedChunks.clear();
+
+        if(this.chunkLoader == null) return;
+        try {
+            this.chunkLoader.close();
+        } catch (IOException ignored) {
+        }
     }
 
-    void configure(ISaveHandler saveHandler, File worldDirectory) {
+    void configure(SaveHandler saveHandler, File worldDirectory) {
         this.saveHandler = saveHandler;
-        if(worldDirectory != null) {
-            this.chunkSaveLocation = DimensionType.getById(dimensionId).getDirectory(worldDirectory);
+        if (worldDirectory != null) {
+            this.chunkSaveLocation = new File(DimensionType.getById(dimensionId).getDirectory(worldDirectory), "region");
+            this.chunkLoader = new ChunkLoader(this.chunkSaveLocation);
         }
     }
 
     private LegacyStructureDataUtil getLegacyStructureDataUtil() {
         if (this.legacyStructureDataUtil == null) {
-            this.legacyStructureDataUtil = LegacyStructureDataUtil.func_212183_a(DimensionType.getById(dimensionId), new WorldSavedDataStorage(saveHandler));
+            File dataFolder = new File(DimensionType.OVERWORLD.getDirectory(this.saveHandler.getWorldDirectory()), "data");
+            this.legacyStructureDataUtil = LegacyStructureDataUtil.func_215130_a(DimensionType.getById(dimensionId),
+                    new DimensionSavedDataManager(dataFolder, this.saveHandler.getFixer()));
         }
         return this.legacyStructureDataUtil;
     }
 
-    private NBTTagCompound loadStructureStarts(int chunkX, int chunkZ) {
+    private CompoundNBT loadStructureStarts(int chunkX, int chunkZ) {
         try {
-            DataInputStream stream = RegionFileCache.getChunkInputStream(chunkSaveLocation, chunkX, chunkZ);
-            if (stream != null) {
-                NBTTagCompound compound = CompressedStreamTools.read(stream);
-                stream.close();
-                int dataVersion = compound.contains("DataVersion", 99) ? compound.getInt("DataVersion") : -1;
-                if (dataVersion < 1493) {
-                    if (compound.getCompound("Level").getBoolean("hasLegacyStructureData")) {
-                        compound = getLegacyStructureDataUtil().func_212181_a(compound);
-                    }
+            CompoundNBT compound = this.chunkLoader.readChunk(chunkX, chunkZ);
+            if (compound == null) return null;
+            int dataVersion = compound.contains("DataVersion", 99) ? compound.getInt("DataVersion") : -1;
+            if (dataVersion < 1493) {
+                if (compound.getCompound("Level").getBoolean("hasLegacyStructureData")) {
+                    compound = getLegacyStructureDataUtil().func_212181_a(compound);
                 }
-                return compound.getCompound("Level").getCompound("Structures").getCompound("Starts");
             }
+            return compound.getCompound("Level").getCompound("Structures").getCompound("Starts");
         } catch (IOException ignored) {
         }
         return null;
@@ -79,12 +86,12 @@ class NBTStructureLoader {
 
         if (!loadedChunks.add(String.format("%s,%s", chunkX, chunkZ))) return;
 
-        NBTTagCompound structureStarts = loadStructureStarts(chunkX, chunkZ);
+        CompoundNBT structureStarts = loadStructureStarts(chunkX, chunkZ);
         if (structureStarts == null || structureStarts.size() == 0) return;
 
         Map<String, StructureStart> structureStartMap = new HashMap<>();
         for (String key : structureStarts.keySet()) {
-            NBTTagCompound compound = structureStarts.getCompound(key);
+            CompoundNBT compound = structureStarts.getCompound(key);
             if (compound.contains("BB")) {
                 structureStartMap.put(key, new SimpleStructureStart(compound));
             }
@@ -94,33 +101,58 @@ class NBTStructureLoader {
     }
 
     private static class SimpleStructureStart extends StructureStart {
-        SimpleStructureStart(NBTTagCompound compound) {
-            this.boundingBox = new MutableBoundingBox(compound.getIntArray("BB"));
+        SimpleStructureStart(CompoundNBT compound) {
+            super(null,
+                    0,
+                    0,
+                    null,
+                    new MutableBoundingBox(compound.getIntArray("BB")),
+                    0,
+                    0);
 
-            NBTTagList children = compound.getList("Children", 10);
+            ListNBT children = compound.getList("Children", 10);
             for (int index = 0; index < children.size(); ++index) {
-                NBTTagCompound child = children.getCompound(index);
+                CompoundNBT child = children.getCompound(index);
                 if (child.contains("BB")) this.components.add(new SimpleStructurePiece(child));
             }
+        }
+
+        @Override
+        public void init(ChunkGenerator<?> chunkGenerator, TemplateManager templateManager, int i, int i1, Biome biome) {
+
         }
     }
 
     private static class SimpleStructurePiece extends StructurePiece {
-        SimpleStructurePiece(NBTTagCompound compound) {
-            this.boundingBox = new MutableBoundingBox(compound.getIntArray("BB"));
+        SimpleStructurePiece(CompoundNBT compound) {
+            super(null, compound);
         }
 
         @Override
-        protected void writeAdditional(NBTTagCompound nbtTagCompound) {
-        }
+        protected void readAdditional(CompoundNBT compoundNBT) {
 
-        @Override
-        protected void readAdditional(NBTTagCompound nbtTagCompound, TemplateManager templateManager) {
         }
 
         @Override
         public boolean addComponentParts(IWorld iWorld, Random random, MutableBoundingBox mutableBoundingBox, ChunkPos chunkPos) {
             return false;
+        }
+    }
+
+    private static class ChunkLoader {
+        private final RegionFileCache regionFileCache;
+
+        public ChunkLoader(File file) {
+            this.regionFileCache = new RegionFileCache(file) {
+            };
+        }
+
+        public CompoundNBT readChunk(int chunkX, int chunkZ) throws IOException {
+            return regionFileCache.readChunk(new ChunkPos(chunkX, chunkZ));
+        }
+
+        public void close() throws IOException {
+            regionFileCache.close();
         }
     }
 }

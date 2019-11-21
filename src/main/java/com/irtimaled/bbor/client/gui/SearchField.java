@@ -1,16 +1,16 @@
 package com.irtimaled.bbor.client.gui;
 
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.client.gui.widget.TextFieldWidget;
 
-public class SearchField extends GuiTextField {
+public class SearchField extends TextFieldWidget {
     private final ControlList controlList;
 
     SearchField(FontRenderer fontRenderer, int left, int top, int width, int height, ControlList controlList) {
-        super(0, fontRenderer, left, top, width, height);
+        super(fontRenderer, left, top, width, height, "");
 
         this.controlList = controlList;
-        this.setTextAcceptHandler((id, text) -> this.controlList.filter(removeLeadingSpaces(text.toLowerCase())));
+        this.func_212954_a(text -> this.controlList.filter(removeLeadingSpaces(text.toLowerCase())));
         this.setTextFormatter((text, id) -> removeLeadingSpaces(text));
         this.setFocused(true);
         this.setCanLoseFocus(false);
@@ -21,7 +21,7 @@ public class SearchField extends GuiTextField {
     }
 
     public void render(int mouseX, int mouseY) {
-        this.drawTextField(mouseX, mouseY, 0f);
+        this.render(mouseX, mouseY, 0f);
     }
 
     @Override

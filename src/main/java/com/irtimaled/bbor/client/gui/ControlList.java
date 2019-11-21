@@ -1,11 +1,11 @@
 package com.irtimaled.bbor.client.gui;
 
 import com.irtimaled.bbor.client.renderers.Renderer;
+import com.mojang.blaze3d.platform.GLX;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiEventHandler;
+import net.minecraft.client.gui.AbstractGui;
+import net.minecraft.client.gui.FocusableGui;
 import net.minecraft.client.gui.IGuiEventListener;
-import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.opengl.GL11;
 
@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ControlList extends GuiEventHandler {
+public class ControlList extends FocusableGui {
     private static final int CONTROLS_WIDTH = 310;
     private final int scrollBarLeft;
     private final int listHeight;
@@ -156,7 +156,7 @@ public class ControlList extends GuiEventHandler {
     }
 
     @Override
-    public boolean mouseScrolled(double scrollAmount) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollAmount) {
         this.amountScrolled -= scrollAmount * 10;
         return true;
     }
@@ -176,7 +176,7 @@ public class ControlList extends GuiEventHandler {
         this.overlayBackground(0, this.top);
         this.overlayBackground(this.bottom, this.height);
         GL11.glEnable(GL11.GL_BLEND);
-        OpenGlHelper.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ZERO, GL11.GL_ONE);
+        GLX.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ZERO, GL11.GL_ONE);
         GL11.glDisable(GL11.GL_ALPHA_TEST);
         GL11.glShadeModel(GL11.GL_SMOOTH);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
@@ -194,7 +194,7 @@ public class ControlList extends GuiEventHandler {
     }
 
     private void drawListBackground() {
-        this.minecraft.getTextureManager().bindTexture(Gui.OPTIONS_BACKGROUND);
+        this.minecraft.getTextureManager().bindTexture(AbstractGui.BACKGROUND_LOCATION);
         Renderer.startTextured()
                 .setColor(32, 32, 32)
                 .setAlpha(255)
@@ -239,7 +239,7 @@ public class ControlList extends GuiEventHandler {
     }
 
     private void overlayBackground(int top, int bottom) {
-        this.minecraft.getTextureManager().bindTexture(Gui.OPTIONS_BACKGROUND);
+        this.minecraft.getTextureManager().bindTexture(AbstractGui.BACKGROUND_LOCATION);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         Renderer.startTextured()
                 .setColor(64, 64, 64)
@@ -303,7 +303,7 @@ public class ControlList extends GuiEventHandler {
     }
 
     @Override
-    protected List<? extends IGuiEventListener> getChildren() {
+    public List<? extends IGuiEventListener> children() {
         return Collections.emptyList();
     }
 

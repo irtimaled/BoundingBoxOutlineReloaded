@@ -10,7 +10,6 @@ import com.irtimaled.bbor.client.providers.*;
 import com.irtimaled.bbor.common.BoundingBoxCache;
 import com.irtimaled.bbor.common.CommonProxy;
 import com.irtimaled.bbor.common.EventBus;
-import com.irtimaled.bbor.common.VillageColorCache;
 
 public class ClientProxy extends CommonProxy {
     public static void registerKeyBindings() {
@@ -34,7 +33,6 @@ public class ClientProxy extends CommonProxy {
         EventBus.subscribe(DisconnectedFromRemoteServer.class, e -> disconnectedFromServer());
         EventBus.subscribe(InitializeClientReceived.class, this::onInitializeClientReceived);
         EventBus.subscribe(AddBoundingBoxReceived.class, this::addBoundingBox);
-        EventBus.subscribe(RemoveBoundingBoxReceived.class, this::onRemoveBoundingBoxReceived);
         EventBus.subscribe(UpdateWorldSpawnReceived.class, this::onUpdateWorldSpawnReceived);
         EventBus.subscribe(SaveLoaded.class, e -> clear());
 
@@ -56,7 +54,6 @@ public class ClientProxy extends CommonProxy {
         CustomBeaconProvider.clear();
         CustomBoxProvider.clear();
         BiomeBorderProvider.clear();
-        VillageColorCache.clear();
         clearCaches();
     }
 
@@ -65,10 +62,6 @@ public class ClientProxy extends CommonProxy {
         if (cache == null) return;
 
         cache.addBoundingBoxes(event.getKey(), event.getBoundingBoxes());
-    }
-
-    private void onRemoveBoundingBoxReceived(RemoveBoundingBoxReceived event) {
-        super.removeBoundingBox(event.getDimensionId(), event.getKey());
     }
 
     private void onInitializeClientReceived(InitializeClientReceived event) {

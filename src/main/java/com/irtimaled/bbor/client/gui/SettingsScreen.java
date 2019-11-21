@@ -4,8 +4,9 @@ import com.irtimaled.bbor.client.ClientRenderer;
 import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.interop.ClientInterop;
 import com.irtimaled.bbor.common.BoundingBoxType;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.SharedConstants;
 
 public class SettingsScreen extends ListScreen {
     private static final String pillagerOutpostVersionPattern = "(?:1\\.1[4-9]|1\\.[2-9][0-9]|18w(?:4[7-9]|5[0-9])|19w|2[0-9]w).*";
@@ -16,7 +17,7 @@ public class SettingsScreen extends ListScreen {
         ClientInterop.displayScreen(new SettingsScreen(null));
     }
 
-    SettingsScreen(GuiScreen lastScreen) {
+    SettingsScreen(Screen lastScreen) {
         super(lastScreen);
     }
 
@@ -28,13 +29,13 @@ public class SettingsScreen extends ListScreen {
 
     @Override
     protected void setup() {
-        String version = this.mc.getVersion();
+        String version = SharedConstants.getVersion().getName();
         ControlList controlList = this.getControlList();
-        if (this.mc.world != null) controlList.setTransparentBackground();
+        if (this.minecraft.world != null) controlList.setTransparentBackground();
 
         controlList
                 .section(null,
-                        (x, width) -> new BoolButton(width, I18n.format("bbor.options.active"), this.mc.world != null) {
+                        (x, width) -> new BoolButton(width, I18n.format("bbor.options.active"), this.minecraft.world != null) {
                             @Override
                             public void onPressed() {
                                 ClientRenderer.toggleActive();
@@ -100,17 +101,6 @@ public class SettingsScreen extends ListScreen {
                         (x, width) -> new BoundingBoxTypeButton(width, I18n.format("bbor.structures.fortresses"), BoundingBoxType.NetherFortress),
                         (x, width) -> version.matches(netherFossilVersionPattern) ? new BoundingBoxTypeButton(width, I18n.format("bbor.structures.netherFossils"), BoundingBoxType.NetherFossil) : null,
                         (x, width) -> version.matches(bastionRemnantVersionPattern) ? new BoundingBoxTypeButton(width, I18n.format("bbor.structures.bastionRemnants"), BoundingBoxType.BastionRemnant) : null,
-                        (x, width) -> new BoundingBoxTypeButton(width, I18n.format("bbor.structures.endCities"), BoundingBoxType.EndCity))
-                .section(I18n.format("bbor.tabs.villages"),
-                        (x, width) -> new BoolSettingButton(width, I18n.format("bbor.features.villageSpheres"), ConfigManager.drawVillageSpheres),
-                        (x, width) -> new BoolSettingButton(width, I18n.format("bbor.features.villageSpheres.doorLines"), ConfigManager.drawVillageDoors),
-                        (x, width) -> new BoolSettingButton(width, I18n.format("bbor.features.villageSpheres.golemSpawn"), ConfigManager.drawIronGolemSpawnArea),
-                        (x, width) -> new IntSettingSlider(width, 1, 5, "bbor.features.villageSpheres.dotSize", ConfigManager.villageSphereDotSize),
-                        (x, width) -> new IntSettingSlider(width, 1, 5, "bbor.features.villageSpheres.density", ConfigManager.villageSphereDensity)
-                                .addDisplayValue(1, I18n.format("bbor.features.villageSpheres.density.fewest"))
-                                .addDisplayValue(2, I18n.format("bbor.features.villageSpheres.density.fewer"))
-                                .addDisplayValue(3, I18n.format("bbor.features.villageSpheres.density.normal"))
-                                .addDisplayValue(4, I18n.format("bbor.features.villageSpheres.density.more"))
-                                .addDisplayValue(5, I18n.format("bbor.features.villageSpheres.density.most")));
+                        (x, width) -> new BoundingBoxTypeButton(width, I18n.format("bbor.structures.endCities"), BoundingBoxType.EndCity));
     }
 }

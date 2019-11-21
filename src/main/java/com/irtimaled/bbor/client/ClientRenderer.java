@@ -9,7 +9,6 @@ import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBoxCuboid;
 import com.irtimaled.bbor.common.models.BoundingBoxSphere;
-import com.irtimaled.bbor.common.models.BoundingBoxVillage;
 import org.lwjgl.opengl.GL11;
 
 import java.util.HashMap;
@@ -40,7 +39,6 @@ public class ClientRenderer {
     }
 
     static {
-        registerRenderer(BoundingBoxVillage.class, new VillageRenderer());
         registerRenderer(BoundingBoxSlimeChunk.class, new SlimeChunkRenderer());
         registerRenderer(BoundingBoxWorldSpawn.class, new WorldSpawnRenderer());
         registerRenderer(BoundingBoxCuboid.class, new CuboidRenderer());

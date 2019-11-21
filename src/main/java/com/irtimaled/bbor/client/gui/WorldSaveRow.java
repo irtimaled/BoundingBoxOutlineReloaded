@@ -3,12 +3,12 @@ package com.irtimaled.bbor.client.gui;
 import com.google.common.hash.Hashing;
 import com.irtimaled.bbor.client.interop.ClientInterop;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
-import net.minecraft.world.storage.ISaveFormat;
+import net.minecraft.world.storage.SaveFormat;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraft.world.storage.WorldSummary;
 import org.apache.logging.log4j.LogManager;
@@ -29,14 +29,14 @@ public class WorldSaveRow extends ControlListEntry implements Comparable<WorldSa
     private static final int ICON_SIZE = 20;
     private final Minecraft client;
     private final WorldSummary worldSummary;
-    private final ISaveFormat saveLoader;
+    private final SaveFormat saveLoader;
     private final ResourceLocation iconLocation;
     private final DynamicTexture icon;
 
     private File iconFile;
     private long lastClickTime;
 
-    WorldSaveRow(WorldSummary worldSummary, ISaveFormat saveLoader) {
+    WorldSaveRow(WorldSummary worldSummary, SaveFormat saveLoader) {
         this.worldSummary = worldSummary;
         this.saveLoader = saveLoader;
         this.client = Minecraft.getInstance();
@@ -101,7 +101,7 @@ public class WorldSaveRow extends ControlListEntry implements Comparable<WorldSa
         this.client.fontRenderer.drawString(details, (float) (x + ICON_SIZE + 3), (float) (y + 1 + this.client.fontRenderer.FONT_HEIGHT + 1), 8421504);
         this.client.getTextureManager().bindTexture(this.icon != null ? this.iconLocation : ICON_MISSING);
         GL11.glEnable(GL11.GL_BLEND);
-        Gui.drawModalRectWithCustomSizedTexture(x, y, 0.0F, 0.0F, ICON_SIZE, ICON_SIZE, 32.0F, 32.0F);
+        AbstractGui.blit(x, y, 0.0F, 0.0F, ICON_SIZE, ICON_SIZE, 32, 32);
         GL11.glDisable(GL11.GL_BLEND);
     }
 

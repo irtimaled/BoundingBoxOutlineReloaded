@@ -22,7 +22,7 @@ public class HexColorArgument implements ArgumentType<HexColor> {
     public static final SimpleCommandExceptionType EXPECTED_HEX_COLOR = new SimpleCommandExceptionType(new LiteralMessage("Expected hex color"));
 
     @Override
-    public <S> HexColor parse(StringReader reader) throws CommandSyntaxException {
+    public HexColor parse(StringReader reader) throws CommandSyntaxException {
         String value = reader.getRemaining().split(" ")[0].toLowerCase();
         if (value.isEmpty()) {
             throw EXPECTED_HEX_COLOR.createWithContext(reader);

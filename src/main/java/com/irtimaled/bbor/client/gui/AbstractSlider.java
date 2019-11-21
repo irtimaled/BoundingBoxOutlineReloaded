@@ -13,15 +13,15 @@ abstract class AbstractSlider extends AbstractControl {
 
     @Override
     protected void renderBackground(int mouseX, int mouseY) {
-        this.minecraft.getTextureManager().bindTexture(BUTTON_TEXTURES);
+        this.minecraft.getTextureManager().bindTexture(WIDGETS_LOCATION);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         if(isDragging) {
             changeProgress(mouseX);
         }
 
-        int hoverState = super.getHoverState(this.hovered);
-        this.drawTexturedModalRect(this.x + (int) (this.progress * (double) (this.width - 8)), this.y, 0, 46 + hoverState * 20, 4, this.height);
-        this.drawTexturedModalRect(this.x + (int) (this.progress * (double) (this.width - 8)) + 4, this.y, 196, 46 + hoverState * 20, 4, 20);
+        int hoverState = super.getYImage(this.isHovered);
+        this.blit(this.x + (int) (this.progress * (double) (this.width - 8)), this.y, 0, 46 + hoverState * 20, 4, this.height);
+        this.blit(this.x + (int) (this.progress * (double) (this.width - 8)) + 4, this.y, 196, 46 + hoverState * 20, 4, 20);
     }
 
     boolean setProgress(double progress) {
@@ -41,7 +41,7 @@ abstract class AbstractSlider extends AbstractControl {
     }
 
     @Override
-    protected int getHoverState(boolean hovered) {
+    protected int getYImage(boolean hovered) {
         return 0;
     }
 

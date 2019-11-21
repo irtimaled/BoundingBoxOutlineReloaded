@@ -5,7 +5,7 @@ import com.irtimaled.bbor.client.interop.TileEntitiesHelper;
 import com.irtimaled.bbor.client.models.BoundingBoxMobSpawner;
 import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.models.Coords;
-import net.minecraft.tileentity.TileEntityMobSpawner;
+import net.minecraft.tileentity.MobSpawnerTileEntity;
 
 public class MobSpawnerProvider implements IBoundingBoxProvider<BoundingBoxMobSpawner> {
     @Override
@@ -15,7 +15,7 @@ public class MobSpawnerProvider implements IBoundingBoxProvider<BoundingBoxMobSp
 
     @Override
     public Iterable<BoundingBoxMobSpawner> get(int dimensionId) {
-        return TileEntitiesHelper.map(TileEntityMobSpawner.class, spawner -> {
+        return TileEntitiesHelper.map(MobSpawnerTileEntity.class, spawner -> {
             Coords coords = new Coords(spawner.getPos());
             return BoundingBoxMobSpawner.from(coords);
         });

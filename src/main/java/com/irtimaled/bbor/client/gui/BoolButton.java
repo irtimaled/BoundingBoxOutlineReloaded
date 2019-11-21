@@ -16,7 +16,7 @@ public abstract class BoolButton extends AbstractButton {
 
     @Override
     protected int getState() {
-        return enabled ? super.getState() : 0;
+        return active ? super.getState() : 0;
     }
 
     protected boolean getValue() {

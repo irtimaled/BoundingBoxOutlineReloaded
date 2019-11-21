@@ -2,9 +2,8 @@ package com.irtimaled.bbor.client.interop;
 
 import com.irtimaled.bbor.client.Player;
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.chunk.storage.RegionFileCache;
-import net.minecraft.world.storage.ISaveFormat;
-import net.minecraft.world.storage.ISaveHandler;
+import net.minecraft.world.storage.SaveFormat;
+import net.minecraft.world.storage.SaveHandler;
 
 import java.io.File;
 import java.util.HashMap;
@@ -12,14 +11,14 @@ import java.util.Map;
 
 public class SaveGameStructureLoader {
     private static final Map<Integer, NBTStructureLoader> nbtStructureLoaders = new HashMap<>();
-    private static ISaveHandler saveHandler = null;
+    private static SaveHandler saveHandler = null;
     private static File worldDirectory = null;
 
     static void loadSaveGame(String fileName) {
         Minecraft minecraft = Minecraft.getInstance();
-        ISaveFormat saveLoader = minecraft.getSaveLoader();
+        SaveFormat saveLoader = minecraft.getSaveLoader();
         saveHandler = saveLoader.getSaveLoader(fileName, null);
-        worldDirectory = saveLoader.getWorldFolder(fileName).toFile();
+        worldDirectory = saveLoader.func_215781_c().resolve(fileName).toFile();
 
         for (int dimensionId : nbtStructureLoaders.keySet()) {
             NBTStructureLoader dimensionProcessor = getNBTStructureLoader(dimensionId);
@@ -63,6 +62,5 @@ public class SaveGameStructureLoader {
         nbtStructureLoaders.clear();
         saveHandler = null;
         worldDirectory = null;
-        RegionFileCache.clearRegionFileReferences();
     }
 }

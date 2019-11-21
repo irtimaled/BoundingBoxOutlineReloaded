@@ -9,7 +9,6 @@
     "network.play.client.MixinCPacketCustomPayload",
     "server.MixinMinecraftServer",
     "server.management.MixinPlayerList",
-    "world.MixinWorldServer",
     "world.chunk.MixinChunk"
   ],
   "client": [

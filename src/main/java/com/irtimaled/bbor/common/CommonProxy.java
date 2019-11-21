@@ -5,7 +5,6 @@ import com.irtimaled.bbor.common.events.*;
 import com.irtimaled.bbor.common.messages.AddBoundingBox;
 import com.irtimaled.bbor.common.messages.InitializeClient;
 import com.irtimaled.bbor.common.messages.PayloadBuilder;
-import com.irtimaled.bbor.common.messages.RemoveBoundingBox;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.common.models.ServerPlayer;
 
@@ -18,7 +17,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CommonProxy {
     private final Map<Integer, ServerPlayer> players = new ConcurrentHashMap<>();
     private final Map<Integer, Set<AbstractBoundingBox>> playerBoundingBoxesCache = new HashMap<>();
-    private final Map<Integer, VillageProcessor> villageProcessors = new HashMap<>();
     private final Map<Integer, StructureProcessor> structureProcessors = new HashMap<>();
     private final Map<Integer, BoundingBoxCache> dimensionCache = new ConcurrentHashMap<>();
     private Long seed = null;
@@ -32,9 +30,7 @@ public class CommonProxy {
         EventBus.subscribe(PlayerLoggedIn.class, this::playerLoggedIn);
         EventBus.subscribe(PlayerLoggedOut.class, this::playerLoggedOut);
         EventBus.subscribe(PlayerSubscribed.class, this::onPlayerSubscribed);
-        EventBus.subscribe(ServerWorldTick.class, this::serverWorldTick);
         EventBus.subscribe(ServerTick.class, e -> serverTick());
-        EventBus.subscribe(VillageRemoved.class, this::onVillageRemoved);
     }
 
     protected void setSeed(long seed) {
@@ -85,27 +81,6 @@ public class CommonProxy {
         playerBoundingBoxesCache.remove(playerId);
     }
 
-    private void onVillageRemoved(VillageRemoved event) {
-        sendRemoveBoundingBox(event.getDimensionId(), event.getVillage());
-    }
-
-    private void sendRemoveBoundingBox(int dimensionId, AbstractBoundingBox boundingBox) {
-        PayloadBuilder payload = RemoveBoundingBox.getPayload(dimensionId, boundingBox);
-        if (payload == null) return;
-
-        for (Map.Entry<Integer, ServerPlayer> playerEntry : players.entrySet()) {
-            int playerId = playerEntry.getKey();
-            ServerPlayer player = playerEntry.getValue();
-            if (player.getDimensionId() == dimensionId) {
-                player.sendPacket(payload);
-
-                if (playerBoundingBoxesCache.containsKey(playerId)) {
-                    playerBoundingBoxesCache.get(playerId).remove(boundingBox);
-                }
-            }
-        }
-    }
-
     private void onPlayerSubscribed(PlayerSubscribed event) {
         int playerId = event.getPlayerId();
         ServerPlayer player = event.getPlayer();
@@ -137,13 +112,6 @@ public class CommonProxy {
         }
     }
 
-    protected void removeBoundingBox(int dimensionId, AbstractBoundingBox key) {
-        BoundingBoxCache cache = getCache(dimensionId);
-        if (cache == null) return;
-
-        cache.removeBoundingBox(key);
-    }
-
     private void serverTick() {
         for (Map.Entry<Integer, ServerPlayer> playerEntry : players.entrySet()) {
             int playerId = playerEntry.getKey();
@@ -151,17 +119,6 @@ public class CommonProxy {
 
             sendToPlayer(playerId, player);
         }
-    }
-
-    private void serverWorldTick(ServerWorldTick event) {
-        int dimensionId = event.getDimensionId();
-        VillageProcessor villageProcessor = villageProcessors.get(dimensionId);
-        if (villageProcessor == null) {
-            villageProcessor = new VillageProcessor(dimensionId, getOrCreateCache(dimensionId));
-            villageProcessors.put(dimensionId, villageProcessor);
-        }
-
-        villageProcessor.process(event.getWorld());
     }
 
     protected BoundingBoxCache getCache(int dimensionId) {
@@ -173,10 +130,6 @@ public class CommonProxy {
     }
 
     protected void clearCaches() {
-        for (VillageProcessor villageProcessor : villageProcessors.values()) {
-            villageProcessor.clear();
-        }
-        villageProcessors.clear();
         structureProcessors.clear();
         for (BoundingBoxCache cache : dimensionCache.values()) {
             cache.clear();

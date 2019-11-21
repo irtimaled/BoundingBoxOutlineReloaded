@@ -1,6 +1,6 @@
 package com.irtimaled.bbor.client.renderers;
 
-import com.irtimaled.bbor.client.Player;
+import com.irtimaled.bbor.client.Camera;
 import com.irtimaled.bbor.common.models.Coords;
 import com.irtimaled.bbor.common.models.Point;
 
@@ -20,15 +20,15 @@ class OffsetPoint {
     }
 
     double getX() {
-        return point.getX() - Player.getX();
+        return point.getX() - Camera.getX();
     }
 
     double getY() {
-        return point.getY() - Player.getY();
+        return point.getY() - Camera.getY();
     }
 
     double getZ() {
-        return point.getZ() - Player.getZ();
+        return point.getZ() - Camera.getZ();
     }
 
     OffsetPoint offset(double x, double y, double z) {

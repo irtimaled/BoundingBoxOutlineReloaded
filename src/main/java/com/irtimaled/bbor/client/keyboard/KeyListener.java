@@ -35,7 +35,7 @@ public class KeyListener {
         if (windowHandle == mainWindowHandle &&
                 minecraft.currentScreen == null &&
                 keyCode != -1 &&
-                !InputMappings.isKeyDown(292) &&
+                !InputMappings.isKeyDown(mainWindowHandle, 292) &&
                 handleKeyEvent(keyCode, isPressed))
             return;
         minecraft.keyboardListener.onKeyEvent(windowHandle, keyCode, scanCode, action, modifiers);

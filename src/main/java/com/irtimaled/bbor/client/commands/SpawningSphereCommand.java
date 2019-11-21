@@ -10,7 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.ISuggestionProvider;
-import net.minecraft.world.EnumLightType;
+import net.minecraft.world.LightType;
 import net.minecraft.world.World;
 
 public class SpawningSphereCommand {
@@ -42,7 +42,7 @@ public class SpawningSphereCommand {
                             World world = Minecraft.getInstance().world;
                             SpawningSphereProvider.calculateSpawnableSpacesCount(pos -> {
                                 counts.spawnable++;
-                                if(world.getLightFor(EnumLightType.SKY, pos) > 7)
+                                if(world.getLightFor(LightType.SKY, pos) > 7)
                                     counts.nightSpawnable++;
                             });
                             SpawningSphereProvider.setSpawnableSpacesCount(counts.spawnable);
