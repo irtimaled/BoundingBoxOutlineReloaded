@@ -18,7 +18,7 @@ public class DimensionId {
     }
 
     public static DimensionId OVERWORLD = DimensionId.from(DimensionType.OVERWORLD);
-    public static DimensionId NETHER = DimensionId.from(DimensionType.NETHER);
+    public static DimensionId NETHER = DimensionId.from(DimensionType.THE_NETHER);
 
     private final ResourceLocation value;
 
