@@ -10,7 +10,7 @@ public class SearchField extends TextFieldWidget implements IControl {
         super(fontRenderer, left, top, width, height, "");
 
         this.controlList = controlList;
-        this.func_212954_a(text -> this.controlList.filter(removeLeadingSpaces(text.toLowerCase())));
+        this.setResponder(text -> this.controlList.filter(removeLeadingSpaces(text.toLowerCase())));
         this.setTextFormatter((text, id) -> removeLeadingSpaces(text));
         this.setFocused(true);
     }
