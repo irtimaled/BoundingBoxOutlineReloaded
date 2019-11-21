@@ -8,7 +8,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import net.minecraft.command.Commands;
 import net.minecraft.command.ISuggestionProvider;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 
 public class SeedCommand {
     public static void register(CommandDispatcher<ISuggestionProvider> commandDispatcher) {
@@ -42,6 +42,6 @@ public class SeedCommand {
     }
 
     private static final SimpleCommandExceptionType INCOMPLETE_COMMAND =
-            new SimpleCommandExceptionType(new TextComponentString("Missing argument (expected seed)"));
+            new SimpleCommandExceptionType(new StringTextComponent("Missing argument (expected seed)"));
 
 }

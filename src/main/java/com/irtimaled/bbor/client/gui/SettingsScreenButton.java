@@ -1,13 +1,13 @@
 package com.irtimaled.bbor.client.gui;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.screen.Screen;
 
 public class SettingsScreenButton extends AbstractButton {
     private final SettingsScreen screen;
 
-    public SettingsScreenButton(int id, int x, int y, int width, String label, GuiScreen lastScreen) {
-        super(id, x, y, width, label);
+    public SettingsScreenButton(int x, int y, int width, String label, Screen lastScreen) {
+        super(x, y, width, label);
         screen = new SettingsScreen(lastScreen, 0);
     }
 

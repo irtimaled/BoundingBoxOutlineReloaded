@@ -8,7 +8,6 @@ import com.irtimaled.bbor.client.providers.*;
 import com.irtimaled.bbor.common.BoundingBoxCache;
 import com.irtimaled.bbor.common.CommonProxy;
 import com.irtimaled.bbor.common.EventBus;
-import com.irtimaled.bbor.common.VillageColorCache;
 import com.irtimaled.bbor.config.ConfigManager;
 
 public class ClientProxy extends CommonProxy {
@@ -44,7 +43,6 @@ public class ClientProxy extends CommonProxy {
         BeaconProvider.clear();
         CustomBoxProvider.clear();
         BiomeBorderProvider.clear();
-        VillageColorCache.clear();
         clearCaches();
     }
 

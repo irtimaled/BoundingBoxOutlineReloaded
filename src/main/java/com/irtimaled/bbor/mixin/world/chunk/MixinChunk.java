@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Chunk.class)
 public class MixinChunk {
-    @Inject(method = "onLoad", at = @At("RETURN"))
+    @Inject(method = "func_217318_w", at = @At("RETURN"))
     private void onLoad(CallbackInfo ci) {
         CommonInterop.chunkLoaded((Chunk) (Object) this);
     }

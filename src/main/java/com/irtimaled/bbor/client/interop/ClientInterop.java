@@ -14,8 +14,8 @@ import com.irtimaled.bbor.common.TypeHelper;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.network.NetHandlerPlayClient;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.client.network.play.ClientPlayNetHandler;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.util.math.BlockPos;
@@ -27,14 +27,14 @@ public class ClientInterop {
         EventBus.publish(new DisconnectedFromRemoteServer());
     }
 
-    public static void render(float partialTicks, EntityPlayerSP player) {
+    public static void render(float partialTicks, ClientPlayerEntity player) {
         Player.setPosition(partialTicks, player);
         ClientRenderer.render(player.dimension.getId());
     }
 
     public static boolean interceptChatMessage(String message) {
         if (message.startsWith("/bbor:")) {
-            NetHandlerPlayClient connection = Minecraft.getInstance().getConnection();
+            ClientPlayNetHandler connection = Minecraft.getInstance().getConnection();
             if (connection != null) {
                 CommandDispatcher<ISuggestionProvider> commandDispatcher = connection.func_195515_i();
                 CommandSource commandSource = Minecraft.getInstance().player.getCommandSource();
@@ -43,7 +43,7 @@ public class ClientInterop {
                 } catch (CommandSyntaxException exception) {
                     commandSource.sendErrorMessage(TextComponentUtils.toTextComponent(exception.getRawMessage()));
                     if (exception.getInput() != null && exception.getCursor() >= 0) {
-                        ITextComponent suggestion = new TextComponentString("")
+                        ITextComponent suggestion = new StringTextComponent("")
                                 .applyTextStyle(TextFormatting.GRAY)
                                 .applyTextStyle(style -> style.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, message)));
                         int textLength = Math.min(exception.getInput().length(), exception.getCursor());
@@ -53,11 +53,11 @@ public class ClientInterop {
 
                         suggestion.appendText(exception.getInput().substring(Math.max(0, textLength - 10), textLength));
                         if (textLength < exception.getInput().length()) {
-                            suggestion.appendSibling(new TextComponentString(exception.getInput().substring(textLength))
+                            suggestion.appendSibling(new StringTextComponent(exception.getInput().substring(textLength))
                                     .applyTextStyles(TextFormatting.RED, TextFormatting.UNDERLINE));
                         }
 
-                        suggestion.appendSibling(new TextComponentTranslation("command.context.here")
+                        suggestion.appendSibling(new TranslationTextComponent("command.context.here")
                                 .applyTextStyles(TextFormatting.RED, TextFormatting.ITALIC));
                         commandSource.sendErrorMessage(suggestion);
                     }
@@ -77,7 +77,7 @@ public class ClientInterop {
     }
 
     public static void handleSeedMessage(ITextComponent chatComponent) {
-        TypeHelper.doIfType(chatComponent, TextComponentTranslation.class, message -> {
+        TypeHelper.doIfType(chatComponent, TranslationTextComponent.class, message -> {
             if (!message.getKey().equals("commands.seed.success")) return;
 
             try {

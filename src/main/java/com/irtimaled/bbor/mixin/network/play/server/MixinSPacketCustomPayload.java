@@ -2,23 +2,23 @@ package com.irtimaled.bbor.mixin.network.play.server;
 
 import com.irtimaled.bbor.common.EventBus;
 import com.irtimaled.bbor.common.messages.*;
-import net.minecraft.client.network.NetHandlerPlayClient;
+import net.minecraft.client.network.play.ClientPlayNetHandler;
+import net.minecraft.client.network.play.IClientPlayNetHandler;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.network.play.INetHandlerPlayClient;
-import net.minecraft.network.play.server.SPacketCustomPayload;
+import net.minecraft.network.play.server.SCustomPayloadPlayPacket;
 import net.minecraft.util.ResourceLocation;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-@Mixin(SPacketCustomPayload.class)
+@Mixin(SCustomPayloadPlayPacket.class)
 public abstract class MixinSPacketCustomPayload {
     @Shadow
     private ResourceLocation channel;
 
-    @Redirect(method = "processPacket", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/play/INetHandlerPlayClient;handleCustomPayload(Lnet/minecraft/network/play/server/SPacketCustomPayload;)V"))
-    private void processPacket(INetHandlerPlayClient netHandlerPlayClient, SPacketCustomPayload packet) {
+    @Redirect(method = "processPacket", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/play/IClientPlayNetHandler;handleCustomPayload(Lnet/minecraft/network/play/server/SCustomPayloadPlayPacket;)V"))
+    private void processPacket(IClientPlayNetHandler netHandlerPlayClient, SCustomPayloadPlayPacket packet) {
         String channelName = channel.toString();
         if (channelName.startsWith("bbor:")) {
             PacketBuffer data = null;
@@ -28,7 +28,7 @@ public abstract class MixinSPacketCustomPayload {
                 switch (channelName) {
                     case InitializeClient.NAME: {
                         EventBus.publish(InitializeClient.getEvent(reader));
-                        ((NetHandlerPlayClient) netHandlerPlayClient).sendPacket(SubscribeToServer.getPayload().build());
+                        ((ClientPlayNetHandler) netHandlerPlayClient).sendPacket(SubscribeToServer.getPayload().build());
                         break;
                     }
                     case AddBoundingBox.NAME: {

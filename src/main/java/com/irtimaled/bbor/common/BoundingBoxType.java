@@ -31,7 +31,6 @@ public class BoundingBoxType {
     public final static BoundingBoxType MobSpawner = register(Color.GREEN, "Mob_Spawner", ConfigManager.drawMobSpawners);
     public final static BoundingBoxType SlimeChunks = register(Colors.DARK_GREEN, "Slime_Chunks", ConfigManager.drawSlimeChunks);
     public final static BoundingBoxType Village = register(Colors.PURPLE, "Village", ConfigManager.drawVillages);
-    public final static BoundingBoxType VillageSpheres = register(null, "Village Sphere", ConfigManager.drawVillageSpheres);
     public final static BoundingBoxType AFKSphere = register(Color.RED, "AFK Sphere", ConfigManager.drawAFKSpheres);
     public final static BoundingBoxType BiomeBorder = register(Color.GREEN, "Biome Border", ConfigManager.drawBiomeBorders);
     public final static BoundingBoxType Beacon = register(Color.WHITE, "Beacon", ConfigManager.drawBeacons);

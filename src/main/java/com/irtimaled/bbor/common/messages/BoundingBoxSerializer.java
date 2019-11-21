@@ -1,6 +1,8 @@
 package com.irtimaled.bbor.common.messages;
 
-import com.irtimaled.bbor.common.models.*;
+import com.irtimaled.bbor.common.models.AbstractBoundingBox;
+import com.irtimaled.bbor.common.models.BoundingBoxCuboid;
+import com.irtimaled.bbor.common.models.BoundingBoxMobSpawner;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,7 +12,6 @@ class BoundingBoxSerializer {
     private static final Map<Class, BiConsumer<AbstractBoundingBox, PayloadBuilder>> serializers = new HashMap<>();
 
     static {
-        serializers.put(BoundingBoxVillage.class, (bb, pb) -> serializeVillage((BoundingBoxVillage) bb, pb));
         serializers.put(BoundingBoxCuboid.class, (bb, pb) -> serializeStructure((BoundingBoxCuboid)bb, pb));
         serializers.put(BoundingBoxMobSpawner.class, (bb, pb) -> serializeMobSpawner((BoundingBoxMobSpawner) bb, pb));
     }
@@ -24,17 +25,6 @@ class BoundingBoxSerializer {
         if (serializer == null) return;
 
         serializer.accept(boundingBox, builder);
-    }
-
-    private static void serializeVillage(BoundingBoxVillage boundingBox, PayloadBuilder builder) {
-        builder.writeChar('V')
-                .writeCoords(boundingBox.getCenter())
-                .writeVarInt(boundingBox.getRadius())
-                .writeBoolean(boundingBox.getSpawnsIronGolems())
-                .writeVarInt(boundingBox.getColor().getRGB());
-        for (Coords door : boundingBox.getDoors()) {
-            builder.writeCoords(door);
-        }
     }
 
     private static void serializeStructure(BoundingBoxCuboid boundingBox, PayloadBuilder builder) {

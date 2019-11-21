@@ -10,7 +10,6 @@
     "server.MixinMinecraftServer",
     "server.management.MixinPlayerInteractionManager",
     "server.management.MixinPlayerList",
-    "world.MixinWorldServer",
     "world.chunk.MixinChunk"
   ],
   "client": [

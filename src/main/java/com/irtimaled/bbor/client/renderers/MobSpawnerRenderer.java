@@ -24,7 +24,7 @@ public class MobSpawnerRenderer extends AbstractRenderer<BoundingBoxMobSpawner> 
     }
 
     private void renderActivationLine(OffsetPoint centerPoint) {
-        OffsetPoint playerPos = new OffsetPoint(Player.getX(), Player.getY(), Player.getZ());
+        OffsetPoint playerPos = new OffsetPoint(Player.getPoint());
         double distance = centerPoint.getDistance(playerPos);
         if (distance <= 20) {
             Color color = distance > 18 ? Color.RED : distance > 16 ? Colors.DARK_ORANGE : Color.GREEN;

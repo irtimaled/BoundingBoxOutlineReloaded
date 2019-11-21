@@ -4,18 +4,21 @@ import com.irtimaled.bbor.client.models.Point;
 import com.irtimaled.bbor.common.models.BoundingBoxSpawningSphere;
 import com.irtimaled.bbor.common.models.Coords;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.entity.EnumCreatureType;
-import net.minecraft.init.Blocks;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.EntityClassification;
+import net.minecraft.entity.EntityType;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.EnumLightType;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.world.LightType;
 import net.minecraft.world.biome.Biome;
 
 public class SpawningSphereHelper {
+    private static EntityType entityType = EntityType.Builder.create(EntityClassification.MONSTER).size(0f, 0f).disableSerialization().build(null);
+
     public static int findSpawnableSpaces(Point center, Coords coords, int width, int height, BlockProcessor blockProcessor) {
         int blockX = coords.getX();
         int minX = blockX - width;
@@ -56,28 +59,27 @@ public class SpawningSphereHelper {
     }
 
     private static boolean isSpawnable(int x, int y, int z) {
-        WorldClient world = Minecraft.getInstance().world;
+        ClientWorld world = Minecraft.getInstance().world;
         BlockPos pos = new BlockPos(x, y, z);
         Biome biome = world.getBiome(pos);
         return  biome.getSpawningChance() > 0 &&
-                !biome.getSpawns(EnumCreatureType.MONSTER).isEmpty() &&
+                !biome.getSpawns(EntityClassification.MONSTER).isEmpty() &&
                 isSpawnable(pos, world);
     }
 
-    private static boolean isSpawnable(BlockPos pos, WorldClient world) {
-        IBlockState spawnBlockState = world.getBlockState(pos.down());
-        Block spawnBlock = spawnBlockState.getBlock();
-        IBlockState upperBlockState = world.getBlockState(pos);
+    private static boolean isSpawnable(BlockPos pos, ClientWorld world) {
+        BlockPos down = pos.down();
+        BlockState spawnBlockState = world.getBlockState(down);
+        BlockState upperBlockState = world.getBlockState(pos);
+        VoxelShape collisionShape = upperBlockState.getCollisionShape(world, pos);
 
-        return spawnBlock != Blocks.AIR &&
-                spawnBlock != Blocks.BEDROCK &&
-                spawnBlock != Blocks.BARRIER &&
-                spawnBlockState.isTopSolid() &&
-                !upperBlockState.isBlockNormalCube() &&
+        boolean isNether = world.dimension.isNether();
+        return spawnBlockState.canEntitySpawn(world, down, isNether ? EntityType.ZOMBIE_PIGMAN : entityType) &&
+                !Block.doesSideFillSquare(collisionShape, Direction.UP) &&
                 !upperBlockState.canProvidePower() &&
                 !upperBlockState.isIn(BlockTags.RAILS) &&
-                upperBlockState.getCollisionShape(world, pos).getEnd(EnumFacing.Axis.Y) <= 0 &&
+                collisionShape.getEnd(Direction.Axis.Y) <= 0 &&
                 upperBlockState.getFluidState().isEmpty() &&
-                (world.dimension.isNether() || world.getLightFor(EnumLightType.BLOCK, pos) <= 7);
+                (isNether || world.getLightFor(LightType.BLOCK, pos) <= 7);
     }
 }

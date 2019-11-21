@@ -18,6 +18,7 @@ public class ClientRenderer {
     private static final Map<Class<? extends AbstractBoundingBox>, AbstractRenderer> boundingBoxRendererMap = new HashMap<>();
 
     private static boolean active;
+    private static double activeY;
     private static Set<IBoundingBoxProvider> providers = new HashSet<>();
 
     public static boolean getActive() {
@@ -28,7 +29,17 @@ public class ClientRenderer {
         active = !active;
         if (!active) return;
 
-        Player.setActiveY();
+        activeY = Player.getY();
+    }
+
+    public static double getMaxY(int configMaxY) {
+        if (configMaxY == -1) {
+            return activeY;
+        }
+        if (configMaxY == 0) {
+            return Player.getY();
+        }
+        return configMaxY;
     }
 
     static void deactivate() {
@@ -36,7 +47,6 @@ public class ClientRenderer {
     }
 
     static {
-        registerRenderer(BoundingBoxVillage.class, new VillageRenderer());
         registerRenderer(BoundingBoxSlimeChunk.class, new SlimeChunkRenderer());
         registerRenderer(BoundingBoxWorldSpawn.class, new WorldSpawnRenderer());
         registerRenderer(BoundingBoxCuboid.class, new CuboidRenderer());

@@ -14,11 +14,11 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.command.arguments.BlockPosArgument;
+import net.minecraft.tileentity.BeaconTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityBeacon;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 
 public class BeaconCommand {
     private static final String COMMAND = "bbor:beacon";
@@ -65,10 +65,9 @@ public class BeaconCommand {
 
     private static void AddValidBeacon(CommandContext<CommandSource> context, BlockPos pos) throws CommandSyntaxException {
         TileEntity tileEntity = Minecraft.getInstance().world.getTileEntity(pos);
-        TileEntityBeacon beacon = TypeHelper.as(tileEntity, TileEntityBeacon.class);
+        BeaconTileEntity beacon = TypeHelper.as(tileEntity, BeaconTileEntity.class);
         if(beacon == null) {
-            BlockPos playerPosition = new BlockPos(context.getSource().getPos());
-            if (pos.getDistance(playerPosition) > ClientInterop.getRenderDistanceChunks()*16) {
+            if (!pos.withinDistance(context.getSource().getPos(), ClientInterop.getRenderDistanceChunks()*16)) {
                 throw POS_UNLOADED.create();
             }
 
@@ -87,9 +86,9 @@ public class BeaconCommand {
     private static final SimpleCommandExceptionType INCOMPLETE_COMMAND =
             CommandHelper.getIncompleteCommandException(COMMAND, ADD, CLEAR);
     private static final SimpleCommandExceptionType POS_NOT_BEACON =
-            new SimpleCommandExceptionType(new TextComponentString("That position is not a beacon block"));
+            new SimpleCommandExceptionType(new StringTextComponent("That position is not a beacon block"));
     private static final SimpleCommandExceptionType POS_UNLOADED =
-            new SimpleCommandExceptionType(new TextComponentTranslation("argument.pos.unloaded"));
+            new SimpleCommandExceptionType(new TranslationTextComponent("argument.pos.unloaded"));
 
 }
 

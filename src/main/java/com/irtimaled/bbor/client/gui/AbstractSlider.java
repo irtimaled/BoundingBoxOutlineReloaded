@@ -1,15 +1,15 @@
 package com.irtimaled.bbor.client.gui;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.opengl.GL11;
 
-abstract class AbstractSlider extends GuiButton implements IRenderableControl {
+abstract class AbstractSlider extends Widget implements IRenderableControl {
     double progress;
 
-    AbstractSlider(int id, int x, int y, int width) {
-        super(id, x, y, width, 20, "");
+    AbstractSlider(int x, int y, int width) {
+        super(x, y, width, 20, "");
     }
 
     @Override
@@ -19,10 +19,10 @@ abstract class AbstractSlider extends GuiButton implements IRenderableControl {
 
     @Override
     protected void renderBg(Minecraft minecraft, int mouseX, int mouseY) {
-        minecraft.getTextureManager().bindTexture(BUTTON_TEXTURES);
+        minecraft.getTextureManager().bindTexture(WIDGETS_LOCATION);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.drawTexturedModalRect(this.x + (int) (this.progress * (double) (this.width - 8)), this.y, 0, 66, 4, 20);
-        this.drawTexturedModalRect(this.x + (int) (this.progress * (double) (this.width - 8)) + 4, this.y, 196, 66, 4, 20);
+        this.blit(this.x + (int) (this.progress * (double) (this.width - 8)), this.y, 0, 66, 4, 20);
+        this.blit(this.x + (int) (this.progress * (double) (this.width - 8)) + 4, this.y, 196, 66, 4, 20);
     }
 
     boolean setProgress(double progress) {
@@ -42,7 +42,7 @@ abstract class AbstractSlider extends GuiButton implements IRenderableControl {
     }
 
     @Override
-    protected int getHoverState(boolean hovered) {
+    protected int getYImage(boolean hovered) {
         return 0;
     }
 

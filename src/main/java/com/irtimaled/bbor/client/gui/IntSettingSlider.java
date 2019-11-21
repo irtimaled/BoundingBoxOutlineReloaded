@@ -13,8 +13,8 @@ class IntSettingSlider extends AbstractSlider implements IRenderableControl {
     final int minValue;
     final int range;
 
-    IntSettingSlider(int id, int x, int y, int width, int minValue, int maxValue, String prefix, Setting<Integer> setting) {
-        super(id, x, y, width);
+    IntSettingSlider(int x, int y, int width, int minValue, int maxValue, String prefix, Setting<Integer> setting) {
+        super(x, y, width);
         this.setting = setting;
         this.minValue = minValue;
         this.prefix = prefix;
@@ -46,7 +46,7 @@ class IntSettingSlider extends AbstractSlider implements IRenderableControl {
 
     @Override
     protected void updateText() {
-        this.displayString = this.getDisplayValue();
+        this.setMessage(this.getDisplayValue());
     }
 
     @Override
