@@ -2,6 +2,7 @@ package com.irtimaled.bbor.client.providers;
 
 import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.Dimensions;
+import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.models.BoundingBoxWorldSpawn;
 import com.irtimaled.bbor.common.models.Coords;
 
@@ -23,8 +24,8 @@ public class WorldSpawnProvider implements IBoundingBoxProvider<BoundingBoxWorld
     private static Set<BoundingBoxWorldSpawn> getSpawnChunkBoundingBoxes(int spawnX, int spawnZ) {
         Set<BoundingBoxWorldSpawn> boundingBoxes = new HashSet<>();
         boundingBoxes.add(getWorldSpawnBoundingBox(spawnX, spawnZ));
-        boundingBoxes.add(buildSpawnChunksBoundingBox(spawnX, spawnZ, 12, BoundingBoxType.SpawnChunks));
-        boundingBoxes.add(buildSpawnChunksBoundingBox(spawnX, spawnZ, 16, BoundingBoxType.LazySpawnChunks));
+        boundingBoxes.add(buildSpawnChunksBoundingBox(spawnX, spawnZ, 19, BoundingBoxType.SpawnChunks));
+        boundingBoxes.add(buildSpawnChunksBoundingBox(spawnX, spawnZ, 21, BoundingBoxType.LazySpawnChunks));
         return boundingBoxes;
     }
 
@@ -36,17 +37,18 @@ public class WorldSpawnProvider implements IBoundingBoxProvider<BoundingBoxWorld
     }
 
     private static BoundingBoxWorldSpawn buildSpawnChunksBoundingBox(int spawnX, int spawnZ, int size, BoundingBoxType type) {
-        double midOffset = CHUNK_SIZE * (size / 2.0);
-        double midX = Math.round((float) (spawnX / CHUNK_SIZE)) * CHUNK_SIZE;
-        double midZ = Math.round((float) (spawnZ / CHUNK_SIZE)) * CHUNK_SIZE;
-        Coords maxCoords = new Coords(midX + midOffset, 0, midZ + midOffset);
-        if ((spawnX / CHUNK_SIZE) % 1.0D == 0.5D) {
-            midX -= CHUNK_SIZE;
-        }
-        if ((spawnZ / CHUNK_SIZE) % 1.0D == 0.5D) {
-            midZ -= CHUNK_SIZE;
-        }
-        Coords minCoords = new Coords(midX - midOffset, 0, midZ - midOffset);
+        int spawnChunkX = MathHelper.floor(spawnX / CHUNK_SIZE);
+        int spawnChunkZ = MathHelper.floor(spawnZ / CHUNK_SIZE);
+        int midOffset = ((size-1) / 2);
+
+        int minX = spawnChunkX - midOffset;
+        int maxX = spawnChunkX + midOffset;
+        int minZ = spawnChunkZ - midOffset;
+        int maxZ = spawnChunkZ + midOffset;
+
+
+        Coords maxCoords = new Coords(minX * CHUNK_SIZE, 0, minZ * CHUNK_SIZE);
+        Coords minCoords = new Coords(16 + (maxX * CHUNK_SIZE), 0, 16 + (maxZ * CHUNK_SIZE));
         return BoundingBoxWorldSpawn.from(minCoords, maxCoords, type);
     }
 
