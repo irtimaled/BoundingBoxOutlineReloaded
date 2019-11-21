@@ -37,7 +37,7 @@ public class ClientInterop {
         if (message.startsWith("/bbor:")) {
             ClientPlayNetHandler connection = Minecraft.getInstance().getConnection();
             if (connection != null) {
-                CommandDispatcher<ISuggestionProvider> commandDispatcher = connection.func_195515_i();
+                CommandDispatcher<ISuggestionProvider> commandDispatcher = connection.getCommandDispatcher();
                 CommandSource commandSource = Minecraft.getInstance().player.getCommandSource();
                 try {
                     commandDispatcher.execute(message.substring(1), commandSource);
