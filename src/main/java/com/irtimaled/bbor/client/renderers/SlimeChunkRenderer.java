@@ -1,6 +1,6 @@
 package com.irtimaled.bbor.client.renderers;
 
-import com.irtimaled.bbor.client.PlayerCoords;
+import com.irtimaled.bbor.client.Player;
 import com.irtimaled.bbor.common.models.BoundingBoxSlimeChunk;
 import com.irtimaled.bbor.config.ConfigManager;
 
@@ -13,7 +13,7 @@ public class SlimeChunkRenderer extends AbstractRenderer<BoundingBoxSlimeChunk> 
         Color color = boundingBox.getColor();
         renderCuboid(bb, color);
 
-        double maxY = PlayerCoords.getMaxY(ConfigManager.slimeChunkMaxY.get());
+        double maxY = Player.getMaxY(ConfigManager.slimeChunkMaxY.get());
         double dY = maxY - 39;
         if (dY > 0) {
             OffsetPoint min = bb.getMin().offset(0, 38, 0);

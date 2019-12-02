@@ -1,6 +1,6 @@
 package com.irtimaled.bbor.client.providers;
 
-import com.irtimaled.bbor.client.PlayerCoords;
+import com.irtimaled.bbor.client.Player;
 import com.irtimaled.bbor.client.interop.BiomeBorderHelper;
 import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.MathHelper;
@@ -21,7 +21,7 @@ public class BiomeBorderProvider implements IBoundingBoxProvider<BoundingBoxBiom
         if (!BoundingBoxType.BiomeBorder.shouldRender())
             return Iterators.empty();
 
-        Coords playerCoords = PlayerCoords.get();
+        Coords playerCoords = Player.getCoords();
         Integer renderDistance = ConfigManager.biomeBordersRenderDistance.get();
         Boolean renderAllTransitions = !ConfigManager.renderOnlyCurrentBiome.get();
         if (!playerCoords.equals(lastPlayerCoords) || !renderDistance.equals(lastRenderDistance) || renderAllTransitions != lastRenderAllTransitions) {

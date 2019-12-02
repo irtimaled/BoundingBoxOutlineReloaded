@@ -1,6 +1,6 @@
 package com.irtimaled.bbor.client.providers;
 
-import com.irtimaled.bbor.client.PlayerCoords;
+import com.irtimaled.bbor.client.Player;
 import com.irtimaled.bbor.common.Dimensions;
 import com.irtimaled.bbor.common.models.BoundingBoxBeacon;
 import com.irtimaled.bbor.common.models.Coords;
@@ -25,13 +25,13 @@ public class BeaconProvider implements IBoundingBoxProvider<BoundingBoxBeacon> {
     }
 
     public static void add(Coords coords, int level) {
-        int dimensionId = PlayerCoords.getDimensionId();
+        int dimensionId = Player.getDimensionId();
         BoundingBoxBeacon beacon = BoundingBoxBeacon.from(coords, level);
         getCache(dimensionId).put(coords, beacon);
     }
 
     public static boolean remove(Coords coords) {
-        int dimensionId = PlayerCoords.getDimensionId();
+        int dimensionId = Player.getDimensionId();
         return getCache(dimensionId).remove(coords) != null;
     }
 

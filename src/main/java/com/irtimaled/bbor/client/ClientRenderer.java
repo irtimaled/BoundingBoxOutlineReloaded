@@ -28,7 +28,7 @@ public class ClientRenderer {
         active = !active;
         if (!active) return;
 
-        PlayerCoords.setActiveY();
+        Player.setActiveY();
     }
 
     static void deactivate() {
@@ -63,10 +63,10 @@ public class ClientRenderer {
 
     private static boolean isWithinRenderDistance(AbstractBoundingBox boundingBox) {
         int renderDistanceBlocks = ClientInterop.getRenderDistanceChunks() * CHUNK_SIZE;
-        int minX = MathHelper.floor(PlayerCoords.getX() - renderDistanceBlocks);
-        int maxX = MathHelper.floor(PlayerCoords.getX() + renderDistanceBlocks);
-        int minZ = MathHelper.floor(PlayerCoords.getZ() - renderDistanceBlocks);
-        int maxZ = MathHelper.floor(PlayerCoords.getZ() + renderDistanceBlocks);
+        int minX = MathHelper.floor(Player.getX() - renderDistanceBlocks);
+        int maxX = MathHelper.floor(Player.getX() + renderDistanceBlocks);
+        int minZ = MathHelper.floor(Player.getZ() - renderDistanceBlocks);
+        int maxZ = MathHelper.floor(Player.getZ() + renderDistanceBlocks);
 
         return boundingBox.intersectsBounds(minX, minZ, maxX, maxZ);
     }

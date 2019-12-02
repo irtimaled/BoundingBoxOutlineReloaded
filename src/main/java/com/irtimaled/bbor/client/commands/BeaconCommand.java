@@ -1,6 +1,5 @@
 package com.irtimaled.bbor.client.commands;
 
-import com.irtimaled.bbor.client.PlayerCoords;
 import com.irtimaled.bbor.client.interop.ClientInterop;
 import com.irtimaled.bbor.client.providers.BeaconProvider;
 import com.irtimaled.bbor.common.TypeHelper;
@@ -18,7 +17,6 @@ import net.minecraft.command.arguments.BlockPosArgument;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityBeacon;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 
@@ -38,7 +36,7 @@ public class BeaconCommand {
                                     return 0;
                                 }))
                         .executes(context -> {
-                            BlockPos pos = new BlockPos(PlayerCoords.getX(), PlayerCoords.getY() - 1, PlayerCoords.getZ());
+                            BlockPos pos = new BlockPos(context.getSource().getPos());
                             AddValidBeacon(context, pos);
                             return 0;
                         }))
@@ -69,7 +67,7 @@ public class BeaconCommand {
         TileEntity tileEntity = Minecraft.getInstance().world.getTileEntity(pos);
         TileEntityBeacon beacon = TypeHelper.as(tileEntity, TileEntityBeacon.class);
         if(beacon == null) {
-            Vec3i playerPosition = new Vec3i(PlayerCoords.getX(), PlayerCoords.getY(), PlayerCoords.getZ());
+            BlockPos playerPosition = new BlockPos(context.getSource().getPos());
             if (pos.getDistance(playerPosition) > ClientInterop.getRenderDistanceChunks()*16) {
                 throw POS_UNLOADED.create();
             }

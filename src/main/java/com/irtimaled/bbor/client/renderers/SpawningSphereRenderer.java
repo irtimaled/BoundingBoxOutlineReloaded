@@ -1,6 +1,6 @@
 package com.irtimaled.bbor.client.renderers;
 
-import com.irtimaled.bbor.client.PlayerCoords;
+import com.irtimaled.bbor.client.Player;
 import com.irtimaled.bbor.client.interop.SpawningSphereHelper;
 import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.models.BoundingBoxSpawningSphere;
@@ -35,7 +35,7 @@ public class SpawningSphereRenderer extends AbstractRenderer<BoundingBoxSpawning
         int width = MathHelper.floor(Math.pow(2, 2 + renderDistance));
         int height = MathHelper.floor(Math.pow(2, renderDistance));
 
-        SpawningSphereHelper.findSpawnableSpaces(center.getPoint(), PlayerCoords.get(), width, height,
+        SpawningSphereHelper.findSpawnableSpaces(center.getPoint(), Player.getCoords(), width, height,
                 (x, y, z) -> {
                     OffsetBox offsetBox = new OffsetBox(x, y, z, x + 1, y, z + 1);
                     renderCuboid(offsetBox, Color.RED);

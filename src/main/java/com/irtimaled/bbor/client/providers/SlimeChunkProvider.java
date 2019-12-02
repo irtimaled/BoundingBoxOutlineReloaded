@@ -1,6 +1,6 @@
 package com.irtimaled.bbor.client.providers;
 
-import com.irtimaled.bbor.client.PlayerCoords;
+import com.irtimaled.bbor.client.Player;
 import com.irtimaled.bbor.client.interop.ClientInterop;
 import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.Dimensions;
@@ -41,8 +41,8 @@ public class SlimeChunkProvider implements IBoundingBoxProvider<BoundingBoxSlime
 
         Set<BoundingBoxSlimeChunk> slimeChunks = new HashSet<>();
         int renderDistanceChunks = ClientInterop.getRenderDistanceChunks();
-        int playerChunkX = MathHelper.floor(PlayerCoords.getX() / CHUNK_SIZE);
-        int playerChunkZ = MathHelper.floor(PlayerCoords.getZ() / CHUNK_SIZE);
+        int playerChunkX = MathHelper.floor(Player.getX() / CHUNK_SIZE);
+        int playerChunkZ = MathHelper.floor(Player.getZ() / CHUNK_SIZE);
         for (int chunkX = playerChunkX - renderDistanceChunks; chunkX <= playerChunkX + renderDistanceChunks; ++chunkX) {
             for (int chunkZ = playerChunkZ - renderDistanceChunks; chunkZ <= playerChunkZ + renderDistanceChunks; ++chunkZ) {
                 if (isSlimeChunk(chunkX, chunkZ)) {

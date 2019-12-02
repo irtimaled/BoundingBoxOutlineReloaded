@@ -1,7 +1,7 @@
 package com.irtimaled.bbor.client.interop;
 
 import com.irtimaled.bbor.client.ClientRenderer;
-import com.irtimaled.bbor.client.PlayerCoords;
+import com.irtimaled.bbor.client.Player;
 import com.irtimaled.bbor.client.commands.BeaconCommand;
 import com.irtimaled.bbor.client.commands.BoxCommand;
 import com.irtimaled.bbor.client.commands.SeedCommand;
@@ -28,7 +28,7 @@ public class ClientInterop {
     }
 
     public static void render(float partialTicks, EntityPlayerSP player) {
-        PlayerCoords.setPlayerPosition(partialTicks, player);
+        Player.setPosition(partialTicks, player);
         ClientRenderer.render(player.dimension.getId());
     }
 

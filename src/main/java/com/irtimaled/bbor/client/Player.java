@@ -3,18 +3,18 @@ package com.irtimaled.bbor.client;
 import com.irtimaled.bbor.common.models.Coords;
 import net.minecraft.entity.player.EntityPlayer;
 
-public class PlayerCoords {
+public class Player {
     private static double x;
     private static double y;
     private static double z;
     private static double activeY;
     private static int dimensionId;
 
-    public static void setPlayerPosition(double partialTicks, EntityPlayer entityPlayer) {
-        x = entityPlayer.lastTickPosX + (entityPlayer.posX - entityPlayer.lastTickPosX) * partialTicks;
-        y = entityPlayer.lastTickPosY + (entityPlayer.posY - entityPlayer.lastTickPosY) * partialTicks;
-        z = entityPlayer.lastTickPosZ + (entityPlayer.posZ - entityPlayer.lastTickPosZ) * partialTicks;
-        dimensionId = entityPlayer.dimension.getId();
+    public static void setPosition(double partialTicks, EntityPlayer player) {
+        x = player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTicks;
+        y = player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTicks;
+        z = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * partialTicks;
+        dimensionId = player.dimension.getId();
     }
 
     static void setActiveY() {
@@ -47,7 +47,7 @@ public class PlayerCoords {
         return dimensionId;
     }
 
-    public static Coords get() {
+    public static Coords getCoords() {
         return new Coords(x, y, z);
     }
 }

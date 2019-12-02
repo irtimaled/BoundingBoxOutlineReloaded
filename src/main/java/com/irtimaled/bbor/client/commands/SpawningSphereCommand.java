@@ -1,6 +1,5 @@
 package com.irtimaled.bbor.client.commands;
 
-import com.irtimaled.bbor.client.PlayerCoords;
 import com.irtimaled.bbor.client.providers.SpawningSphereProvider;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -29,7 +28,8 @@ public class SpawningSphereCommand {
                                     return 0;
                                 }))
                         .executes(context -> {
-                            SpawningSphereProvider.setSphere(PlayerCoords.getX(), PlayerCoords.getY(), PlayerCoords.getZ());
+                            Vec3d pos = context.getSource().getPos();
+                            SpawningSphereProvider.setSphere(pos.x, pos.y, pos.z);
 
                             CommandHelper.feedback(context, "Spawning sphere set");
                             return 0;

@@ -1,6 +1,6 @@
 package com.irtimaled.bbor.client.providers;
 
-import com.irtimaled.bbor.client.PlayerCoords;
+import com.irtimaled.bbor.client.Player;
 import com.irtimaled.bbor.client.interop.SpawningSphereHelper;
 import com.irtimaled.bbor.client.models.Point;
 import com.irtimaled.bbor.common.MathHelper;
@@ -22,7 +22,7 @@ public class SpawningSphereProvider implements IBoundingBoxProvider<BoundingBoxS
         }
         clear();
 
-        dimensionId = PlayerCoords.getDimensionId();
+        dimensionId = Player.getDimensionId();
         spawningSphere = new BoundingBoxSpawningSphere(coords, xOffset, yOffset, zOffset);
     }
 
