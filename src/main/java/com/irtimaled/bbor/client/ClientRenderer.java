@@ -1,9 +1,8 @@
 package com.irtimaled.bbor.client;
 
 import com.irtimaled.bbor.client.interop.ClientInterop;
-import com.irtimaled.bbor.client.providers.IBoundingBoxProvider;
+import com.irtimaled.bbor.client.providers.*;
 import com.irtimaled.bbor.client.renderers.*;
-import com.irtimaled.bbor.common.BoundingBoxCache;
 import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.models.*;
 import com.irtimaled.bbor.config.ConfigManager;
@@ -19,7 +18,7 @@ public class ClientRenderer {
     private static final Map<Class<? extends AbstractBoundingBox>, AbstractRenderer> boundingBoxRendererMap = new HashMap<>();
 
     private static boolean active;
-    private Set<IBoundingBoxProvider> providers = new HashSet<>();
+    private static Set<IBoundingBoxProvider> providers = new HashSet<>();
 
     public static boolean getActive() {
         return active;
@@ -36,10 +35,7 @@ public class ClientRenderer {
         active = false;
     }
 
-    private final GetCache getCache;
-
-    ClientRenderer(GetCache getCache) {
-        this.getCache = getCache;
+    static {
         registerRenderer(BoundingBoxVillage.class, new VillageRenderer());
         registerRenderer(BoundingBoxSlimeChunk.class, new SlimeChunkRenderer());
         registerRenderer(BoundingBoxWorldSpawn.class, new WorldSpawnRenderer());
@@ -48,19 +44,24 @@ public class ClientRenderer {
         registerRenderer(BoundingBoxSpawningSphere.class, new SpawningSphereRenderer());
         registerRenderer(BoundingBoxBeacon.class, new CuboidRenderer());
         registerRenderer(BoundingBoxBiomeBorder.class, new BiomeBorderRenderer());
+
+        registerProvider(new SlimeChunkProvider());
+        registerProvider(new WorldSpawnProvider());
+        registerProvider(new SpawningSphereProvider());
+        registerProvider(new BeaconProvider());
+        registerProvider(new CustomBoxProvider());
+        registerProvider(new BiomeBorderProvider());
     }
 
-    public <T extends AbstractBoundingBox> ClientRenderer registerProvider(IBoundingBoxProvider<T> provider) {
-        this.providers.add(provider);
-        return this;
+    public static <T extends AbstractBoundingBox> void registerProvider(IBoundingBoxProvider<T> provider) {
+        providers.add(provider);
     }
 
-    public <T extends AbstractBoundingBox> ClientRenderer registerRenderer(Class<? extends T> type, AbstractRenderer<T> renderer) {
+    public static <T extends AbstractBoundingBox> void registerRenderer(Class<? extends T> type, AbstractRenderer<T> renderer) {
         boundingBoxRendererMap.put(type, renderer);
-        return this;
     }
 
-    private boolean isWithinRenderDistance(AbstractBoundingBox boundingBox) {
+    private static boolean isWithinRenderDistance(AbstractBoundingBox boundingBox) {
         int renderDistanceBlocks = ClientInterop.getRenderDistanceChunks() * CHUNK_SIZE;
         int minX = MathHelper.floor(PlayerCoords.getX() - renderDistanceBlocks);
         int maxX = MathHelper.floor(PlayerCoords.getX() + renderDistanceBlocks);
@@ -70,7 +71,7 @@ public class ClientRenderer {
         return boundingBox.intersectsBounds(minX, minZ, maxX, maxZ);
     }
 
-    public void render(int dimensionId) {
+    public static void render(int dimensionId) {
         if(!active) return;
 
         Set<AbstractBoundingBox> boundingBoxes = getBoundingBoxes(dimensionId);
@@ -98,7 +99,7 @@ public class ClientRenderer {
         GL11.glEnable(GL11.GL_TEXTURE_2D);
     }
 
-    private Set<AbstractBoundingBox> getBoundingBoxes(int dimensionId) {
+    private static Set<AbstractBoundingBox> getBoundingBoxes(int dimensionId) {
         Set<AbstractBoundingBox> boundingBoxes = new HashSet<>();
         for(IBoundingBoxProvider<?> provider: providers) {
             for (AbstractBoundingBox boundingBox : provider.get(dimensionId)) {

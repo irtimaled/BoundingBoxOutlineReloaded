@@ -1,12 +1,12 @@
 package com.irtimaled.bbor.client.interop;
 
+import com.irtimaled.bbor.client.ClientRenderer;
 import com.irtimaled.bbor.client.PlayerCoords;
 import com.irtimaled.bbor.client.commands.BeaconCommand;
 import com.irtimaled.bbor.client.commands.BoxCommand;
 import com.irtimaled.bbor.client.commands.SeedCommand;
 import com.irtimaled.bbor.client.commands.SpawningSphereCommand;
 import com.irtimaled.bbor.client.events.DisconnectedFromRemoteServer;
-import com.irtimaled.bbor.client.events.Render;
 import com.irtimaled.bbor.client.events.UpdateWorldSpawnReceived;
 import com.irtimaled.bbor.client.providers.SlimeChunkProvider;
 import com.irtimaled.bbor.common.EventBus;
@@ -29,7 +29,7 @@ public class ClientInterop {
 
     public static void render(float partialTicks, EntityPlayerSP player) {
         PlayerCoords.setPlayerPosition(partialTicks, player);
-        EventBus.publish(new Render(player.dimension.getId()));
+        ClientRenderer.render(player.dimension.getId());
     }
 
     public static boolean interceptChatMessage(String message) {

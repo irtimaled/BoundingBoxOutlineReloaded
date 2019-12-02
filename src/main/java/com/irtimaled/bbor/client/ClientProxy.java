@@ -21,32 +21,18 @@ public class ClientProxy extends CommonProxy {
                 .onKeyPressHandler(() -> ConfigManager.Toggle(ConfigManager.outerBoxesOnly));
     }
 
-    private ClientRenderer renderer;
-
     @Override
     public void init() {
         super.init();
-        EventBus.subscribe(Render.class, this::render);
         EventBus.subscribe(DisconnectedFromRemoteServer.class, e -> disconnectedFromServer());
         EventBus.subscribe(InitializeClientReceived.class, this::onInitializeClientReceived);
         EventBus.subscribe(AddBoundingBoxReceived.class, this::addBoundingBox);
         EventBus.subscribe(RemoveBoundingBoxReceived.class, this::onRemoveBoundingBoxReceived);
         EventBus.subscribe(UpdateWorldSpawnReceived.class, this::onUpdateWorldSpawnReceived);
 
-        renderer = new ClientRenderer(this::getCache)
-                .registerProvider(new SlimeChunkProvider())
-                .registerProvider(new WorldSpawnProvider())
-                .registerProvider(new SpawningSphereProvider())
-                .registerProvider(new BeaconProvider())
-                .registerProvider(new CustomBoxProvider())
-                .registerProvider(new BiomeBorderProvider())
-                .registerProvider(new CacheProvider(this::getCache));
+        ClientRenderer.registerProvider(new CacheProvider(this::getCache));
 
         KeyListener.init();
-    }
-
-    private void render(Render event) {
-        renderer.render(event.getDimensionId());
     }
 
     private void disconnectedFromServer() {
