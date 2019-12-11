@@ -61,7 +61,7 @@ public class SpawningSphereHelper {
     private static boolean isSpawnable(int x, int y, int z) {
         ClientWorld world = Minecraft.getInstance().world;
         BlockPos pos = new BlockPos(x, y, z);
-        Biome biome = world.getBiome(pos);
+        Biome biome = world.func_225523_d_().func_226836_a_(pos);
         return  biome.getSpawningChance() > 0 &&
                 !biome.getSpawns(EntityClassification.MONSTER).isEmpty() &&
                 isSpawnable(pos, world);
@@ -80,6 +80,6 @@ public class SpawningSphereHelper {
                 !upperBlockState.isIn(BlockTags.RAILS) &&
                 collisionShape.getEnd(Direction.Axis.Y) <= 0 &&
                 upperBlockState.getFluidState().isEmpty() &&
-                (isNether || world.getLightFor(LightType.BLOCK, pos) <= 7);
+                (isNether || world.func_226658_a_(LightType.BLOCK, pos) <= 7);
     }
 }

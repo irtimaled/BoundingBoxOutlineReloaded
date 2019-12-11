@@ -11,16 +11,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Minecraft.class)
 public class MixinMinecraft {
-    private ClientProxy clientProxy;
-
     @Inject(method = "<init>", at = @At("RETURN"))
     private void constructor(GameConfiguration configuration, CallbackInfo ci) {
         CommonInterop.init();
-        clientProxy = new ClientProxy();
-    }
-
-    @Inject(method = "init", at = @At("RETURN"))
-    private void init(CallbackInfo ci) {
-        clientProxy.init();
+        new ClientProxy().init();
     }
 }
