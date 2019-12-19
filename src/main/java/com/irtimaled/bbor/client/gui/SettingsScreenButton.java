@@ -1,6 +1,6 @@
 package com.irtimaled.bbor.client.gui;
 
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 
 public class SettingsScreenButton extends AbstractButton {
@@ -13,6 +13,6 @@ public class SettingsScreenButton extends AbstractButton {
 
     @Override
     public void onPressed() {
-        Minecraft.getInstance().displayGuiScreen(screen);
+        MinecraftClient.getInstance().openScreen(screen);
     }
 }

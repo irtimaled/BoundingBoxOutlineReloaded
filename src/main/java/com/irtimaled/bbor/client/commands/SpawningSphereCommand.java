@@ -4,9 +4,9 @@ import com.irtimaled.bbor.client.providers.SpawningSphereProvider;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
-import net.minecraft.command.Commands;
-import net.minecraft.command.ISuggestionProvider;
-import net.minecraft.command.arguments.Vec3Argument;
+import net.minecraft.command.arguments.Vec3ArgumentType;
+import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.command.CommandSource;
 import net.minecraft.util.math.Vec3d;
 
 public class SpawningSphereCommand {
@@ -16,25 +16,25 @@ public class SpawningSphereCommand {
     private static final String CLEAR = "clear";
     private static final String CALCULATE_SPAWNABLE = "calculateSpawnable";
 
-    public static void register(CommandDispatcher<ISuggestionProvider> commandDispatcher) {
-        LiteralArgumentBuilder command = Commands.literal(COMMAND)
-                .then(Commands.literal(SET)
-                        .then(Commands.argument(POS, Vec3Argument.vec3())
+    public static void register(CommandDispatcher<CommandSource> commandDispatcher) {
+        LiteralArgumentBuilder command = CommandManager.literal(COMMAND)
+                .then(CommandManager.literal(SET)
+                        .then(CommandManager.argument(POS, Vec3ArgumentType.vec3())
                                 .executes(context -> {
-                                    Vec3d pos = Vec3Argument.getVec3(context, POS);
+                                    Vec3d pos = Vec3ArgumentType.getVec3(context, POS);
                                     SpawningSphereProvider.setSphere(pos.x, pos.y, pos.z);
 
                                     CommandHelper.feedback(context, "Spawning sphere set");
                                     return 0;
                                 }))
                         .executes(context -> {
-                            Vec3d pos = context.getSource().getPos();
+                            Vec3d pos = context.getSource().getPosition();
                             SpawningSphereProvider.setSphere(pos.x, pos.y, pos.z);
 
                             CommandHelper.feedback(context, "Spawning sphere set");
                             return 0;
                         }))
-                .then(Commands.literal(CLEAR)
+                .then(CommandManager.literal(CLEAR)
                         .executes(context -> {
                             boolean cleared = SpawningSphereProvider.clear();
 
@@ -42,7 +42,7 @@ public class SpawningSphereCommand {
                             CommandHelper.feedback(context, feedback);
                             return 0;
                         }))
-                .then(Commands.literal(CALCULATE_SPAWNABLE)
+                .then(CommandManager.literal(CALCULATE_SPAWNABLE)
                         .executes(context -> {
                             int count = SpawningSphereProvider.recalculateSpawnableSpacesCount();
 

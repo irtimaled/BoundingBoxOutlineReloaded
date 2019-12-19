@@ -5,9 +5,9 @@ import com.irtimaled.bbor.common.models.Coords;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
-import net.minecraft.command.Commands;
-import net.minecraft.command.ISuggestionProvider;
-import net.minecraft.command.arguments.BlockPosArgument;
+import net.minecraft.command.arguments.BlockPosArgumentType;
+import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.command.CommandSource;
 import net.minecraft.util.math.BlockPos;
 
 public class BoxCommand {
@@ -17,14 +17,14 @@ public class BoxCommand {
     private static final String FROM = "from";
     private static final String TO = "to";
 
-    public static void register(CommandDispatcher<ISuggestionProvider> commandDispatcher) {
-        LiteralArgumentBuilder command = Commands.literal(COMMAND)
-                .then(Commands.literal(ADD)
-                        .then(Commands.argument(FROM, BlockPosArgument.blockPos())
-                                .then(Commands.argument(TO, BlockPosArgument.blockPos())
+    public static void register(CommandDispatcher<CommandSource> commandDispatcher) {
+        LiteralArgumentBuilder command = CommandManager.literal(COMMAND)
+                .then(CommandManager.literal(ADD)
+                        .then(CommandManager.argument(FROM, BlockPosArgumentType.blockPos())
+                                .then(CommandManager.argument(TO, BlockPosArgumentType.blockPos())
                                         .executes(context -> {
-                                            BlockPos from = BlockPosArgument.getBlockPos(context, FROM);
-                                            BlockPos to = BlockPosArgument.getBlockPos(context, TO);
+                                            BlockPos from = BlockPosArgumentType.getBlockPos(context, FROM);
+                                            BlockPos to = BlockPosArgumentType.getBlockPos(context, TO);
                                             Coords minCoords = getMinCoords(from, to);
                                             Coords maxCoords = getMaxCoords(from, to);
                                             CustomBoxProvider.add(minCoords, maxCoords);
@@ -33,18 +33,18 @@ public class BoxCommand {
                                             CommandHelper.feedback(context, feedback);
                                             return 0;
                                         }))))
-                .then(Commands.literal(CLEAR)
+                .then(CommandManager.literal(CLEAR)
                         .executes(context -> {
                             CustomBoxProvider.clear();
 
                             CommandHelper.feedback(context, "All boxes cleared");
                             return 0;
                         })
-                        .then(Commands.argument(FROM, BlockPosArgument.blockPos())
-                                .then(Commands.argument(TO, BlockPosArgument.blockPos())
+                        .then(CommandManager.argument(FROM, BlockPosArgumentType.blockPos())
+                                .then(CommandManager.argument(TO, BlockPosArgumentType.blockPos())
                                         .executes(context -> {
-                                            BlockPos from = BlockPosArgument.getBlockPos(context, FROM);
-                                            BlockPos to = BlockPosArgument.getBlockPos(context, TO);
+                                            BlockPos from = BlockPosArgumentType.getBlockPos(context, FROM);
+                                            BlockPos to = BlockPosArgumentType.getBlockPos(context, TO);
                                             Coords minCoords = getMinCoords(from, to);
                                             Coords maxCoords = getMaxCoords(from, to);
                                             boolean removed = CustomBoxProvider.remove(minCoords, maxCoords);

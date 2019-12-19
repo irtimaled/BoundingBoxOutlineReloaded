@@ -7,13 +7,13 @@ import com.irtimaled.bbor.common.models.ServerPlayer;
 import com.irtimaled.bbor.config.ConfigManager;
 import net.minecraft.block.Block;
 import net.minecraft.block.SpawnerBlock;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.ServerPlayNetHandler;
+import net.minecraft.network.ClientConnection;
+import net.minecraft.server.network.ServerPlayNetworkHandler;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.chunk.WorldChunk;
 
 import java.io.File;
 import java.util.Collection;
@@ -23,7 +23,7 @@ public class CommonInterop {
         ConfigManager.loadConfig(new File("."));
     }
 
-    public static void chunkLoaded(Chunk chunk) {
+    public static void chunkLoaded(WorldChunk chunk) {
         EventBus.publish(new ChunkLoaded(chunk));
     }
 
@@ -42,11 +42,11 @@ public class CommonInterop {
     }
 
     public static void playerLoggedIn(ServerPlayerEntity player) {
-        ServerPlayNetHandler connection = player.connection;
+        ServerPlayNetworkHandler connection = player.networkHandler;
         if (connection == null) return;
 
-        NetworkManager networkManager = connection.netManager;
-        if (networkManager.isLocalChannel()) return;
+        ClientConnection networkManager = connection.client;
+        if (networkManager.isLocal()) return;
 
         EventBus.publish(new PlayerLoggedIn(new ServerPlayer(player)));
     }
@@ -61,7 +61,7 @@ public class CommonInterop {
 
     public static void tryHarvestBlock(Block block, BlockPos pos, World world) {
         if (block instanceof SpawnerBlock) {
-            EventBus.publish(new MobSpawnerBroken(world.dimension.getType().getId(), new Coords(pos)));
+            EventBus.publish(new MobSpawnerBroken(world.dimension.getType().getRawId(), new Coords(pos)));
         }
     }
 }

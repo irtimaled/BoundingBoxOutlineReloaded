@@ -1,28 +1,28 @@
 package com.irtimaled.bbor.client.renderers;
 
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexFormat;
+import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.render.Tessellator;
+import net.minecraft.client.render.VertexFormat;
+import net.minecraft.client.render.VertexFormats;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 
 public class Renderer {
     static Renderer startLines() {
-        return new Renderer(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
+        return new Renderer(GL11.GL_LINES, VertexFormats.POSITION_COLOR);
     }
 
     static Renderer startQuads() {
-        return new Renderer(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+        return new Renderer(GL11.GL_QUADS, VertexFormats.POSITION_COLOR);
     }
 
     static Renderer startPoints() {
-        return new Renderer(GL11.GL_POINTS, DefaultVertexFormats.POSITION_COLOR);
+        return new Renderer(GL11.GL_POINTS, VertexFormats.POSITION_COLOR);
     }
 
     public static Renderer startTextured() {
-        return new Renderer(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+        return new Renderer(GL11.GL_QUADS, VertexFormats.POSITION_TEXTURE_COLOR);
     }
 
     private Tessellator tessellator;
@@ -81,18 +81,18 @@ public class Renderer {
     }
 
     private void pos(double x, double y, double z) {
-        bufferBuilder.func_225582_a_(x, y, z);
+        bufferBuilder.vertex(x, y, z);
     }
 
     private void tex(float u, float v) {
-        bufferBuilder.func_225583_a_(u, v);
+        bufferBuilder.texture(u, v);
     }
 
     private void color() {
-        bufferBuilder.func_225586_a_(red, green, blue, alpha);
+        bufferBuilder.color(red, green, blue, alpha);
     }
 
     private void end() {
-        bufferBuilder.endVertex();
+        bufferBuilder.next();
     }
 }

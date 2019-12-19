@@ -2,33 +2,33 @@ package com.irtimaled.bbor.mixin.network.play.server;
 
 import com.irtimaled.bbor.common.EventBus;
 import com.irtimaled.bbor.common.messages.*;
-import net.minecraft.client.network.play.ClientPlayNetHandler;
-import net.minecraft.client.network.play.IClientPlayNetHandler;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.network.play.server.SCustomPayloadPlayPacket;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.network.packet.CustomPayloadS2CPacket;
+import net.minecraft.network.listener.ClientPlayPacketListener;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.PacketByteBuf;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-@Mixin(SCustomPayloadPlayPacket.class)
+@Mixin(CustomPayloadS2CPacket.class)
 public abstract class MixinSPacketCustomPayload {
     @Shadow
-    private ResourceLocation channel;
+    private Identifier channel;
 
-    @Redirect(method = "processPacket", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/play/IClientPlayNetHandler;handleCustomPayload(Lnet/minecraft/network/play/server/SCustomPayloadPlayPacket;)V"))
-    private void processPacket(IClientPlayNetHandler netHandlerPlayClient, SCustomPayloadPlayPacket packet) {
+    @Redirect(method = "apply", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/listener/ClientPlayPacketListener;onCustomPayload(Lnet/minecraft/client/network/packet/CustomPayloadS2CPacket;)V"))
+    private void processPacket(ClientPlayPacketListener netHandlerPlayClient, CustomPayloadS2CPacket packet) {
         String channelName = channel.toString();
         if (channelName.startsWith("bbor:")) {
-            PacketBuffer data = null;
+            PacketByteBuf data = null;
             try {
-                data = packet.getBufferData();
+                data = packet.getData();
                 PayloadReader reader = new PayloadReader(data);
                 switch (channelName) {
                     case InitializeClient.NAME: {
                         EventBus.publish(InitializeClient.getEvent(reader));
-                        ((ClientPlayNetHandler) netHandlerPlayClient).sendPacket(SubscribeToServer.getPayload().build());
+                        ((ClientPlayNetworkHandler) netHandlerPlayClient).sendPacket(SubscribeToServer.getPayload().build());
                         break;
                     }
                     case AddBoundingBox.NAME: {
@@ -45,7 +45,7 @@ public abstract class MixinSPacketCustomPayload {
                     data.release();
             }
         } else {
-            netHandlerPlayClient.handleCustomPayload(packet);
+            netHandlerPlayClient.onCustomPayload(packet);
         }
     }
 }

@@ -1,9 +1,9 @@
 package com.irtimaled.bbor.client.gui;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.widget.Widget;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.widget.AbstractButtonWidget;
 
-abstract class AbstractButton extends Widget implements IRenderableControl {
+abstract class AbstractButton extends AbstractButtonWidget implements IRenderableControl {
     AbstractButton(int x, int y, int width, String name) {
         super(x, y, width, 20, name);
     }
@@ -19,7 +19,7 @@ abstract class AbstractButton extends Widget implements IRenderableControl {
     }
 
     @Override
-    protected void renderBg(Minecraft minecraft, int mouseX, int mouseY) {
+    protected void renderBg(MinecraftClient minecraft, int mouseX, int mouseY) {
         renderBackground();
     }
 

@@ -2,26 +2,26 @@ package com.irtimaled.bbor.mixin.network.play.client;
 
 import com.irtimaled.bbor.common.interop.CommonInterop;
 import com.irtimaled.bbor.common.messages.SubscribeToServer;
-import net.minecraft.network.play.IServerPlayNetHandler;
-import net.minecraft.network.play.ServerPlayNetHandler;
-import net.minecraft.network.play.client.CCustomPayloadPacket;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.network.listener.ServerPlayPacketListener;
+import net.minecraft.server.network.ServerPlayNetworkHandler;
+import net.minecraft.server.network.packet.CustomPayloadC2SPacket;
+import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-@Mixin(CCustomPayloadPacket.class)
+@Mixin(CustomPayloadC2SPacket.class)
 public class MixinCPacketCustomPayload {
     @Shadow
-    private ResourceLocation channel;
+    private Identifier channel;
 
-    @Redirect(method = "processPacket", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/play/IServerPlayNetHandler;processCustomPayload(Lnet/minecraft/network/play/client/CCustomPayloadPacket;)V"))
-    private void processPacket(IServerPlayNetHandler netHandlerPlayServer, CCustomPayloadPacket packet) {
+    @Redirect(method = "apply", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/listener/ServerPlayPacketListener;onCustomPayload(Lnet/minecraft/server/network/packet/CustomPayloadC2SPacket;)V"))
+    private void processPacket(ServerPlayPacketListener netHandlerPlayServer, CustomPayloadC2SPacket packet) {
         if (this.channel.toString().equals(SubscribeToServer.NAME)) {
-            CommonInterop.playerSubscribed(((ServerPlayNetHandler) netHandlerPlayServer).player);
+            CommonInterop.playerSubscribed(((ServerPlayNetworkHandler) netHandlerPlayServer).player);
         } else {
-            netHandlerPlayServer.processCustomPayload(packet);
+            netHandlerPlayServer.onCustomPayload(packet);
         }
     }
 }

@@ -6,11 +6,11 @@ import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.TypeHelper;
 import com.irtimaled.bbor.config.ConfigManager;
 import com.mojang.blaze3d.platform.GLX;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.IGuiEventListener;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.text.LiteralText;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
@@ -26,13 +26,13 @@ public class SettingsScreen extends Screen {
     private Set<IRenderableControl> controls = new HashSet<>();
 
     SettingsScreen(Screen lastScreen, int tabIndex) {
-        super(new StringTextComponent("Bounding Box Outline Reloaded"));
+        super(new LiteralText("Bounding Box Outline Reloaded"));
         this.lastScreen = lastScreen;
         this.tabIndex = tabIndex;
     }
 
     public static void show() {
-        Minecraft.getInstance().displayGuiScreen(new SettingsScreen(null, 0));
+        MinecraftClient.getInstance().openScreen(new SettingsScreen(null, 0));
     }
 
     private int getY(double row) {
@@ -41,7 +41,7 @@ public class SettingsScreen extends Screen {
 
     private void addControl(IRenderableControl control) {
         this.controls.add(control);
-        TypeHelper.doIfType(control, IGuiEventListener.class, this.children::add);
+        TypeHelper.doIfType(control, Element.class, this.children::add);
     }
 
     private void addTabs(String... labels) {
@@ -54,7 +54,7 @@ public class SettingsScreen extends Screen {
                     (x, y1, width) -> new AbstractButton(x, y, width, label, index != tabIndex) {
                         @Override
                         public void onPressed() {
-                            Minecraft.getInstance().displayGuiScreen(new SettingsScreen(lastScreen, index));
+                            MinecraftClient.getInstance().openScreen(new SettingsScreen(lastScreen, index));
                         }
                     });
             column++;
@@ -65,7 +65,7 @@ public class SettingsScreen extends Screen {
             @Override
             public void onPressed() {
                 ConfigManager.saveConfig();
-                minecraft.displayGuiScreen(lastScreen);
+                minecraft.openScreen(lastScreen);
             }
         });
     }
@@ -177,7 +177,7 @@ public class SettingsScreen extends Screen {
     }
 
     private void drawScreen(int top, int bottom) {
-        this.minecraft.getTextureManager().bindTexture(AbstractGui.BACKGROUND_LOCATION);
+        this.minecraft.getTextureManager().bindTexture(DrawableHelper.BACKGROUND_LOCATION);
 
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glDisable(GL11.GL_FOG);
@@ -231,7 +231,7 @@ public class SettingsScreen extends Screen {
             this.renderBackground();
             this.drawScreen(getY(-1), getY(5.5) - 4);
         }
-        this.drawCenteredString(this.font, title.getUnformattedComponentText(), this.width / 2, 15, 16777215);
+        this.drawCenteredString(this.font, title.asString(), this.width / 2, 15, 16777215);
         for (IRenderableControl control : controls) {
             control.render(mouseX, mouseY);
         }

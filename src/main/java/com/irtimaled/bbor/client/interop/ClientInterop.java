@@ -13,14 +13,14 @@ import com.irtimaled.bbor.common.EventBus;
 import com.irtimaled.bbor.common.TypeHelper;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.client.network.play.ClientPlayNetHandler;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.ISuggestionProvider;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.server.command.CommandSource;
+import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.text.*;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.*;
-import net.minecraft.util.text.event.ClickEvent;
 
 public class ClientInterop {
     public static void disconnectedFromRemoteServer() {
@@ -29,37 +29,37 @@ public class ClientInterop {
 
     public static void render(float partialTicks, ClientPlayerEntity player) {
         Player.setPosition(partialTicks, player);
-        ClientRenderer.render(player.dimension.getId());
+        ClientRenderer.render(player.dimension.getRawId());
     }
 
     public static boolean interceptChatMessage(String message) {
         if (message.startsWith("/bbor:")) {
-            ClientPlayNetHandler connection = Minecraft.getInstance().getConnection();
+            ClientPlayNetworkHandler connection = MinecraftClient.getInstance().getNetworkHandler();
             if (connection != null) {
-                CommandDispatcher<ISuggestionProvider> commandDispatcher = connection.getCommandDispatcher();
-                CommandSource commandSource = Minecraft.getInstance().player.getCommandSource();
+                CommandDispatcher<CommandSource> commandDispatcher = connection.getCommandDispatcher();
+                ServerCommandSource commandSource = MinecraftClient.getInstance().player.getCommandSource();
                 try {
                     commandDispatcher.execute(message.substring(1), commandSource);
                 } catch (CommandSyntaxException exception) {
-                    commandSource.sendErrorMessage(TextComponentUtils.toTextComponent(exception.getRawMessage()));
+                    commandSource.sendError(Texts.toText(exception.getRawMessage()));
                     if (exception.getInput() != null && exception.getCursor() >= 0) {
-                        ITextComponent suggestion = new StringTextComponent("")
-                                .applyTextStyle(TextFormatting.GRAY)
-                                .applyTextStyle(style -> style.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, message)));
+                        Text suggestion = new LiteralText("")
+                                .formatted(Formatting.GRAY)
+                                .styled(style -> style.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, message)));
                         int textLength = Math.min(exception.getInput().length(), exception.getCursor());
                         if (textLength > 10) {
-                            suggestion.appendText("...");
+                            suggestion.append("...");
                         }
 
-                        suggestion.appendText(exception.getInput().substring(Math.max(0, textLength - 10), textLength));
+                        suggestion.append(exception.getInput().substring(Math.max(0, textLength - 10), textLength));
                         if (textLength < exception.getInput().length()) {
-                            suggestion.appendSibling(new StringTextComponent(exception.getInput().substring(textLength))
-                                    .applyTextStyles(TextFormatting.RED, TextFormatting.UNDERLINE));
+                            suggestion.append(new LiteralText(exception.getInput().substring(textLength))
+                                    .formatted(Formatting.RED, Formatting.UNDERLINE));
                         }
 
-                        suggestion.appendSibling(new TranslationTextComponent("command.context.here")
-                                .applyTextStyles(TextFormatting.RED, TextFormatting.ITALIC));
-                        commandSource.sendErrorMessage(suggestion);
+                        suggestion.append(new TranslatableText("command.context.here")
+                                .formatted(Formatting.RED, Formatting.ITALIC));
+                        commandSource.sendError(suggestion);
                     }
                 }
             }
@@ -73,22 +73,22 @@ public class ClientInterop {
     }
 
     public static int getRenderDistanceChunks() {
-        return Minecraft.getInstance().gameSettings.renderDistanceChunks;
+        return MinecraftClient.getInstance().options.viewDistance;
     }
 
-    public static void handleSeedMessage(ITextComponent chatComponent) {
-        TypeHelper.doIfType(chatComponent, TranslationTextComponent.class, message -> {
+    public static void handleSeedMessage(Text chatComponent) {
+        TypeHelper.doIfType(chatComponent, TranslatableText.class, message -> {
             if (!message.getKey().equals("commands.seed.success")) return;
 
             try {
-                long seed = Long.parseLong(message.getFormatArgs()[0].toString());
+                long seed = Long.parseLong(message.getArgs()[0].toString());
                 SlimeChunkProvider.setSeed(seed);
             } catch (Exception ignored) {
             }
         });
     }
 
-    public static void registerClientCommands(CommandDispatcher<ISuggestionProvider> commandDispatcher) {
+    public static void registerClientCommands(CommandDispatcher<CommandSource> commandDispatcher) {
         SeedCommand.register(commandDispatcher);
         SpawningSphereCommand.register(commandDispatcher);
         BeaconCommand.register(commandDispatcher);

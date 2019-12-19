@@ -1,12 +1,12 @@
 package com.irtimaled.bbor.common.messages;
 
 import com.irtimaled.bbor.common.models.Coords;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.PacketByteBuf;
 
 public class PayloadReader {
-    private PacketBuffer buffer;
+    private PacketByteBuf buffer;
 
-    public PayloadReader(PacketBuffer buffer) {
+    public PayloadReader(PacketByteBuf buffer) {
         this.buffer = buffer;
     }
 

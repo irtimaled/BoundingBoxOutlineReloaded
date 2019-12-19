@@ -1,27 +1,27 @@
 package com.irtimaled.bbor.client.keyboard;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.client.util.InputMappings;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.options.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public class KeyListener {
-    private static final Minecraft minecraft = Minecraft.getInstance();
+    private static final MinecraftClient minecraft = MinecraftClient.getInstance();
     private static long mainWindowHandle;
     private static Set<Key> keys = new HashSet<>();
     private static Set<CustomKeyBinding> keyBindings = new HashSet<>();
     public static final String Category = "Bounding Box Outline Reloaded";
 
     public static void init() {
-        mainWindowHandle = minecraft.func_228018_at_().getHandle();
+        mainWindowHandle = minecraft.getWindow().getHandle();
         GLFW.glfwSetKeyCallback(mainWindowHandle, KeyListener::onKeyEvent);
     }
 
     public static Key register(String description, String keyName) {
-        InputMappings.Input input = InputMappings.getInputByName(keyName);
+        InputUtil.KeyCode input = InputUtil.fromName(keyName);
         CustomKeyBinding keyBinding = new CustomKeyBinding(description, input.getKeyCode());
         keyBindings.add(keyBinding);
 
@@ -35,10 +35,10 @@ public class KeyListener {
         if (windowHandle == mainWindowHandle &&
                 minecraft.currentScreen == null &&
                 keyCode != -1 &&
-                !InputMappings.isKeyDown(mainWindowHandle, 292) &&
+                !InputUtil.isKeyPressed(mainWindowHandle, 292) &&
                 handleKeyEvent(keyCode, isPressed))
             return;
-        minecraft.keyboardListener.onKeyEvent(windowHandle, keyCode, scanCode, action, modifiers);
+        minecraft.keyboard.onKey(windowHandle, keyCode, scanCode, action, modifiers);
     }
 
     private static boolean handleKeyEvent(int keyCode, boolean isPressed) {

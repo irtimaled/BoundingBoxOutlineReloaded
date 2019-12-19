@@ -6,14 +6,14 @@ import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
-import net.minecraft.command.Commands;
-import net.minecraft.command.ISuggestionProvider;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.command.CommandSource;
+import net.minecraft.text.LiteralText;
 
 public class SeedCommand {
-    public static void register(CommandDispatcher<ISuggestionProvider> commandDispatcher) {
-        LiteralArgumentBuilder command = Commands.literal("bbor:seed")
-                .then(Commands.argument("seed", StringArgumentType.string())
+    public static void register(CommandDispatcher<CommandSource> commandDispatcher) {
+        LiteralArgumentBuilder command = CommandManager.literal("bbor:seed")
+                .then(CommandManager.argument("seed", StringArgumentType.string())
                         .executes(context -> {
                             String argument = StringArgumentType.getString(context, "seed");
                             handleSeedCommand(argument);
@@ -42,6 +42,6 @@ public class SeedCommand {
     }
 
     private static final SimpleCommandExceptionType INCOMPLETE_COMMAND =
-            new SimpleCommandExceptionType(new StringTextComponent("Missing argument (expected seed)"));
+            new SimpleCommandExceptionType(new LiteralText("Missing argument (expected seed)"));
 
 }

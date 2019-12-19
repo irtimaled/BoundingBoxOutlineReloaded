@@ -1,11 +1,11 @@
 package com.irtimaled.bbor.client;
 
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.math.Vec3d;
 
 public class Camera {
     private static Vec3d getPos() {
-        return Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView();
+        return MinecraftClient.getInstance().gameRenderer.getCamera().getPos();
     }
 
     public static double getX() {

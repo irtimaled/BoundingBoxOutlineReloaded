@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ClientWorld.class)
 public class MixinWorldClient {
-    @Inject(method = "sendQuittingDisconnectingPacket", at = @At("RETURN"))
+    @Inject(method = "disconnect", at = @At("RETURN"))
     private void sendQuittingDisconnectingPacket(CallbackInfo ci) {
         ClientInterop.disconnectedFromRemoteServer();
     }

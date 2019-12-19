@@ -1,0 +1,11 @@
+{
+  "id": "bbor",
+  "name": "BoundingBoxOutlineReloaded",
+  "description": "Shows the bounding boxes of structures and features.",
+  "version": "$version",
+  "side": "UNIVERSAL",
+  "mixins": {
+    "client": "mixins.bbor.json",
+    "server": "mixins.bbor.json"
+  }
+}

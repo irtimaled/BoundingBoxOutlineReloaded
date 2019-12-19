@@ -3,8 +3,8 @@ package com.irtimaled.bbor.client.renderers;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.config.ConfigManager;
 import com.mojang.blaze3d.platform.GLX;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
@@ -106,7 +106,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
     }
 
     void renderText(OffsetPoint offsetPoint, String... texts) {
-        FontRenderer fontRenderer = Minecraft.getInstance().fontRenderer;
+        TextRenderer fontRenderer = MinecraftClient.getInstance().textRenderer;
 
         GL11.glPushMatrix();
         GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
@@ -123,11 +123,11 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
         GL11.glDisable(GL11.GL_DEPTH_TEST);
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glDepthMask(true);
-        float top = -(fontRenderer.FONT_HEIGHT * texts.length) / 2f;
+        float top = -(fontRenderer.fontHeight * texts.length) / 2f;
         for (String text : texts) {
             float left = fontRenderer.getStringWidth(text) / 2f;
-            fontRenderer.drawString(text, -left, top, -1);
-            top += fontRenderer.FONT_HEIGHT;
+            fontRenderer.draw(text, -left, top, -1);
+            top += fontRenderer.fontHeight;
         }
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glDisable(GL11.GL_BLEND);

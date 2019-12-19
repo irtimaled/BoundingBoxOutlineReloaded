@@ -1,7 +1,7 @@
 package com.irtimaled.bbor.mixin.client.entity;
 
 import com.irtimaled.bbor.client.interop.ClientInterop;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.client.network.ClientPlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
