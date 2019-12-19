@@ -3,9 +3,9 @@ package com.irtimaled.bbor.common;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBoxCuboid;
 import com.irtimaled.bbor.common.models.Coords;
-import net.minecraft.server.v1_15_R1.StructureBoundingBox;
-import net.minecraft.server.v1_15_R1.StructurePiece;
-import net.minecraft.server.v1_15_R1.StructureStart;
+import net.minecraft.server.v1_16_R2.StructureBoundingBox;
+import net.minecraft.server.v1_16_R2.StructurePiece;
+import net.minecraft.server.v1_16_R2.StructureStart;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -24,8 +24,8 @@ class StructureProcessor {
 
     private final BoundingBoxCache boundingBoxCache;
 
-    private void addStructures(BoundingBoxType type, Map<String, StructureStart> structureMap) {
-        StructureStart structureStart = structureMap.get(type.getName());
+    private void addStructures(BoundingBoxType type, Map<String, StructureStart<?>> structureMap) {
+        StructureStart<?> structureStart = structureMap.get(type.getName());
         if (structureStart == null) return;
 
         StructureBoundingBox bb = structureStart.c();
@@ -47,7 +47,7 @@ class StructureProcessor {
         return BoundingBoxCuboid.from(min, max, type);
     }
 
-    void process(Map<String, StructureStart> structures) {
+    void process(Map<String, StructureStart<?>> structures) {
         if (structures.size() > 0) {
             supportedStructures.forEach(type -> addStructures(type, structures));
         }
