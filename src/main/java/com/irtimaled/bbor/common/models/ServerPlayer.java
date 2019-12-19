@@ -1,8 +1,8 @@
 package com.irtimaled.bbor.common.models;
 
 import com.irtimaled.bbor.common.messages.PayloadBuilder;
-import net.minecraft.server.v1_15_R1.EntityPlayer;
-import net.minecraft.server.v1_15_R1.Packet;
+import net.minecraft.server.v1_16_R3.EntityPlayer;
+import net.minecraft.server.v1_16_R3.Packet;
 
 import java.util.function.Consumer;
 
@@ -11,7 +11,7 @@ public class ServerPlayer {
     private final Consumer<Packet<?>> packetConsumer;
 
     public ServerPlayer(EntityPlayer player) {
-        this.dimensionId = DimensionId.from(player.dimension);
+        this.dimensionId = DimensionId.from(player.world.getDimensionKey());
         this.packetConsumer = player.playerConnection::sendPacket;
     }
 

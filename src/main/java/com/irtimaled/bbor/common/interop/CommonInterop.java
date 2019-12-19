@@ -4,18 +4,17 @@ import com.irtimaled.bbor.common.EventBus;
 import com.irtimaled.bbor.common.events.*;
 import com.irtimaled.bbor.common.models.DimensionId;
 import com.irtimaled.bbor.common.models.ServerPlayer;
-import net.minecraft.server.v1_15_R1.Chunk;
-import net.minecraft.server.v1_15_R1.EntityPlayer;
-import net.minecraft.server.v1_15_R1.StructureStart;
-import net.minecraft.server.v1_15_R1.WorldServer;
+import net.minecraft.server.v1_16_R3.*;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 public class CommonInterop {
     public static void chunkLoaded(Chunk chunk) {
-        DimensionId dimensionId = DimensionId.from(((WorldServer) chunk.getWorld()).worldProvider.getDimensionManager());
-        Map<String, StructureStart> structures = chunk.h();
+        DimensionId dimensionId = DimensionId.from(((WorldServer) chunk.getWorld()).getDimensionKey());
+        Map<String, StructureStart<?>> structures = new HashMap<>();
+        chunk.h().forEach((key, value) -> structures.put(key.i(), value));
         if (structures.size() > 0) EventBus.publish(new StructuresLoaded(structures, dimensionId));
     }
 
