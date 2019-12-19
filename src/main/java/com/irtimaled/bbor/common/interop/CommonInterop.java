@@ -4,10 +4,10 @@ import com.irtimaled.bbor.common.EventBus;
 import com.irtimaled.bbor.common.events.*;
 import com.irtimaled.bbor.common.models.DimensionId;
 import com.irtimaled.bbor.common.models.ServerPlayer;
-import net.minecraft.server.v1_14_R1.Chunk;
-import net.minecraft.server.v1_14_R1.EntityPlayer;
-import net.minecraft.server.v1_14_R1.StructureStart;
-import net.minecraft.server.v1_14_R1.WorldServer;
+import net.minecraft.server.v1_15_R1.Chunk;
+import net.minecraft.server.v1_15_R1.EntityPlayer;
+import net.minecraft.server.v1_15_R1.StructureStart;
+import net.minecraft.server.v1_15_R1.WorldServer;
 
 import java.util.Collection;
 import java.util.Map;

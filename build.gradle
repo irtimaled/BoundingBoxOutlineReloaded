@@ -27,7 +27,7 @@ repositories {
 }
 
 dependencies {
-    compile files('run/craftbukkit-1.14.4.jar')
+    compile files('run/craftbukkit-1.15.2.jar')
 }
 
 sourceSets {
@@ -66,8 +66,8 @@ artifacts {
 }
 
 task downloadServer(type: Download) {
-    src 'https://cdn.getbukkit.org/craftbukkit/craftbukkit-1.14.4-R0.1-SNAPSHOT.jar'
-    dest new File('run/craftbukkit-1.14.4.jar')
+    src 'https://cdn.getbukkit.org/craftbukkit/craftbukkit-1.15.2.jar'
+    dest new File('run/craftbukkit-1.15.2.jar')
     overwrite false
 }
 
@@ -76,6 +76,6 @@ task runServer(dependsOn: jar, type: JavaExec) {
 
     main = "-jar";
     args = [
-            "craftbukkit-1.14.4.jar"
+            "craftbukkit-1.15.2.jar"
     ]
 }

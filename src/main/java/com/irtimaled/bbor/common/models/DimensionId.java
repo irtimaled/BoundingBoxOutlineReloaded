@@ -1,7 +1,7 @@
 package com.irtimaled.bbor.common.models;
 
-import net.minecraft.server.v1_14_R1.DimensionManager;
-import net.minecraft.server.v1_14_R1.MinecraftKey;
+import net.minecraft.server.v1_15_R1.DimensionManager;
+import net.minecraft.server.v1_15_R1.MinecraftKey;
 
 import java.util.HashMap;
 import java.util.Map;

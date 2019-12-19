@@ -3,9 +3,9 @@ package com.irtimaled.bbor.common;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBoxCuboid;
 import com.irtimaled.bbor.common.models.Coords;
-import net.minecraft.server.v1_14_R1.StructureBoundingBox;
-import net.minecraft.server.v1_14_R1.StructurePiece;
-import net.minecraft.server.v1_14_R1.StructureStart;
+import net.minecraft.server.v1_15_R1.StructureBoundingBox;
+import net.minecraft.server.v1_15_R1.StructurePiece;
+import net.minecraft.server.v1_15_R1.StructureStart;
 
 import java.util.HashSet;
 import java.util.Map;

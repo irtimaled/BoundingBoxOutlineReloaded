@@ -1,8 +1,8 @@
 package com.irtimaled.bbor.common.models;
 
 import com.irtimaled.bbor.common.messages.PayloadBuilder;
-import net.minecraft.server.v1_14_R1.EntityPlayer;
-import net.minecraft.server.v1_14_R1.Packet;
+import net.minecraft.server.v1_15_R1.EntityPlayer;
+import net.minecraft.server.v1_15_R1.Packet;
 
 import java.util.function.Consumer;
 
