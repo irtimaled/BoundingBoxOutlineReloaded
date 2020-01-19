@@ -71,8 +71,8 @@ Keep Cache Between Sessions | Bounding box caches are not cleared when disconnec
 ## Using
 
 - Press B, sit back and enjoy the goodness flowing onto your screen.
-- Press and hold B to open the configuration Gui.
-- Press O to switch the "Display Outer Boxes Only" mode on and off, this will allow you to see the full boundary of Nether Fortresses, End Cities, Strongholds and Mineshafts
+- Press and hold B+G to open the configuration Gui.
+- Press B+O to switch the "Display Outer Boxes Only" mode on and off, this will allow you to see the full boundary of Nether Fortresses, End Cities, Strongholds and Mineshafts
 
 ## Bounding boxes when connected to servers
 
