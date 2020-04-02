@@ -1,10 +1,6 @@
 package com.irtimaled.bbor.common;
 
 import com.irtimaled.bbor.Logger;
-import com.irtimaled.bbor.common.chunkProcessors.AbstractChunkProcessor;
-import com.irtimaled.bbor.common.chunkProcessors.EndChunkProcessor;
-import com.irtimaled.bbor.common.chunkProcessors.NetherChunkProcessor;
-import com.irtimaled.bbor.common.chunkProcessors.OverworldChunkProcessor;
 import com.irtimaled.bbor.common.events.*;
 import com.irtimaled.bbor.common.messages.AddBoundingBox;
 import com.irtimaled.bbor.common.messages.InitializeClient;
@@ -24,7 +20,7 @@ public class CommonProxy {
     private final Map<Integer, ServerPlayer> players = new ConcurrentHashMap<>();
     private final Map<Integer, Set<AbstractBoundingBox>> playerBoundingBoxesCache = new HashMap<>();
     private final Map<Integer, VillageProcessor> villageProcessors = new HashMap<>();
-    private final Map<Integer, AbstractChunkProcessor> chunkProcessors = new HashMap<>();
+    private final Map<Integer, ChunkProcessor> chunkProcessors = new HashMap<>();
     private final Map<Integer, BoundingBoxCache> dimensionCache = new ConcurrentHashMap<>();
     private Long seed = null;
     private Integer spawnX = null;
@@ -54,28 +50,18 @@ public class CommonProxy {
     private void worldLoaded(WorldLoaded event) {
         int dimensionId = event.getDimensionId();
         long seed = event.getSeed();
-        BoundingBoxCache boundingBoxCache = getOrCreateCache(dimensionId);
-        AbstractChunkProcessor chunkProcessor = null;
-        switch (dimensionId) {
-            case Dimensions.OVERWORLD:
-                setSeed(seed);
-                setWorldSpawn(event.getSpawnX(), event.getSpawnZ());
-                chunkProcessor = new OverworldChunkProcessor(boundingBoxCache);
-                break;
-            case Dimensions.NETHER:
-                chunkProcessor = new NetherChunkProcessor(boundingBoxCache);
-                break;
-            case Dimensions.THE_END:
-                chunkProcessor = new EndChunkProcessor(boundingBoxCache);
-                break;
+        if (dimensionId == Dimensions.OVERWORLD) {
+            setSeed(seed);
+            setWorldSpawn(event.getSpawnX(), event.getSpawnZ());
         }
         Logger.info("create world dimension: %s (seed: %d)", dimensionId, seed);
-        chunkProcessors.put(dimensionId, chunkProcessor);
+        BoundingBoxCache boundingBoxCache = getOrCreateCache(dimensionId);
+        chunkProcessors.put(dimensionId, new ChunkProcessor(boundingBoxCache));
         villageProcessors.put(dimensionId, new VillageProcessor(dimensionId, boundingBoxCache));
     }
 
     private void chunkLoaded(ChunkLoaded event) {
-        AbstractChunkProcessor chunkProcessor = chunkProcessors.get(event.getDimensionId());
+        ChunkProcessor chunkProcessor = chunkProcessors.get(event.getDimensionId());
         if (chunkProcessor == null) return;
 
         chunkProcessor.process(event.getChunk());

@@ -1,7 +1,6 @@
 package com.irtimaled.bbor.client.providers;
 
 import com.irtimaled.bbor.client.Player;
-import com.irtimaled.bbor.common.Dimensions;
 import com.irtimaled.bbor.common.models.BoundingBoxBeacon;
 import com.irtimaled.bbor.common.models.Coords;
 
@@ -10,15 +9,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class BeaconProvider implements IBoundingBoxProvider<BoundingBoxBeacon> {
-    private static final Map<Integer, Map<Coords, BoundingBoxBeacon>> dimensionsCache = buildBeaconsCache();
-
-    private static Map<Integer, Map<Coords, BoundingBoxBeacon>> buildBeaconsCache() {
-        Map<Integer, Map<Coords, BoundingBoxBeacon>> map = new HashMap<>();
-        map.put(Dimensions.OVERWORLD, new ConcurrentHashMap<>());
-        map.put(Dimensions.NETHER, new ConcurrentHashMap<>());
-        map.put(Dimensions.THE_END, new ConcurrentHashMap<>());
-        return map;
-    }
+    private static final Map<Integer, Map<Coords, BoundingBoxBeacon>> dimensionsCache = new HashMap<>();
 
     private static Map<Coords, BoundingBoxBeacon> getCache(int dimensionId) {
         return dimensionsCache.computeIfAbsent(dimensionId, i -> new ConcurrentHashMap<>());

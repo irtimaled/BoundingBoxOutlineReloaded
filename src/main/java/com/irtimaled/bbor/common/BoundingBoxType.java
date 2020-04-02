@@ -38,7 +38,9 @@ public class BoundingBoxType {
     public static final BoundingBoxType Custom = register(Color.WHITE, "Custom", ConfigManager.drawCustomBoxes);
 
     private static BoundingBoxType register(Color color, String name, Setting<Boolean> shouldRenderSetting) {
-        return structureTypeMap.computeIfAbsent(name.hashCode(), k -> new BoundingBoxType(color, name, shouldRenderSetting));
+        BoundingBoxType type = structureTypeMap.computeIfAbsent(name.hashCode(), k -> new BoundingBoxType(color, name, shouldRenderSetting));
+        ChunkProcessor.registerSupportedStructure(type);
+        return type;
     }
 
     public static BoundingBoxType getByNameHash(Integer nameHash) {

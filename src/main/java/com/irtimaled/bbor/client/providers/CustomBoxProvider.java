@@ -2,7 +2,6 @@ package com.irtimaled.bbor.client.providers;
 
 import com.irtimaled.bbor.client.Player;
 import com.irtimaled.bbor.common.BoundingBoxType;
-import com.irtimaled.bbor.common.Dimensions;
 import com.irtimaled.bbor.common.models.BoundingBoxCuboid;
 import com.irtimaled.bbor.common.models.Coords;
 
@@ -11,15 +10,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CustomBoxProvider implements IBoundingBoxProvider<BoundingBoxCuboid> {
-    private static final Map<Integer, Map<Integer, BoundingBoxCuboid>> dimensionCache = buildDimensionCache();
-
-    private static Map<Integer, Map<Integer, BoundingBoxCuboid>> buildDimensionCache() {
-        Map<Integer, Map<Integer, BoundingBoxCuboid>> map = new HashMap<>();
-        map.put(Dimensions.OVERWORLD, new ConcurrentHashMap<>());
-        map.put(Dimensions.NETHER, new ConcurrentHashMap<>());
-        map.put(Dimensions.THE_END, new ConcurrentHashMap<>());
-        return map;
-    }
+    private final static Map<Integer, Map<Integer, BoundingBoxCuboid>> dimensionCache = new HashMap<>();
 
     private static int getHashKey(Coords minCoords, Coords maxCoords) {
         return (31 + minCoords.hashCode()) * 31 + maxCoords.hashCode();

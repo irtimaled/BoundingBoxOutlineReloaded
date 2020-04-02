@@ -1,8 +1,5 @@
-package com.irtimaled.bbor.common.chunkProcessors;
+package com.irtimaled.bbor.common;
 
-import com.irtimaled.bbor.common.BoundingBoxCache;
-import com.irtimaled.bbor.common.BoundingBoxType;
-import com.irtimaled.bbor.common.TypeHelper;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBoxCuboid;
 import com.irtimaled.bbor.common.models.BoundingBoxMobSpawner;
@@ -19,10 +16,14 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public abstract class AbstractChunkProcessor {
-    Set<BoundingBoxType> supportedStructures = new HashSet<>();
+class ChunkProcessor {
+    private static final Set<BoundingBoxType> supportedStructures = new HashSet<>();
 
-    AbstractChunkProcessor(BoundingBoxCache boundingBoxCache) {
+    static void registerSupportedStructure(BoundingBoxType type) {
+        supportedStructures.add(type);
+    }
+
+    ChunkProcessor(BoundingBoxCache boundingBoxCache) {
         this.boundingBoxCache = boundingBoxCache;
     }
 
@@ -62,7 +63,7 @@ public abstract class AbstractChunkProcessor {
         }
     }
 
-    public void process(Chunk chunk) {
+    void process(Chunk chunk) {
         Map<String, StructureStart> structureMap = chunk.getStructureStarts();
         if (structureMap.size() > 0) {
             supportedStructures.forEach(type -> addStructures(type, structureMap));
