@@ -2,16 +2,11 @@ package com.irtimaled.bbor.common.interop;
 
 import com.irtimaled.bbor.common.EventBus;
 import com.irtimaled.bbor.common.events.*;
-import com.irtimaled.bbor.common.models.Coords;
 import com.irtimaled.bbor.common.models.ServerPlayer;
 import com.irtimaled.bbor.config.ConfigManager;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockMobSpawner;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 
@@ -61,11 +56,5 @@ public class CommonInterop {
 
     public static void playerSubscribed(EntityPlayerMP player) {
         EventBus.publish(new PlayerSubscribed(player.getEntityId(), new ServerPlayer(player)));
-    }
-
-    public static void tryHarvestBlock(Block block, BlockPos pos, World world) {
-        if (block instanceof BlockMobSpawner) {
-            EventBus.publish(new MobSpawnerBroken(world.dimension.getType().getId(), new Coords(pos)));
-        }
     }
 }

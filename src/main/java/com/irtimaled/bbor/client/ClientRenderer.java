@@ -51,6 +51,7 @@ public class ClientRenderer {
         registerProvider(new BeaconProvider());
         registerProvider(new CustomBoxProvider());
         registerProvider(new BiomeBorderProvider());
+        registerProvider(new MobSpawnerProvider());
     }
 
     public static <T extends AbstractBoundingBox> void registerProvider(IBoundingBoxProvider<T> provider) {

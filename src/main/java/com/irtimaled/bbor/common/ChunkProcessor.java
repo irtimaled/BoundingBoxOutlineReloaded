@@ -2,16 +2,12 @@ package com.irtimaled.bbor.common;
 
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBoxCuboid;
-import com.irtimaled.bbor.common.models.BoundingBoxMobSpawner;
 import com.irtimaled.bbor.common.models.Coords;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityMobSpawner;
 import net.minecraft.util.math.MutableBoundingBox;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.feature.structure.StructurePiece;
 import net.minecraft.world.gen.feature.structure.StructureStart;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -52,22 +48,10 @@ class ChunkProcessor {
         return BoundingBoxCuboid.from(min, max, type);
     }
 
-    private void addMobSpawners(Chunk chunk) {
-        Collection<TileEntity> tileEntities = chunk.getTileEntityMap().values();
-        for (TileEntity tileEntity : tileEntities) {
-            TileEntityMobSpawner spawner = TypeHelper.as(tileEntity, TileEntityMobSpawner.class);
-            if (spawner != null) {
-                Coords coords = new Coords(spawner.getPos());
-                boundingBoxCache.addBoundingBox(BoundingBoxMobSpawner.from(coords));
-            }
-        }
-    }
-
     void process(Chunk chunk) {
         Map<String, StructureStart> structureMap = chunk.getStructureStarts();
         if (structureMap.size() > 0) {
             supportedStructures.forEach(type -> addStructures(type, structureMap));
         }
-        addMobSpawners(chunk);
     }
 }

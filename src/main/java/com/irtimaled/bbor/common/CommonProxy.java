@@ -7,7 +7,6 @@ import com.irtimaled.bbor.common.messages.InitializeClient;
 import com.irtimaled.bbor.common.messages.PayloadBuilder;
 import com.irtimaled.bbor.common.messages.RemoveBoundingBox;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
-import com.irtimaled.bbor.common.models.BoundingBoxMobSpawner;
 import com.irtimaled.bbor.common.models.ServerPlayer;
 
 import java.util.HashMap;
@@ -29,7 +28,6 @@ public class CommonProxy {
     public void init() {
         EventBus.subscribe(WorldLoaded.class, this::worldLoaded);
         EventBus.subscribe(ChunkLoaded.class, this::chunkLoaded);
-        EventBus.subscribe(MobSpawnerBroken.class, this::mobSpawnerBroken);
         EventBus.subscribe(PlayerLoggedIn.class, this::playerLoggedIn);
         EventBus.subscribe(PlayerLoggedOut.class, this::playerLoggedOut);
         EventBus.subscribe(PlayerSubscribed.class, this::onPlayerSubscribed);
@@ -138,13 +136,6 @@ public class CommonProxy {
         if (cache == null) return;
 
         cache.removeBoundingBox(key);
-    }
-
-    private void mobSpawnerBroken(MobSpawnerBroken event) {
-        int dimensionId = event.getDimensionId();
-        AbstractBoundingBox boundingBox = BoundingBoxMobSpawner.from(event.getPos());
-        removeBoundingBox(dimensionId, boundingBox);
-        sendRemoveBoundingBox(dimensionId, boundingBox);
     }
 
     private void serverTick() {

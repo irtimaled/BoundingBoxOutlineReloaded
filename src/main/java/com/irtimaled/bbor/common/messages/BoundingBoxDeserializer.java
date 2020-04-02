@@ -1,7 +1,10 @@
 package com.irtimaled.bbor.common.messages;
 
 import com.irtimaled.bbor.common.BoundingBoxType;
-import com.irtimaled.bbor.common.models.*;
+import com.irtimaled.bbor.common.models.AbstractBoundingBox;
+import com.irtimaled.bbor.common.models.BoundingBoxCuboid;
+import com.irtimaled.bbor.common.models.BoundingBoxVillage;
+import com.irtimaled.bbor.common.models.Coords;
 
 import java.awt.*;
 import java.util.HashSet;
@@ -17,8 +20,6 @@ class BoundingBoxDeserializer {
                 return deserializeVillage(reader);
             case 'S':
                 return deserializeStructure(reader);
-            case 'M':
-                return deserializeMobSpawner(reader);
         }
         return null;
     }
@@ -41,9 +42,5 @@ class BoundingBoxDeserializer {
             doors.add(reader.readCoords());
         }
         return BoundingBoxVillage.from(center, radius, color, spawnsIronGolems, doors);
-    }
-
-    private static AbstractBoundingBox deserializeMobSpawner(PayloadReader reader) {
-        return BoundingBoxMobSpawner.from(reader.readCoords());
     }
 }

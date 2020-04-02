@@ -1,6 +1,9 @@
 package com.irtimaled.bbor.common.messages;
 
-import com.irtimaled.bbor.common.models.*;
+import com.irtimaled.bbor.common.models.AbstractBoundingBox;
+import com.irtimaled.bbor.common.models.BoundingBoxCuboid;
+import com.irtimaled.bbor.common.models.BoundingBoxVillage;
+import com.irtimaled.bbor.common.models.Coords;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +15,6 @@ class BoundingBoxSerializer {
     static {
         serializers.put(BoundingBoxVillage.class, (bb, pb) -> serializeVillage((BoundingBoxVillage) bb, pb));
         serializers.put(BoundingBoxCuboid.class, (bb, pb) -> serializeStructure((BoundingBoxCuboid)bb, pb));
-        serializers.put(BoundingBoxMobSpawner.class, (bb, pb) -> serializeMobSpawner((BoundingBoxMobSpawner) bb, pb));
     }
 
     static boolean canSerialize(AbstractBoundingBox key) {
@@ -42,10 +44,5 @@ class BoundingBoxSerializer {
                 .writeInt(boundingBox.getTypeName().hashCode())
                 .writeCoords(boundingBox.getMinCoords())
                 .writeCoords(boundingBox.getMaxCoords());
-    }
-
-    private static void serializeMobSpawner(BoundingBoxMobSpawner boundingBox, PayloadBuilder builder) {
-        builder.writeChar('M')
-                .writeCoords(boundingBox.getCoords());
     }
 }
