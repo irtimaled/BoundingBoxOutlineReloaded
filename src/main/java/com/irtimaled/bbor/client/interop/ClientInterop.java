@@ -2,7 +2,6 @@ package com.irtimaled.bbor.client.interop;
 
 import com.irtimaled.bbor.client.ClientRenderer;
 import com.irtimaled.bbor.client.Player;
-import com.irtimaled.bbor.client.commands.BeaconCommand;
 import com.irtimaled.bbor.client.commands.BoxCommand;
 import com.irtimaled.bbor.client.commands.SeedCommand;
 import com.irtimaled.bbor.client.commands.SpawningSphereCommand;
@@ -91,7 +90,6 @@ public class ClientInterop {
     public static void registerClientCommands(CommandDispatcher<ISuggestionProvider> commandDispatcher) {
         SeedCommand.register(commandDispatcher);
         SpawningSphereCommand.register(commandDispatcher);
-        BeaconCommand.register(commandDispatcher);
         BoxCommand.register(commandDispatcher);
     }
 }

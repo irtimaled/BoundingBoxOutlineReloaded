@@ -41,7 +41,6 @@ public class ClientProxy extends CommonProxy {
         SlimeChunkProvider.clear();
         WorldSpawnProvider.clear();
         SpawningSphereProvider.clear();
-        BeaconProvider.clear();
         CustomBoxProvider.clear();
         BiomeBorderProvider.clear();
         VillageColorCache.clear();
