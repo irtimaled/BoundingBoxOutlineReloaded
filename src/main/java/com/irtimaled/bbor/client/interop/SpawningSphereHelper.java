@@ -74,10 +74,10 @@ public class SpawningSphereHelper {
         VoxelShape collisionShape = upperBlockState.getCollisionShape(world, pos);
 
         boolean isNether = world.dimension.isNether();
-        return spawnBlockState.allowsSpawning(world, down, isNether ? EntityType.ZOMBIE_PIGMAN : entityType) &&
+        return spawnBlockState.allowsSpawning(world, down, isNether ? EntityType.PIGLIN : entityType) &&
                 !Block.isFaceFullSquare(collisionShape, Direction.UP) &&
                 !upperBlockState.emitsRedstonePower() &&
-                !upperBlockState.matches(BlockTags.RAILS) &&
+                !upperBlockState.isIn(BlockTags.RAILS) &&
                 collisionShape.getMaximum(Direction.Axis.Y) <= 0 &&
                 upperBlockState.getFluidState().isEmpty() &&
                 (isNether || world.getLightLevel(LightType.BLOCK, pos) <= 7);

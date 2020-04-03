@@ -45,7 +45,7 @@ public class CommonInterop {
         ServerPlayNetworkHandler connection = player.networkHandler;
         if (connection == null) return;
 
-        ClientConnection networkManager = connection.client;
+        ClientConnection networkManager = connection.connection;
         if (networkManager.isLocal()) return;
 
         EventBus.publish(new PlayerLoggedIn(new ServerPlayer(player)));

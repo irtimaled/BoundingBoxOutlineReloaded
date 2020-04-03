@@ -65,7 +65,7 @@ public class SettingsScreen extends Screen {
             @Override
             public void onPressed() {
                 ConfigManager.saveConfig();
-                minecraft.openScreen(lastScreen);
+                client.openScreen(lastScreen);
             }
         });
     }
@@ -115,7 +115,7 @@ public class SettingsScreen extends Screen {
         this.addTabs("General", "Structures");
 
         buildTab(0,
-                (x, y, width) -> new AbstractButton(x, y, width, "Active", this.minecraft.world != null) {
+                (x, y, width) -> new AbstractButton(x, y, width, "Active", this.client.world != null) {
                     @Override
                     public void onPressed() {
                         ClientRenderer.toggleActive();
@@ -177,7 +177,7 @@ public class SettingsScreen extends Screen {
     }
 
     private void drawScreen(int top, int bottom) {
-        this.minecraft.getTextureManager().bindTexture(DrawableHelper.BACKGROUND_LOCATION);
+        this.client.getTextureManager().bindTexture(DrawableHelper.BACKGROUND_TEXTURE);
 
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glDisable(GL11.GL_FOG);
@@ -227,11 +227,11 @@ public class SettingsScreen extends Screen {
 
     @Override
     public void render(int mouseX, int mouseY, float unknown) {
-        if (this.minecraft.world == null) {
+        if (this.client.world == null) {
             this.renderBackground();
             this.drawScreen(getY(-1), getY(5.5) - 4);
         }
-        this.drawCenteredString(this.font, title.asString(), this.width / 2, 15, 16777215);
+        this.drawCenteredString(this.textRenderer, title.asString(), this.width / 2, 15, 16777215);
         for (IRenderableControl control : controls) {
             control.render(mouseX, mouseY);
         }

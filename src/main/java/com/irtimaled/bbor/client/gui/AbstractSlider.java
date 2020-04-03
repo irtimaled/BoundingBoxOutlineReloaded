@@ -21,8 +21,8 @@ abstract class AbstractSlider extends AbstractButtonWidget implements IRenderabl
     protected void renderBg(MinecraftClient minecraft, int mouseX, int mouseY) {
         minecraft.getTextureManager().bindTexture(WIDGETS_LOCATION);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.blit(this.x + (int) (this.progress * (double) (this.width - 8)), this.y, 0, 66, 4, 20);
-        this.blit(this.x + (int) (this.progress * (double) (this.width - 8)) + 4, this.y, 196, 66, 4, 20);
+        this.drawTexture(this.x + (int) (this.progress * (double) (this.width - 8)), this.y, 0, 66, 4, 20);
+        this.drawTexture(this.x + (int) (this.progress * (double) (this.width - 8)) + 4, this.y, 196, 66, 4, 20);
     }
 
     boolean setProgress(double progress) {
