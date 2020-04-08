@@ -15,6 +15,7 @@ public class BiomeBorderProvider implements IBoundingBoxProvider<BoundingBoxBiom
     private static Coords lastPlayerCoords = null;
     private static Boolean lastRenderAllTransitions = null;
     private static Integer lastRenderDistance = null;
+    private static Integer lastMaxY = null;
     private static Map<Coords, BoundingBoxBiomeBorder> lastBorders = new HashMap<>();
 
     public Iterable<BoundingBoxBiomeBorder> get(int dimensionId) {
@@ -24,10 +25,15 @@ public class BiomeBorderProvider implements IBoundingBoxProvider<BoundingBoxBiom
         Coords playerCoords = Player.getCoords();
         Integer renderDistance = ConfigManager.biomeBordersRenderDistance.get();
         Boolean renderAllTransitions = !ConfigManager.renderOnlyCurrentBiome.get();
-        if (!playerCoords.equals(lastPlayerCoords) || !renderDistance.equals(lastRenderDistance) || renderAllTransitions != lastRenderAllTransitions) {
+        Integer maxY = (int)Player.getMaxY(ConfigManager.biomeBordersMaxY.get());
+        if (!playerCoords.equals(lastPlayerCoords) ||
+                !renderDistance.equals(lastRenderDistance) ||
+                renderAllTransitions != lastRenderAllTransitions ||
+                !maxY.equals(lastMaxY)) {
             lastPlayerCoords = playerCoords;
             lastRenderDistance = renderDistance;
             lastRenderAllTransitions = renderAllTransitions;
+            lastMaxY = maxY;
             lastBorders = getBiomeBorders();
         }
         return lastBorders.values();
@@ -39,16 +45,16 @@ public class BiomeBorderProvider implements IBoundingBoxProvider<BoundingBoxBiom
     }
 
     private Map<Coords, BoundingBoxBiomeBorder> getBiomeBorders() {
-        Integer renderDistance = lastRenderDistance;
+        int renderDistance = lastRenderDistance;
         Coords playerCoords = lastPlayerCoords;
         boolean renderAllTransitions = lastRenderAllTransitions;
+        int maxY = lastMaxY;
 
         int width = MathHelper.floor(Math.pow(2, 3 + renderDistance));
+
         int blockX = playerCoords.getX();
         int minX = blockX - width;
         int maxX = blockX + width;
-
-        int blockY = playerCoords.getY();
 
         int blockZ = playerCoords.getZ();
         int minZ = blockZ - width;
@@ -60,7 +66,7 @@ public class BiomeBorderProvider implements IBoundingBoxProvider<BoundingBoxBiom
             int matchX = (x - minX);
             for (int z = minZ; z <= maxZ; z++) {
                 int matchZ = (z - minZ);
-                biomeIds[matchX][matchZ] = BiomeBorderHelper.getBiomeId(x, blockY, z);
+                biomeIds[matchX][matchZ] = BiomeBorderHelper.getBiomeId(x, maxY, z);
             }
         }
 
@@ -73,7 +79,7 @@ public class BiomeBorderProvider implements IBoundingBoxProvider<BoundingBoxBiom
                 int z = matchZ + minZ;
                 int biomeId = biomeIds[matchX][matchZ];
                 if (renderAllTransitions || biomeId == playerBiomeId) {
-                    Coords coords = new Coords(x, blockY, z);
+                    Coords coords = new Coords(x, maxY, z);
                     if (lastBorders.containsKey(coords)) {
                         borders.put(coords, lastBorders.get(coords));
                     } else {

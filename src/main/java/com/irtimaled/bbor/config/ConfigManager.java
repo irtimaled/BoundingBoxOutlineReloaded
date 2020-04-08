@@ -48,6 +48,7 @@ public class ConfigManager {
     public static Setting<Boolean> drawBiomeBorders;
     public static Setting<Boolean> renderOnlyCurrentBiome;
     public static Setting<Integer> biomeBordersRenderDistance;
+    public static Setting<Integer> biomeBordersMaxY;
 
     public static void loadConfig(File mcConfigDir) {
         configDir = new File(mcConfigDir, "config");
@@ -63,6 +64,7 @@ public class ConfigManager {
         drawBiomeBorders = setup(config, "biomeBorders", "drawBiomeBorders", true, "If set to true biome borders will be drawn.");
         renderOnlyCurrentBiome = setup(config, "biomeBorders", "renderOnlyCurrentBiome", true, "If set to true only the biome border for the current biome will be drawn.");
         biomeBordersRenderDistance = setup(config, "biomeBorders", "biomeBordersRenderDistance", 3, "The distance from the player where biome borders will be drawn.");
+        biomeBordersMaxY = setup(config, "biomeBorders", "biomeBordersMaxY", -1, "The maximum top of the biome borders. If set to -1 it will use the value when activated, if set to 0 it will always track the players feet.");
 
         drawVillageSpheres = setup(config, "villages", "drawVillageSpheres", true, "If set to true village bounding spheres are drawn.");
         drawIronGolemSpawnArea = setup(config, "villages", "drawIronGolemSpawnArea", true, "If set to true the iron golem spawn area of the village will be drawn. (default:true)");

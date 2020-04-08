@@ -150,7 +150,7 @@ public class SettingsScreen extends GuiScreen {
                         .addDisplayValue(3, "Normal"),
 
                 (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Biome Borders", BoundingBoxType.BiomeBorder),
-                (id, x, y, width) -> new BoolSettingButton(id, x, y, width, "Only This Biome", ConfigManager.renderOnlyCurrentBiome),
+                (id, x, y, width) -> new MaxYSettingSlider(id, x, y, width, 1, ConfigManager.biomeBordersMaxY),
                 (id, x, y, width) -> new IntSettingSlider(id, x, y, width, 1, 3, "Distance", ConfigManager.biomeBordersRenderDistance)
                         .addDisplayValue(1, "Nearest")
                         .addDisplayValue(2, "Nearer")
