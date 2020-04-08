@@ -1,7 +1,6 @@
 {
   "bbor.key.toggleActive": "Toggle Active",
 
-  "bbor.tabs.general": "General",
   "bbor.tabs.structures": "Structures",
   "bbor.tabs.villages": "Villages",
 
@@ -28,7 +27,6 @@
   "bbor.features.spawningSpheres": "Spawning Spheres",
   "bbor.features.spawningSpheres.spawnableBlocks": "Spawnable Blocks",
   "bbor.features.biomeBorders": "Biome Borders",
-  "bbor.features.biomeBorders.onlyThisBiome": "Only This Biome",
 
   "bbor.structures.desertTemples": "Desert Temples",
   "bbor.structures.jungleTemples": "Jungle Temples",

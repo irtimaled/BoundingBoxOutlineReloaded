@@ -6,7 +6,7 @@ import net.minecraft.client.resources.I18n;
 import java.util.HashMap;
 import java.util.Map;
 
-class IntSettingSlider extends AbstractSlider implements IRenderableControl {
+class IntSettingSlider extends AbstractSlider {
     private final String format;
     private final Map<Integer, String> displayValues = new HashMap<>();
 
@@ -14,8 +14,8 @@ class IntSettingSlider extends AbstractSlider implements IRenderableControl {
     final int minValue;
     final int range;
 
-    IntSettingSlider(int id, int x, int y, int width, int minValue, int maxValue, String format, Setting<Integer> setting) {
-        super(id, x, y, width);
+    IntSettingSlider(int width, int minValue, int maxValue, String format, Setting<Integer> setting) {
+        super(0, 0, width);
         this.setting = setting;
         this.minValue = minValue;
         this.format = format;

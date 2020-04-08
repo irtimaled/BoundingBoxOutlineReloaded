@@ -6,8 +6,8 @@ import net.minecraft.client.resources.I18n;
 class MaxYSettingSlider extends IntSettingSlider {
     private final int actualMinValue;
 
-    MaxYSettingSlider(int id, int x, int y, int width, int minValue, Setting<Integer> setting) {
-        super(id, x, y, width, minValue - 2, 127, I18n.format("bbor.options.maxY", "%s"), setting);
+    MaxYSettingSlider(int width, int minValue, Setting<Integer> setting) {
+        super(width, minValue - 2, 127, I18n.format("bbor.options.maxY", "%s"), setting);
         this.actualMinValue = minValue;
         this.setProgress(getSliderValue());
         this.addDisplayValue(-1, I18n.format("bbor.options.maxY.activated"));

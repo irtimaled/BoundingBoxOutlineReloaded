@@ -3,21 +3,21 @@ package com.irtimaled.bbor.client.gui;
 import com.irtimaled.bbor.config.ConfigManager;
 import com.irtimaled.bbor.config.Setting;
 
-public class BoolSettingButton extends AbstractButton {
+public class BoolSettingButton extends BoolButton {
     private final Setting<Boolean> setting;
 
-    BoolSettingButton(int id, int x, int y, int width, String label, Setting<Boolean> setting) {
-        super(id, x, y, width, label);
+    BoolSettingButton(int width, String label, Setting<Boolean> setting) {
+        super(width, label);
         this.setting = setting;
     }
 
     @Override
-    protected int getState() {
-        return enabled ? setting.get() ? 2 : 1 : 0;
+    public void onPressed() {
+        ConfigManager.Toggle(this.setting);
     }
 
     @Override
-    public void onPressed() {
-        ConfigManager.Toggle(setting);
+    protected boolean getValue() {
+        return this.setting.get();
     }
 }

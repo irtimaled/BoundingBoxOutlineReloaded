@@ -39,7 +39,7 @@ public class Renderer {
         bufferBuilder.begin(glMode, vertexFormat);
     }
 
-    Renderer setColor(Color color) {
+    public Renderer setColor(Color color) {
         return setColor(color.getRed(), color.getGreen(), color.getBlue())
                 .setAlpha(color.getAlpha());
     }
@@ -57,8 +57,7 @@ public class Renderer {
     }
 
     Renderer addPoint(OffsetPoint point) {
-        addPoint(point.getX(), point.getY(), point.getZ());
-        return this;
+        return addPoint(point.getX(), point.getY(), point.getZ());
     }
 
     Renderer addPoint(double x, double y, double z) {
