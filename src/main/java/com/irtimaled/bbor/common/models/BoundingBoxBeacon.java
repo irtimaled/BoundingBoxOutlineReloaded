@@ -4,17 +4,19 @@ import com.irtimaled.bbor.common.BoundingBoxType;
 
 public class BoundingBoxBeacon extends BoundingBoxCuboid {
     private final Coords coords;
+    private final int level;
 
-    private BoundingBoxBeacon(Coords coords, Coords minCoords, Coords maxCoords) {
+    private BoundingBoxBeacon(Coords coords, Coords minCoords, Coords maxCoords, int level) {
         super(minCoords, maxCoords, BoundingBoxType.Beacon);
         this.coords = coords;
+        this.level = level;
     }
 
     public static BoundingBoxBeacon from(Coords coords, int level) {
         int range = 10 + (10 * level);
         Coords minCoords = new Coords(coords.getX() - range, coords.getY() - range, coords.getZ() - range);
         Coords maxCoords = new Coords(coords.getX() + range, 324 + range, coords.getZ() + range);
-        return new BoundingBoxBeacon(coords, minCoords, maxCoords);
+        return new BoundingBoxBeacon(coords, minCoords, maxCoords, level);
     }
 
     @Override
@@ -32,5 +34,9 @@ public class BoundingBoxBeacon extends BoundingBoxCuboid {
 
     public Coords getCoords() {
         return coords;
+    }
+
+    public int getLevel() {
+        return level;
     }
 }

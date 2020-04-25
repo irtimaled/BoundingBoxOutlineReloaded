@@ -9,8 +9,6 @@ public class BeaconProvider implements IBoundingBoxProvider<BoundingBoxBeacon> {
     public Iterable<BoundingBoxBeacon> get(int dimensionId) {
         return TileEntitiesHelper.map(TileEntityBeacon.class, beacon -> {
             int levels = beacon.getLevels();
-            if (levels == 0) return null;
-
             Coords coords = new Coords(beacon.getPos());
             return BoundingBoxBeacon.from(coords, levels);
         });

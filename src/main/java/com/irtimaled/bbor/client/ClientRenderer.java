@@ -42,7 +42,7 @@ public class ClientRenderer {
         registerRenderer(BoundingBoxCuboid.class, new CuboidRenderer());
         registerRenderer(BoundingBoxMobSpawner.class, new MobSpawnerRenderer());
         registerRenderer(BoundingBoxSpawningSphere.class, new SpawningSphereRenderer());
-        registerRenderer(BoundingBoxBeacon.class, new CuboidRenderer());
+        registerRenderer(BoundingBoxBeacon.class, new BeaconRenderer());
         registerRenderer(BoundingBoxBiomeBorder.class, new BiomeBorderRenderer());
 
         registerProvider(new SlimeChunkProvider());
@@ -50,6 +50,7 @@ public class ClientRenderer {
         registerProvider(new SpawningSphereProvider());
         registerProvider(new BeaconProvider());
         registerProvider(new CustomBoxProvider());
+        registerProvider(new CustomBeaconProvider());
         registerProvider(new BiomeBorderProvider());
         registerProvider(new MobSpawnerProvider());
     }
