@@ -18,8 +18,10 @@ import net.minecraft.world.biome.Biome;
 
 public class SpawningSphereHelper {
     private static EntityType entityType = EntityType.Builder.create(EntityClassification.MONSTER).size(0f, 0f).disableSerialization().build(null);
-
+    
     public static int findSpawnableSpaces(Point center, Coords coords, int width, int height, BlockProcessor blockProcessor) {
+        ClientWorld world = Minecraft.getInstance().world;
+        
         int blockX = coords.getX();
         int minX = blockX - width;
         int maxX = blockX + width;
@@ -37,14 +39,25 @@ public class SpawningSphereHelper {
         int processed = 0;
         for (int x = minX; x < maxX; x++) {
             for (int z = minZ; z < maxZ; z++) {
+                if(!isWithinSpawnSphere(x, (int) Math.round(center.getY()), z, center)) continue;// Doesn't check the biome if it's out of the sphere anyway
+                if(!isBiomeHostileSpawnable(world, new BlockPos(x, 1, z))) continue;
                 for (int y = minY; y < maxY; y++) {
-                    if (isWithinSpawnSphere(x, y, z, center) && isSpawnable(x, y, z) && blockProcessor.process(x, y, z)) {
+                    if (isWithinSpawnSphere(x, y, z, center) && isSpawnable(new BlockPos(x, y, z), world) && blockProcessor.process(x, y, z)) {
                         processed++;
                     }
                 }
             }
         }
         return processed;
+    }
+
+    private static boolean isBiomeHostileSpawnable(ClientWorld world, BlockPos pos){
+        Biome biome = world.func_225523_d_().func_226836_a_(pos);
+        
+        boolean spawningChanceNotZero = biome.getSpawningChance() > 0;
+        if(!spawningChanceNotZero) return false;
+        
+        return !biome.getSpawns(EntityClassification.MONSTER).isEmpty();
     }
 
     private static boolean isWithinSpawnSphere(int x, int y, int z, Point center) {
@@ -56,15 +69,6 @@ public class SpawningSphereHelper {
         int closestZ = Math.abs(center.getZ()-z) < Math.abs(center.getZ()-z1) ? z : z1;
         double distance = center.getDistance(new Point(closestX, closestY, closestZ));
         return distance <= BoundingBoxSpawningSphere.SPAWN_RADIUS && distance >= (BoundingBoxSpawningSphere.SAFE_RADIUS-1);
-    }
-
-    private static boolean isSpawnable(int x, int y, int z) {
-        ClientWorld world = Minecraft.getInstance().world;
-        BlockPos pos = new BlockPos(x, y, z);
-        Biome biome = world.func_225523_d_().func_226836_a_(pos);
-        return  biome.getSpawningChance() > 0 &&
-                !biome.getSpawns(EntityClassification.MONSTER).isEmpty() &&
-                isSpawnable(pos, world);
     }
 
     private static boolean isSpawnable(BlockPos pos, ClientWorld world) {

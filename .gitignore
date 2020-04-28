@@ -8,3 +8,7 @@ classes
 *.iws
 *.ipr
 out
+bin
+.classpath
+.project
+.settings/org.eclipse.buildship.core.prefs
