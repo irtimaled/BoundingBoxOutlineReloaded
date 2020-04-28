@@ -27,15 +27,36 @@ public class SpawningSphereHelper {
 
         int blockY = coords.getY();
         int minY = blockY - height;
-        if (minY < 1) minY = 1;
-        int maxY = blockY + height;
-        if (maxY > 255) maxY = 255;
 
+        int centerY = (int) center.getY();
+        int centerYby2 = 2 * centerY;
+
+        WorldClient world = Minecraft.getInstance().world;
         int processed = 0;
         for (int x = minX; x < maxX; x++) {
             for (int z = minZ; z < maxZ; z++) {
-                for (int y = minY; y < maxY; y++) {
-                    if (isWithinSpawnSphere(x, y, z, center) && isSpawnable(x, y, z) && blockProcessor.process(x, y, z)) {
+                if (!isWithinCircle(x, z, center)) continue;
+
+                if (!isBiomeHostileSpawnable(world, new BlockPos(x, 1, z))) continue;
+
+                int bottom = centerY;
+                for (int y = minY; y < centerY; y++) {
+                    if (isWithinSpawnSphere(x, y, z, center)) {
+                        bottom = y;
+                        break;
+                    }
+                }
+                int top = (centerYby2 - bottom);
+                if (top > 255) top = 255;
+                if (bottom < 1) bottom = 1;
+
+                IBlockState upperBlockState = world.getBlockState(new BlockPos(x, bottom - 1, z));
+                for (int y = Math.max(1, bottom); y < top; y++) {
+                    IBlockState spawnBlockState = upperBlockState;
+                    BlockPos pos = new BlockPos(x, y, z);
+                    upperBlockState = world.getBlockState(pos);
+                    if (isSpawnable(world, pos, spawnBlockState, upperBlockState) &&
+                            blockProcessor.process(x, y, z)) {
                         processed++;
                     }
                 }
@@ -55,20 +76,23 @@ public class SpawningSphereHelper {
         return distance <= BoundingBoxSpawningSphere.SPAWN_RADIUS && distance >= (BoundingBoxSpawningSphere.SAFE_RADIUS-1);
     }
 
-    private static boolean isSpawnable(int x, int y, int z) {
-        WorldClient world = Minecraft.getInstance().world;
-        BlockPos pos = new BlockPos(x, y, z);
-        Biome biome = world.getBiome(pos);
-        return  biome.getSpawningChance() > 0 &&
-                !biome.getSpawns(EnumCreatureType.MONSTER).isEmpty() &&
-                isSpawnable(pos, world);
+    private static boolean isWithinCircle(int x, int z, Point center) {
+        int x1 = x+1;
+        int z1 = z+1;
+        int closestX = Math.abs(center.getX()-x) < Math.abs(center.getX()-x1) ? x : x1;
+        int closestZ = Math.abs(center.getZ()-z) < Math.abs(center.getZ()-z1) ? z : z1;
+        double distance = center.getDistance(new Point(closestX, center.getY(), closestZ));
+        return distance <= BoundingBoxSpawningSphere.SPAWN_RADIUS;
     }
 
-    private static boolean isSpawnable(BlockPos pos, WorldClient world) {
-        IBlockState spawnBlockState = world.getBlockState(pos.down());
-        Block spawnBlock = spawnBlockState.getBlock();
-        IBlockState upperBlockState = world.getBlockState(pos);
+    private static boolean isBiomeHostileSpawnable(WorldClient world, BlockPos pos) {
+        Biome biome = world.getBiome(pos);
+        return biome.getSpawningChance() > 0 &&
+                !biome.getSpawns(EnumCreatureType.MONSTER).isEmpty();
+    }
 
+    private static boolean isSpawnable(WorldClient world, BlockPos pos, IBlockState spawnBlockState, IBlockState upperBlockState) {
+        Block spawnBlock = spawnBlockState.getBlock();
         return spawnBlock != Blocks.AIR &&
                 spawnBlock != Blocks.BEDROCK &&
                 spawnBlock != Blocks.BARRIER &&
