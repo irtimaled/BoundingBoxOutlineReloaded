@@ -35,6 +35,9 @@ public class BoundingBoxType {
     public static final BoundingBoxType AFKSphere = register(Color.RED, "AFK Sphere", ConfigManager.drawAFKSpheres);
     public static final BoundingBoxType BiomeBorder = register(Color.GREEN, "Biome Border", ConfigManager.drawBiomeBorders);
     public static final BoundingBoxType Beacon = register(Color.WHITE, "Beacon", ConfigManager.drawBeacons);
+    public static final BoundingBoxType NetherFossil = register(Color.WHITE, "Nether_Fossil", ConfigManager.drawNetherFossils);
+    public static final BoundingBoxType BastionRemnant = register(Color.LIGHT_GRAY, "Bastion_Remnant", ConfigManager.drawBastionRemnants);
+    public static final BoundingBoxType RuinedPortal = register(Colors.COOL_PURPLE, "Ruined_Portal", ConfigManager.drawRuinedPortals);
     public static final BoundingBoxType Custom = register(Color.WHITE, "Custom", ConfigManager.drawCustomBoxes);
 
     private static BoundingBoxType register(Color color, String name, Setting<Boolean> shouldRenderSetting) {

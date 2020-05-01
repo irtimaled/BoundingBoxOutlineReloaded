@@ -49,6 +49,9 @@ public class ConfigManager {
     public static Setting<Boolean> renderOnlyCurrentBiome;
     public static Setting<Integer> biomeBordersRenderDistance;
     public static Setting<Integer> biomeBordersMaxY;
+    public static Setting<Boolean> drawNetherFossils;
+    public static Setting<Boolean> drawBastionRemnants;
+    public static Setting<Boolean> drawRuinedPortals;
 
     public static void loadConfig(File mcConfigDir) {
         configDir = new File(mcConfigDir, "config");
@@ -87,6 +90,9 @@ public class ConfigManager {
         drawOceanRuins = setup(config, "structures", "drawOceanRuins", true, "If set to true ocean ruins will be drawn.");
         drawBuriedTreasure = setup(config, "structures", "drawBuriedTreasures", true, "If set to true buried treasure will be drawn.");
         drawPillagerOutposts = setup(config, "structures", "drawPillagerOutposts", true, "If set to true pillager outposts will be drawn.");
+        drawNetherFossils = setup(config, "structures", "drawNetherFossils", true, "If set to true nether fossils will be drawn.");
+        drawBastionRemnants = setup(config, "structures", "drawBastionRemnants", true, "If set to true bastion remnants will be drawn.");
+        drawRuinedPortals = setup(config, "structures", "drawRuinedPortals", true, "If set to true ruined portals will be drawn.");
 
         drawSlimeChunks = setup(config, "slimeChunks", "drawSlimeChunks", true, "If set to true slime chunks bounding boxes are drawn.");
         slimeChunkMaxY = setup(config, "slimeChunks", "slimeChunkMaxY", -1, "The maximum top of the slime chunk bounding box. If set to -1 it will use the value when activated, if set to 0 it will always track the player's feet.");

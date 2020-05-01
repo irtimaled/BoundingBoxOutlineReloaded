@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CustomBoxProvider implements IBoundingBoxProvider<BoundingBoxCuboid> {
-    private final static Map<Integer, Map<Integer, BoundingBoxCuboid>> dimensionCache = new HashMap<>();
+    private static final Map<Integer, Map<Integer, BoundingBoxCuboid>> dimensionCache = new HashMap<>();
 
     private static int getHashKey(Coords minCoords, Coords maxCoords) {
         return (31 + minCoords.hashCode()) * 31 + maxCoords.hashCode();

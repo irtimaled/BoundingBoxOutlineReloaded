@@ -44,6 +44,10 @@
   "bbor.structures.pillagerOutposts": "Pillager Outposts",
   "bbor.structures.villages": "Villages",
   "bbor.structures.fortresses": "Fortresses",
+  "bbor.structures.endCities": "End Cities",
+  "bbor.structures.netherFossils": "Nether Fossils",
+  "bbor.structures.bastionRemnants": "Bastion Remnants",
+  "bbor.structures.ruinedPortal": "Ruined Portals",
 
   "bbor.features.villageSpheres": "Village Spheres",
   "bbor.features.villageSpheres.doorLines": "Door Lines",
