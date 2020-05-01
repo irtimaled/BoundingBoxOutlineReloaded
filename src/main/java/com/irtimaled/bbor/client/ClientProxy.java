@@ -1,6 +1,7 @@
 package com.irtimaled.bbor.client;
 
 import com.irtimaled.bbor.client.events.*;
+import com.irtimaled.bbor.client.gui.LoadSavesScreen;
 import com.irtimaled.bbor.client.gui.SettingsScreen;
 import com.irtimaled.bbor.client.keyboard.Key;
 import com.irtimaled.bbor.client.keyboard.KeyListener;
@@ -19,6 +20,8 @@ public class ClientProxy extends CommonProxy {
                 .onKeyPressHandler(SettingsScreen::show);
         mainKey.register("key.keyboard.o")
                 .onKeyPressHandler(() -> ConfigManager.Toggle(ConfigManager.outerBoxesOnly));
+        mainKey.register("key.keyboard.l")
+                .onKeyPressHandler(LoadSavesScreen::show);
     }
 
     @Override
@@ -29,6 +32,7 @@ public class ClientProxy extends CommonProxy {
         EventBus.subscribe(AddBoundingBoxReceived.class, this::addBoundingBox);
         EventBus.subscribe(RemoveBoundingBoxReceived.class, this::onRemoveBoundingBoxReceived);
         EventBus.subscribe(UpdateWorldSpawnReceived.class, this::onUpdateWorldSpawnReceived);
+        EventBus.subscribe(SaveLoaded.class, e -> clear());
 
         ClientRenderer.registerProvider(new CacheProvider(this::getCache));
 
@@ -38,6 +42,10 @@ public class ClientProxy extends CommonProxy {
     private void disconnectedFromServer() {
         ClientRenderer.deactivate();
         if (ConfigManager.keepCacheBetweenSessions.get()) return;
+        clear();
+    }
+
+    private void clear() {
         SlimeChunkProvider.clear();
         WorldSpawnProvider.clear();
         SpawningSphereProvider.clear();

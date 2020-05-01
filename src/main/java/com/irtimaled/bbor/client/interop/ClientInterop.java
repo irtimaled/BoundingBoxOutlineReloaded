@@ -4,6 +4,7 @@ import com.irtimaled.bbor.client.ClientRenderer;
 import com.irtimaled.bbor.client.Player;
 import com.irtimaled.bbor.client.commands.*;
 import com.irtimaled.bbor.client.events.DisconnectedFromRemoteServer;
+import com.irtimaled.bbor.client.events.SaveLoaded;
 import com.irtimaled.bbor.client.events.UpdateWorldSpawnReceived;
 import com.irtimaled.bbor.client.providers.SlimeChunkProvider;
 import com.irtimaled.bbor.common.EventBus;
@@ -21,6 +22,7 @@ import net.minecraft.util.text.event.ClickEvent;
 
 public class ClientInterop {
     public static void disconnectedFromRemoteServer() {
+        SaveGameStructureLoader.clear();
         EventBus.publish(new DisconnectedFromRemoteServer());
     }
 
@@ -91,5 +93,26 @@ public class ClientInterop {
         BoxCommand.register(commandDispatcher);
         BeaconCommand.register(commandDispatcher);
         ConfigCommand.register(commandDispatcher);
+        StructuresCommand.register(commandDispatcher);
+    }
+
+    public static void receivedChunk(int chunkX, int chunkZ) {
+        SaveGameStructureLoader.loadStructures(chunkX, chunkZ);
+    }
+
+    public static void saveLoaded(String fileName, long seed) {
+        Minecraft minecraft = Minecraft.getInstance();
+        minecraft.displayGuiScreen(null);
+        minecraft.mouseHelper.grabMouse();
+
+        clearStructures();
+
+        SlimeChunkProvider.setSeed(seed);
+        SaveGameStructureLoader.loadSaveGame(fileName);
+    }
+
+    public static void clearStructures() {
+        EventBus.publish(new SaveLoaded());
+        SaveGameStructureLoader.clear();
     }
 }
