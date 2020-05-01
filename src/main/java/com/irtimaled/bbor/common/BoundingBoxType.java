@@ -39,7 +39,7 @@ public class BoundingBoxType {
 
     private static BoundingBoxType register(Color color, String name, Setting<Boolean> shouldRenderSetting) {
         BoundingBoxType type = structureTypeMap.computeIfAbsent(name.hashCode(), k -> new BoundingBoxType(color, name, shouldRenderSetting));
-        ChunkProcessor.registerSupportedStructure(type);
+        StructureProcessor.registerSupportedStructure(type);
         return type;
     }
 

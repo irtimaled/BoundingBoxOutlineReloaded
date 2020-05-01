@@ -19,7 +19,7 @@ public class CommonProxy {
     private final Map<Integer, ServerPlayer> players = new ConcurrentHashMap<>();
     private final Map<Integer, Set<AbstractBoundingBox>> playerBoundingBoxesCache = new HashMap<>();
     private final Map<Integer, VillageProcessor> villageProcessors = new HashMap<>();
-    private final Map<Integer, ChunkProcessor> chunkProcessors = new HashMap<>();
+    private final Map<Integer, StructureProcessor> structureProcessors = new HashMap<>();
     private final Map<Integer, BoundingBoxCache> dimensionCache = new ConcurrentHashMap<>();
     private Long seed = null;
     private Integer spawnX = null;
@@ -27,7 +27,7 @@ public class CommonProxy {
 
     public void init() {
         EventBus.subscribe(WorldLoaded.class, this::worldLoaded);
-        EventBus.subscribe(ChunkLoaded.class, this::chunkLoaded);
+        EventBus.subscribe(StructuresLoaded.class, this::structuresLoaded);
         EventBus.subscribe(PlayerLoggedIn.class, this::playerLoggedIn);
         EventBus.subscribe(PlayerLoggedOut.class, this::playerLoggedOut);
         EventBus.subscribe(PlayerSubscribed.class, this::onPlayerSubscribed);
@@ -53,16 +53,21 @@ public class CommonProxy {
             setWorldSpawn(event.getSpawnX(), event.getSpawnZ());
         }
         Logger.info("create world dimension: %s (seed: %d)", dimensionId, seed);
-        BoundingBoxCache boundingBoxCache = getOrCreateCache(dimensionId);
-        chunkProcessors.put(dimensionId, new ChunkProcessor(boundingBoxCache));
-        villageProcessors.put(dimensionId, new VillageProcessor(dimensionId, boundingBoxCache));
     }
 
-    private void chunkLoaded(ChunkLoaded event) {
-        ChunkProcessor chunkProcessor = chunkProcessors.get(event.getDimensionId());
-        if (chunkProcessor == null) return;
+    private void structuresLoaded(StructuresLoaded event) {
+        int dimensionId = event.getDimensionId();
+        StructureProcessor structureProcessor = getStructureProcessor(dimensionId);
+        structureProcessor.process(event.getStructures());
+    }
 
-        chunkProcessor.process(event.getChunk());
+    private StructureProcessor getStructureProcessor(int dimensionId) {
+        StructureProcessor structureProcessor = structureProcessors.get(dimensionId);
+        if (structureProcessor == null) {
+            structureProcessor = new StructureProcessor(getOrCreateCache(dimensionId));
+            structureProcessors.put(dimensionId, structureProcessor);
+        }
+        return structureProcessor;
     }
 
     private void playerLoggedIn(PlayerLoggedIn event) {
@@ -148,8 +153,12 @@ public class CommonProxy {
     }
 
     private void serverWorldTick(ServerWorldTick event) {
-        VillageProcessor villageProcessor = villageProcessors.get(event.getDimensionId());
-        if (villageProcessor == null) return;
+        int dimensionId = event.getDimensionId();
+        VillageProcessor villageProcessor = villageProcessors.get(dimensionId);
+        if (villageProcessor == null) {
+            villageProcessor = new VillageProcessor(dimensionId, getOrCreateCache(dimensionId));
+            villageProcessors.put(dimensionId, villageProcessor);
+        }
 
         villageProcessor.process(event.getWorld());
     }
@@ -167,6 +176,7 @@ public class CommonProxy {
             villageProcessor.clear();
         }
         villageProcessors.clear();
+        structureProcessors.clear();
         for (BoundingBoxCache cache : dimensionCache.values()) {
             cache.clear();
         }

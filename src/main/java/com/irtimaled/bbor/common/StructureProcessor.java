@@ -4,7 +4,6 @@ import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBoxCuboid;
 import com.irtimaled.bbor.common.models.Coords;
 import net.minecraft.util.math.MutableBoundingBox;
-import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.feature.structure.StructurePiece;
 import net.minecraft.world.gen.feature.structure.StructureStart;
 
@@ -12,14 +11,14 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-class ChunkProcessor {
+class StructureProcessor {
     private static final Set<BoundingBoxType> supportedStructures = new HashSet<>();
 
     static void registerSupportedStructure(BoundingBoxType type) {
         supportedStructures.add(type);
     }
 
-    ChunkProcessor(BoundingBoxCache boundingBoxCache) {
+    StructureProcessor(BoundingBoxCache boundingBoxCache) {
         this.boundingBoxCache = boundingBoxCache;
     }
 
@@ -48,10 +47,9 @@ class ChunkProcessor {
         return BoundingBoxCuboid.from(min, max, type);
     }
 
-    void process(Chunk chunk) {
-        Map<String, StructureStart> structureMap = chunk.getStructureStarts();
-        if (structureMap.size() > 0) {
-            supportedStructures.forEach(type -> addStructures(type, structureMap));
+    void process(Map<String, StructureStart> structures) {
+        if (structures.size() > 0) {
+            supportedStructures.forEach(type -> addStructures(type, structures));
         }
     }
 }

@@ -9,9 +9,11 @@ import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.gen.feature.structure.StructureStart;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Map;
 
 public class CommonInterop {
     public static void init() {
@@ -19,7 +21,9 @@ public class CommonInterop {
     }
 
     public static void chunkLoaded(Chunk chunk) {
-        EventBus.publish(new ChunkLoaded(chunk));
+        int dimensionId = chunk.getWorld().getDimension().getType().getId();
+        Map<String, StructureStart> structures = chunk.getStructureStarts();
+        if(structures.size() > 0) EventBus.publish(new StructuresLoaded(structures, dimensionId));
     }
 
     public static void loadWorlds(Collection<WorldServer> worlds) {
