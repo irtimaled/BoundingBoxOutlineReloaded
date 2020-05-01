@@ -138,4 +138,8 @@ public class ConfigManager {
     public static void Toggle(Setting<Boolean> setting) {
         setting.set(!setting.get());
     }
+
+    public static Set<Setting<?>> getSettings() {
+        return settings;
+    }
 }

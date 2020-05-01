@@ -7,13 +7,15 @@ public abstract class AbstractSetting {
 
     private final char type;
 
-    public AbstractSetting(char type) {
+    AbstractSetting(char type) {
         this.type = type;
     }
 
-    char getType() {
+    public char getType() {
         return type;
     }
+
+    public String getName() { return name; }
 
     abstract Object getValue();
 }

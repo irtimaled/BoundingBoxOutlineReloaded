@@ -2,10 +2,7 @@ package com.irtimaled.bbor.client.interop;
 
 import com.irtimaled.bbor.client.ClientRenderer;
 import com.irtimaled.bbor.client.Player;
-import com.irtimaled.bbor.client.commands.BeaconCommand;
-import com.irtimaled.bbor.client.commands.BoxCommand;
-import com.irtimaled.bbor.client.commands.SeedCommand;
-import com.irtimaled.bbor.client.commands.SpawningSphereCommand;
+import com.irtimaled.bbor.client.commands.*;
 import com.irtimaled.bbor.client.events.DisconnectedFromRemoteServer;
 import com.irtimaled.bbor.client.events.UpdateWorldSpawnReceived;
 import com.irtimaled.bbor.client.providers.SlimeChunkProvider;
@@ -93,5 +90,6 @@ public class ClientInterop {
         SpawningSphereCommand.register(commandDispatcher);
         BoxCommand.register(commandDispatcher);
         BeaconCommand.register(commandDispatcher);
+        ConfigCommand.register(commandDispatcher);
     }
 }
