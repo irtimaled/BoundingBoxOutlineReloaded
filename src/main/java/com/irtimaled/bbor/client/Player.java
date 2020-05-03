@@ -8,12 +8,16 @@ public class Player {
     private static double x;
     private static double y;
     private static double z;
+    private static float yaw;
+    private static float pitch;
     private static int dimensionId;
 
     public static void setPosition(double partialTicks, ClientPlayerEntity player) {
         x = player.lastTickPosX + (player.func_226277_ct_() - player.lastTickPosX) * partialTicks;
         y = player.lastTickPosY + (player.func_226278_cu_() - player.lastTickPosY) * partialTicks;
         z = player.lastTickPosZ + (player.func_226281_cx_() - player.lastTickPosZ) * partialTicks;
+        yaw =  player.rotationYaw % 360;
+        pitch = player.rotationPitch;
         dimensionId = player.dimension.getId();
     }
 
@@ -39,5 +43,13 @@ public class Player {
 
     public static Point getPoint() {
         return new Point(x, y, z);
+    }
+    
+    public static float getYaw() {
+        return yaw;
+    }
+    
+    public static float getPitch() {
+        return pitch;
     }
 }

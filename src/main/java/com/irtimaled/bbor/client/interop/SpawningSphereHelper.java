@@ -50,6 +50,38 @@ public class SpawningSphereHelper {
         }
         return processed;
     }
+    
+    public static int findSpawnableSpacesWithFov(Point center, Coords coords, int width, int height, float yaw, float pitch, double fov, BlockProcessor blockProcessor) {
+        ClientWorld world = Minecraft.getInstance().world;
+        
+        int blockX = coords.getX();
+        int minX = blockX - width;
+        int maxX = blockX + width;
+
+        int blockZ = coords.getZ();
+        int minZ = blockZ - width;
+        int maxZ = blockZ + width;
+
+        int blockY = coords.getY();
+        int minY = blockY - height;
+        if (minY < 1) minY = 1;
+        int maxY = blockY + height;
+        if (maxY > 255) maxY = 255;
+
+        int processed = 0;
+        for (int x = minX; x < maxX; x++) {
+            for (int z = minZ; z < maxZ; z++) {
+                if(!isWithinSpawnSphere(x, (int) Math.round(center.getY()), z, center) || !isWithinFieldOfView(blockX, blockZ, x, z, yaw, pitch, fov)) continue;// Doesn't check the biome if it's out of the sphere anyway
+                if(!isBiomeHostileSpawnable(world, new BlockPos(x, 1, z))) continue;
+                for (int y = minY; y < maxY; y++) {
+                    if (isWithinSpawnSphere(x, y, z, center) && isSpawnable(new BlockPos(x, y, z), world) && blockProcessor.process(x, y, z)) {
+                        processed++;
+                    }
+                }
+            }
+        }
+        return processed;
+    }
 
     private static boolean isBiomeHostileSpawnable(ClientWorld world, BlockPos pos){
         Biome biome = world.func_225523_d_().func_226836_a_(pos);
@@ -69,6 +101,11 @@ public class SpawningSphereHelper {
         int closestZ = Math.abs(center.getZ()-z) < Math.abs(center.getZ()-z1) ? z : z1;
         double distance = center.getDistance(new Point(closestX, closestY, closestZ));
         return distance <= BoundingBoxSpawningSphere.SPAWN_RADIUS && distance >= (BoundingBoxSpawningSphere.SAFE_RADIUS-1);
+    }
+    
+    private static boolean isWithinFieldOfView(int centerX, int centerZ, int targetX, int targetZ, float yaw, float pitch, double fov){
+        double anglediff = (yaw - Math.atan2(targetZ - centerZ, targetX - centerX) * (180.0 / Math.PI) + 630) % 360 - 180;
+        return (anglediff <= fov && anglediff >= -fov);
     }
 
     private static boolean isSpawnable(BlockPos pos, ClientWorld world) {

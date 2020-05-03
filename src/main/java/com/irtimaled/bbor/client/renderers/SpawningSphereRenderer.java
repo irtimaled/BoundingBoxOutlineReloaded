@@ -6,6 +6,8 @@ import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.models.BoundingBoxSpawningSphere;
 import com.irtimaled.bbor.config.ConfigManager;
 
+import net.minecraft.client.Minecraft;
+
 import java.awt.*;
 
 public class SpawningSphereRenderer extends AbstractRenderer<BoundingBoxSpawningSphere> {
@@ -32,10 +34,20 @@ public class SpawningSphereRenderer extends AbstractRenderer<BoundingBoxSpawning
 
     private void renderSpawnableSpaces(OffsetPoint center) {
         Integer renderDistance = ConfigManager.afkSpawnableBlocksRenderDistance.get();
-        int width = MathHelper.floor(Math.pow(2, 2 + renderDistance));
-        int height = MathHelper.floor(Math.pow(2, renderDistance));
+        int width = MathHelper.floor(Math.pow(2, 2 + renderDistance) * 3);
+        int height = MathHelper.floor(Math.pow(2, renderDistance) * 3);
+        
+        // System.out.println(String.format("Rotation: %1f %2f @ %3f", Player.getYaw(), Player.getPitch(), Minecraft.getInstance().gameSettings.fov * 0.6));
+        
+        // long timeStartNormal = java.lang.System.currentTimeMillis();
+        // SpawningSphereHelper.findSpawnableSpaces(center.getPoint(), Player.getCoords(), width, height, (x, y, z) -> true);
+        // System.out.println(String.format("Normal render in : %1d ms", Math.round(java.lang.System.currentTimeMillis() - timeStartNormal)));
 
-        SpawningSphereHelper.findSpawnableSpaces(center.getPoint(), Player.getCoords(), width, height,
+        // long timeStartFov = java.lang.System.currentTimeMillis();
+        // SpawningSphereHelper.findSpawnableSpacesWithFov(center.getPoint(), Player.getCoords(), width, height, Player.getYaw(), Player.getPitch(), Minecraft.getInstance().gameSettings.fov, (x, y, z) -> true);
+        // System.out.println(String.format("Fov render in : %1d ms", Math.round(java.lang.System.currentTimeMillis() - timeStartFov)));
+        
+        SpawningSphereHelper.findSpawnableSpacesWithFov(center.getPoint(), Player.getCoords(), width, height, Player.getYaw(), Player.getPitch(), Minecraft.getInstance().gameSettings.fov,
                 (x, y, z) -> {
                     OffsetBox offsetBox = new OffsetBox(x, y, z, x + 1, y, z + 1);
                     renderCuboid(offsetBox, Color.RED);
