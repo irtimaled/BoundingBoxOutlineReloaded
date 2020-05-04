@@ -14,6 +14,8 @@ public class BoundingBoxTypeButton extends BoolSettingButton {
 
     @Override
     protected void renderBackground(int mouseX, int mouseY) {
+        super.renderBackground(mouseX, mouseY);
+
         int left = x + 1;
         int top = y + 1;
         int right = left + width - 2;
