@@ -38,22 +38,19 @@ public class Coords {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other) {
-            return true;
-        }
-
-        Coords coords = TypeHelper.as(other, Coords.class);
-        return coords != null &&
-                this.getX() == coords.getX() &&
-                this.getY() == coords.getY() &&
-                this.getZ() == coords.getZ();
-
+    public int hashCode() {
+        return TypeHelper.combineHashCodes(z, y, x);
     }
 
     @Override
-    public int hashCode() {
-        return (this.getY() + this.getZ() * 31) * 31 + this.getX();
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Coords other = (Coords) obj;
+        return getX() == other.getX() &&
+                getY() == other.getY() &&
+                getZ() == other.getZ();
+
     }
 }
 

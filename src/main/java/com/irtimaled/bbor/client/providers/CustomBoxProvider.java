@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CustomBoxProvider implements IBoundingBoxProvider<BoundingBoxCuboid> {
-    private static Map<Integer, Map<Integer, BoundingBoxCuboid>> dimensionCache = buildDimensionCache();
+    private static final Map<Integer, Map<Integer, BoundingBoxCuboid>> dimensionCache = buildDimensionCache();
 
     private static Map<Integer, Map<Integer, BoundingBoxCuboid>> buildDimensionCache() {
         Map<Integer, Map<Integer, BoundingBoxCuboid>> map = new HashMap<>();

@@ -4,7 +4,7 @@ import net.minecraft.world.WorldServer;
 
 public class ServerWorldTick {
     private final int dimensionId;
-    private WorldServer world;
+    private final WorldServer world;
 
     public ServerWorldTick(WorldServer world) {
         this.world = world;

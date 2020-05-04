@@ -4,7 +4,7 @@ import com.irtimaled.bbor.common.models.Coords;
 import net.minecraft.network.PacketBuffer;
 
 public class PayloadReader {
-    private PacketBuffer buffer;
+    private final PacketBuffer buffer;
 
     public PayloadReader(PacketBuffer buffer) {
         this.buffer = buffer;

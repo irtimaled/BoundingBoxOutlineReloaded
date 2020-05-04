@@ -19,7 +19,7 @@ public class SpawningSphereRenderer extends AbstractRenderer<BoundingBoxSpawning
 
         Integer spawnableSpacesCount = boundingBox.getSpawnableSpacesCount();
         if (spawnableSpacesCount != null) {
-            renderText(sphereCenter, "Spawnable", spawnableSpacesCount == 0 ? "None" : String.format("%,d", (int) spawnableSpacesCount));
+            renderText(sphereCenter, "Spawnable", spawnableSpacesCount == 0 ? "None" : String.format("%,d", spawnableSpacesCount));
         }
 
         renderSphere(sphereCenter, BoundingBoxSpawningSphere.SAFE_RADIUS, Color.GREEN, 5, 5);

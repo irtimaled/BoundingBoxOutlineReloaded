@@ -59,7 +59,7 @@ public class SpawningSphereProvider implements IBoundingBoxProvider<BoundingBoxS
         return SpawningSphereHelper.findSpawnableSpaces(center, center.getCoords(), size, size, (x, y, z) -> true);
     }
 
-    private static Iterable<BoundingBoxSpawningSphere> iterable = Iterators.singleton(() -> spawningSphere);
+    private static final Iterable<BoundingBoxSpawningSphere> iterable = Iterators.singleton(() -> spawningSphere);
 
     public Iterable<BoundingBoxSpawningSphere> get(int dimensionId) {
         if(spawningSphere == null || SpawningSphereProvider.dimensionId != dimensionId) {

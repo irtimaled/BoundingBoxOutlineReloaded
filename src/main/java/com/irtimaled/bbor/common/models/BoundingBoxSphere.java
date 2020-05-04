@@ -14,7 +14,7 @@ public class BoundingBoxSphere extends AbstractBoundingBox {
     private Double centerOffsetY = 0d;
     private Double centerOffsetZ = 0d;
 
-    protected BoundingBoxSphere(BoundingBoxType type, Coords center, Integer radius) {
+    protected BoundingBoxSphere(Coords center, Integer radius, BoundingBoxType type) {
         super(type);
         this.center = center;
         this.radius = radius;
@@ -31,11 +31,6 @@ public class BoundingBoxSphere extends AbstractBoundingBox {
                 this.maxZ >= minZ &&
                 this.minX <= maxX &&
                 this.minZ <= maxZ;
-    }
-
-    @Override
-    public String toString() {
-        return "(" + center.toString() + "; " + radius.toString() + ")";
     }
 
     public Integer getRadius() {

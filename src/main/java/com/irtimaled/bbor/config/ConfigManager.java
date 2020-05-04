@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ConfigManager {
-    private static Set<Setting<?>> settings = new HashSet<>();
+    private static final Set<Setting<?>> settings = new HashSet<>();
     public static File configDir;
 
     public static Setting<Boolean> fill;

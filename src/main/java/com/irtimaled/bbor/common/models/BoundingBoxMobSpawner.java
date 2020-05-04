@@ -20,11 +20,6 @@ public class BoundingBoxMobSpawner extends BoundingBoxCuboid {
         return new BoundingBoxMobSpawner(coords, minCoords, maxCoords);
     }
 
-    @Override
-    public String toString() {
-        return "(" + coords.toString() + ")";
-    }
-
     public Coords getCoords() {
         return coords;
     }

@@ -12,8 +12,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
-    private static double TAU = 6.283185307179586D;
-    private static double PI = TAU / 2D;
+    private static final double TAU = 6.283185307179586D;
+    private static final double PI = TAU / 2D;
 
     public abstract void render(T boundingBox);
 

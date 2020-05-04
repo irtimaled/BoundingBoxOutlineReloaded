@@ -1,6 +1,7 @@
 package com.irtimaled.bbor.common.models;
 
 import com.irtimaled.bbor.common.BoundingBoxType;
+import com.irtimaled.bbor.common.TypeHelper;
 
 public class BoundingBoxCuboid extends AbstractBoundingBox {
     private final Coords minCoords;
@@ -18,28 +19,15 @@ public class BoundingBoxCuboid extends AbstractBoundingBox {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + minCoords.hashCode();
-        result = prime * result + maxCoords.hashCode();
-        return result;
+        return TypeHelper.combineHashCodes(minCoords.hashCode(), maxCoords.hashCode());
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
         BoundingBoxCuboid other = (BoundingBoxCuboid) obj;
         return minCoords.equals(other.minCoords) && maxCoords.equals(other.maxCoords);
-    }
-
-    @Override
-    public String toString() {
-        return "(" + minCoords.toString() + "; " + maxCoords.toString() + ")";
     }
 
     public Coords getMinCoords() {

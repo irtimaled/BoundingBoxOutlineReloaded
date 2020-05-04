@@ -12,7 +12,7 @@ public class WorldSpawnProvider implements IBoundingBoxProvider<BoundingBoxWorld
     private static final double CHUNK_SIZE = 16d;
     private static Set<BoundingBoxWorldSpawn> spawnChunks = new HashSet<>();
 
-    public static void setWorldSpan(int spawnX, int spawnZ) {
+    public static void setWorldSpawn(int spawnX, int spawnZ) {
         spawnChunks = getSpawnChunkBoundingBoxes(spawnX, spawnZ);
     }
 

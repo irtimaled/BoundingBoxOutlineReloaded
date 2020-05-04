@@ -25,8 +25,8 @@ public class Renderer {
         return new Renderer(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
     }
 
-    private Tessellator tessellator;
-    private BufferBuilder bufferBuilder;
+    private final Tessellator tessellator;
+    private final BufferBuilder bufferBuilder;
 
     private int red;
     private int green;

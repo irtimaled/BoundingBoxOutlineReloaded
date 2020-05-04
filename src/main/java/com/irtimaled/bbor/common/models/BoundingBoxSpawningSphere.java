@@ -9,7 +9,7 @@ public class BoundingBoxSpawningSphere extends BoundingBoxSphere {
     private Integer spawnableCount;
 
     public BoundingBoxSpawningSphere(Coords coords, double xOffset, double yOffset, double zOffset) {
-        super(BoundingBoxType.AFKSphere, coords, 128);
+        super(coords, 128, BoundingBoxType.AFKSphere);
         setCenterOffsets(xOffset, yOffset, zOffset);
     }
 

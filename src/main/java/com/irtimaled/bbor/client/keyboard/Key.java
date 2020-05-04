@@ -8,7 +8,7 @@ import java.util.Set;
 public class Key {
     private int keyCode;
     private KeyHandler onKeyPress;
-    private Set<Key> subKeys = new HashSet<>();
+    private final Set<Key> subKeys = new HashSet<>();
     private boolean triggeredSincePress;
 
     Key(int keyCode) {

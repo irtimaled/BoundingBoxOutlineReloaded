@@ -14,7 +14,7 @@ class VillageProcessor {
     private final BoundingBoxCache boundingBoxCache;
 
     private Map<Integer, BoundingBoxVillage> villageCache = new HashMap<>();
-    private int dimensionId;
+    private final int dimensionId;
 
     VillageProcessor(int dimensionId, BoundingBoxCache boundingBoxCache) {
         this.dimensionId = dimensionId;

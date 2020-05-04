@@ -21,10 +21,10 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CommonProxy {
-    private Map<Integer, ServerPlayer> players = new ConcurrentHashMap<>();
-    private Map<Integer, Set<AbstractBoundingBox>> playerBoundingBoxesCache = new HashMap<>();
-    private Map<Integer, VillageProcessor> villageProcessors = new HashMap<>();
-    private Map<Integer, AbstractChunkProcessor> chunkProcessors = new HashMap<>();
+    private final Map<Integer, ServerPlayer> players = new ConcurrentHashMap<>();
+    private final Map<Integer, Set<AbstractBoundingBox>> playerBoundingBoxesCache = new HashMap<>();
+    private final Map<Integer, VillageProcessor> villageProcessors = new HashMap<>();
+    private final Map<Integer, AbstractChunkProcessor> chunkProcessors = new HashMap<>();
     private final Map<Integer, BoundingBoxCache> dimensionCache = new ConcurrentHashMap<>();
     private Long seed = null;
     private Integer spawnX = null;

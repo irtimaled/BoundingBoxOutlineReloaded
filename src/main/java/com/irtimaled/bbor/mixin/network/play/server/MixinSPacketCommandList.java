@@ -14,8 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinSPacketCommandList {
     @Inject(method = "processPacket", at= @At("RETURN"))
     private void processPacket(INetHandlerPlayClient netHandlerPlayClient, CallbackInfo ci) {
-        TypeHelper.doIfType(netHandlerPlayClient, NetHandlerPlayClient.class, handler -> {
-            ClientInterop.registerClientCommands(handler.func_195515_i());
-        });
+        TypeHelper.doIfType(netHandlerPlayClient, NetHandlerPlayClient.class, handler ->
+                ClientInterop.registerClientCommands(handler.func_195515_i()));
     }
 }

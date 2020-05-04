@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.function.BiFunction;
 
 public class PayloadBuilder {
-    private static Map<String, ResourceLocation> packetNames = new HashMap<>();
+    private static final Map<String, ResourceLocation> packetNames = new HashMap<>();
 
     static PayloadBuilder clientBound(String name) {
         return new PayloadBuilder(packetNames.computeIfAbsent(name, ResourceLocation::new), SPacketCustomPayload::new);

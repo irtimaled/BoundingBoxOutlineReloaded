@@ -21,7 +21,7 @@ class Iterators {
                 }
             };
         }
-    };
+    }
 
     static <T extends AbstractBoundingBox> Iterable<T> empty() {
         return new Empty<>();

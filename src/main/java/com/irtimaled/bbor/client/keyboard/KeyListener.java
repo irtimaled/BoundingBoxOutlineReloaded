@@ -11,8 +11,8 @@ import java.util.Set;
 public class KeyListener {
     private static final Minecraft minecraft = Minecraft.getInstance();
     private static long mainWindowHandle;
-    private static Set<Key> keys = new HashSet<>();
-    private static Set<CustomKeyBinding> keyBindings = new HashSet<>();
+    private static final Set<Key> keys = new HashSet<>();
+    private static final Set<CustomKeyBinding> keyBindings = new HashSet<>();
     public static final String Category = "Bounding Box Outline Reloaded";
 
     public static void init() {

@@ -69,7 +69,7 @@ public class ClientProxy extends CommonProxy {
     }
 
     @Override
-    public void setSeed(long seed) {
+    protected void setSeed(long seed) {
         super.setSeed(seed);
         SlimeChunkProvider.setSeed(seed);
     }
@@ -77,6 +77,6 @@ public class ClientProxy extends CommonProxy {
     @Override
     protected void setWorldSpawn(int spawnX, int spawnZ) {
         super.setWorldSpawn(spawnX, spawnZ);
-        WorldSpawnProvider.setWorldSpan(spawnX, spawnZ);
+        WorldSpawnProvider.setWorldSpawn(spawnX, spawnZ);
     }
 }

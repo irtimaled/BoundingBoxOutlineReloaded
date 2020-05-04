@@ -7,7 +7,7 @@ import java.util.Map;
 
 class IntSettingSlider extends AbstractSlider implements IRenderableControl {
     private final String prefix;
-    private Map<Integer, String> displayValues = new HashMap<>();
+    private final Map<Integer, String> displayValues = new HashMap<>();
 
     final Setting<Integer> setting;
     final int minValue;

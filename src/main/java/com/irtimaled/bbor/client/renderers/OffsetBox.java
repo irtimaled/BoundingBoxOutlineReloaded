@@ -29,7 +29,6 @@ class OffsetBox {
         return new OffsetBox(min.offset(x, y, z), max.offset(x, y, z));
     }
 
-
     OffsetBox nudge() {
         double growXZ = 0.001F;
         if (min.getY() == max.getY()) {

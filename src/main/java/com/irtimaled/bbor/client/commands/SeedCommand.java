@@ -11,11 +11,14 @@ import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.util.text.TextComponentString;
 
 public class SeedCommand {
+    private static final String COMMAND = "bbor:seed";
+    private static final String SEED = "seed";
+
     public static void register(CommandDispatcher<ISuggestionProvider> commandDispatcher) {
-        LiteralArgumentBuilder command = Commands.literal("bbor:seed")
-                .then(Commands.argument("seed", StringArgumentType.string())
+        LiteralArgumentBuilder command = Commands.literal(COMMAND)
+                .then(Commands.argument(SEED, StringArgumentType.string())
                         .executes(context -> {
-                            String argument = StringArgumentType.getString(context, "seed");
+                            String argument = StringArgumentType.getString(context, SEED);
                             handleSeedCommand(argument);
                             return 0;
                         }))

@@ -30,7 +30,7 @@ public class VillageColorCache {
         return Color.WHITE;
     }
 
-    private static Map<Integer, Color> villageColorCache = new HashMap<>();
+    private static final Map<Integer, Color> villageColorCache = new HashMap<>();
 
     public static Color getColor(int villageId) {
         return villageColorCache.computeIfAbsent(villageId, k -> getNextColor());

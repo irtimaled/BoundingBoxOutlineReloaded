@@ -1,6 +1,7 @@
 package com.irtimaled.bbor.common.models;
 
 import com.irtimaled.bbor.common.BoundingBoxType;
+import com.irtimaled.bbor.common.TypeHelper;
 import com.irtimaled.bbor.common.VillageColorCache;
 import com.irtimaled.bbor.common.VillageHelper;
 
@@ -10,11 +11,11 @@ import java.util.Set;
 public class BoundingBoxVillage extends BoundingBoxSphere {
     private final boolean spawnsIronGolems;
     private final Color color;
-    private Set<Coords> doors;
-    private int villageHash;
+    private final Set<Coords> doors;
+    private final int villageHash;
 
     private BoundingBoxVillage(Coords center, Integer radius, Color color, boolean spawnsIronGolems, Set<Coords> doors) {
-        super(BoundingBoxType.VillageSpheres, center, radius);
+        super(center, radius, BoundingBoxType.VillageSpheres);
         this.color = color;
         this.spawnsIronGolems = spawnsIronGolems;
         this.doors = doors;
@@ -63,7 +64,7 @@ public class BoundingBoxVillage extends BoundingBoxSphere {
 
     @Override
     public int hashCode() {
-        return (super.hashCode() * 31) + villageHash;
+        return TypeHelper.combineHashCodes(super.hashCode(), villageHash);
     }
 
     public boolean getSpawnsIronGolems() {

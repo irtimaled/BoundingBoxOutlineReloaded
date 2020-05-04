@@ -18,7 +18,7 @@ public class ClientRenderer {
     private static final Map<Class<? extends AbstractBoundingBox>, AbstractRenderer> boundingBoxRendererMap = new HashMap<>();
 
     private static boolean active;
-    private static Set<IBoundingBoxProvider> providers = new HashSet<>();
+    private static final Set<IBoundingBoxProvider> providers = new HashSet<>();
 
     public static boolean getActive() {
         return active;

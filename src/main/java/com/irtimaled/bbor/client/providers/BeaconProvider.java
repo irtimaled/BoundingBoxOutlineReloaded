@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class BeaconProvider implements IBoundingBoxProvider<BoundingBoxBeacon> {
-    private static Map<Integer, Map<Coords, BoundingBoxBeacon>> dimensionsCache = buildBeaconsCache();
+    private static final Map<Integer, Map<Coords, BoundingBoxBeacon>> dimensionsCache = buildBeaconsCache();
 
     private static Map<Integer, Map<Coords, BoundingBoxBeacon>> buildBeaconsCache() {
         Map<Integer, Map<Coords, BoundingBoxBeacon>> map = new HashMap<>();

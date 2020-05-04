@@ -3,7 +3,6 @@ package com.irtimaled.bbor.config;
 import com.google.common.io.Files;
 
 import java.io.*;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
@@ -39,11 +38,11 @@ public class Configuration {
         }
     }
 
-    private Map<String, Map<String, Setting<?>>> settingsGroup = new HashMap<>();
+    private final Map<String, Map<String, Setting<?>>> settingsGroup = new HashMap<>();
 
     void load() {
         try {
-            List<String> lines = Files.readLines(file, Charset.forName("utf-8"));
+            List<String> lines = Files.readLines(file, StandardCharsets.UTF_8);
             String category = null;
             String lastCommentLine = null;
             for (String line : lines) {
@@ -95,7 +94,7 @@ public class Configuration {
         }
         Map<String, Setting<?>> settings = settingsGroup.get(category);
         Setting<?> setting = settings.get(settingName);
-        if (setting == null && category != FALLBACK_CATEGORY)
+        if (setting == null && !category.equals(FALLBACK_CATEGORY))
             setting = getFallbackSetting(settingName, settings);
         if (setting != null && setting.getType() != type) {
             setting = null;
