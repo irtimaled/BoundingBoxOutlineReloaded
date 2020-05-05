@@ -1,9 +1,9 @@
 package com.irtimaled.bbor.client.gui;
 
 import com.irtimaled.bbor.client.ClientRenderer;
+import com.irtimaled.bbor.client.interop.ClientInterop;
 import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.config.ConfigManager;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 
@@ -13,7 +13,7 @@ public class SettingsScreen extends ListScreen {
     private static final String netherFossilVersionPattern = "(?:1\\.1[6-9]|1\\.[2-9][0-9]|20w(?:1[1-9]|[2-5][0-9])|2[1-9]w).*";
 
     public static void show() {
-        Minecraft.getInstance().displayGuiScreen(new SettingsScreen(null));
+        ClientInterop.displayScreen(new SettingsScreen(null));
     }
 
     SettingsScreen(GuiScreen lastScreen) {

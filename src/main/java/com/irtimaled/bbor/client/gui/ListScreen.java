@@ -1,5 +1,6 @@
 package com.irtimaled.bbor.client.gui;
 
+import com.irtimaled.bbor.client.interop.ClientInterop;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 
@@ -20,7 +21,7 @@ public abstract class ListScreen extends GuiScreen {
     }
 
     protected void onDoneClicked() {
-        mc.displayGuiScreen(lastScreen);
+        ClientInterop.displayScreen(lastScreen);
     }
 
     @Override

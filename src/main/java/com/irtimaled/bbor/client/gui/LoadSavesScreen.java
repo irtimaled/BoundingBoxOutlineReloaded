@@ -1,7 +1,7 @@
 package com.irtimaled.bbor.client.gui;
 
+import com.irtimaled.bbor.client.interop.ClientInterop;
 import net.minecraft.client.AnvilConverterException;
-import net.minecraft.client.Minecraft;
 import net.minecraft.world.storage.ISaveFormat;
 import net.minecraft.world.storage.WorldSummary;
 
@@ -9,7 +9,7 @@ import java.util.List;
 
 public class LoadSavesScreen extends ListScreen {
     public static void show() {
-        Minecraft.getInstance().displayGuiScreen(new LoadSavesScreen());
+        ClientInterop.displayScreen(new LoadSavesScreen());
     }
 
     @Override

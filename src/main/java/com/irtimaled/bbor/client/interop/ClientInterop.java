@@ -13,6 +13,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.ISuggestionProvider;
@@ -101,9 +102,8 @@ public class ClientInterop {
     }
 
     public static void saveLoaded(String fileName, long seed) {
-        Minecraft minecraft = Minecraft.getInstance();
-        minecraft.displayGuiScreen(null);
-        minecraft.mouseHelper.grabMouse();
+        displayScreen(null);
+        Minecraft.getInstance().mouseHelper.grabMouse();
 
         clearStructures();
 
@@ -114,5 +114,9 @@ public class ClientInterop {
     public static void clearStructures() {
         EventBus.publish(new SaveLoaded());
         SaveGameStructureLoader.clear();
+    }
+
+    public static void displayScreen(GuiScreen screen) {
+        Minecraft.getInstance().displayGuiScreen(screen);
     }
 }
