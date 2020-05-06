@@ -10,6 +10,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.resources.I18n;
 import org.lwjgl.opengl.GL11;
 
 import java.util.HashSet;
@@ -59,7 +60,7 @@ public class SettingsScreen extends GuiScreen {
         }
 
         //done button
-        addControl(new AbstractButton(200, this.width / 2 - 100, getY(5.5), 200, "Done") {
+        addControl(new AbstractButton(200, this.width / 2 - 100, getY(5.5), 200, I18n.format("gui.done")) {
             @Override
             public void onPressed() {
                 ConfigManager.saveConfig();
@@ -113,10 +114,12 @@ public class SettingsScreen extends GuiScreen {
         this.title = "Bounding Box Outline Reloaded";
 
         this.controls = new HashSet<>();
-        this.addTabs("General", "Structures", "Villages");
+        this.addTabs(I18n.format("bbor.tabs.general"),
+                I18n.format("bbor.tabs.structures"),
+                I18n.format("bbor.tabs.villages"));
 
         buildTab(0,
-                (id, x, y, width) -> new AbstractButton(id, x, y, width, "Active", this.mc.world != null) {
+                (id, x, y, width) -> new AbstractButton(id, x, y, width, I18n.format("bbor.options.active"), this.mc.world != null) {
                     @Override
                     public void onPressed() {
                         ClientRenderer.toggleActive();
@@ -127,66 +130,66 @@ public class SettingsScreen extends GuiScreen {
                         return enabled ? ClientRenderer.getActive() ? 2 : 1 : 0;
                     }
                 },
-                (id, x, y, width) -> new BoolSettingButton(id, x, y, width, "Outer Box Only", ConfigManager.outerBoxesOnly),
-                (id, x, y, width) -> new BoolSettingButton(id, x, y, width, "Fill", ConfigManager.fill),
+                (id, x, y, width) -> new BoolSettingButton(id, x, y, width, I18n.format("bbor.options.outerBoxOnly"), ConfigManager.outerBoxesOnly),
+                (id, x, y, width) -> new BoolSettingButton(id, x, y, width, I18n.format("bbor.options.fill"), ConfigManager.fill),
 
-                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Spawn Chunks", BoundingBoxType.WorldSpawn),
-                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Lazy Chunks", BoundingBoxType.LazySpawnChunks),
+                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, I18n.format("bbor.features.spawnChunks"), BoundingBoxType.WorldSpawn),
+                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, I18n.format("bbor.features.lazyChunks"), BoundingBoxType.LazySpawnChunks),
                 (id, x, y, width) -> new MaxYSettingSlider(id, x, y, width, 39, ConfigManager.worldSpawnMaxY),
 
-                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Slime Chunks", BoundingBoxType.SlimeChunks),
+                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, I18n.format("bbor.features.slimeChunks"), BoundingBoxType.SlimeChunks),
                 (id, x, y, width) -> new MaxYSettingSlider(id, x, y, width, 39, ConfigManager.slimeChunkMaxY),
                 (id, x, y, width) -> (IRowHeight) () -> 0,
 
-                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Mob Spawners", BoundingBoxType.MobSpawner),
-                (id, x, y, width) -> new BoolSettingButton(id, x, y, width, "Spawn Area", ConfigManager.renderMobSpawnerSpawnArea),
-                (id, x, y, width) -> new BoolSettingButton(id, x, y, width, "Activation Lines", ConfigManager.renderMobSpawnerActivationLines),
+                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, I18n.format("bbor.features.mobSpawners"), BoundingBoxType.MobSpawner),
+                (id, x, y, width) -> new BoolSettingButton(id, x, y, width, I18n.format("bbor.features.mobSpawners.spawnArea"), ConfigManager.renderMobSpawnerSpawnArea),
+                (id, x, y, width) -> new BoolSettingButton(id, x, y, width, I18n.format("bbor.features.mobSpawners.activationLines"), ConfigManager.renderMobSpawnerActivationLines),
 
-                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Spawn Sphere", BoundingBoxType.AFKSphere),
-                (id, x, y, width) -> new BoolSettingButton(id, x, y, width, "Spawnable Blocks", ConfigManager.renderAFKSpawnableBlocks),
-                (id, x, y, width) -> new IntSettingSlider(id, x, y, width, 1, 3, "Distance", ConfigManager.afkSpawnableBlocksRenderDistance)
-                        .addDisplayValue(1, "Nearest")
-                        .addDisplayValue(2, "Nearer")
-                        .addDisplayValue(3, "Normal"),
+                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, I18n.format("bbor.features.spawningSpheres"), BoundingBoxType.AFKSphere),
+                (id, x, y, width) -> new BoolSettingButton(id, x, y, width, I18n.format("bbor.features.spawningSpheres.spawnableBlocks"), ConfigManager.renderAFKSpawnableBlocks),
+                (id, x, y, width) -> new IntSettingSlider(id, x, y, width, 1, 3, "bbor.options.distance", ConfigManager.afkSpawnableBlocksRenderDistance)
+                        .addDisplayValue(1, I18n.format("bbor.options.distance.nearest"))
+                        .addDisplayValue(2, I18n.format("bbor.options.distance.nearer"))
+                        .addDisplayValue(3, I18n.format("bbor.options.distance.normal")),
 
-                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Biome Borders", BoundingBoxType.BiomeBorder),
+                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, I18n.format("bbor.features.biomeBorders"), BoundingBoxType.BiomeBorder),
                 (id, x, y, width) -> new MaxYSettingSlider(id, x, y, width, 1, ConfigManager.biomeBordersMaxY),
-                (id, x, y, width) -> new IntSettingSlider(id, x, y, width, 1, 3, "Distance", ConfigManager.biomeBordersRenderDistance)
-                        .addDisplayValue(1, "Nearest")
-                        .addDisplayValue(2, "Nearer")
-                        .addDisplayValue(3, "Normal"));
+                (id, x, y, width) -> new IntSettingSlider(id, x, y, width, 1, 3, "bbor.options.distance", ConfigManager.biomeBordersRenderDistance)
+                        .addDisplayValue(1, I18n.format("bbor.options.distance.nearest"))
+                        .addDisplayValue(2, I18n.format("bbor.options.distance.nearer"))
+                        .addDisplayValue(3, I18n.format("bbor.options.distance.normal")));
         buildTab(1,
-                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Desert Temples", BoundingBoxType.DesertTemple),
-                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Jungle Temples", BoundingBoxType.JungleTemple),
-                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Witch Huts", BoundingBoxType.WitchHut),
+                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, I18n.format("bbor.structures.desertTemples"), BoundingBoxType.DesertTemple),
+                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, I18n.format("bbor.structures.jungleTemples"), BoundingBoxType.JungleTemple),
+                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, I18n.format("bbor.structures.witchHuts"), BoundingBoxType.WitchHut),
 
-                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Mansions", BoundingBoxType.Mansion),
-                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Monuments", BoundingBoxType.OceanMonument),
-                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Igloos", BoundingBoxType.Igloo),
+                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, I18n.format("bbor.structures.mansions"), BoundingBoxType.Mansion),
+                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, I18n.format("bbor.structures.monuments"), BoundingBoxType.OceanMonument),
+                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, I18n.format("bbor.structures.igloos"), BoundingBoxType.Igloo),
 
-                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Ocean Ruins", BoundingBoxType.OceanRuin),
-                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Buried Treasure", BoundingBoxType.BuriedTreasure),
-                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Shipwrecks", BoundingBoxType.Shipwreck),
+                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, I18n.format("bbor.structures.oceanRuins"), BoundingBoxType.OceanRuin),
+                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, I18n.format("bbor.structures.buriedTreasure"), BoundingBoxType.BuriedTreasure),
+                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, I18n.format("bbor.structures.shipwrecks"), BoundingBoxType.Shipwreck),
 
-                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Strongholds", BoundingBoxType.Stronghold),
-                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Mineshafts", BoundingBoxType.MineShaft),
-                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Pillager Outposts", BoundingBoxType.PillagerOutpost, false),
+                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, I18n.format("bbor.structures.strongholds"), BoundingBoxType.Stronghold),
+                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, I18n.format("bbor.structures.mineshafts"), BoundingBoxType.MineShaft),
+                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, I18n.format("bbor.structures.pillagerOutposts"), BoundingBoxType.PillagerOutpost, false),
 
-                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Villages", BoundingBoxType.Village),
-                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "Fortresses", BoundingBoxType.NetherFortress),
-                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, "End Cities", BoundingBoxType.EndCity));
+                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, I18n.format("bbor.structures.villages"), BoundingBoxType.Village),
+                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, I18n.format("bbor.structures.fortresses"), BoundingBoxType.NetherFortress),
+                (id, x, y, width) -> new BoundingBoxTypeButton(id, x, y, width, I18n.format("bbor.structures.endCities"), BoundingBoxType.EndCity));
         buildTab(2,
-                (id, x, y, width) -> new BoolSettingButton(id, x, y, width, "Village Spheres", ConfigManager.drawVillageSpheres),
-                (id, x, y, width) -> new BoolSettingButton(id, x, y, width, "Door Lines", ConfigManager.drawVillageDoors),
-                (id, x, y, width) -> new BoolSettingButton(id, x, y, width, "Golem Spawn", ConfigManager.drawIronGolemSpawnArea),
+                (id, x, y, width) -> new BoolSettingButton(id, x, y, width, I18n.format("bbor.features.villageSpheres"), ConfigManager.drawVillageSpheres),
+                (id, x, y, width) -> new BoolSettingButton(id, x, y, width, I18n.format("bbor.features.villageSpheres.doorLines"), ConfigManager.drawVillageDoors),
+                (id, x, y, width) -> new BoolSettingButton(id, x, y, width, I18n.format("bbor.features.villageSpheres.golemSpawn"), ConfigManager.drawIronGolemSpawnArea),
 
-                (id, x, y, width) -> new IntSettingSlider(id, x, y, width, 1, 5, "Dot Size", ConfigManager.villageSphereDotSize),
-                (id, x, y, width) -> new IntSettingSlider(id, x, y, width, 1, 5, "Density", ConfigManager.villageSphereDensity)
-                        .addDisplayValue(1, "Fewest")
-                        .addDisplayValue(2, "Fewer")
-                        .addDisplayValue(3, "Normal")
-                        .addDisplayValue(4, "More")
-                        .addDisplayValue(5, "Most"));
+                (id, x, y, width) -> new IntSettingSlider(id, x, y, width, 1, 5, "bbor.features.villageSpheres.dotSize", ConfigManager.villageSphereDotSize),
+                (id, x, y, width) -> new IntSettingSlider(id, x, y, width, 1, 5, "bbor.features.villageSpheres.density", ConfigManager.villageSphereDensity)
+                        .addDisplayValue(1, I18n.format("bbor.features.villageSpheres.density.fewest"))
+                        .addDisplayValue(2, I18n.format("bbor.features.villageSpheres.density.fewer"))
+                        .addDisplayValue(3, I18n.format("bbor.features.villageSpheres.density.normal"))
+                        .addDisplayValue(4, I18n.format("bbor.features.villageSpheres.density.more"))
+                        .addDisplayValue(5, I18n.format("bbor.features.villageSpheres.density.most")));
     }
 
     private void drawScreen(int top, int bottom) {

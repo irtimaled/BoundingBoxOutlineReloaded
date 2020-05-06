@@ -5,6 +5,7 @@ import com.irtimaled.bbor.client.interop.SpawningSphereHelper;
 import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.models.BoundingBoxSpawningSphere;
 import com.irtimaled.bbor.config.ConfigManager;
+import net.minecraft.client.resources.I18n;
 
 import java.awt.*;
 
@@ -19,7 +20,10 @@ public class SpawningSphereRenderer extends AbstractRenderer<BoundingBoxSpawning
 
         Integer spawnableSpacesCount = boundingBox.getSpawnableSpacesCount();
         if (spawnableSpacesCount != null) {
-            renderText(sphereCenter, "Spawnable", spawnableSpacesCount == 0 ? "None" : String.format("%,d", spawnableSpacesCount));
+            renderText(sphereCenter, I18n.format("bbor.renderer.spawningSphere.spawnable"),
+                    spawnableSpacesCount == 0 ?
+                            I18n.format("bbor.renderer.spawningSphere.none") :
+                            String.format("%,d", spawnableSpacesCount));
         }
 
         renderSphere(sphereCenter, BoundingBoxSpawningSphere.SAFE_RADIUS, Color.GREEN, 5, 5);

@@ -1,37 +1,11 @@
 package com.irtimaled.bbor.client.commands;
 
 import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import net.minecraft.command.CommandSource;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.event.ClickEvent;
+import net.minecraft.util.text.TextComponentTranslation;
 
 class CommandHelper {
-    static SimpleCommandExceptionType getIncompleteCommandException(String cmd, String... commands) {
-        ITextComponent textComponent = new TextComponentString("Incomplete command");
-
-        int length = commands.length;
-        if (length > 0) {
-            textComponent.appendText(" (expected ");
-            for (int idx = 0; idx < length; idx++) {
-                if (idx > 0) textComponent.appendText(", ");
-                if (idx + 1 == length) textComponent.appendText("or ");
-                String command = commands[idx];
-                String commandSuggestion = String.format("/%s %s", cmd, command);
-                ClickEvent clickEvent = new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, commandSuggestion);
-                ITextComponent suggestion = new TextComponentString(command)
-                        .applyTextStyle(TextFormatting.UNDERLINE)
-                        .applyTextStyle(style -> style.setClickEvent(clickEvent));
-                textComponent.appendSibling(suggestion);
-            }
-            textComponent.appendText(")");
-        }
-        return new SimpleCommandExceptionType(textComponent);
-    }
-
-    static void feedback(CommandContext<CommandSource> context, String feedback) {
-        context.getSource().sendFeedback(new TextComponentString(feedback), false);
+    static void feedback(CommandContext<CommandSource> context, String format, Object... values) {
+        context.getSource().sendFeedback(new TextComponentTranslation(format, values), false);
     }
 }

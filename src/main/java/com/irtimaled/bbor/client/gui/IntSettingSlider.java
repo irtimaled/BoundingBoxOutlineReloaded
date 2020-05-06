@@ -1,23 +1,24 @@
 package com.irtimaled.bbor.client.gui;
 
 import com.irtimaled.bbor.config.Setting;
+import net.minecraft.client.resources.I18n;
 
 import java.util.HashMap;
 import java.util.Map;
 
 class IntSettingSlider extends AbstractSlider implements IRenderableControl {
-    private final String prefix;
+    private final String format;
     private final Map<Integer, String> displayValues = new HashMap<>();
 
     final Setting<Integer> setting;
     final int minValue;
     final int range;
 
-    IntSettingSlider(int id, int x, int y, int width, int minValue, int maxValue, String prefix, Setting<Integer> setting) {
+    IntSettingSlider(int id, int x, int y, int width, int minValue, int maxValue, String format, Setting<Integer> setting) {
         super(id, x, y, width);
         this.setting = setting;
         this.minValue = minValue;
-        this.prefix = prefix;
+        this.format = format;
         this.range = maxValue - minValue;
         this.setProgress(getSliderValue());
         this.updateText();
@@ -33,7 +34,7 @@ class IntSettingSlider extends AbstractSlider implements IRenderableControl {
 
     private String getDisplayValue() {
         Integer value = setting.get();
-        return prefix + ": " + displayValues.getOrDefault(value, value.toString());
+        return I18n.format(format, displayValues.getOrDefault(value, value.toString()));
     }
 
     protected Integer getSettingValue() {

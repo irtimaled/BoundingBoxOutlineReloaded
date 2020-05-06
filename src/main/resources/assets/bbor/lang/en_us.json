@@ -1,0 +1,71 @@
+{
+  "bbor.key.toggleActive": "Toggle Active",
+
+  "bbor.tabs.general": "General",
+  "bbor.tabs.structures": "Structures",
+  "bbor.tabs.villages": "Villages",
+
+  "bbor.options.active": "Active",
+  "bbor.options.outerBoxOnly": "Outer Box Only",
+  "bbor.options.fill": "Fill",
+
+  "bbor.options.maxY": "Max Y: %s",
+  "bbor.options.maxY.activated": "Activated",
+  "bbor.options.maxY.player": "Player",
+  "bbor.options.maxY.seaLevel": "Sea Level",
+
+  "bbor.options.distance": "Distance: %s",
+  "bbor.options.distance.nearest": "Nearest",
+  "bbor.options.distance.nearer": "Nearer",
+  "bbor.options.distance.normal": "Normal",
+
+  "bbor.features.spawnChunks": "Spawn Chunks",
+  "bbor.features.lazyChunks": "Lazy Chunks",
+  "bbor.features.slimeChunks": "Slime Chunks",
+  "bbor.features.mobSpawners": "Mob Spawners",
+  "bbor.features.mobSpawners.spawnArea": "Spawn Area",
+  "bbor.features.mobSpawners.activationLines": "Activation Lines",
+  "bbor.features.spawningSpheres": "Spawning Spheres",
+  "bbor.features.spawningSpheres.spawnableBlocks": "Spawnable Blocks",
+  "bbor.features.biomeBorders": "Biome Borders",
+  "bbor.features.biomeBorders.onlyThisBiome": "Only This Biome",
+
+  "bbor.structures.desertTemples": "Desert Temples",
+  "bbor.structures.jungleTemples": "Jungle Temples",
+  "bbor.structures.witchHuts": "Witch Huts",
+  "bbor.structures.mansions": "Mansions",
+  "bbor.structures.monuments": "Monuments",
+  "bbor.structures.igloos": "Igloos",
+  "bbor.structures.oceanRuins": "Ocean Ruins",
+  "bbor.structures.buriedTreasure": "Buried Treasure",
+  "bbor.structures.shipwrecks": "Shipwrecks",
+  "bbor.structures.strongholds": "Strongholds",
+  "bbor.structures.mineshafts": "Mineshafts",
+  "bbor.structures.pillagerOutposts": "Pillager Outposts",
+  "bbor.structures.villages": "Villages",
+  "bbor.structures.fortresses": "Fortresses",
+
+  "bbor.features.villageSpheres": "Village Spheres",
+  "bbor.features.villageSpheres.doorLines": "Door Lines",
+  "bbor.features.villageSpheres.golemSpawn": "Golem Spawn",
+  "bbor.features.villageSpheres.dotSize": "Dot Size: %s",
+  "bbor.features.villageSpheres.density": "Density: %s",
+  "bbor.features.villageSpheres.density.fewest": "Fewest",
+  "bbor.features.villageSpheres.density.fewer": "Fewer",
+  "bbor.features.villageSpheres.density.normal": "Normal",
+  "bbor.features.villageSpheres.density.more": "More",
+  "bbor.features.villageSpheres.density.most": "Most",
+
+  "bbor.commands.box.added": "Box added with start [x=%d, y=%d, z=%d] and end [x=%d, y=%d, z=%d]",
+  "bbor.commands.box.cleared.all": "All boxes cleared",
+  "bbor.commands.box.cleared": "Box cleared with start [x=%d, y=%d, z=%d] and end [x=%d, y=%d, z=%d]",
+  "bbor.commands.box.notFound": "No box found with start [x=%d, y=%d, z=%d] and end [x=%d, y=%d, z=%d]",
+
+  "bbor.commands.spawningSphere.set": "Spawning sphere set",
+  "bbor.commands.spawningSphere.notSet": "No spawning sphere set",
+  "bbor.commands.spawningSphere.cleared": "Spawning sphere cleared",
+  "bbor.commands.spawningSphere.calculated": "Calculated %s spawnable spaces",
+
+  "bbor.renderer.spawningSphere.spawnable": "Spawnable:",
+  "bbor.renderer.spawningSphere.none": "None"
+}

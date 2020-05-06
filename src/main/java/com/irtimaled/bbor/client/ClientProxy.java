@@ -13,7 +13,7 @@ import com.irtimaled.bbor.config.ConfigManager;
 
 public class ClientProxy extends CommonProxy {
     static {
-        Key mainKey = KeyListener.register("Toggle Active", "key.keyboard.b")
+        Key mainKey = KeyListener.register("bbor.key.toggleActive", "key.keyboard.b")
                 .onKeyPressHandler(ClientRenderer::toggleActive);
         mainKey.register("key.keyboard.g")
                 .onKeyPressHandler(SettingsScreen::show);

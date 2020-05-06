@@ -4,7 +4,6 @@ import com.irtimaled.bbor.client.providers.CustomBoxProvider;
 import com.irtimaled.bbor.common.models.Coords;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import net.minecraft.command.Commands;
 import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.command.arguments.BlockPosArgument;
@@ -29,15 +28,16 @@ public class BoxCommand {
                                             Coords maxCoords = getMaxCoords(from, to);
                                             CustomBoxProvider.add(minCoords, maxCoords);
 
-                                            String feedback = getPosBasedFeedback("Box added", from, to);
-                                            CommandHelper.feedback(context, feedback);
+                                            CommandHelper.feedback(context, "bbor.commands.box.added",
+                                                    from.getX(), from.getY(), from.getZ(),
+                                                    to.getX(), to.getY(), to.getZ());
                                             return 0;
                                         }))))
                 .then(Commands.literal(CLEAR)
                         .executes(context -> {
                             CustomBoxProvider.clear();
 
-                            CommandHelper.feedback(context, "All boxes cleared");
+                            CommandHelper.feedback(context, "bbor.commands.box.cleared.all");
                             return 0;
                         })
                         .then(Commands.argument(FROM, BlockPosArgument.blockPos())
@@ -49,14 +49,12 @@ public class BoxCommand {
                                             Coords maxCoords = getMaxCoords(from, to);
                                             boolean removed = CustomBoxProvider.remove(minCoords, maxCoords);
 
-                                            String prefix = removed ? "Box cleared" : "No box found";
-                                            String feedback = getPosBasedFeedback(prefix, from, to);
-                                            CommandHelper.feedback(context, feedback);
+                                            String format = removed ? "bbor.commands.box.cleared" : "bbor.commands.box.notFound";
+                                            CommandHelper.feedback(context, format,
+                                                    from.getX(), from.getY(), from.getZ(),
+                                                    to.getX(), to.getY(), to.getZ());
                                             return 0;
-                                        }))))
-                .executes(context -> {
-                    throw INCOMPLETE_COMMAND.create();
-                });
+                                        }))));
         commandDispatcher.register(command);
     }
 
@@ -67,11 +65,4 @@ public class BoxCommand {
     private static Coords getMinCoords(BlockPos from, BlockPos to) {
         return new Coords(Math.min(from.getX(), to.getX()), Math.min(from.getY(), to.getY()), Math.min(from.getZ(), to.getZ()));
     }
-
-    private static String getPosBasedFeedback(String prefix, BlockPos from, BlockPos to) {
-        return String.format("%s with start [%d, %d, %d] and end [%d, %d, %d]", prefix, from.getX(), from.getY(), from.getZ(), to.getX(), to.getY(), to.getZ());
-    }
-
-    private static final SimpleCommandExceptionType INCOMPLETE_COMMAND =
-            CommandHelper.getIncompleteCommandException(COMMAND, ADD, CLEAR);
 }
