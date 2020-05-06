@@ -1,6 +1,8 @@
-package com.irtimaled.bbor.common.models;
+package com.irtimaled.bbor.client.models;
 
 import com.irtimaled.bbor.common.BoundingBoxType;
+import com.irtimaled.bbor.common.models.AbstractBoundingBox;
+import com.irtimaled.bbor.common.models.Coords;
 
 public class BoundingBoxBiomeBorder extends AbstractBoundingBox {
     private final Coords coords;

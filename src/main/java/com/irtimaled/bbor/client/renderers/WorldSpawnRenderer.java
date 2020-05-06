@@ -1,7 +1,7 @@
 package com.irtimaled.bbor.client.renderers;
 
 import com.irtimaled.bbor.client.Player;
-import com.irtimaled.bbor.common.models.BoundingBoxWorldSpawn;
+import com.irtimaled.bbor.client.models.BoundingBoxWorldSpawn;
 import com.irtimaled.bbor.common.models.Coords;
 import com.irtimaled.bbor.config.ConfigManager;
 

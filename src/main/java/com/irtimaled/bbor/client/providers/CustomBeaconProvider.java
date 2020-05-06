@@ -1,7 +1,7 @@
 package com.irtimaled.bbor.client.providers;
 
 import com.irtimaled.bbor.client.Player;
-import com.irtimaled.bbor.common.models.BoundingBoxBeacon;
+import com.irtimaled.bbor.client.models.BoundingBoxBeacon;
 import com.irtimaled.bbor.common.models.Coords;
 
 import java.util.HashMap;

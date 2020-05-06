@@ -1,7 +1,7 @@
 package com.irtimaled.bbor.client.renderers;
 
 import com.irtimaled.bbor.client.Player;
-import com.irtimaled.bbor.common.models.BoundingBoxSlimeChunk;
+import com.irtimaled.bbor.client.models.BoundingBoxSlimeChunk;
 import com.irtimaled.bbor.config.ConfigManager;
 
 import java.awt.*;

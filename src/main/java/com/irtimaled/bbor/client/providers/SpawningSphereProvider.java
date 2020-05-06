@@ -2,9 +2,9 @@ package com.irtimaled.bbor.client.providers;
 
 import com.irtimaled.bbor.client.Player;
 import com.irtimaled.bbor.client.interop.SpawningSphereHelper;
+import com.irtimaled.bbor.client.models.BoundingBoxSpawningSphere;
 import com.irtimaled.bbor.client.models.Point;
 import com.irtimaled.bbor.common.MathHelper;
-import com.irtimaled.bbor.common.models.BoundingBoxSpawningSphere;
 import com.irtimaled.bbor.common.models.Coords;
 
 public class SpawningSphereProvider implements IBoundingBoxProvider<BoundingBoxSpawningSphere> {

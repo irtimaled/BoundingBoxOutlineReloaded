@@ -2,10 +2,10 @@ package com.irtimaled.bbor.client.providers;
 
 import com.irtimaled.bbor.client.Player;
 import com.irtimaled.bbor.client.interop.ClientInterop;
+import com.irtimaled.bbor.client.models.BoundingBoxSlimeChunk;
 import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.Dimensions;
 import com.irtimaled.bbor.common.MathHelper;
-import com.irtimaled.bbor.common.models.BoundingBoxSlimeChunk;
 import com.irtimaled.bbor.common.models.Coords;
 
 import java.util.HashSet;

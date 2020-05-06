@@ -1,11 +1,13 @@
 package com.irtimaled.bbor.client;
 
 import com.irtimaled.bbor.client.interop.ClientInterop;
-import com.irtimaled.bbor.client.models.BoundingBoxConduit;
+import com.irtimaled.bbor.client.models.*;
 import com.irtimaled.bbor.client.providers.*;
 import com.irtimaled.bbor.client.renderers.*;
 import com.irtimaled.bbor.common.MathHelper;
-import com.irtimaled.bbor.common.models.*;
+import com.irtimaled.bbor.common.models.AbstractBoundingBox;
+import com.irtimaled.bbor.common.models.BoundingBoxCuboid;
+import com.irtimaled.bbor.common.models.BoundingBoxVillage;
 import com.irtimaled.bbor.config.ConfigManager;
 import org.lwjgl.opengl.GL11;
 

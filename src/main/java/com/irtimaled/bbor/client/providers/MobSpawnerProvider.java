@@ -1,7 +1,7 @@
 package com.irtimaled.bbor.client.providers;
 
 import com.irtimaled.bbor.client.interop.TileEntitiesHelper;
-import com.irtimaled.bbor.common.models.BoundingBoxMobSpawner;
+import com.irtimaled.bbor.client.models.BoundingBoxMobSpawner;
 import com.irtimaled.bbor.common.models.Coords;
 import net.minecraft.tileentity.TileEntityMobSpawner;
 

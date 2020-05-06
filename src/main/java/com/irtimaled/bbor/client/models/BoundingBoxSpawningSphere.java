@@ -1,6 +1,8 @@
-package com.irtimaled.bbor.common.models;
+package com.irtimaled.bbor.client.models;
 
 import com.irtimaled.bbor.common.BoundingBoxType;
+import com.irtimaled.bbor.common.models.BoundingBoxSphere;
+import com.irtimaled.bbor.common.models.Coords;
 
 public class BoundingBoxSpawningSphere extends BoundingBoxSphere {
     public static final int SAFE_RADIUS = 24;

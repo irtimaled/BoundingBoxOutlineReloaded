@@ -1,6 +1,6 @@
 package com.irtimaled.bbor.client.renderers;
 
-import com.irtimaled.bbor.common.models.BoundingBoxBeacon;
+import com.irtimaled.bbor.client.models.BoundingBoxBeacon;
 import com.irtimaled.bbor.common.models.Coords;
 
 import java.awt.*;
