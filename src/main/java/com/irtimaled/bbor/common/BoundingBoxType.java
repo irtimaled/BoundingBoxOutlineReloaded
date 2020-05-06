@@ -38,6 +38,7 @@ public class BoundingBoxType {
     public static final BoundingBoxType NetherFossil = register(Color.WHITE, "Nether_Fossil", ConfigManager.drawNetherFossils);
     public static final BoundingBoxType BastionRemnant = register(Color.LIGHT_GRAY, "Bastion_Remnant", ConfigManager.drawBastionRemnants);
     public static final BoundingBoxType RuinedPortal = register(Colors.COOL_PURPLE, "Ruined_Portal", ConfigManager.drawRuinedPortals);
+    public static final BoundingBoxType Conduit = register(Color.CYAN, "Conduit", ConfigManager.drawConduits);
     public static final BoundingBoxType Custom = register(Color.WHITE, "Custom", ConfigManager.drawCustomBoxes);
 
     private static BoundingBoxType register(Color color, String name, Setting<Boolean> shouldRenderSetting) {

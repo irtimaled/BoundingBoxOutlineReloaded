@@ -52,6 +52,8 @@ public class ConfigManager {
     public static Setting<Boolean> drawNetherFossils;
     public static Setting<Boolean> drawBastionRemnants;
     public static Setting<Boolean> drawRuinedPortals;
+    public static Setting<Boolean> drawConduits;
+    public static Setting<Boolean> renderConduitMobHarmArea;
 
     public static void loadConfig(File mcConfigDir) {
         configDir = new File(mcConfigDir, "config");
@@ -62,8 +64,13 @@ public class ConfigManager {
         outerBoxesOnly = setup(config, "general", "outerBoxesOnly", false, "If set to true only the outer bounding boxes are rendered.");
         alwaysVisible = setup(config, "general", "alwaysVisible", false, "If set to true boxes will be visible even through other blocks.");
         keepCacheBetweenSessions = setup(config, "general", "keepCacheBetweenSessions", false, "If set to true bounding box caches will be kept between sessions.");
-        drawBeacons = setup(config, "general", "drawBeacons", true, "If set to true beacon bounding boxes will be drawn.");
         drawCustomBoxes = setup(config, "general", "drawCustomBoxes", true, "If set to true custom bounding boxes will be drawn.");
+
+        drawBeacons = setup(config, "beacons", "drawBeacons", true, "If set to true beacon bounding boxes will be drawn.");
+
+        drawConduits = setup(config, "conduits", "drawConduits", true, "If set to true conduit bounding spheres will be drawn.");
+        renderConduitMobHarmArea = setup(config, "conduits", "renderConduitMobHarmArea", true, "If set to true a box to show the area where hostile mobs are harmed will be drawn");
+
         drawBiomeBorders = setup(config, "biomeBorders", "drawBiomeBorders", true, "If set to true biome borders will be drawn.");
         renderOnlyCurrentBiome = setup(config, "biomeBorders", "renderOnlyCurrentBiome", true, "If set to true only the biome border for the current biome will be drawn.");
         biomeBordersRenderDistance = setup(config, "biomeBorders", "biomeBordersRenderDistance", 3, "The distance from the player where biome borders will be drawn.");

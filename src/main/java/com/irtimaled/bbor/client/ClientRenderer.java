@@ -1,6 +1,7 @@
 package com.irtimaled.bbor.client;
 
 import com.irtimaled.bbor.client.interop.ClientInterop;
+import com.irtimaled.bbor.client.models.BoundingBoxConduit;
 import com.irtimaled.bbor.client.providers.*;
 import com.irtimaled.bbor.client.renderers.*;
 import com.irtimaled.bbor.common.MathHelper;
@@ -44,6 +45,7 @@ public class ClientRenderer {
         registerRenderer(BoundingBoxSpawningSphere.class, new SpawningSphereRenderer());
         registerRenderer(BoundingBoxBeacon.class, new BeaconRenderer());
         registerRenderer(BoundingBoxBiomeBorder.class, new BiomeBorderRenderer());
+        registerRenderer(BoundingBoxConduit.class, new ConduitRenderer());
 
         registerProvider(new SlimeChunkProvider());
         registerProvider(new WorldSpawnProvider());
@@ -53,6 +55,7 @@ public class ClientRenderer {
         registerProvider(new CustomBeaconProvider());
         registerProvider(new BiomeBorderProvider());
         registerProvider(new MobSpawnerProvider());
+        registerProvider(new ConduitProvider());
     }
 
     public static <T extends AbstractBoundingBox> void registerProvider(IBoundingBoxProvider<T> provider) {

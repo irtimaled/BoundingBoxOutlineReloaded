@@ -65,6 +65,10 @@ public class SettingsScreen extends ListScreen {
                         (x, width) -> new BoundingBoxTypeButton(width, I18n.format("bbor.features.mobSpawners"), BoundingBoxType.MobSpawner),
                         (x, width) -> new BoolSettingButton(width, I18n.format("bbor.features.mobSpawners.spawnArea"), ConfigManager.renderMobSpawnerSpawnArea),
                         (x, width) -> new BoolSettingButton(width, I18n.format("bbor.features.mobSpawners.activationLines"), ConfigManager.renderMobSpawnerActivationLines))
+                .section(I18n.format("bbor.sections.beaconsAndConduits"),
+                        (x, width) -> new BoundingBoxTypeButton(width, I18n.format("bbor.features.beacons"), BoundingBoxType.Beacon),
+                        (x, width) -> new BoundingBoxTypeButton(width, I18n.format("bbor.features.conduits"), BoundingBoxType.Conduit),
+                        (x, width) -> new BoolSettingButton(width, I18n.format("bbor.features.conduits.mobHarmArea"), ConfigManager.renderConduitMobHarmArea))
                 .section(I18n.format("bbor.features.spawningSpheres"),
                         (x, width) -> new BoundingBoxTypeButton(width, I18n.format("bbor.features.spawningSpheres"), BoundingBoxType.AFKSphere),
                         (x, width) -> new BoolSettingButton(width, I18n.format("bbor.features.spawningSpheres.spawnableBlocks"), ConfigManager.renderAFKSpawnableBlocks),

@@ -28,6 +28,11 @@
   "bbor.features.spawningSpheres.spawnableBlocks": "Spawnable Blocks",
   "bbor.features.biomeBorders": "Biome Borders",
 
+  "bbor.sections.beaconsAndConduits": "Beacons & Conduits",
+  "bbor.features.beacons": "Beacons",
+  "bbor.features.conduits": "Conduits",
+  "bbor.features.conduits.mobHarmArea": "Mob Harm Area",
+
   "bbor.structures.desertTemples": "Desert Temples",
   "bbor.structures.jungleTemples": "Jungle Temples",
   "bbor.structures.witchHuts": "Witch Huts",

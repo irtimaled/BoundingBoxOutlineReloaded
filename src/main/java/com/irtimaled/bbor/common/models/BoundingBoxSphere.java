@@ -53,7 +53,7 @@ public class BoundingBoxSphere extends AbstractBoundingBox {
         return centerOffsetZ;
     }
 
-    void setCenterOffsets(double x, double y, double z) {
+    public void setCenterOffsets(double x, double y, double z) {
         this.centerOffsetX = x;
         this.centerOffsetY = y;
         this.centerOffsetZ = z;
