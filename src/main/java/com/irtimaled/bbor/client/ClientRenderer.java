@@ -79,7 +79,7 @@ public class ClientRenderer {
     }
 
     public static void render(int dimensionId) {
-        if(!active) return;
+        if (!active) return;
 
         Set<AbstractBoundingBox> boundingBoxes = getBoundingBoxes(dimensionId);
 
@@ -93,8 +93,6 @@ public class ClientRenderer {
         }
 
         for (AbstractBoundingBox key : boundingBoxes) {
-            if (!key.shouldRender() || !isWithinRenderDistance(key)) continue;
-
             AbstractRenderer renderer = boundingBoxRendererMap.get(key.getClass());
             if (renderer == null) continue;
 
@@ -108,9 +106,13 @@ public class ClientRenderer {
 
     private static Set<AbstractBoundingBox> getBoundingBoxes(int dimensionId) {
         Set<AbstractBoundingBox> boundingBoxes = new HashSet<>();
-        for(IBoundingBoxProvider<?> provider: providers) {
-            for (AbstractBoundingBox boundingBox : provider.get(dimensionId)) {
-                boundingBoxes.add(boundingBox);
+        for (IBoundingBoxProvider<?> provider : providers) {
+            if (provider.canProvide(dimensionId)) {
+                for (AbstractBoundingBox boundingBox : provider.get(dimensionId)) {
+                    if (isWithinRenderDistance(boundingBox)) {
+                        boundingBoxes.add(boundingBox);
+                    }
+                }
             }
         }
         return boundingBoxes;

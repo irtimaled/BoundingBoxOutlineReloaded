@@ -1,6 +1,7 @@
 package com.irtimaled.bbor.client.providers;
 
 import com.irtimaled.bbor.client.Player;
+import com.irtimaled.bbor.client.config.BoundingBoxTypeHelper;
 import com.irtimaled.bbor.client.interop.BiomeBorderHelper;
 import com.irtimaled.bbor.client.models.BoundingBoxBiomeBorder;
 import com.irtimaled.bbor.common.BoundingBoxType;
@@ -18,10 +19,13 @@ public class BiomeBorderProvider implements IBoundingBoxProvider<BoundingBoxBiom
     private static Integer lastMaxY = null;
     private static Map<Coords, BoundingBoxBiomeBorder> lastBorders = new HashMap<>();
 
-    public Iterable<BoundingBoxBiomeBorder> get(int dimensionId) {
-        if (!BoundingBoxType.BiomeBorder.shouldRender())
-            return Iterators.empty();
+    @Override
+    public boolean canProvide(int dimensionId) {
+        return BoundingBoxTypeHelper.shouldRender(BoundingBoxType.BiomeBorder);
+    }
 
+    @Override
+    public Iterable<BoundingBoxBiomeBorder> get(int dimensionId) {
         Coords playerCoords = Player.getCoords();
         Integer renderDistance = ConfigManager.biomeBordersRenderDistance.get();
         Boolean renderAllTransitions = !ConfigManager.renderOnlyCurrentBiome.get();

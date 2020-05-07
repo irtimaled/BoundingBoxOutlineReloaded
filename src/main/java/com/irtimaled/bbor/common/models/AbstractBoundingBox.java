@@ -24,4 +24,8 @@ public abstract class AbstractBoundingBox {
     public String getTypeName() {
         return type.getName();
     }
+
+    public BoundingBoxType getType() {
+        return type;
+    }
 }

@@ -1,8 +1,10 @@
 package com.irtimaled.bbor.client.providers;
 
 import com.irtimaled.bbor.ReflectionHelper;
+import com.irtimaled.bbor.client.config.BoundingBoxTypeHelper;
 import com.irtimaled.bbor.client.interop.TileEntitiesHelper;
 import com.irtimaled.bbor.client.models.BoundingBoxConduit;
+import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.models.Coords;
 import net.minecraft.tileentity.TileEntityConduit;
 import net.minecraft.util.math.BlockPos;
@@ -13,6 +15,11 @@ import java.util.function.Function;
 public class ConduitProvider implements IBoundingBoxProvider<BoundingBoxConduit> {
     private static final Function<TileEntityConduit, List<BlockPos>> blocksFetcher =
             ReflectionHelper.getPrivateFieldGetter(TileEntityConduit.class, List.class, BlockPos.class);
+
+    @Override
+    public boolean canProvide(int dimensionId) {
+        return BoundingBoxTypeHelper.shouldRender(BoundingBoxType.Conduit);
+    }
 
     @Override
     public Iterable<BoundingBoxConduit> get(int dimensionId) {

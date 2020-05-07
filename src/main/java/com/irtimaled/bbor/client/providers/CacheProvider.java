@@ -2,6 +2,7 @@ package com.irtimaled.bbor.client.providers;
 
 import com.irtimaled.bbor.client.GetCache;
 import com.irtimaled.bbor.client.Player;
+import com.irtimaled.bbor.client.config.BoundingBoxTypeHelper;
 import com.irtimaled.bbor.client.interop.ClientInterop;
 import com.irtimaled.bbor.common.BoundingBoxCache;
 import com.irtimaled.bbor.common.MathHelper;
@@ -40,7 +41,7 @@ public class CacheProvider implements IBoundingBoxProvider<AbstractBoundingBox> 
         if (cache != null) {
             for (Map.Entry<AbstractBoundingBox, Set<AbstractBoundingBox>> entry : cache.getBoundingBoxes().entrySet()) {
                 AbstractBoundingBox key = entry.getKey();
-                if (key.shouldRender() && isWithinRenderDistance(key)) {
+                if (BoundingBoxTypeHelper.shouldRender(key.getType()) && isWithinRenderDistance(key)) {
                     if (!outerBoxesOnly) {
                         Set<AbstractBoundingBox> children = entry.getValue();
                         if (children != null && children.size() > 0) {

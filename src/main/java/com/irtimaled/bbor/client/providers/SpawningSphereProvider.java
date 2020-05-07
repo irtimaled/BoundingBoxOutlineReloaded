@@ -1,11 +1,16 @@
 package com.irtimaled.bbor.client.providers;
 
 import com.irtimaled.bbor.client.Player;
+import com.irtimaled.bbor.client.config.BoundingBoxTypeHelper;
 import com.irtimaled.bbor.client.interop.SpawningSphereHelper;
 import com.irtimaled.bbor.client.models.BoundingBoxSpawningSphere;
 import com.irtimaled.bbor.client.models.Point;
+import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.models.Coords;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class SpawningSphereProvider implements IBoundingBoxProvider<BoundingBoxSpawningSphere> {
     private static BoundingBoxSpawningSphere spawningSphere;
@@ -59,12 +64,15 @@ public class SpawningSphereProvider implements IBoundingBoxProvider<BoundingBoxS
         return SpawningSphereHelper.findSpawnableSpaces(center, center.getCoords(), size, size, (x, y, z) -> true);
     }
 
-    private static final Iterable<BoundingBoxSpawningSphere> iterable = Iterators.singleton(() -> spawningSphere);
+    @Override
+    public boolean canProvide(int dimensionId) {
+        return spawningSphere != null && SpawningSphereProvider.dimensionId == dimensionId && BoundingBoxTypeHelper.shouldRender(BoundingBoxType.AFKSphere);
+    }
 
+    @Override
     public Iterable<BoundingBoxSpawningSphere> get(int dimensionId) {
-        if(spawningSphere == null || SpawningSphereProvider.dimensionId != dimensionId) {
-            return Iterators.empty();
-        }
-        return iterable;
+        Set<BoundingBoxSpawningSphere> boundingBoxes = new HashSet<>();
+        boundingBoxes.add(spawningSphere);
+        return boundingBoxes;
     }
 }

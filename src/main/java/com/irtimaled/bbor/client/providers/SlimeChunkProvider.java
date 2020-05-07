@@ -1,6 +1,7 @@
 package com.irtimaled.bbor.client.providers;
 
 import com.irtimaled.bbor.client.Player;
+import com.irtimaled.bbor.client.config.BoundingBoxTypeHelper;
 import com.irtimaled.bbor.client.interop.ClientInterop;
 import com.irtimaled.bbor.client.models.BoundingBoxSlimeChunk;
 import com.irtimaled.bbor.common.BoundingBoxType;
@@ -34,11 +35,12 @@ public class SlimeChunkProvider implements IBoundingBoxProvider<BoundingBoxSlime
         seed = null;
     }
 
-    public Iterable<BoundingBoxSlimeChunk> get(int dimensionId) {
-        if (!BoundingBoxType.SlimeChunks.shouldRender() || seed == null || dimensionId != Dimensions.OVERWORLD) {
-            return Iterators.empty();
-        }
+    @Override
+    public boolean canProvide(int dimensionId) {
+        return dimensionId == Dimensions.OVERWORLD && seed != null && BoundingBoxTypeHelper.shouldRender(BoundingBoxType.SlimeChunks);
+    }
 
+    public Iterable<BoundingBoxSlimeChunk> get(int dimensionId) {
         Set<BoundingBoxSlimeChunk> slimeChunks = new HashSet<>();
         int renderDistanceChunks = ClientInterop.getRenderDistanceChunks();
         int playerChunkX = MathHelper.floor(Player.getX() / CHUNK_SIZE);

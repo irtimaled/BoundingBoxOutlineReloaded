@@ -1,5 +1,6 @@
 package com.irtimaled.bbor.client.providers;
 
+import com.irtimaled.bbor.client.config.BoundingBoxTypeHelper;
 import com.irtimaled.bbor.client.models.BoundingBoxWorldSpawn;
 import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.Dimensions;
@@ -10,22 +11,20 @@ import java.util.Set;
 
 public class WorldSpawnProvider implements IBoundingBoxProvider<BoundingBoxWorldSpawn> {
     private static final double CHUNK_SIZE = 16d;
-    private static Set<BoundingBoxWorldSpawn> spawnChunks = new HashSet<>();
+    private static BoundingBoxWorldSpawn spawnChunks;
+    private static BoundingBoxWorldSpawn lazyChunks;
+    private static BoundingBoxWorldSpawn worldSpawn;
 
     public static void setWorldSpawn(int spawnX, int spawnZ) {
-        spawnChunks = getSpawnChunkBoundingBoxes(spawnX, spawnZ);
+        worldSpawn = getWorldSpawnBoundingBox(spawnX, spawnZ);
+        spawnChunks = buildSpawnChunksBoundingBox(spawnX, spawnZ, 12, BoundingBoxType.SpawnChunks);
+        lazyChunks = buildSpawnChunksBoundingBox(spawnX, spawnZ, 16, BoundingBoxType.LazySpawnChunks);
     }
 
     public static void clear() {
-        spawnChunks = new HashSet<>();
-    }
-
-    private static Set<BoundingBoxWorldSpawn> getSpawnChunkBoundingBoxes(int spawnX, int spawnZ) {
-        Set<BoundingBoxWorldSpawn> boundingBoxes = new HashSet<>();
-        boundingBoxes.add(getWorldSpawnBoundingBox(spawnX, spawnZ));
-        boundingBoxes.add(buildSpawnChunksBoundingBox(spawnX, spawnZ, 12, BoundingBoxType.SpawnChunks));
-        boundingBoxes.add(buildSpawnChunksBoundingBox(spawnX, spawnZ, 16, BoundingBoxType.LazySpawnChunks));
-        return boundingBoxes;
+        worldSpawn = null;
+        spawnChunks = null;
+        lazyChunks = null;
     }
 
     private static BoundingBoxWorldSpawn getWorldSpawnBoundingBox(int spawnX, int spawnZ) {
@@ -50,7 +49,21 @@ public class WorldSpawnProvider implements IBoundingBoxProvider<BoundingBoxWorld
         return BoundingBoxWorldSpawn.from(minCoords, maxCoords, type);
     }
 
+    @Override
+    public boolean canProvide(int dimensionId) {
+        return dimensionId == Dimensions.OVERWORLD;
+    }
+
+    @Override
     public Iterable<BoundingBoxWorldSpawn> get(int dimensionId) {
-        return dimensionId == Dimensions.OVERWORLD ? spawnChunks : Iterators.empty();
+        Set<BoundingBoxWorldSpawn> boundingBoxes = new HashSet<>();
+        if (BoundingBoxTypeHelper.shouldRender(BoundingBoxType.WorldSpawn)) {
+            if (worldSpawn != null) boundingBoxes.add(worldSpawn);
+            if (spawnChunks != null) boundingBoxes.add(spawnChunks);
+        }
+        if (BoundingBoxTypeHelper.shouldRender(BoundingBoxType.LazySpawnChunks)) {
+            if (lazyChunks != null) boundingBoxes.add(lazyChunks);
+        }
+        return boundingBoxes;
     }
 }
