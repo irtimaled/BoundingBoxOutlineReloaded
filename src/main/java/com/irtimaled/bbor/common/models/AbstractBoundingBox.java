@@ -15,15 +15,7 @@ public abstract class AbstractBoundingBox {
         return type.getColor();
     }
 
-    public Boolean shouldRender() {
-        return type.shouldRender();
-    }
-
     public abstract Boolean intersectsBounds(int minX, int minZ, int maxX, int maxZ);
-
-    public String getTypeName() {
-        return type.getName();
-    }
 
     public BoundingBoxType getType() {
         return type;

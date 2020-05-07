@@ -44,7 +44,6 @@ public class ConfigManager {
     public static Setting<Boolean> renderAFKSpawnableBlocks;
     public static Setting<Integer> afkSpawnableBlocksRenderDistance;
     public static Setting<Boolean> drawBeacons;
-    public static Setting<Boolean> drawCustomBoxes;
     public static Setting<Boolean> drawBiomeBorders;
     public static Setting<Boolean> renderOnlyCurrentBiome;
     public static Setting<Integer> biomeBordersRenderDistance;
@@ -64,7 +63,6 @@ public class ConfigManager {
         outerBoxesOnly = setup(config, "general", "outerBoxesOnly", false, "If set to true only the outer bounding boxes are rendered.");
         alwaysVisible = setup(config, "general", "alwaysVisible", false, "If set to true boxes will be visible even through other blocks.");
         keepCacheBetweenSessions = setup(config, "general", "keepCacheBetweenSessions", false, "If set to true bounding box caches will be kept between sessions.");
-        drawCustomBoxes = setup(config, "general", "drawCustomBoxes", true, "If set to true custom bounding boxes will be drawn.");
 
         drawBeacons = setup(config, "beacons", "drawBeacons", true, "If set to true beacon bounding boxes will be drawn.");
 

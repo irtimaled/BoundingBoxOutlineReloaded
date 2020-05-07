@@ -1,5 +1,6 @@
 package com.irtimaled.bbor.client.gui;
 
+import com.irtimaled.bbor.client.config.BoundingBoxTypeHelper;
 import com.irtimaled.bbor.common.BoundingBoxType;
 
 import java.awt.*;
@@ -8,7 +9,7 @@ public class BoundingBoxTypeButton extends BoolSettingButton {
     private final Color color;
 
     BoundingBoxTypeButton(int width, String label, BoundingBoxType type) {
-        super(width, label, type.shouldRenderSetting);
+        super(width, label, BoundingBoxTypeHelper.renderSetting(type));
         color = type.getColor();
     }
 

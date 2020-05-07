@@ -41,7 +41,7 @@ class BoundingBoxSerializer {
 
     private static void serializeStructure(BoundingBoxCuboid boundingBox, PayloadBuilder builder) {
         builder.writeChar('S')
-                .writeInt(boundingBox.getTypeName().hashCode())
+                .writeInt(boundingBox.getType().hashCode())
                 .writeCoords(boundingBox.getMinCoords())
                 .writeCoords(boundingBox.getMaxCoords());
     }

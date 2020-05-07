@@ -22,7 +22,7 @@ public class BoundingBoxConduit extends BoundingBoxSphere {
 
     @Override
     public int hashCode() {
-        return TypeHelper.combineHashCodes(getTypeName().hashCode(), getCenter().hashCode());
+        return TypeHelper.combineHashCodes(getType().hashCode(), getCenter().hashCode());
     }
 
     @Override

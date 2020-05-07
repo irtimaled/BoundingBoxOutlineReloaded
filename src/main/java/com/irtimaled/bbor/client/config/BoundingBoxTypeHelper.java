@@ -46,6 +46,10 @@ public class BoundingBoxTypeHelper {
         registerType(BoundingBoxType.RuinedPortal, ConfigManager.drawRuinedPortals);
     }
 
+    public static Setting<Boolean> renderSetting(BoundingBoxType type) {
+        return structureTypeMap.get(type.getName());
+    }
+
     public static boolean shouldRender(BoundingBoxType type) {
         Setting<Boolean> setting = structureTypeMap.get(type.getName());
         return setting != null ? setting.get() : false;
