@@ -22,6 +22,7 @@ public class BoundingBoxTypeHelper {
         registerType(BoundingBoxType.BiomeBorder, ConfigManager.drawBiomeBorders);
         registerType(BoundingBoxType.Beacon, ConfigManager.drawBeacons);
         registerType(BoundingBoxType.Conduit, ConfigManager.drawConduits);
+        registerType(BoundingBoxType.SpawnableBlocks, ConfigManager.drawSpawnableBlocks);
 
         registerType(BoundingBoxType.JungleTemple, ConfigManager.drawJungleTemples);
         registerType(BoundingBoxType.DesertTemple, ConfigManager.drawDesertTemples);

@@ -53,6 +53,9 @@ public class ConfigManager {
     public static Setting<Boolean> drawRuinedPortals;
     public static Setting<Boolean> drawConduits;
     public static Setting<Boolean> renderConduitMobHarmArea;
+    public static Setting<Boolean> drawSpawnableBlocks;
+    public static Setting<Integer> spawnableBlocksRenderWidth;
+    public static Setting<Integer> spawnableBlocksRenderHeight;
 
     public static void loadConfig() {
         configDir = new File(".", "config");
@@ -113,6 +116,10 @@ public class ConfigManager {
         drawAFKSpheres = setup(config, "afkSpot", "drawAFKSpheres", true, "If set to true afk spot spheres will be drawn.");
         renderAFKSpawnableBlocks = setup(config, "afkSpot", "renderAFKSpawnableBlocks", true, "If set to true boxes to show spawnable blocks within the AFK sphere will be drawn.");
         afkSpawnableBlocksRenderDistance = setup(config, "afkSpot", "afkSpawnableBlocksRenderDistance", 3, "The distance from the player where spawnable blocks within the AFK sphere will be drawn.");
+
+        drawSpawnableBlocks = setup(config, "spawnableBlocks", "drawSpawnableBlocks", false, "If set to true boxes to show spawnable blocks will be drawn.");
+        spawnableBlocksRenderWidth = setup(config, "spawnableBlocks", "spawnableBlocksRenderWidth", 2, "The distance from the player where spawnable blocks will be drawn in X and Z axis.");
+        spawnableBlocksRenderHeight = setup(config, "spawnableBlocks", "spawnableBlocksRenderHeight", 1, "The distance from the player where spawnable blocks will be drawn in Y axis.");
 
         config.save();
     }

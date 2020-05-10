@@ -14,6 +14,10 @@ public class BoundingBoxSpawningSphere extends BoundingBoxSphere {
         super(point, SPAWN_RADIUS, BoundingBoxType.AFKSphere);
     }
 
+    public boolean isWithinSphere(Point point) {
+        return this.getPoint().getDistance(point) <= getRadius() + 0.5D;
+    }
+
     public void setSpawnableCount(int count) {
         this.spawnableCount = count;
     }

@@ -19,6 +19,7 @@ public class BoundingBoxType {
     public static final BoundingBoxType Custom = register(Color.WHITE, "Custom");
     public static final BoundingBoxType Beacon = register(Color.WHITE, "Beacon");
     public static final BoundingBoxType Conduit = register(Color.CYAN, "Conduit");
+    public static final BoundingBoxType SpawnableBlocks = register(Color.RED, "Spawnable Blocks");
 
     public static final BoundingBoxType JungleTemple = register(Colors.DARK_GREEN, "Jungle_Pyramid");
     public static final BoundingBoxType DesertTemple = register(Color.ORANGE, "Desert_Pyramid");

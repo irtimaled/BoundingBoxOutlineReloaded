@@ -17,6 +17,8 @@
   "bbor.options.distance.nearest": "Nearest",
   "bbor.options.distance.nearer": "Nearer",
   "bbor.options.distance.normal": "Normal",
+  "bbor.options.distance.y": "Distance (Y): %s",
+  "bbor.options.distance.xz": "Distance (X/Z): %s",
 
   "bbor.features.spawnChunks": "Spawn Chunks",
   "bbor.features.lazyChunks": "Lazy Chunks",
@@ -26,6 +28,7 @@
   "bbor.features.mobSpawners.activationLines": "Activation Lines",
   "bbor.features.spawningSpheres": "Spawning Spheres",
   "bbor.features.spawningSpheres.spawnableBlocks": "Spawnable Blocks",
+  "bbor.features.spawnableBlocks": "Spawnable Blocks",
   "bbor.features.biomeBorders": "Biome Borders",
 
   "bbor.sections.beaconsAndConduits": "Beacons & Conduits",

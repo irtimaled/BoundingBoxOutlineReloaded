@@ -58,9 +58,17 @@ public class SpawningSphereProvider implements IBoundingBoxProvider<BoundingBoxS
         return SpawningSphereHelper.findSpawnableSpaces(center, center.getCoords(), size, size, (x, y, z) -> true);
     }
 
+    static boolean playerInsideSphere() {
+        return spawningSphereInDimension(Player.getDimensionId()) && spawningSphere.isWithinSphere(Player.getPoint());
+    }
+
+    private static boolean spawningSphereInDimension(int dimensionId) {
+        return spawningSphere != null && SpawningSphereProvider.dimensionId == dimensionId;
+    }
+
     @Override
     public boolean canProvide(int dimensionId) {
-        return spawningSphere != null && SpawningSphereProvider.dimensionId == dimensionId && BoundingBoxTypeHelper.shouldRender(BoundingBoxType.AFKSphere);
+        return spawningSphereInDimension(dimensionId) && BoundingBoxTypeHelper.shouldRender(BoundingBoxType.AFKSphere);
     }
 
     @Override

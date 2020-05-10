@@ -69,6 +69,16 @@ public class SettingsScreen extends ListScreen {
                         (x, width) -> new BoundingBoxTypeButton(width, I18n.format("bbor.features.beacons"), BoundingBoxType.Beacon),
                         (x, width) -> new BoundingBoxTypeButton(width, I18n.format("bbor.features.conduits"), BoundingBoxType.Conduit),
                         (x, width) -> new BoolSettingButton(width, I18n.format("bbor.features.conduits.mobHarmArea"), ConfigManager.renderConduitMobHarmArea))
+                .section(I18n.format("bbor.features.spawnableBlocks"),
+                        (x, width) -> new BoundingBoxTypeButton(width, I18n.format("bbor.features.spawnableBlocks"), BoundingBoxType.SpawnableBlocks),
+                        (x, width) -> new IntSettingSlider(width, 1, 3, "bbor.options.distance.y", ConfigManager.spawnableBlocksRenderHeight)
+                                .addDisplayValue(1, "2")
+                                .addDisplayValue(2, "4")
+                                .addDisplayValue(3, "8"),
+                        (x, width) -> new IntSettingSlider(width, 1, 3, "bbor.options.distance.xz", ConfigManager.spawnableBlocksRenderWidth)
+                                .addDisplayValue(1, "8")
+                                .addDisplayValue(2, "16")
+                                .addDisplayValue(3, "32"))
                 .section(I18n.format("bbor.features.spawningSpheres"),
                         (x, width) -> new BoundingBoxTypeButton(width, I18n.format("bbor.features.spawningSpheres"), BoundingBoxType.AFKSphere),
                         (x, width) -> new BoolSettingButton(width, I18n.format("bbor.features.spawningSpheres.spawnableBlocks"), ConfigManager.renderAFKSpawnableBlocks),
