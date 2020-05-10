@@ -39,6 +39,11 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
         double maxY = max.getY();
         double maxZ = max.getZ();
 
+        if(ConfigManager.invertBoxColorPlayerInside.get() &&
+                playerInsideBoundingBox(minX, minY, minZ, maxX, maxY, maxZ)) {
+            color = new Color(255 - color.getRed(), 255 - color.getGreen(), 255 - color.getBlue());
+        }
+
         Renderer renderer = Renderer.startQuads()
                 .setColor(color)
                 .setAlpha(alpha);
@@ -84,6 +89,10 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
             }
         }
         renderer.render();
+    }
+
+    private boolean playerInsideBoundingBox(double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
+        return minX < 0 && maxX > 0 && minY < 0 && maxY > 0 && minZ < 0 && maxZ > 0;
     }
 
     void renderLine(OffsetPoint startPoint, OffsetPoint endPoint, Color color) {
