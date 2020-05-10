@@ -2,19 +2,19 @@ package com.irtimaled.bbor.client.models;
 
 import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
-import com.irtimaled.bbor.common.models.Coords;
+import net.minecraft.util.math.BlockPos;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public class BoundingBoxSpawnableBlocks extends AbstractBoundingBox {
-    private final Set<Coords> blocks = new HashSet<>();
+    private final Set<BlockPos> blocks = new HashSet<>();
 
     public BoundingBoxSpawnableBlocks() {
         super(BoundingBoxType.SpawnableBlocks);
     }
 
-    public Set<Coords> getBlocks() {
+    public Set<BlockPos> getBlocks() {
         return blocks;
     }
 

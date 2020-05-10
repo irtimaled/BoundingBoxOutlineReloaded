@@ -9,7 +9,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class SpawningSphereHelper {
-    public static int findSpawnableSpaces(Point center, Coords coords, int width, int height, BlockProcessor blockProcessor) {
+    public static void findSpawnableSpaces(Point center, Coords coords, int width, int height, BlockProcessor blockProcessor) {
         int blockX = coords.getX();
         int minX = blockX - width;
         int maxX = blockX + width + 1;
@@ -23,7 +23,6 @@ public class SpawningSphereHelper {
         int maxY = Math.min(255, blockY + height);
 
         World world = Minecraft.getInstance().world;
-        int processed = 0;
         for (int x = minX; x < maxX; x++) {
             for (int z = minZ; z < maxZ; z++) {
                 double closestX = x + 0.5D;
@@ -40,14 +39,12 @@ public class SpawningSphereHelper {
                     upperBlockState = world.getBlockState(pos);
                     distance = center.getDistance(new Point(closestX, y, closestZ));
                     if (isWithinSpawnableZone(distance) &&
-                            SpawnableBlocksHelper.isSpawnable(world, pos, spawnBlockState, upperBlockState) &&
-                            blockProcessor.process(x, y, z)) {
-                        processed++;
+                            SpawnableBlocksHelper.isSpawnable(world, pos, spawnBlockState, upperBlockState)) {
+                        blockProcessor.process(pos);
                     }
                 }
             }
         }
-        return processed;
     }
 
     private static boolean isWithinSpawnableZone(double distance) {

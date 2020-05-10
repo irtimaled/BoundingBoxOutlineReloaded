@@ -1,6 +1,8 @@
 package com.irtimaled.bbor.client.interop;
 
+import net.minecraft.util.math.BlockPos;
+
 @FunctionalInterface
 public interface BlockProcessor {
-    boolean process(int x, int y, int z);
+    void process(BlockPos blockPos);
 }

@@ -38,7 +38,7 @@ public class SpawnableBlocksHelper {
                     BlockPos pos = new BlockPos(x, y, z);
                     upperBlockState = world.getBlockState(pos);
                     if (isSpawnable(world, pos, spawnBlockState, upperBlockState)) {
-                        blockProcessor.process(x, y, z);
+                        blockProcessor.process(pos);
                     }
                 }
             }

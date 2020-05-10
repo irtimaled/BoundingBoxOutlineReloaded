@@ -7,7 +7,6 @@ import com.irtimaled.bbor.client.interop.SpawnableBlocksHelper;
 import com.irtimaled.bbor.client.models.BoundingBoxSpawnableBlocks;
 import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.MathHelper;
-import com.irtimaled.bbor.common.models.Coords;
 import net.minecraft.client.Minecraft;
 
 import java.util.HashSet;
@@ -47,13 +46,11 @@ public class SpawnableBlocksProvider implements IBoundingBoxProvider<BoundingBox
 
     private Set<BoundingBoxSpawnableBlocks> getSpawnableBlocks() {
         BoundingBoxSpawnableBlocks boundingBox = new BoundingBoxSpawnableBlocks();
-        Set<Coords> blocks = boundingBox.getBlocks();
 
         int width = MathHelper.floor(Math.pow(2, 1 + ConfigManager.spawnableBlocksRenderWidth.get()));
         int height = MathHelper.floor(Math.pow(2, ConfigManager.spawnableBlocksRenderHeight.get()));
 
-        SpawnableBlocksHelper.findSpawnableBlocks(Player.getCoords(), width, height,
-                (x, y, z) -> blocks.add(new Coords(x, y, z)));
+        SpawnableBlocksHelper.findSpawnableBlocks(Player.getCoords(), width, height, boundingBox.getBlocks()::add);
 
         Set<BoundingBoxSpawnableBlocks> boundingBoxes = new HashSet<>();
         boundingBoxes.add(boundingBox);

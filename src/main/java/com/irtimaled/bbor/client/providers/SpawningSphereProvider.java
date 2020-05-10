@@ -3,11 +3,11 @@ package com.irtimaled.bbor.client.providers;
 import com.irtimaled.bbor.client.Player;
 import com.irtimaled.bbor.client.config.BoundingBoxTypeHelper;
 import com.irtimaled.bbor.client.config.ConfigManager;
+import com.irtimaled.bbor.client.interop.BlockProcessor;
 import com.irtimaled.bbor.client.interop.SpawningSphereHelper;
 import com.irtimaled.bbor.client.models.BoundingBoxSpawningSphere;
 import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.MathHelper;
-import com.irtimaled.bbor.common.models.Coords;
 import com.irtimaled.bbor.common.models.Point;
 import net.minecraft.client.Minecraft;
 
@@ -25,9 +25,7 @@ public class SpawningSphereProvider implements IBoundingBoxProvider<BoundingBoxS
     public static void setSphere(double x, double y, double z) {
         Point point = new Point(snapToNearestHalf(x), y, snapToNearestHalf(z));
 
-        if (spawningSphere != null && spawningSphere.getPoint().equals(point)) {
-            return;
-        }
+        if (spawningSphere != null && spawningSphere.getPoint().equals(point)) return;
         clear();
 
         dimensionId = Player.getDimensionId();
@@ -43,7 +41,7 @@ public class SpawningSphereProvider implements IBoundingBoxProvider<BoundingBoxS
     }
 
     public static boolean clear() {
-        if(spawningSphere != null) {
+        if (spawningSphere != null) {
             lastBoundingBox = null;
             spawningSphere = null;
             dimensionId = null;
@@ -52,32 +50,31 @@ public class SpawningSphereProvider implements IBoundingBoxProvider<BoundingBoxS
         return false;
     }
 
-    public static int recalculateSpawnableSpacesCount() {
+    public static void calculateSpawnableSpacesCount(BlockProcessor blockProcessor) {
         if (spawningSphere != null) {
             Point sphereCenter = spawningSphere.getPoint();
-            int spawnableSpacesCount = getSpawnableSpacesCount(sphereCenter);
-            spawningSphere.setSpawnableCount(spawnableSpacesCount);
-            return spawnableSpacesCount;
+            int size = BoundingBoxSpawningSphere.SPAWN_RADIUS + 2;
+            SpawningSphereHelper.findSpawnableSpaces(sphereCenter, sphereCenter.getCoords(), size, size, blockProcessor);
         }
-        return -1;
-    }
-
-    private static int getSpawnableSpacesCount(Point center) {
-        int size = BoundingBoxSpawningSphere.SPAWN_RADIUS + 2;
-        return SpawningSphereHelper.findSpawnableSpaces(center, center.getCoords(), size, size, (x, y, z) -> true);
     }
 
     static boolean playerInsideSphere() {
-        return spawningSphereInDimension(Player.getDimensionId()) && spawningSphere.isWithinSphere(Player.getPoint());
+        return hasSpawningSphereInDimension(Player.getDimensionId()) && spawningSphere.isWithinSphere(Player.getPoint());
     }
 
-    private static boolean spawningSphereInDimension(int dimensionId) {
+    public static boolean hasSpawningSphereInDimension(int dimensionId) {
         return spawningSphere != null && SpawningSphereProvider.dimensionId == dimensionId;
+    }
+
+    public static void setSpawnableSpacesCount(int count) {
+        if (spawningSphere != null) {
+            spawningSphere.setSpawnableCount(count);
+        }
     }
 
     @Override
     public boolean canProvide(int dimensionId) {
-        return spawningSphereInDimension(dimensionId) && BoundingBoxTypeHelper.shouldRender(BoundingBoxType.AFKSphere);
+        return hasSpawningSphereInDimension(dimensionId) && BoundingBoxTypeHelper.shouldRender(BoundingBoxType.AFKSphere);
     }
 
     @Override
@@ -91,14 +88,12 @@ public class SpawningSphereProvider implements IBoundingBoxProvider<BoundingBoxS
     }
 
     private Set<BoundingBoxSpawningSphere> getSpawningSphere() {
-        Set<Coords> blocks = spawningSphere.getBlocks();
-        blocks.clear();
+        spawningSphere.getBlocks().clear();
         if (ConfigManager.renderAFKSpawnableBlocks.get()) {
             int width = MathHelper.floor(Math.pow(2, 1 + ConfigManager.spawnableBlocksRenderWidth.get()));
             int height = MathHelper.floor(Math.pow(2, ConfigManager.spawnableBlocksRenderHeight.get()));
 
-            SpawningSphereHelper.findSpawnableSpaces(spawningSphere.getPoint(), Player.getCoords(), width, height,
-                    (x, y, z) -> blocks.add(new Coords(x, y, z)));
+            SpawningSphereHelper.findSpawnableSpaces(spawningSphere.getPoint(), Player.getCoords(), width, height, spawningSphere.getBlocks()::add);
         }
         Set<BoundingBoxSpawningSphere> boundingBoxes = new HashSet<>();
         boundingBoxes.add(spawningSphere);

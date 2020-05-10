@@ -81,7 +81,7 @@
   "bbor.commands.spawningSphere.set": "Spawning sphere set",
   "bbor.commands.spawningSphere.notSet": "No spawning sphere set",
   "bbor.commands.spawningSphere.cleared": "Spawning sphere cleared",
-  "bbor.commands.spawningSphere.calculated": "Calculated %s spawnable spaces",
+  "bbor.commands.spawningSphere.calculated": "Calculated %s spawnable spaces (%s only at night)",
 
   "bbor.renderer.spawningSphere.spawnable": "Spawnable:",
   "bbor.renderer.spawningSphere.none": "None"
