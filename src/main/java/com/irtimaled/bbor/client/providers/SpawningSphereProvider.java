@@ -2,16 +2,23 @@ package com.irtimaled.bbor.client.providers;
 
 import com.irtimaled.bbor.client.Player;
 import com.irtimaled.bbor.client.config.BoundingBoxTypeHelper;
+import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.interop.SpawningSphereHelper;
 import com.irtimaled.bbor.client.models.BoundingBoxSpawningSphere;
 import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.MathHelper;
+import com.irtimaled.bbor.common.models.Coords;
 import com.irtimaled.bbor.common.models.Point;
+import net.minecraft.client.Minecraft;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public class SpawningSphereProvider implements IBoundingBoxProvider<BoundingBoxSpawningSphere> {
+    public static final Minecraft minecraft = Minecraft.getInstance();
+    private static Long lastGameTime = null;
+
+    private static Set<BoundingBoxSpawningSphere> lastBoundingBox = null;
     private static BoundingBoxSpawningSphere spawningSphere;
     private static Integer dimensionId;
 
@@ -25,6 +32,7 @@ public class SpawningSphereProvider implements IBoundingBoxProvider<BoundingBoxS
 
         dimensionId = Player.getDimensionId();
         spawningSphere = new BoundingBoxSpawningSphere(point);
+        lastBoundingBox = null;
     }
 
     private static double snapToNearestHalf(double value) {
@@ -36,6 +44,7 @@ public class SpawningSphereProvider implements IBoundingBoxProvider<BoundingBoxS
 
     public static boolean clear() {
         if(spawningSphere != null) {
+            lastBoundingBox = null;
             spawningSphere = null;
             dimensionId = null;
             return true;
@@ -73,6 +82,24 @@ public class SpawningSphereProvider implements IBoundingBoxProvider<BoundingBoxS
 
     @Override
     public Iterable<BoundingBoxSpawningSphere> get(int dimensionId) {
+        long gameTime = minecraft.world.getGameTime();
+        if (lastBoundingBox == null || (!((Long) gameTime).equals(lastGameTime) && gameTime % 2L == 0L)) {
+            lastGameTime = gameTime;
+            lastBoundingBox = getSpawningSphere();
+        }
+        return lastBoundingBox;
+    }
+
+    private Set<BoundingBoxSpawningSphere> getSpawningSphere() {
+        Set<Coords> blocks = spawningSphere.getBlocks();
+        blocks.clear();
+        if (ConfigManager.renderAFKSpawnableBlocks.get()) {
+            int width = MathHelper.floor(Math.pow(2, 1 + ConfigManager.spawnableBlocksRenderWidth.get()));
+            int height = MathHelper.floor(Math.pow(2, ConfigManager.spawnableBlocksRenderHeight.get()));
+
+            SpawningSphereHelper.findSpawnableSpaces(spawningSphere.getPoint(), Player.getCoords(), width, height,
+                    (x, y, z) -> blocks.add(new Coords(x, y, z)));
+        }
         Set<BoundingBoxSpawningSphere> boundingBoxes = new HashSet<>();
         boundingBoxes.add(spawningSphere);
         return boundingBoxes;

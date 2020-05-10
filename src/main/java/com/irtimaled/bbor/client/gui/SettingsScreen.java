@@ -81,11 +81,7 @@ public class SettingsScreen extends ListScreen {
                                 .addDisplayValue(3, "32"))
                 .section(I18n.format("bbor.features.spawningSpheres"),
                         (x, width) -> new BoundingBoxTypeButton(width, I18n.format("bbor.features.spawningSpheres"), BoundingBoxType.AFKSphere),
-                        (x, width) -> new BoolSettingButton(width, I18n.format("bbor.features.spawningSpheres.spawnableBlocks"), ConfigManager.renderAFKSpawnableBlocks),
-                        (x, width) -> new IntSettingSlider(width, 1, 3, "bbor.options.distance", ConfigManager.afkSpawnableBlocksRenderDistance)
-                                .addDisplayValue(1, I18n.format("bbor.options.distance.nearest"))
-                                .addDisplayValue(2, I18n.format("bbor.options.distance.nearer"))
-                                .addDisplayValue(3, I18n.format("bbor.options.distance.normal")))
+                        (x, width) -> new BoolSettingButton(width, I18n.format("bbor.features.spawnableBlocks"), ConfigManager.renderAFKSpawnableBlocks))
                 .section(I18n.format("bbor.tabs.structures"),
                         (x, width) -> new BoundingBoxTypeButton(width, I18n.format("bbor.structures.desertTemples"), BoundingBoxType.DesertTemple),
                         (x, width) -> new BoundingBoxTypeButton(width, I18n.format("bbor.structures.jungleTemples"), BoundingBoxType.JungleTemple),
