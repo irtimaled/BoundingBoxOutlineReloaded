@@ -2,7 +2,6 @@ package com.irtimaled.bbor.mixin.client;
 
 import com.irtimaled.bbor.client.ClientProxy;
 import com.irtimaled.bbor.client.interop.ModPackFinder;
-import com.irtimaled.bbor.common.interop.CommonInterop;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.main.GameConfiguration;
 import net.minecraft.client.resources.ResourcePackInfoClient;
@@ -21,7 +20,6 @@ public class MixinMinecraft {
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void constructor(GameConfiguration configuration, CallbackInfo ci) {
-        CommonInterop.init();
         clientProxy = new ClientProxy();
         this.resourcePackRepository.addPackFinder(new ModPackFinder());
     }

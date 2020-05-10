@@ -3,11 +3,11 @@ package com.irtimaled.bbor.client.providers;
 import com.irtimaled.bbor.client.GetCache;
 import com.irtimaled.bbor.client.Player;
 import com.irtimaled.bbor.client.config.BoundingBoxTypeHelper;
+import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.interop.ClientInterop;
 import com.irtimaled.bbor.common.BoundingBoxCache;
 import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
-import com.irtimaled.bbor.config.ConfigManager;
 
 import java.util.HashSet;
 import java.util.Map;

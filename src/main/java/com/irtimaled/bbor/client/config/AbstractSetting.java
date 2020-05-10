@@ -1,4 +1,4 @@
-package com.irtimaled.bbor.config;
+package com.irtimaled.bbor.client.config;
 
 public abstract class AbstractSetting {
     String comment;

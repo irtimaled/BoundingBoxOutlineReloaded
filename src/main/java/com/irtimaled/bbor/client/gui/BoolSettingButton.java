@@ -1,7 +1,7 @@
 package com.irtimaled.bbor.client.gui;
 
-import com.irtimaled.bbor.config.ConfigManager;
-import com.irtimaled.bbor.config.Setting;
+import com.irtimaled.bbor.client.config.ConfigManager;
+import com.irtimaled.bbor.client.config.Setting;
 
 public class BoolSettingButton extends BoolButton {
     private final Setting<Boolean> setting;

@@ -1,4 +1,4 @@
-package com.irtimaled.bbor.config;
+package com.irtimaled.bbor.client.config;
 
 import java.io.File;
 import java.util.HashSet;
@@ -6,7 +6,7 @@ import java.util.Set;
 
 public class ConfigManager {
     private static final Set<Setting<?>> settings = new HashSet<>();
-    public static File configDir;
+    private static File configDir;
 
     public static Setting<Boolean> fill;
     public static Setting<Boolean> drawVillages;
@@ -54,10 +54,10 @@ public class ConfigManager {
     public static Setting<Boolean> drawConduits;
     public static Setting<Boolean> renderConduitMobHarmArea;
 
-    public static void loadConfig(File mcConfigDir) {
-        configDir = new File(mcConfigDir, "config");
+    public static void loadConfig() {
+        configDir = new File(".", "config");
         configDir.mkdirs();
-        Configuration config = loadConfig();
+        Configuration config = loadConfiguration();
 
         fill = setup(config, "general", "fill", true, "If set to true the bounding boxes are filled.");
         outerBoxesOnly = setup(config, "general", "outerBoxesOnly", false, "If set to true only the outer bounding boxes are rendered.");
@@ -117,7 +117,7 @@ public class ConfigManager {
         config.save();
     }
 
-    private static Configuration loadConfig() {
+    private static Configuration loadConfiguration() {
         Configuration config = new Configuration(new File(configDir, "BBOutlineReloaded.cfg"));
         config.load();
         return config;

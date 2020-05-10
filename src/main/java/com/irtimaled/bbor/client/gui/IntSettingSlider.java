@@ -1,6 +1,6 @@
 package com.irtimaled.bbor.client.gui;
 
-import com.irtimaled.bbor.config.Setting;
+import com.irtimaled.bbor.client.config.Setting;
 import net.minecraft.client.resources.I18n;
 
 import java.util.HashMap;

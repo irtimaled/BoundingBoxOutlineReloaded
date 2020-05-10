@@ -1,4 +1,4 @@
-package com.irtimaled.bbor.config;
+package com.irtimaled.bbor.client.config;
 
 public class Setting<T> extends AbstractSetting {
     private T value;

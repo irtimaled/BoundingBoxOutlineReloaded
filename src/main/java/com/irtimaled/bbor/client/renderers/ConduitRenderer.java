@@ -1,9 +1,9 @@
 package com.irtimaled.bbor.client.renderers;
 
+import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.models.BoundingBoxConduit;
 import com.irtimaled.bbor.common.models.Colors;
 import com.irtimaled.bbor.common.models.Coords;
-import com.irtimaled.bbor.config.ConfigManager;
 
 import java.awt.*;
 

@@ -1,5 +1,6 @@
 package com.irtimaled.bbor.client;
 
+import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.events.*;
 import com.irtimaled.bbor.client.gui.LoadSavesScreen;
 import com.irtimaled.bbor.client.gui.SettingsScreen;
@@ -10,7 +11,6 @@ import com.irtimaled.bbor.common.BoundingBoxCache;
 import com.irtimaled.bbor.common.CommonProxy;
 import com.irtimaled.bbor.common.EventBus;
 import com.irtimaled.bbor.common.VillageColorCache;
-import com.irtimaled.bbor.config.ConfigManager;
 
 public class ClientProxy extends CommonProxy {
     static {
@@ -22,6 +22,10 @@ public class ClientProxy extends CommonProxy {
                 .onKeyPressHandler(() -> ConfigManager.Toggle(ConfigManager.outerBoxesOnly));
         mainKey.register("key.keyboard.l")
                 .onKeyPressHandler(LoadSavesScreen::show);
+    }
+
+    public ClientProxy() {
+        ConfigManager.loadConfig();
     }
 
     @Override

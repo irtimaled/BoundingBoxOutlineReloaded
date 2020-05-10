@@ -1,8 +1,8 @@
 package com.irtimaled.bbor.client.commands;
 
+import com.irtimaled.bbor.client.config.ConfigManager;
+import com.irtimaled.bbor.client.config.Setting;
 import com.irtimaled.bbor.client.gui.SettingsScreen;
-import com.irtimaled.bbor.config.ConfigManager;
-import com.irtimaled.bbor.config.Setting;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;

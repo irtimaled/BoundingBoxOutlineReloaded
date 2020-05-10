@@ -3,7 +3,6 @@ package com.irtimaled.bbor.common.interop;
 import com.irtimaled.bbor.common.EventBus;
 import com.irtimaled.bbor.common.events.*;
 import com.irtimaled.bbor.common.models.ServerPlayer;
-import com.irtimaled.bbor.config.ConfigManager;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
@@ -11,15 +10,10 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.feature.structure.StructureStart;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.Map;
 
 public class CommonInterop {
-    public static void init() {
-        ConfigManager.loadConfig(new File("."));
-    }
-
     public static void chunkLoaded(Chunk chunk) {
         int dimensionId = chunk.getWorld().getDimension().getType().getId();
         Map<String, StructureStart> structures = chunk.getStructureStarts();

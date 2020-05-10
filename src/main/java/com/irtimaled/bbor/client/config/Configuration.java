@@ -1,4 +1,4 @@
-package com.irtimaled.bbor.config;
+package com.irtimaled.bbor.client.config;
 
 import com.google.common.io.Files;
 
@@ -8,8 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Configuration {
-    public static final String FALLBACK_CATEGORY = "features";
+class Configuration {
+    private static final String FALLBACK_CATEGORY = "features";
     private final File file;
 
     Configuration(File file) {

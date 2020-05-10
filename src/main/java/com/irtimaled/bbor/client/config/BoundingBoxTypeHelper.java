@@ -1,8 +1,6 @@
 package com.irtimaled.bbor.client.config;
 
 import com.irtimaled.bbor.common.BoundingBoxType;
-import com.irtimaled.bbor.config.ConfigManager;
-import com.irtimaled.bbor.config.Setting;
 
 import java.util.HashMap;
 import java.util.Map;
