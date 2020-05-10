@@ -4,10 +4,9 @@ import com.irtimaled.bbor.client.Player;
 import com.irtimaled.bbor.client.config.BoundingBoxTypeHelper;
 import com.irtimaled.bbor.client.interop.SpawningSphereHelper;
 import com.irtimaled.bbor.client.models.BoundingBoxSpawningSphere;
-import com.irtimaled.bbor.client.models.Point;
 import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.MathHelper;
-import com.irtimaled.bbor.common.models.Coords;
+import com.irtimaled.bbor.common.models.Point;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -17,24 +16,22 @@ public class SpawningSphereProvider implements IBoundingBoxProvider<BoundingBoxS
     private static Integer dimensionId;
 
     public static void setSphere(double x, double y, double z) {
-        Coords coords = new Coords(x, y, z);
-        double xOffset = snapToNearestHalf(x -coords.getX());
-        double yOffset = y- coords.getY();
-        double zOffset = snapToNearestHalf(z-coords.getZ());
+        Point point = new Point(snapToNearestHalf(x), y, snapToNearestHalf(z));
 
-        if(spawningSphere != null && spawningSphere.isCenter(coords, xOffset, yOffset, zOffset)) {
+        if (spawningSphere != null && spawningSphere.getPoint().equals(point)) {
             return;
         }
         clear();
 
         dimensionId = Player.getDimensionId();
-        spawningSphere = new BoundingBoxSpawningSphere(coords, xOffset, yOffset, zOffset);
+        spawningSphere = new BoundingBoxSpawningSphere(point);
     }
 
     private static double snapToNearestHalf(double value) {
-        int floor = MathHelper.floor(value * 4.0);
-        if(floor % 2 == 1) floor += 1;
-        return floor / 4.0;
+        int floor = MathHelper.floor(value);
+        int fraction = MathHelper.floor((value - floor) * 4.0);
+        if (fraction % 2 == 1) fraction++;
+        return floor + (fraction / 4.0);
     }
 
     public static boolean clear() {
@@ -48,10 +45,7 @@ public class SpawningSphereProvider implements IBoundingBoxProvider<BoundingBoxS
 
     public static int recalculateSpawnableSpacesCount() {
         if (spawningSphere != null) {
-            Point sphereCenter = new Point(spawningSphere.getCenter())
-                    .offset(spawningSphere.getCenterOffsetX(),
-                            spawningSphere.getCenterOffsetY(),
-                            spawningSphere.getCenterOffsetZ());
+            Point sphereCenter = spawningSphere.getPoint();
             int spawnableSpacesCount = getSpawnableSpacesCount(sphereCenter);
             spawningSphere.setSpawnableCount(spawnableSpacesCount);
             return spawnableSpacesCount;

@@ -3,22 +3,19 @@ package com.irtimaled.bbor.common.models;
 import com.irtimaled.bbor.common.BoundingBoxType;
 
 public class BoundingBoxSphere extends AbstractBoundingBox {
-    private final Coords center;
-    private final Integer radius;
-    private final int minX;
-    private final int minZ;
-    private final int maxX;
-    private final int maxZ;
+    private final double radius;
+    private final double minX;
+    private final double minZ;
+    private final double maxX;
+    private final double maxZ;
+    private final Point point;
 
-    private Double centerOffsetX = 0d;
-    private Double centerOffsetY = 0d;
-    private Double centerOffsetZ = 0d;
-
-    protected BoundingBoxSphere(Coords center, Integer radius, BoundingBoxType type) {
+    protected BoundingBoxSphere(Point point, double radius, BoundingBoxType type) {
         super(type);
-        this.center = center;
         this.radius = radius;
+        this.point = point;
 
+        Coords center = point.getCoords();
         this.minX = center.getX() - radius;
         this.minZ = center.getZ() - radius;
         this.maxX = center.getX() + radius;
@@ -33,29 +30,11 @@ public class BoundingBoxSphere extends AbstractBoundingBox {
                 this.minZ <= maxZ;
     }
 
-    public Integer getRadius() {
+    public double getRadius() {
         return radius;
     }
 
-    public Coords getCenter() {
-        return center;
-    }
-
-    public Double getCenterOffsetX() {
-        return centerOffsetX;
-    }
-
-    public Double getCenterOffsetY() {
-        return centerOffsetY;
-    }
-
-    public Double getCenterOffsetZ() {
-        return centerOffsetZ;
-    }
-
-    public void setCenterOffsets(double x, double y, double z) {
-        this.centerOffsetX = x;
-        this.centerOffsetY = y;
-        this.centerOffsetZ = z;
+    public Point getPoint() {
+        return point;
     }
 }

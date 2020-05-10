@@ -1,6 +1,7 @@
 package com.irtimaled.bbor.client;
 
 import com.irtimaled.bbor.common.models.Coords;
+import com.irtimaled.bbor.common.models.Point;
 import net.minecraft.entity.player.EntityPlayer;
 
 public class Player {
@@ -49,5 +50,9 @@ public class Player {
 
     public static Coords getCoords() {
         return new Coords(x, y, z);
+    }
+
+    public static Point getPoint() {
+        return new Point(x, y, z);
     }
 }

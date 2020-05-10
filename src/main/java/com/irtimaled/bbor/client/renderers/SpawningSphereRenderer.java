@@ -5,6 +5,7 @@ import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.interop.SpawningSphereHelper;
 import com.irtimaled.bbor.client.models.BoundingBoxSpawningSphere;
 import com.irtimaled.bbor.common.MathHelper;
+import com.irtimaled.bbor.common.models.Point;
 import net.minecraft.client.resources.I18n;
 
 import java.awt.*;
@@ -12,8 +13,8 @@ import java.awt.*;
 public class SpawningSphereRenderer extends AbstractRenderer<BoundingBoxSpawningSphere> {
     @Override
     public void render(BoundingBoxSpawningSphere boundingBox) {
-        OffsetPoint sphereCenter = new OffsetPoint(boundingBox.getCenter())
-                .offset(boundingBox.getCenterOffsetX(), boundingBox.getCenterOffsetY(), boundingBox.getCenterOffsetZ());
+        Point point = boundingBox.getPoint();
+        OffsetPoint sphereCenter = new OffsetPoint(point);
 
         OffsetBox offsetBox = new OffsetBox(sphereCenter, sphereCenter).grow(0.5, 0, 0.5);
         renderCuboid(offsetBox, Color.GREEN);
@@ -30,16 +31,16 @@ public class SpawningSphereRenderer extends AbstractRenderer<BoundingBoxSpawning
         renderSphere(sphereCenter, BoundingBoxSpawningSphere.SPAWN_RADIUS, Color.RED, 5, 5);
 
         if(ConfigManager.renderAFKSpawnableBlocks.get()) {
-            renderSpawnableSpaces(sphereCenter);
+            renderSpawnableSpaces(point);
         }
     }
 
-    private void renderSpawnableSpaces(OffsetPoint center) {
+    private void renderSpawnableSpaces(Point center) {
         Integer renderDistance = ConfigManager.afkSpawnableBlocksRenderDistance.get();
         int width = MathHelper.floor(Math.pow(2, 2 + renderDistance));
         int height = MathHelper.floor(Math.pow(2, renderDistance));
 
-        SpawningSphereHelper.findSpawnableSpaces(center.getPoint(), Player.getCoords(), width, height,
+        SpawningSphereHelper.findSpawnableSpaces(center, Player.getCoords(), width, height,
                 (x, y, z) -> {
                     OffsetBox offsetBox = new OffsetBox(x, y, z, x + 1, y, z + 1);
                     renderCuboid(offsetBox, Color.RED);

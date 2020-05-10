@@ -21,8 +21,7 @@ public class VillageRenderer extends AbstractRenderer<BoundingBoxVillage> {
     }
 
     private void renderIronGolemSpawnArea(BoundingBoxVillage boundingBox) {
-        OffsetPoint offsetCenter = new OffsetPoint(boundingBox.getCenter())
-                .offset(boundingBox.getCenterOffsetX(), 0.0, boundingBox.getCenterOffsetZ());
+        OffsetPoint offsetCenter = new OffsetPoint(boundingBox.getPoint());
         OffsetBox bb = new OffsetBox(offsetCenter, offsetCenter)
                 .grow(8, 3, 8);
 
@@ -30,8 +29,7 @@ public class VillageRenderer extends AbstractRenderer<BoundingBoxVillage> {
     }
 
     private void renderVillageDoors(BoundingBoxVillage boundingBox) {
-        OffsetPoint center = new OffsetPoint(boundingBox.getCenter())
-                .offset(boundingBox.getCenterOffsetX(), 0.0, boundingBox.getCenterOffsetZ());
+        OffsetPoint center = new OffsetPoint(boundingBox.getPoint());
         Color color = boundingBox.getColor();
 
         GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
@@ -47,9 +45,8 @@ public class VillageRenderer extends AbstractRenderer<BoundingBoxVillage> {
     }
 
     private void renderBoundingBoxVillageAsSphere(BoundingBoxVillage boundingBox) {
-        OffsetPoint center = new OffsetPoint(boundingBox.getCenter())
-                .offset(boundingBox.getCenterOffsetX(), 0.0, boundingBox.getCenterOffsetZ());
-        int radius = boundingBox.getRadius();
+        OffsetPoint center = new OffsetPoint(boundingBox.getPoint());
+        double radius = boundingBox.getRadius();
         Color color = boundingBox.getColor();
         int density = ConfigManager.villageSphereDensity.get();
         int dotSize = ConfigManager.villageSphereDotSize.get();

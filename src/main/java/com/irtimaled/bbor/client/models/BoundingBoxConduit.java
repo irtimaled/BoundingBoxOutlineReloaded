@@ -4,13 +4,13 @@ import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.TypeHelper;
 import com.irtimaled.bbor.common.models.BoundingBoxSphere;
 import com.irtimaled.bbor.common.models.Coords;
+import com.irtimaled.bbor.common.models.Point;
 
 public class BoundingBoxConduit extends BoundingBoxSphere {
     private final int level;
 
     private BoundingBoxConduit(Coords coords, int level, int radius) {
-        super(coords, radius, BoundingBoxType.Conduit);
-        setCenterOffsets(0.5, 0.5, 0.5);
+        super(new Point(coords).offset(0.5D, 0.5D, 0.5D), radius, BoundingBoxType.Conduit);
 
         this.level = level;
     }
@@ -22,7 +22,7 @@ public class BoundingBoxConduit extends BoundingBoxSphere {
 
     @Override
     public int hashCode() {
-        return TypeHelper.combineHashCodes(getType().hashCode(), getCenter().hashCode());
+        return TypeHelper.combineHashCodes(getType().hashCode(), getPoint().hashCode());
     }
 
     @Override
@@ -30,7 +30,7 @@ public class BoundingBoxConduit extends BoundingBoxSphere {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         BoundingBoxConduit other = (BoundingBoxConduit) obj;
-        return getCenter().equals(other.getCenter());
+        return getPoint().equals(other.getPoint());
     }
 
     public int getLevel() {

@@ -2,7 +2,7 @@ package com.irtimaled.bbor.client.models;
 
 import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.models.BoundingBoxSphere;
-import com.irtimaled.bbor.common.models.Coords;
+import com.irtimaled.bbor.common.models.Point;
 
 public class BoundingBoxSpawningSphere extends BoundingBoxSphere {
     public static final int SAFE_RADIUS = 24;
@@ -10,16 +10,8 @@ public class BoundingBoxSpawningSphere extends BoundingBoxSphere {
 
     private Integer spawnableCount;
 
-    public BoundingBoxSpawningSphere(Coords coords, double xOffset, double yOffset, double zOffset) {
-        super(coords, 128, BoundingBoxType.AFKSphere);
-        setCenterOffsets(xOffset, yOffset, zOffset);
-    }
-
-    public boolean isCenter(Coords coords, double xOffset, double yOffset, double zOffset) {
-        return this.getCenter().equals(coords) &&
-                this.getCenterOffsetX() == xOffset &&
-                this.getCenterOffsetY() == yOffset &&
-                this.getCenterOffsetZ() == zOffset;
+    public BoundingBoxSpawningSphere(Point point) {
+        super(point, SPAWN_RADIUS, BoundingBoxType.AFKSphere);
     }
 
     public void setSpawnableCount(int count) {

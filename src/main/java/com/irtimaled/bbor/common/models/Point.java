@@ -1,6 +1,6 @@
-package com.irtimaled.bbor.client.models;
+package com.irtimaled.bbor.common.models;
 
-import com.irtimaled.bbor.common.models.Coords;
+import com.irtimaled.bbor.common.TypeHelper;
 
 public class Point {
     private final double x;
@@ -44,5 +44,18 @@ public class Point {
 
     public Coords getCoords() {
         return new Coords(x, y, z);
+    }
+
+    @Override
+    public int hashCode() {
+        return TypeHelper.combineHashCodes(Double.hashCode(z), Double.hashCode(y), Double.hashCode(x));
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Point point = (Point) obj;
+        return getX() == point.getX() && getY() == point.getY() && getZ() == point.getZ();
     }
 }

@@ -31,7 +31,7 @@ class BoundingBoxSerializer {
     private static void serializeVillage(BoundingBoxVillage boundingBox, PayloadBuilder builder) {
         builder.writeChar('V')
                 .writeCoords(boundingBox.getCenter())
-                .writeVarInt(boundingBox.getRadius())
+                .writeVarInt((int)boundingBox.getRadius())
                 .writeBoolean(boundingBox.getSpawnsIronGolems())
                 .writeVarInt(boundingBox.getColor().getRGB());
         for (Coords door : boundingBox.getDoors()) {

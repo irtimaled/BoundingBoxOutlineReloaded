@@ -1,8 +1,8 @@
 package com.irtimaled.bbor.client.renderers;
 
 import com.irtimaled.bbor.client.Player;
-import com.irtimaled.bbor.client.models.Point;
 import com.irtimaled.bbor.common.models.Coords;
+import com.irtimaled.bbor.common.models.Point;
 
 class OffsetPoint {
     private final Point point;
@@ -15,7 +15,7 @@ class OffsetPoint {
         this(new Point(coords));
     }
 
-    private OffsetPoint(Point point) {
+    OffsetPoint(Point point) {
         this.point = point;
     }
 
@@ -37,9 +37,5 @@ class OffsetPoint {
 
     double getDistance(OffsetPoint offsetPoint) {
         return this.point.getDistance(offsetPoint.point);
-    }
-
-    Point getPoint() {
-        return this.point;
     }
 }
