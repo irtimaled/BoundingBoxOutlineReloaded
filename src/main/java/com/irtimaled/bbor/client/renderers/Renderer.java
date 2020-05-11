@@ -13,6 +13,10 @@ public class Renderer {
         return new Renderer(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
     }
 
+    static Renderer startCircle() {
+        return new Renderer(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION_COLOR);
+    }
+
     static Renderer startQuads() {
         return new Renderer(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
     }

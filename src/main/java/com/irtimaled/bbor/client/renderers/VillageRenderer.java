@@ -3,6 +3,7 @@ package com.irtimaled.bbor.client.renderers;
 import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.common.models.BoundingBoxVillage;
 import com.irtimaled.bbor.common.models.Coords;
+import com.irtimaled.bbor.common.models.Point;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -45,12 +46,12 @@ public class VillageRenderer extends AbstractRenderer<BoundingBoxVillage> {
     }
 
     private void renderBoundingBoxVillageAsSphere(BoundingBoxVillage boundingBox) {
-        OffsetPoint center = new OffsetPoint(boundingBox.getPoint());
+        Point point = boundingBox.getPoint();
         double radius = boundingBox.getRadius();
         Color color = boundingBox.getColor();
         int density = ConfigManager.villageSphereDensity.get();
         int dotSize = ConfigManager.villageSphereDotSize.get();
 
-        renderSphere(center, radius, color, density, dotSize);
+        renderSphere(point, radius, color, density, dotSize);
     }
 }

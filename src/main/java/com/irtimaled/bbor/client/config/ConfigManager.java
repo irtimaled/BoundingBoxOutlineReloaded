@@ -57,6 +57,7 @@ public class ConfigManager {
     public static Setting<Integer> spawnableBlocksRenderWidth;
     public static Setting<Integer> spawnableBlocksRenderHeight;
     public static Setting<Boolean> invertBoxColorPlayerInside;
+    public static Setting<Boolean> renderSphereAsDots;
 
     public static void loadConfig() {
         configDir = new File(".", "config");
@@ -68,6 +69,7 @@ public class ConfigManager {
         alwaysVisible = setup(config, "general", "alwaysVisible", false, "If set to true boxes will be visible even through other blocks.");
         keepCacheBetweenSessions = setup(config, "general", "keepCacheBetweenSessions", false, "If set to true bounding box caches will be kept between sessions.");
         invertBoxColorPlayerInside = setup(config, "general", "invertBoxColorPlayerInside", false, "If set to true the color of any bounding box the player is inside will be inverted.");
+        renderSphereAsDots = setup(config, "general", "renderSphereAsDots", false, "If set to true spheres will be rendered as dots.");
 
         drawBeacons = setup(config, "beacons", "drawBeacons", true, "If set to true beacon bounding boxes will be drawn.");
 

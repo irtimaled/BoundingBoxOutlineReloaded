@@ -2,14 +2,13 @@ package com.irtimaled.bbor.client.renderers;
 
 import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
+import com.irtimaled.bbor.common.models.Point;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
-import java.util.HashSet;
-import java.util.Set;
 
 public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
     private static final double TAU = 6.283185307179586D;
@@ -142,20 +141,44 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
         GL11.glPopMatrix();
     }
 
-    void renderSphere(OffsetPoint center, double radius, Color color, int density, int dotSize) {
+    void renderSphere(Point center, double radius, Color color, int density, int dotSize) {
+        if (ConfigManager.renderSphereAsDots.get()) {
+            renderDotSphere(center, radius, color, density, dotSize);
+        } else {
+            renderLineSphere(center, radius, color, density);
+        }
+    }
+
+    private void renderLineSphere(Point center, double radius, Color color, int density) {
+        GL11.glLineWidth(2f);
+        int segments = 24 + (density * 8);
+
+        double offset = ((radius - (int) radius) == 0) ? center.getY() - (int) center.getY() : 0;
+        for (double dy = offset - radius; dy <= radius + 1; dy++) {
+            double circleRadius = Math.sqrt((radius * radius) - (dy * dy));
+            if (circleRadius == 0) circleRadius = Math.sqrt(2) / 2;
+            renderCircle(center, circleRadius, color, segments, dy + 0.001F);
+        }
+    }
+
+    private void renderCircle(Point center, double radius, Color color, int segments, double dy) {
+        Renderer renderer = Renderer.startCircle()
+                .setColor(color);
+
+        for (int a = 0; a < 360; a += 360 / segments) {
+            double heading = a * PI / 180;
+            renderer.addPoint(new OffsetPoint(center.offset(Math.cos(heading) * radius, dy, Math.sin(heading) * radius)));
+        }
+
+        renderer.render();
+    }
+
+    private void renderDotSphere(Point center, double radius, Color color, int density, int dotSize) {
         GL11.glEnable(GL11.GL_POINT_SMOOTH);
         GL11.glPointSize(dotSize);
         Renderer renderer = Renderer.startPoints()
                 .setColor(color);
-        buildPoints(center, radius, density)
-                .forEach(renderer::addPoint);
-        renderer.render();
-    }
-
-    private Set<OffsetPoint> buildPoints(OffsetPoint center, double radius, int density) {
         int segments = 24 + (density * 8);
-
-        Set<OffsetPoint> points = new HashSet<>(segments * segments);
 
         double thetaSegment = PI / (double) segments;
         double phiSegment = TAU / (double) segments;
@@ -166,9 +189,9 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
                 double dz = radius * Math.sin(phi) * Math.sin(theta);
                 double dy = radius * Math.cos(phi);
 
-                points.add(center.offset(dx, dy, dz));
+                renderer.addPoint(new OffsetPoint(center.offset(dx, dy, dz)));
             }
         }
-        return points;
+        renderer.render();
     }
 }

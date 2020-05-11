@@ -3,6 +3,7 @@ package com.irtimaled.bbor.client.renderers;
 import com.irtimaled.bbor.client.Player;
 import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.models.BoundingBoxSpawningSphere;
+import com.irtimaled.bbor.common.models.Point;
 import net.minecraft.client.resources.I18n;
 
 import java.awt.*;
@@ -10,7 +11,8 @@ import java.awt.*;
 public class SpawningSphereRenderer extends AbstractRenderer<BoundingBoxSpawningSphere> {
     @Override
     public void render(BoundingBoxSpawningSphere boundingBox) {
-        OffsetPoint sphereCenter = new OffsetPoint(boundingBox.getPoint());
+        Point point = boundingBox.getPoint();
+        OffsetPoint sphereCenter = new OffsetPoint(point);
 
         OffsetBox offsetBox = new OffsetBox(sphereCenter, sphereCenter).grow(0.5, 0, 0.5);
         renderCuboid(offsetBox, Color.GREEN);
@@ -23,8 +25,8 @@ public class SpawningSphereRenderer extends AbstractRenderer<BoundingBoxSpawning
                             String.format("%,d", spawnableSpacesCount));
         }
 
-        renderSphere(sphereCenter, BoundingBoxSpawningSphere.SAFE_RADIUS, Color.GREEN, 5, 5);
-        renderSphere(sphereCenter, BoundingBoxSpawningSphere.SPAWN_RADIUS, Color.RED, 5, 5);
+        renderSphere(point, BoundingBoxSpawningSphere.SAFE_RADIUS, Color.GREEN, 5, 5);
+        renderSphere(point, BoundingBoxSpawningSphere.SPAWN_RADIUS, Color.RED, 5, 5);
 
         if (ConfigManager.renderAFKSpawnableBlocks.get() && boundingBox.isWithinSphere(Player.getPoint())) {
             renderSpawnableSpaces(boundingBox);

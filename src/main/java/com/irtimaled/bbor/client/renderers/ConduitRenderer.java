@@ -21,7 +21,7 @@ public class ConduitRenderer extends AbstractRenderer<BoundingBoxConduit> {
             renderCuboid(centerBox.grow(8, 8, 8), Colors.DARK_ORANGE);
         }
         if (level != 0) {
-            renderSphere(center, boundingBox.getRadius() + 0.5, color, 5, 5);
+            renderSphere(point, boundingBox.getRadius() + 0.5, color, 5, 5);
         }
     }
 }
