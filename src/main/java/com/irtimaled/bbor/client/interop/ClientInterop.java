@@ -91,8 +91,7 @@ public class ClientInterop {
     public static void registerClientCommands(CommandDispatcher<ISuggestionProvider> commandDispatcher) {
         SeedCommand.register(commandDispatcher);
         SpawningSphereCommand.register(commandDispatcher);
-        BoxCommand.register(commandDispatcher);
-        BeaconCommand.register(commandDispatcher);
+        CustomCommand.register(commandDispatcher);
         ConfigCommand.register(commandDispatcher);
         StructuresCommand.register(commandDispatcher);
     }

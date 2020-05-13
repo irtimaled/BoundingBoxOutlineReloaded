@@ -65,6 +65,8 @@
   "bbor.features.villageSpheres.density.more": "More",
   "bbor.features.villageSpheres.density.most": "Most",
 
+  "bbor.commands.custom.cleared.all": "All custom boxes cleared",
+
   "bbor.commands.beacon.added": "Custom beacon added at [x=%d, y=%d, z=%d] with level %d",
   "bbor.commands.beacon.cleared.all": "All custom beacons cleared",
   "bbor.commands.beacon.cleared": "Custom beacon cleared at [x=%d, y=%d, z=%d]",

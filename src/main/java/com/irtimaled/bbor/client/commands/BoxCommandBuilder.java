@@ -2,18 +2,15 @@ package com.irtimaled.bbor.client.commands;
 
 import com.irtimaled.bbor.client.providers.CustomBoxProvider;
 import com.irtimaled.bbor.common.models.Coords;
-import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
-import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.command.arguments.BlockPosArgument;
 import net.minecraft.util.math.BlockPos;
 
-public class BoxCommand {
-    private static final String COMMAND = "bbor:box";
-
-    public static void register(CommandDispatcher<ISuggestionProvider> commandDispatcher) {
-        LiteralArgumentBuilder command = Commands.literal(COMMAND)
+class BoxCommandBuilder {
+    static LiteralArgumentBuilder<CommandSource> build(String command) {
+        return Commands.literal(command)
                 .then(Commands.literal(ArgumentNames.ADD)
                         .then(Commands.argument(ArgumentNames.FROM, BlockPosArgument.blockPos())
                                 .then(Commands.argument(ArgumentNames.TO, BlockPosArgument.blockPos())
@@ -51,7 +48,6 @@ public class BoxCommand {
                                                     to.getX(), to.getY(), to.getZ());
                                             return 0;
                                         }))));
-        commandDispatcher.register(command);
     }
 
     private static Coords getMaxCoords(BlockPos from, BlockPos to) {

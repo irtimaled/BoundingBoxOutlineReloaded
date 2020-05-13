@@ -2,7 +2,6 @@ package com.irtimaled.bbor.client.commands;
 
 import com.irtimaled.bbor.client.providers.CustomBeaconProvider;
 import com.irtimaled.bbor.common.models.Coords;
-import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -10,16 +9,14 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
-import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.command.arguments.BlockPosArgument;
 import net.minecraft.util.math.BlockPos;
 
-public class BeaconCommand {
-    private static final String COMMAND = "bbor:beacon";
+class BeaconCommandBuilder {
     private static final String LEVEL = "level";
 
-    public static void register(CommandDispatcher<ISuggestionProvider> commandDispatcher) {
-        LiteralArgumentBuilder command = Commands.literal(COMMAND)
+    static LiteralArgumentBuilder<CommandSource> build(String command) {
+        return Commands.literal(command)
                 .then(Commands.literal(ArgumentNames.ADD)
                         .then(Commands.argument(LEVEL, IntegerArgumentType.integer())
                                 .executes(context -> {
@@ -52,7 +49,6 @@ public class BeaconCommand {
                                     CommandHelper.feedback(context, format, pos.getX(), pos.getY(), pos.getZ());
                                     return 0;
                                 })));
-        commandDispatcher.register(command);
     }
 
     private static void addBeacon(CommandContext<CommandSource> context, BlockPos pos, int level) throws CommandSyntaxException {
@@ -66,4 +62,3 @@ public class BeaconCommand {
         CommandHelper.feedback(context, "bbor.commands.beacon.added", pos.getX(), pos.getY(), pos.getZ(), level);
     }
 }
-
