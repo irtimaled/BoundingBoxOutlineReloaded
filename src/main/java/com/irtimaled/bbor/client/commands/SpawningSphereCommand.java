@@ -4,11 +4,12 @@ import com.irtimaled.bbor.client.Player;
 import com.irtimaled.bbor.client.providers.SpawningSphereProvider;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.client.Minecraft;
+import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.ISuggestionProvider;
-import net.minecraft.command.arguments.Vec3Argument;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.EnumLightType;
 import net.minecraft.world.World;
 
@@ -19,21 +20,9 @@ public class SpawningSphereCommand {
     public static void register(CommandDispatcher<ISuggestionProvider> commandDispatcher) {
         LiteralArgumentBuilder command = Commands.literal(COMMAND)
                 .then(Commands.literal(ArgumentNames.SET)
-                        .then(Commands.argument(ArgumentNames.POS, Vec3Argument.vec3())
-                                .executes(context -> {
-                                    Vec3d pos = Vec3Argument.getVec3(context, ArgumentNames.POS);
-                                    SpawningSphereProvider.setSphere(pos.x, pos.y, pos.z);
-
-                                    CommandHelper.feedback(context, "bbor.commands.spawningSphere.set");
-                                    return 0;
-                                }))
-                        .executes(context -> {
-                            Vec3d pos = context.getSource().getPos();
-                            SpawningSphereProvider.setSphere(pos.x, pos.y, pos.z);
-
-                            CommandHelper.feedback(context, "bbor.commands.spawningSphere.set");
-                            return 0;
-                        }))
+                        .then(Commands.argument(ArgumentNames.POS, Arguments.point())
+                                .executes(SpawningSphereCommand::setSphere))
+                        .executes(SpawningSphereCommand::setSphere))
                 .then(Commands.literal(ArgumentNames.CLEAR)
                         .executes(context -> {
                             boolean cleared = SpawningSphereProvider.clear();
@@ -64,6 +53,13 @@ public class SpawningSphereCommand {
                             return 0;
                         }));
         commandDispatcher.register(command);
+    }
+
+    public static int setSphere(CommandContext<CommandSource> context) throws CommandSyntaxException {
+        SpawningSphereProvider.setSphere(Arguments.getPoint(context, ArgumentNames.POS).snapXZ(0.5d));
+
+        CommandHelper.feedback(context, "bbor.commands.spawningSphere.set");
+        return 0;
     }
 
     private static class Counts {

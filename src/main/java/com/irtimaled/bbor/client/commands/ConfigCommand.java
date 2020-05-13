@@ -4,8 +4,6 @@ import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.config.Setting;
 import com.irtimaled.bbor.client.gui.SettingsScreen;
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.arguments.BoolArgumentType;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
@@ -62,16 +60,16 @@ public class ConfigCommand {
         LiteralArgumentBuilder<CommandSource> command = Commands.literal(setting.getName());
         switch (setting.getType()) {
             case 'B':
-                return command.then(Commands.argument(VALUE, BoolArgumentType.bool())
+                return command.then(Commands.argument(VALUE, Arguments.bool())
                         .executes(context -> {
-                            boolean value = BoolArgumentType.getBool(context, VALUE);
+                            boolean value = Arguments.getBool(context, VALUE);
                             ((Setting<Boolean>) setting).set(value);
                             return 0;
                         }));
             case 'I':
-                return command.then(Commands.argument(VALUE, IntegerArgumentType.integer())
+                return command.then(Commands.argument(VALUE, Arguments.integer())
                         .executes(context -> {
-                            int value = IntegerArgumentType.getInteger(context, VALUE);
+                            int value = Arguments.getInteger(context, VALUE);
                             ((Setting<Integer>) setting).set(value);
                             return 0;
                         }));

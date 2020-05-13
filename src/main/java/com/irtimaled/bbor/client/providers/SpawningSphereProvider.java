@@ -22,22 +22,13 @@ public class SpawningSphereProvider implements IBoundingBoxProvider<BoundingBoxS
     private static BoundingBoxSpawningSphere spawningSphere;
     private static Integer dimensionId;
 
-    public static void setSphere(double x, double y, double z) {
-        Point point = new Point(snapToNearestHalf(x), y, snapToNearestHalf(z));
-
+    public static void setSphere(Point point) {
         if (spawningSphere != null && spawningSphere.getPoint().equals(point)) return;
         clear();
 
         dimensionId = Player.getDimensionId();
         spawningSphere = new BoundingBoxSpawningSphere(point);
         lastBoundingBox = null;
-    }
-
-    private static double snapToNearestHalf(double value) {
-        int floor = MathHelper.floor(value);
-        int fraction = MathHelper.floor((value - floor) * 4.0);
-        if (fraction % 2 == 1) fraction++;
-        return floor + (fraction / 4.0);
     }
 
     public static boolean clear() {

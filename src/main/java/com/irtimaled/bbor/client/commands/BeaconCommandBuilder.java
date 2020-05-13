@@ -2,15 +2,11 @@ package com.irtimaled.bbor.client.commands;
 
 import com.irtimaled.bbor.client.providers.CustomBeaconProvider;
 import com.irtimaled.bbor.common.models.Coords;
-import com.mojang.brigadier.StringReader;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
-import net.minecraft.command.arguments.BlockPosArgument;
-import net.minecraft.util.math.BlockPos;
 
 class BeaconCommandBuilder {
     private static final String LEVEL = "level";
@@ -18,20 +14,10 @@ class BeaconCommandBuilder {
     static LiteralArgumentBuilder<CommandSource> build(String command) {
         return Commands.literal(command)
                 .then(Commands.literal(ArgumentNames.ADD)
-                        .then(Commands.argument(LEVEL, IntegerArgumentType.integer())
-                                .executes(context -> {
-                                    BlockPos pos = new BlockPos(context.getSource().getPos());
-                                    int level = IntegerArgumentType.getInteger(context, LEVEL);
-                                    addBeacon(context, pos, level);
-                                    return 0;
-                                })
-                                .then(Commands.argument(ArgumentNames.POS, BlockPosArgument.blockPos())
-                                        .executes(context -> {
-                                            BlockPos pos = BlockPosArgument.getBlockPos(context, ArgumentNames.POS);
-                                            int level = IntegerArgumentType.getInteger(context, LEVEL);
-                                            addBeacon(context, pos, level);
-                                            return 0;
-                                        })))
+                        .then(Commands.argument(LEVEL, Arguments.integer(1,4))
+                                .executes(BeaconCommandBuilder::addBeacon)
+                                .then(Commands.argument(ArgumentNames.POS, Arguments.coords())
+                                        .executes(BeaconCommandBuilder::addBeacon)))
                 )
                 .then(Commands.literal(ArgumentNames.CLEAR)
                         .executes(context -> {
@@ -40,25 +26,23 @@ class BeaconCommandBuilder {
                             CommandHelper.feedback(context, "bbor.commands.beacon.cleared.all");
                             return 0;
                         })
-                        .then(Commands.argument(ArgumentNames.POS, BlockPosArgument.blockPos())
+                        .then(Commands.argument(ArgumentNames.POS, Arguments.coords())
                                 .executes(context -> {
-                                    BlockPos pos = BlockPosArgument.getBlockPos(context, ArgumentNames.POS);
-                                    boolean removed = CustomBeaconProvider.remove(new Coords(pos));
+                                    Coords coords = Arguments.getCoords(context, ArgumentNames.POS);
+                                    boolean removed = CustomBeaconProvider.remove(coords);
 
                                     String format = removed ? "bbor.commands.beacon.cleared" : "bbor.commands.beacon.notFound";
-                                    CommandHelper.feedback(context, format, pos.getX(), pos.getY(), pos.getZ());
+                                    CommandHelper.feedback(context, format, coords.getX(), coords.getY(), coords.getZ());
                                     return 0;
                                 })));
     }
 
-    private static void addBeacon(CommandContext<CommandSource> context, BlockPos pos, int level) throws CommandSyntaxException {
-        if (level < 1 || level > 4) {
-            throw CommandHelper.getException("bbor.commandArgument.invalid",
-                    "bbor.commands.beacon.expectedLevelInRange")
-                    .createWithContext(new StringReader(context.getInput()));
-        }
+    private static int addBeacon(CommandContext<CommandSource> context) throws CommandSyntaxException {
+        Coords coords = Arguments.getCoords(context, ArgumentNames.POS);
+        int level = Arguments.getInteger(context, LEVEL);
 
-        CustomBeaconProvider.add(new Coords(pos), level);
-        CommandHelper.feedback(context, "bbor.commands.beacon.added", pos.getX(), pos.getY(), pos.getZ(), level);
+        CustomBeaconProvider.add(coords, level);
+        CommandHelper.feedback(context, "bbor.commands.beacon.added", coords.getX(), coords.getY(), coords.getZ(), level);
+        return 0;
     }
 }

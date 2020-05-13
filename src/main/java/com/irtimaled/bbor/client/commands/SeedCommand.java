@@ -2,7 +2,6 @@ package com.irtimaled.bbor.client.commands;
 
 import com.irtimaled.bbor.client.providers.SlimeChunkProvider;
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.command.Commands;
 import net.minecraft.command.ISuggestionProvider;
@@ -13,9 +12,9 @@ public class SeedCommand {
 
     public static void register(CommandDispatcher<ISuggestionProvider> commandDispatcher) {
         LiteralArgumentBuilder command = Commands.literal(COMMAND)
-                .then(Commands.argument(SEED, StringArgumentType.string())
+                .then(Commands.argument(SEED, Arguments.string())
                         .executes(context -> {
-                            String argument = StringArgumentType.getString(context, SEED);
+                            String argument = Arguments.getString(context, SEED);
                             handleSeedCommand(argument);
                             return 0;
                         }));

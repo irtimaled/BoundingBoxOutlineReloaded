@@ -1,6 +1,8 @@
 package com.irtimaled.bbor.common.models;
 
+import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.TypeHelper;
+import net.minecraft.util.math.Vec3d;
 
 public class Point {
     private final double x;
@@ -19,6 +21,12 @@ public class Point {
         this.z = Coords.getZ();
     }
 
+    public Point(Vec3d pos) {
+        this.x = pos.x;
+        this.y = pos.y;
+        this.z = pos.z;
+    }
+
     public double getX() {
         return x;
     }
@@ -33,6 +41,12 @@ public class Point {
 
     public Point offset(double x, double y, double z) {
         return new Point(this.x + x, this.y + y, this.z + z);
+    }
+
+    public Point snapXZ(double nearest) {
+        double x = MathHelper.snapToNearest(this.x, nearest);
+        double z = MathHelper.snapToNearest(this.z, nearest);
+        return new Point(x, this.y, z);
     }
 
     public double getDistance(Point point) {

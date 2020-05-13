@@ -21,7 +21,7 @@ public class CustomCommand {
                             CustomBoxProvider.clear();
                             CustomBeaconProvider.clear();
 
-                            CommandHelper.feedback(context, "bbor.commands.box.cleared.all");
+                            CommandHelper.feedback(context, "bbor.commands.custom.cleared.all");
                             return 0;
                         }));
         commandDispatcher.register(command);

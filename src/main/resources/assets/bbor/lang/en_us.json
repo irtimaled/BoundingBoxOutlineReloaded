@@ -71,14 +71,11 @@
   "bbor.commands.beacon.cleared.all": "All custom beacons cleared",
   "bbor.commands.beacon.cleared": "Custom beacon cleared at [x=%d, y=%d, z=%d]",
   "bbor.commands.beacon.notFound": "No custom beacon found at [x=%d, y=%d, z=%d]",
-  "bbor.commands.beacon.expectedLevelInRange": "expected level between 1 and 4",
 
   "bbor.commands.box.added": "Box added with start [x=%d, y=%d, z=%d] and end [x=%d, y=%d, z=%d]",
   "bbor.commands.box.cleared.all": "All boxes cleared",
   "bbor.commands.box.cleared": "Box cleared with start [x=%d, y=%d, z=%d] and end [x=%d, y=%d, z=%d]",
   "bbor.commands.box.notFound": "No box found with start [x=%d, y=%d, z=%d] and end [x=%d, y=%d, z=%d]",
-
-  "bbor.commandArgument.invalid": "Invalid argument",
 
   "bbor.commands.spawningSphere.set": "Spawning sphere set",
   "bbor.commands.spawningSphere.notSet": "No spawning sphere set",
