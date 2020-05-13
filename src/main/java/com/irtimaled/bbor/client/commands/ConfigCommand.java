@@ -16,7 +16,6 @@ import java.util.function.Function;
 public class ConfigCommand {
     private static final String COMMAND = "bbor:config";
     private static final String GET = "get";
-    private static final String SET = "set";
     private static final String SAVE = "save";
     private static final String SHOW_GUI = "showGui";
     private static final String VALUE = "value";
@@ -24,7 +23,7 @@ public class ConfigCommand {
     public static void register(CommandDispatcher<ISuggestionProvider> commandDispatcher) {
         LiteralArgumentBuilder command = Commands.literal(COMMAND)
                 .then(buildCommands(GET, ConfigCommand::getCommandForSetting))
-                .then(buildCommands(SET, ConfigCommand::setCommandForSetting))
+                .then(buildCommands(ArgumentNames.SET, ConfigCommand::setCommandForSetting))
                 .then(Commands.literal(SAVE)
                         .executes(context -> {
                             ConfigManager.saveConfig();

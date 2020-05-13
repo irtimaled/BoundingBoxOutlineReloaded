@@ -14,17 +14,14 @@ import net.minecraft.world.World;
 
 public class SpawningSphereCommand {
     private static final String COMMAND = "bbor:spawningSphere";
-    private static final String SET = "set";
-    private static final String POS = "pos";
-    private static final String CLEAR = "clear";
     private static final String CALCULATE_SPAWNABLE = "calculateSpawnable";
 
     public static void register(CommandDispatcher<ISuggestionProvider> commandDispatcher) {
         LiteralArgumentBuilder command = Commands.literal(COMMAND)
-                .then(Commands.literal(SET)
-                        .then(Commands.argument(POS, Vec3Argument.vec3())
+                .then(Commands.literal(ArgumentNames.SET)
+                        .then(Commands.argument(ArgumentNames.POS, Vec3Argument.vec3())
                                 .executes(context -> {
-                                    Vec3d pos = Vec3Argument.getVec3(context, POS);
+                                    Vec3d pos = Vec3Argument.getVec3(context, ArgumentNames.POS);
                                     SpawningSphereProvider.setSphere(pos.x, pos.y, pos.z);
 
                                     CommandHelper.feedback(context, "bbor.commands.spawningSphere.set");
@@ -37,7 +34,7 @@ public class SpawningSphereCommand {
                             CommandHelper.feedback(context, "bbor.commands.spawningSphere.set");
                             return 0;
                         }))
-                .then(Commands.literal(CLEAR)
+                .then(Commands.literal(ArgumentNames.CLEAR)
                         .executes(context -> {
                             boolean cleared = SpawningSphereProvider.clear();
 

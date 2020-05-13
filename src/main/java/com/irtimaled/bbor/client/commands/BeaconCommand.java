@@ -16,14 +16,11 @@ import net.minecraft.util.math.BlockPos;
 
 public class BeaconCommand {
     private static final String COMMAND = "bbor:beacon";
-    private static final String ADD = "add";
-    private static final String CLEAR = "clear";
-    private static final String POS = "pos";
     private static final String LEVEL = "level";
 
     public static void register(CommandDispatcher<ISuggestionProvider> commandDispatcher) {
         LiteralArgumentBuilder command = Commands.literal(COMMAND)
-                .then(Commands.literal(ADD)
+                .then(Commands.literal(ArgumentNames.ADD)
                         .then(Commands.argument(LEVEL, IntegerArgumentType.integer())
                                 .executes(context -> {
                                     BlockPos pos = new BlockPos(context.getSource().getPos());
@@ -31,24 +28,24 @@ public class BeaconCommand {
                                     addBeacon(context, pos, level);
                                     return 0;
                                 })
-                                .then(Commands.argument(POS, BlockPosArgument.blockPos())
+                                .then(Commands.argument(ArgumentNames.POS, BlockPosArgument.blockPos())
                                         .executes(context -> {
-                                            BlockPos pos = BlockPosArgument.getBlockPos(context, POS);
+                                            BlockPos pos = BlockPosArgument.getBlockPos(context, ArgumentNames.POS);
                                             int level = IntegerArgumentType.getInteger(context, LEVEL);
                                             addBeacon(context, pos, level);
                                             return 0;
                                         })))
                 )
-                .then(Commands.literal(CLEAR)
+                .then(Commands.literal(ArgumentNames.CLEAR)
                         .executes(context -> {
                             CustomBeaconProvider.clear();
 
                             CommandHelper.feedback(context, "bbor.commands.beacon.cleared.all");
                             return 0;
                         })
-                        .then(Commands.argument(POS, BlockPosArgument.blockPos())
+                        .then(Commands.argument(ArgumentNames.POS, BlockPosArgument.blockPos())
                                 .executes(context -> {
-                                    BlockPos pos = BlockPosArgument.getBlockPos(context, POS);
+                                    BlockPos pos = BlockPosArgument.getBlockPos(context, ArgumentNames.POS);
                                     boolean removed = CustomBeaconProvider.remove(new Coords(pos));
 
                                     String format = removed ? "bbor.commands.beacon.cleared" : "bbor.commands.beacon.notFound";

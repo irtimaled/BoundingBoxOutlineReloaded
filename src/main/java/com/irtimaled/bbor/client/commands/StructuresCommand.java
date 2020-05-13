@@ -10,7 +10,6 @@ import net.minecraft.command.ISuggestionProvider;
 public class StructuresCommand {
     private static final String COMMAND = "bbor:structures";
     private static final String LOAD = "load";
-    private static final String CLEAR = "clear";
 
     public static void register(CommandDispatcher<ISuggestionProvider> commandDispatcher) {
         LiteralArgumentBuilder command = Commands.literal(COMMAND)
@@ -19,7 +18,7 @@ public class StructuresCommand {
                             LoadSavesScreen.show();
                             return 0;
                         }))
-                .then(Commands.literal(CLEAR)
+                .then(Commands.literal(ArgumentNames.CLEAR)
                         .executes(context -> {
                             ClientInterop.clearStructures();
                             return 0;

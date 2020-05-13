@@ -11,19 +11,15 @@ import net.minecraft.util.math.BlockPos;
 
 public class BoxCommand {
     private static final String COMMAND = "bbor:box";
-    private static final String ADD = "add";
-    private static final String CLEAR = "clear";
-    private static final String FROM = "from";
-    private static final String TO = "to";
 
     public static void register(CommandDispatcher<ISuggestionProvider> commandDispatcher) {
         LiteralArgumentBuilder command = Commands.literal(COMMAND)
-                .then(Commands.literal(ADD)
-                        .then(Commands.argument(FROM, BlockPosArgument.blockPos())
-                                .then(Commands.argument(TO, BlockPosArgument.blockPos())
+                .then(Commands.literal(ArgumentNames.ADD)
+                        .then(Commands.argument(ArgumentNames.FROM, BlockPosArgument.blockPos())
+                                .then(Commands.argument(ArgumentNames.TO, BlockPosArgument.blockPos())
                                         .executes(context -> {
-                                            BlockPos from = BlockPosArgument.getBlockPos(context, FROM);
-                                            BlockPos to = BlockPosArgument.getBlockPos(context, TO);
+                                            BlockPos from = BlockPosArgument.getBlockPos(context, ArgumentNames.FROM);
+                                            BlockPos to = BlockPosArgument.getBlockPos(context, ArgumentNames.TO);
                                             Coords minCoords = getMinCoords(from, to);
                                             Coords maxCoords = getMaxCoords(from, to);
                                             CustomBoxProvider.add(minCoords, maxCoords);
@@ -33,18 +29,18 @@ public class BoxCommand {
                                                     to.getX(), to.getY(), to.getZ());
                                             return 0;
                                         }))))
-                .then(Commands.literal(CLEAR)
+                .then(Commands.literal(ArgumentNames.CLEAR)
                         .executes(context -> {
                             CustomBoxProvider.clear();
 
                             CommandHelper.feedback(context, "bbor.commands.box.cleared.all");
                             return 0;
                         })
-                        .then(Commands.argument(FROM, BlockPosArgument.blockPos())
-                                .then(Commands.argument(TO, BlockPosArgument.blockPos())
+                        .then(Commands.argument(ArgumentNames.FROM, BlockPosArgument.blockPos())
+                                .then(Commands.argument(ArgumentNames.TO, BlockPosArgument.blockPos())
                                         .executes(context -> {
-                                            BlockPos from = BlockPosArgument.getBlockPos(context, FROM);
-                                            BlockPos to = BlockPosArgument.getBlockPos(context, TO);
+                                            BlockPos from = BlockPosArgument.getBlockPos(context, ArgumentNames.FROM);
+                                            BlockPos to = BlockPosArgument.getBlockPos(context, ArgumentNames.TO);
                                             Coords minCoords = getMinCoords(from, to);
                                             Coords maxCoords = getMaxCoords(from, to);
                                             boolean removed = CustomBoxProvider.remove(minCoords, maxCoords);
