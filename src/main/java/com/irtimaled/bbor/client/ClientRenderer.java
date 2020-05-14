@@ -8,6 +8,7 @@ import com.irtimaled.bbor.client.renderers.*;
 import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBoxCuboid;
+import com.irtimaled.bbor.common.models.BoundingBoxSphere;
 import com.irtimaled.bbor.common.models.BoundingBoxVillage;
 import org.lwjgl.opengl.GL11;
 
@@ -50,6 +51,7 @@ public class ClientRenderer {
         registerRenderer(BoundingBoxConduit.class, new ConduitRenderer());
         registerRenderer(BoundingBoxSpawnableBlocks.class, new SpawnableBlocksRenderer());
         registerRenderer(BoundingBoxLine.class, new LineRenderer());
+        registerRenderer(BoundingBoxSphere.class, new SphereRenderer());
 
         registerProvider(new SlimeChunkProvider());
         registerProvider(new WorldSpawnProvider());
@@ -62,6 +64,7 @@ public class ClientRenderer {
         registerProvider(new ConduitProvider());
         registerProvider(new SpawnableBlocksProvider());
         registerProvider(new CustomLineProvider());
+        registerProvider(new CustomSphereProvider());
     }
 
     public static <T extends AbstractBoundingBox> void registerProvider(IBoundingBoxProvider<T> provider) {

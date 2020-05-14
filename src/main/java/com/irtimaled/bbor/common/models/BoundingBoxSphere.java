@@ -10,7 +10,7 @@ public class BoundingBoxSphere extends AbstractBoundingBox {
     private final double maxZ;
     private final Point point;
 
-    protected BoundingBoxSphere(Point point, double radius, BoundingBoxType type) {
+    public BoundingBoxSphere(Point point, double radius, BoundingBoxType type) {
         super(type);
         this.radius = radius;
         this.point = point;
