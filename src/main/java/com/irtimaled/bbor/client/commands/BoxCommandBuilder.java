@@ -13,7 +13,6 @@ class BoxCommandBuilder {
         return Commands.literal(command)
                 .then(Commands.literal(ArgumentNames.ADD)
                         .then(Commands.argument(ArgumentNames.FROM, Arguments.coords())
-                                .executes(BoxCommandBuilder::addBox)
                                 .then(Commands.argument(ArgumentNames.TO, Arguments.coords())
                                         .executes(BoxCommandBuilder::addBox))))
                 .then(Commands.literal(ArgumentNames.CLEAR)

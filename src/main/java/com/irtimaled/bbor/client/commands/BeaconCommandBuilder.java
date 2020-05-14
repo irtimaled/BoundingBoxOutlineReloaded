@@ -14,11 +14,11 @@ class BeaconCommandBuilder {
     static LiteralArgumentBuilder<CommandSource> build(String command) {
         return Commands.literal(command)
                 .then(Commands.literal(ArgumentNames.ADD)
-                        .then(Commands.argument(LEVEL, Arguments.integer(1,4))
-                                .executes(BeaconCommandBuilder::addBeacon)
-                                .then(Commands.argument(ArgumentNames.POS, Arguments.coords())
+                        .then(Commands.argument(ArgumentNames.POS, Arguments.coords())
+                                .then(Commands.argument(LEVEL, Arguments.integer(1, 4))
                                         .executes(BeaconCommandBuilder::addBeacon)))
-                )
+                        .then(Commands.argument(LEVEL, Arguments.integer(1, 4))
+                                .executes(BeaconCommandBuilder::addBeacon)))
                 .then(Commands.literal(ArgumentNames.CLEAR)
                         .executes(context -> {
                             CustomBeaconProvider.clear();
