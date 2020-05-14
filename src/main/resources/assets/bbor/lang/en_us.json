@@ -77,6 +77,11 @@
   "bbor.commands.box.cleared": "Box cleared with start [x=%d, y=%d, z=%d] and end [x=%d, y=%d, z=%d]",
   "bbor.commands.box.notFound": "No box found with start [x=%d, y=%d, z=%d] and end [x=%d, y=%d, z=%d]",
 
+  "bbor.commands.line.added": "Line added with start [x=%d, y=%d, z=%d] and end [x=%d, y=%d, z=%d]",
+  "bbor.commands.line.cleared":  "All lines cleared",
+  "bbor.commands.line.cleared.all": "Line cleared with start [x=%d, y=%d, z=%d] and end [x=%d, y=%d, z=%d]",
+  "bbor.commands.line.notFound":  "No line found with start [x=%d, y=%d, z=%d] and end [x=%d, y=%d, z=%d]",
+
   "bbor.commands.spawningSphere.set": "Spawning sphere set",
   "bbor.commands.spawningSphere.notSet": "No spawning sphere set",
   "bbor.commands.spawningSphere.cleared": "Spawning sphere cleared",

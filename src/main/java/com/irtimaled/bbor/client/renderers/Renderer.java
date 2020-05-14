@@ -64,6 +64,14 @@ public class Renderer {
         return addPoint(point.getX(), point.getY(), point.getZ());
     }
 
+    public Renderer addPoints(OffsetPoint[] points) {
+        Renderer renderer = this;
+        for (OffsetPoint point : points) {
+            renderer = renderer.addPoint(point);
+        }
+        return renderer;
+    }
+
     Renderer addPoint(double x, double y, double z) {
         pos(x, y, z);
         color();

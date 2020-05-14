@@ -49,6 +49,7 @@ public class ClientRenderer {
         registerRenderer(BoundingBoxBiomeBorder.class, new BiomeBorderRenderer());
         registerRenderer(BoundingBoxConduit.class, new ConduitRenderer());
         registerRenderer(BoundingBoxSpawnableBlocks.class, new SpawnableBlocksRenderer());
+        registerRenderer(BoundingBoxLine.class, new LineRenderer());
 
         registerProvider(new SlimeChunkProvider());
         registerProvider(new WorldSpawnProvider());
@@ -60,6 +61,7 @@ public class ClientRenderer {
         registerProvider(new MobSpawnerProvider());
         registerProvider(new ConduitProvider());
         registerProvider(new SpawnableBlocksProvider());
+        registerProvider(new CustomLineProvider());
     }
 
     public static <T extends AbstractBoundingBox> void registerProvider(IBoundingBoxProvider<T> provider) {
