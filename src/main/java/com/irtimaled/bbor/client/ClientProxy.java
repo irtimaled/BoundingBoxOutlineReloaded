@@ -13,7 +13,7 @@ import com.irtimaled.bbor.common.EventBus;
 import com.irtimaled.bbor.common.VillageColorCache;
 
 public class ClientProxy extends CommonProxy {
-    static {
+    public static void registerKeyBindings() {
         Key mainKey = KeyListener.register("bbor.key.toggleActive", "key.keyboard.b")
                 .onKeyPressHandler(ClientRenderer::toggleActive);
         mainKey.register("key.keyboard.g")

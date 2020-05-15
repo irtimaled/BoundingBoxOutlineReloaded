@@ -1,5 +1,6 @@
 package com.irtimaled.bbor.mixin.client.settings;
 
+import com.irtimaled.bbor.client.ClientProxy;
 import com.irtimaled.bbor.client.keyboard.KeyListener;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
@@ -23,6 +24,7 @@ public abstract class MixinGameSettings {
 
     @Inject(method = "<init>(Lnet/minecraft/client/Minecraft;Ljava/io/File;)V", at = @At("RETURN"))
     private void init(Minecraft minecraft, File file, CallbackInfo ci) {
+        ClientProxy.registerKeyBindings();
         keyBindings = ArrayUtils.addAll(keyBindings, KeyListener.keyBindings());
         this.loadOptions();
     }
