@@ -1,5 +1,6 @@
 package com.irtimaled.bbor.client.renderers;
 
+import com.irtimaled.bbor.client.config.BoundingBoxTypeHelper;
 import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.models.BoundingBoxBiomeBorder;
 import com.irtimaled.bbor.common.models.Coords;
@@ -14,7 +15,7 @@ public class BiomeBorderRenderer extends AbstractRenderer<BoundingBoxBiomeBorder
         OffsetPoint northEast = northWest.offset(1, 0, 0);
         OffsetPoint southWest = northWest.offset(0, 0, 1);
 
-        Color color = Color.GREEN;
+        Color color = BoundingBoxTypeHelper.getColor(boundingBox.getType());
         if (boundingBox.renderNorth()) {
             render(northWest, northEast, color);
         }

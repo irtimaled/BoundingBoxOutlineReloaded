@@ -1,10 +1,9 @@
 package com.irtimaled.bbor.client.gui;
 
-import java.awt.*;
+import com.irtimaled.bbor.client.config.ColorHelper;
+import com.irtimaled.bbor.client.config.ConfigManager;
 
 public abstract class BoolButton extends AbstractButton {
-    private static final Color OVERLAY_COLOR = new Color(0, 255, 0, 48);
-
     private boolean value;
 
     BoolButton(int width, String label, boolean enabled) {
@@ -35,7 +34,7 @@ public abstract class BoolButton extends AbstractButton {
         int right = left + this.width - 2;
         int bottom = top + this.height - 2;
         if (this.getValue()) {
-            drawRectangle(left, top, right, bottom, OVERLAY_COLOR);
+            drawRectangle(left, top, right, bottom, ColorHelper.getColor(ConfigManager.buttonOnOverlay));
         }
     }
 }

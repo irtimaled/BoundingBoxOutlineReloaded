@@ -1,11 +1,9 @@
 package com.irtimaled.bbor.client.commands;
 
+import com.irtimaled.bbor.client.config.HexColor;
 import com.irtimaled.bbor.common.models.Coords;
 import com.irtimaled.bbor.common.models.Point;
-import com.mojang.brigadier.arguments.BoolArgumentType;
-import com.mojang.brigadier.arguments.DoubleArgumentType;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
-import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.arguments.*;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.command.CommandSource;
@@ -41,6 +39,10 @@ public class Arguments {
 
     public static BoolArgumentType bool() {
         return BoolArgumentType.bool();
+    }
+
+    public static ArgumentType<HexColor> hexColor() {
+        return new HexColorArgument();
     }
 
     public static Coords getCoords(CommandContext<CommandSource> context, String name) throws CommandSyntaxException {

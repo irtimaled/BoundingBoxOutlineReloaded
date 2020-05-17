@@ -1,6 +1,7 @@
 package com.irtimaled.bbor.client.commands;
 
 import com.irtimaled.bbor.client.config.ConfigManager;
+import com.irtimaled.bbor.client.config.HexColor;
 import com.irtimaled.bbor.client.config.Setting;
 import com.irtimaled.bbor.client.gui.SettingsScreen;
 import com.mojang.brigadier.Command;
@@ -84,6 +85,9 @@ public class ConfigCommand {
                 break;
             case 'S':
                 buildSetSettingCommand(command, (Setting<String>) setting, Arguments.string(), String.class);
+                break;
+            case 'H':
+                buildSetSettingCommand(command, (Setting<HexColor>) setting, Arguments.hexColor(), HexColor.class);
                 break;
         }
         return command;

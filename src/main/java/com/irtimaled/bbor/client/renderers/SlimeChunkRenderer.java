@@ -1,6 +1,7 @@
 package com.irtimaled.bbor.client.renderers;
 
 import com.irtimaled.bbor.client.Player;
+import com.irtimaled.bbor.client.config.BoundingBoxTypeHelper;
 import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.models.BoundingBoxSlimeChunk;
 
@@ -10,7 +11,7 @@ public class SlimeChunkRenderer extends AbstractRenderer<BoundingBoxSlimeChunk> 
     @Override
     public void render(BoundingBoxSlimeChunk boundingBox) {
         OffsetBox bb = new OffsetBox(boundingBox.getMinCoords(), boundingBox.getMaxCoords());
-        Color color = boundingBox.getColor();
+        Color color = BoundingBoxTypeHelper.getColor(boundingBox.getType());
         renderCuboid(bb, color);
 
         double maxY = Player.getMaxY(ConfigManager.slimeChunkMaxY.get());

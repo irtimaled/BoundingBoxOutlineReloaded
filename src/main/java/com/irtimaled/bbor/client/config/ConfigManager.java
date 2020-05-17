@@ -59,6 +59,42 @@ public class ConfigManager {
     public static Setting<Boolean> invertBoxColorPlayerInside;
     public static Setting<Boolean> renderSphereAsDots;
 
+    public static Setting<HexColor> colorWorldSpawn;
+    public static Setting<HexColor> colorLazySpawnChunks;
+    public static Setting<HexColor> colorMobSpawners;
+    public static Setting<HexColor> colorMobSpawnersLineFarAway;
+    public static Setting<HexColor> colorMobSpawnersLineNearby;
+    public static Setting<HexColor> colorMobSpawnersLineActive;
+    public static Setting<HexColor> colorSlimeChunks;
+    public static Setting<HexColor> colorAFKSpheres;
+    public static Setting<HexColor> colorAFKSpheresSafeArea;
+    public static Setting<HexColor> colorBiomeBorders;
+    public static Setting<HexColor> colorBeacons;
+    public static Setting<HexColor> colorCustom;
+    public static Setting<HexColor> colorConduits;
+    public static Setting<HexColor> colorConduitMobHarmArea;
+    public static Setting<HexColor> colorSpawnableBlocks;
+    public static Setting<HexColor> colorJungleTemples;
+    public static Setting<HexColor> colorDesertTemples;
+    public static Setting<HexColor> colorWitchHuts;
+    public static Setting<HexColor> colorOceanMonuments;
+    public static Setting<HexColor> colorShipwrecks;
+    public static Setting<HexColor> colorOceanRuins;
+    public static Setting<HexColor> colorBuriedTreasure;
+    public static Setting<HexColor> colorStrongholds;
+    public static Setting<HexColor> colorMineShafts;
+    public static Setting<HexColor> colorNetherFortresses;
+    public static Setting<HexColor> colorEndCities;
+    public static Setting<HexColor> colorMansions;
+    public static Setting<HexColor> colorIgloos;
+    public static Setting<HexColor> colorPillagerOutposts;
+    public static Setting<HexColor> colorVillages;
+    public static Setting<HexColor> colorNetherFossils;
+    public static Setting<HexColor> colorBastionRemnants;
+    public static Setting<HexColor> colorRuinedPortals;
+
+    public static Setting<HexColor> buttonOnOverlay;
+
     public static void loadConfig() {
         configDir = new File(".", "config");
         configDir.mkdirs();
@@ -70,6 +106,7 @@ public class ConfigManager {
         keepCacheBetweenSessions = setup(config, "general", "keepCacheBetweenSessions", false, "If set to true bounding box caches will be kept between sessions.");
         invertBoxColorPlayerInside = setup(config, "general", "invertBoxColorPlayerInside", false, "If set to true the color of any bounding box the player is inside will be inverted.");
         renderSphereAsDots = setup(config, "general", "renderSphereAsDots", false, "If set to true spheres will be rendered as dots.");
+        buttonOnOverlay = setup(config, "general", "buttonEnabledOverlay", HexColor.from("#3000ff00"), "The color and alpha of the button overlay when a button is on.");
 
         drawBeacons = setup(config, "beacons", "drawBeacons", true, "If set to true beacon bounding boxes will be drawn.");
 
@@ -124,6 +161,40 @@ public class ConfigManager {
         drawSpawnableBlocks = setup(config, "spawnableBlocks", "drawSpawnableBlocks", false, "If set to true boxes to show spawnable blocks will be drawn.");
         spawnableBlocksRenderWidth = setup(config, "spawnableBlocks", "spawnableBlocksRenderWidth", 2, "The distance from the player where spawnable blocks will be drawn in X and Z axis.");
         spawnableBlocksRenderHeight = setup(config, "spawnableBlocks", "spawnableBlocksRenderHeight", 1, "The distance from the player where spawnable blocks will be drawn in Y axis.");
+
+        colorWorldSpawn = setup(config, "colors", "colorWorldSpawn", HexColor.from("#ff0000"), "Color of world spawn and spawn chunks bounding boxes.");
+        colorLazySpawnChunks = setup(config, "colors", "colorLazySpawnChunks", HexColor.from("#ff0000"), "Color of lazy spawn chunks bounding boxes.");
+        colorMobSpawners = setup(config, "colors", "colorMobSpawners", HexColor.from("#00ff00"), "Color of mob spawners.");
+        colorMobSpawnersLineFarAway = setup(config, "colors", "colorMobSpawnersLineFarAway", HexColor.from("#ff0000"), "Color of mob spawner activation line if spawner far away.");
+        colorMobSpawnersLineNearby = setup(config, "colors", "colorMobSpawnersLineNearby", HexColor.from("#ff7f00"), "Color of mob spawners activation line if spawner nearby.");
+        colorMobSpawnersLineActive = setup(config, "colors", "colorMobSpawnersLineActive", HexColor.from("#00ff00"), "Color of mob spawners activation line if spawner active.");
+        colorSlimeChunks = setup(config, "colors", "colorSlimeChunks", HexColor.from("#006000"), "Color of slime chunks bounding boxes.");
+        colorAFKSpheres = setup(config, "colors", "colorAFKSpheres", HexColor.from("#ff0000"), "Color of afk spot spheres.");
+        colorAFKSpheresSafeArea = setup(config, "colors", "colorAFKSpheresSafeArea", HexColor.from("#00ff00"), "Color of afk spot safe area spheres.");
+        colorBiomeBorders = setup(config, "colors", "colorBiomeBorders", HexColor.from("#00ff00"), "Color of biome borders.");
+        colorBeacons = setup(config, "colors", "colorBeacons", HexColor.from("#ffffff"), "Color of beacon bounding boxes.");
+        colorCustom = setup(config, "colors", "colorCustom", HexColor.from("#ffffff"), "Color of all types of custom boxes.");
+        colorConduits = setup(config, "colors", "colorConduits", HexColor.from("#00ffff"), "Color of conduit bounding spheres.");
+        colorConduitMobHarmArea = setup(config, "colors", "colorConduitMobHarmArea", HexColor.from("#ff7f00"), "Color of conduit mob harm bounding boxes.");
+        colorSpawnableBlocks = setup(config, "colors", "colorSpawnableBlocks", HexColor.from("#ff0000"), "Color of spawnable blocks.");
+        colorJungleTemples = setup(config, "colors", "colorJungleTemples", HexColor.from("#006000"), "Color of jungle temple bounding boxes.");
+        colorDesertTemples = setup(config, "colors", "colorDesertTemples", HexColor.from("#ffc800"), "Color of desert temple bounding boxes.");
+        colorWitchHuts = setup(config, "colors", "colorWitchHuts", HexColor.from("#0000ff"), "Color of witch hut bounding boxes.");
+        colorOceanMonuments = setup(config, "colors", "colorOceanMonuments", HexColor.from("#00ffff"), "Color of ocean monument bounding boxes.");
+        colorShipwrecks = setup(config, "colors", "colorShipwrecks", HexColor.from("#00ffff"), "Color of ship wrecks.");
+        colorOceanRuins = setup(config, "colors", "colorOceanRuins", HexColor.from("#00ffff"), "Color of ocean ruins.");
+        colorBuriedTreasure = setup(config, "colors", "colorBuriedTreasure", HexColor.from("#00ffff"), "Color of buried treasure.");
+        colorStrongholds = setup(config, "colors", "colorStrongholds", HexColor.from("#ffff00"), "Color of stronghold bounding boxes.");
+        colorMineShafts = setup(config, "colors", "colorMineShafts", HexColor.from("#c0c0c0"), "Color of mineshaft bounding boxes.");
+        colorNetherFortresses = setup(config, "colors", "colorNetherFortresses", HexColor.from("#ff0000"), "Color of nether fortress bounding boxes.");
+        colorEndCities = setup(config, "colors", "colorEndCities", HexColor.from("#ff00ff"), "Color of end cities.");
+        colorMansions = setup(config, "colors", "colorMansions", HexColor.from("#8b4513"), "Color of woodland mansions.");
+        colorIgloos = setup(config, "colors", "colorIgloos", HexColor.from("#ffffff"), "Color of igloos.");
+        colorPillagerOutposts = setup(config, "colors", "colorPillagerOutposts", HexColor.from("#404040"), "Color of pillager outposts.");
+        colorVillages = setup(config, "colors", "colorVillages", HexColor.from("#800080"), "Color of village bounding boxes.");
+        colorNetherFossils = setup(config, "colors", "colorNetherFossils", HexColor.from("#ffffff"), "Color of nether fossils.");
+        colorBastionRemnants = setup(config, "colors", "colorBastionRemnants", HexColor.from("#c0c0c0"), "Color of bastion remnants.");
+        colorRuinedPortals = setup(config, "colors", "colorRuinedPortals", HexColor.from("#c800ff"), "Color of ruined portals.");
 
         config.save();
     }

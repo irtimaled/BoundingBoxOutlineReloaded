@@ -1,5 +1,6 @@
 package com.irtimaled.bbor.client.renderers;
 
+import com.irtimaled.bbor.client.config.BoundingBoxTypeHelper;
 import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.models.BoundingBoxLine;
 import org.lwjgl.opengl.GL11;
@@ -10,7 +11,7 @@ import java.util.Arrays;
 public class LineRenderer extends AbstractRenderer<BoundingBoxLine> {
     @Override
     public void render(BoundingBoxLine boundingBox) {
-        Color color = boundingBox.getColor();
+        Color color = BoundingBoxTypeHelper.getColor(boundingBox.getType());
 
         if (boundingBox.getWidth() == 0) {
             OffsetPoint startPoint = new OffsetPoint(boundingBox.getMinPoint()).offset(0, 0.001f, 0);

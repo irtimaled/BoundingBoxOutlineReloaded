@@ -6,11 +6,11 @@ import com.irtimaled.bbor.common.BoundingBoxType;
 import java.awt.*;
 
 public class BoundingBoxTypeButton extends BoolSettingButton {
-    private final Color color;
+    private final BoundingBoxType type;
 
     BoundingBoxTypeButton(int width, String label, BoundingBoxType type) {
         super(width, label, BoundingBoxTypeHelper.renderSetting(type));
-        color = type.getColor();
+        this.type = type;
     }
 
     @Override
@@ -21,6 +21,8 @@ public class BoundingBoxTypeButton extends BoolSettingButton {
         int top = y + 1;
         int right = left + width - 2;
         int bottom = top + height - 2;
+
+        Color color = BoundingBoxTypeHelper.getColor(type);
 
         // top & left
         drawRectangle(left, top, right, top + 1, color);

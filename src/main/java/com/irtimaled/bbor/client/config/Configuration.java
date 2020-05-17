@@ -83,6 +83,8 @@ class Configuration {
                 return new Setting<>(type, Integer.parseInt(value));
             case 'B':
                 return new Setting<>(type, value.equals("1") || value.toLowerCase().equals("true"));
+            case 'H':
+                return new Setting<>(type, HexColor.from(value));
         }
         return new Setting<>(type, value);
     }

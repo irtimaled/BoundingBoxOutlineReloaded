@@ -8,17 +8,22 @@ public class BoundingBoxBeacon extends BoundingBoxCuboid {
     private final Coords coords;
     private final int level;
 
-    private BoundingBoxBeacon(Coords coords, Coords minCoords, Coords maxCoords, int level) {
-        super(minCoords, maxCoords, BoundingBoxType.Beacon);
+    private BoundingBoxBeacon(Coords coords, Coords minCoords, Coords maxCoords, int level, BoundingBoxType beacon) {
+        super(minCoords, maxCoords, beacon);
         this.coords = coords;
         this.level = level;
     }
 
     public static BoundingBoxBeacon from(Coords coords, int level) {
+        BoundingBoxType type = BoundingBoxType.Beacon;
+        return from(coords, level, type);
+    }
+
+    public static BoundingBoxBeacon from(Coords coords, int level, BoundingBoxType type) {
         int range = 10 + (10 * level);
         Coords minCoords = new Coords(coords.getX() - range, coords.getY() - range, coords.getZ() - range);
         Coords maxCoords = new Coords(coords.getX() + range, 324 + range, coords.getZ() + range);
-        return new BoundingBoxBeacon(coords, minCoords, maxCoords, level);
+        return new BoundingBoxBeacon(coords, minCoords, maxCoords, level, type);
     }
 
     @Override

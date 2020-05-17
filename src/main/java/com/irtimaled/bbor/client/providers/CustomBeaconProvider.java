@@ -2,6 +2,7 @@ package com.irtimaled.bbor.client.providers;
 
 import com.irtimaled.bbor.client.Player;
 import com.irtimaled.bbor.client.models.BoundingBoxBeacon;
+import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.models.Coords;
 
 import java.util.HashMap;
@@ -17,7 +18,7 @@ public class CustomBeaconProvider implements IBoundingBoxProvider<BoundingBoxBea
 
     public static void add(Coords coords, int level) {
         int dimensionId = Player.getDimensionId();
-        BoundingBoxBeacon beacon = BoundingBoxBeacon.from(coords, level);
+        BoundingBoxBeacon beacon = BoundingBoxBeacon.from(coords, level, BoundingBoxType.Custom);
         getCache(dimensionId).put(coords, beacon);
     }
 
