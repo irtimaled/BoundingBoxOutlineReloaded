@@ -146,6 +146,9 @@ public class ConfigManager {
         Setting<T> setting = config.get(category, settingName, defaultValue);
         setting.category = category;
         setting.name = settingName;
+        setting.defaultValue = defaultValue;
+        if (setting.get() == null)
+            setting.reset();
         setting.comment = comment + " (default: " + defaultValue.toString() + ")";
         settings.add(setting);
         return setting;

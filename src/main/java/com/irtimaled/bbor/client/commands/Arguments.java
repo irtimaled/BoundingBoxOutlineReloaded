@@ -36,7 +36,7 @@ public class Arguments {
     }
 
     public static StringArgumentType string() {
-        return StringArgumentType.greedyString();
+        return StringArgumentType.string();
     }
 
     public static BoolArgumentType bool() {
@@ -67,11 +67,10 @@ public class Arguments {
         return getArgumentValueOrDefault(context, name, BoolArgumentType::getBool, () -> false);
     }
 
-
-    public static <T> T getArgumentValueOrDefault(CommandContext<CommandSource> context,
-                                                  String name,
-                                                  ArgumentFetcher<T> getValue,
-                                                  Supplier<T> defaultValue) throws CommandSyntaxException {
+    private static <T> T getArgumentValueOrDefault(CommandContext<CommandSource> context,
+                                                   String name,
+                                                   ArgumentFetcher<T> getValue,
+                                                   Supplier<T> defaultValue) throws CommandSyntaxException {
         try {
             return getValue.get(context, name);
         } catch (IllegalArgumentException exception) {

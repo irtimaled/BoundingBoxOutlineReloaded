@@ -30,7 +30,7 @@ class Configuration {
                     first = false;
                     Setting setting = settings.get(settingName);
                     writer.write(String.format("    # %s\n", setting.comment));
-                    writer.write(String.format("    %s:%s=%s\n", setting.getType(), settingName, setting.getValue()));
+                    writer.write(String.format("    %s:%s=%s\n", setting.getType(), settingName, setting.get()));
                 }
                 writer.write("}\n");
             }
