@@ -26,6 +26,7 @@ public class CommonProxy {
     private Integer spawnZ = null;
 
     public void init() {
+        BoundingBoxType.registerTypes();
         EventBus.subscribe(WorldLoaded.class, this::worldLoaded);
         EventBus.subscribe(StructuresLoaded.class, this::structuresLoaded);
         EventBus.subscribe(PlayerLoggedIn.class, this::playerLoggedIn);

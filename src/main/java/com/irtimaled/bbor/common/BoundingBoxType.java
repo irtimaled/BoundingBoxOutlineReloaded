@@ -39,9 +39,11 @@ public class BoundingBoxType {
     public static final BoundingBoxType RuinedPortal = register("Ruined_Portal");
 
     private static BoundingBoxType register(String name) {
-        BoundingBoxType type = structureTypeMap.computeIfAbsent(name.hashCode(), k -> new BoundingBoxType(name));
-        StructureProcessor.registerSupportedStructure(type);
-        return type;
+        return structureTypeMap.computeIfAbsent(name.hashCode(), k -> new BoundingBoxType(name));
+    }
+
+    public static void registerTypes() {
+        structureTypeMap.values().forEach(StructureProcessor::registerSupportedStructure);
     }
 
     public static BoundingBoxType getByNameHash(Integer nameHash) {
