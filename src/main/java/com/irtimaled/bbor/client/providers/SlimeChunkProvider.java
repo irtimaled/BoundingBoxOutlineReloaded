@@ -40,6 +40,7 @@ public class SlimeChunkProvider implements IBoundingBoxProvider<BoundingBoxSlime
         return dimensionId == Dimensions.OVERWORLD && seed != null && BoundingBoxTypeHelper.shouldRender(BoundingBoxType.SlimeChunks);
     }
 
+    @Override
     public Iterable<BoundingBoxSlimeChunk> get(int dimensionId) {
         Set<BoundingBoxSlimeChunk> slimeChunks = new HashSet<>();
         int renderDistanceChunks = ClientInterop.getRenderDistanceChunks();

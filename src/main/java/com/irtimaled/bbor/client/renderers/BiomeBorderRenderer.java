@@ -22,7 +22,7 @@ public class BiomeBorderRenderer extends AbstractRenderer<BoundingBoxBiomeBorder
         if (boundingBox.renderWest()) {
             render(northWest, southWest, color);
         }
-        if(ConfigManager.renderOnlyCurrentBiome.get()) {
+        if (ConfigManager.renderOnlyCurrentBiome.get()) {
             OffsetPoint southEast = southWest.offset(1, 0, 0);
             if (boundingBox.renderSouth()) {
                 render(southWest, southEast, color);
@@ -36,12 +36,9 @@ public class BiomeBorderRenderer extends AbstractRenderer<BoundingBoxBiomeBorder
     private void render(OffsetPoint topCorner1, OffsetPoint topCorner2, Color color) {
         double xOffset = 0d;
         double zOffset = 0d;
-        if(topCorner1.getX() == topCorner2.getX())
-        {
+        if (topCorner1.getX() == topCorner2.getX()) {
             xOffset = getOffset(topCorner1.getX());
-        }
-        else
-        {
+        } else {
             zOffset = getOffset(topCorner1.getZ());
         }
 

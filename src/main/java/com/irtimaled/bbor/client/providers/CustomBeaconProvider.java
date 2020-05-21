@@ -31,6 +31,7 @@ public class CustomBeaconProvider implements IBoundingBoxProvider<BoundingBoxBea
         dimensionsCache.values().forEach(Map::clear);
     }
 
+    @Override
     public Iterable<BoundingBoxBeacon> get(int dimensionId) {
         return getCache(dimensionId).values();
     }

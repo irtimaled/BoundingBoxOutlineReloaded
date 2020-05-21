@@ -26,7 +26,9 @@ public class Coords {
         this(pos.getX(), pos.getY(), pos.getZ());
     }
 
-    public Coords(Vec3d pos) { this(pos.x, pos.y, pos.z); }
+    public Coords(Vec3d pos) {
+        this(pos.x, pos.y, pos.z);
+    }
 
     public int getX() {
         return x;

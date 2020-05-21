@@ -29,5 +29,7 @@ public class Setting<T> {
         return type;
     }
 
-    public String getName() { return name; }
+    public String getName() {
+        return name;
+    }
 }

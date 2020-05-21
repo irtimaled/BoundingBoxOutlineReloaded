@@ -33,6 +33,7 @@ public class CustomSphereProvider implements IBoundingBoxProvider<BoundingBoxSph
         dimensionCache.values().forEach(Map::clear);
     }
 
+    @Override
     public Iterable<BoundingBoxSphere> get(int dimensionId) {
         return getCache(dimensionId).values();
     }

@@ -33,7 +33,7 @@ public class SpawningSphereCommand {
                         }))
                 .then(Commands.literal(CALCULATE_SPAWNABLE)
                         .executes(context -> {
-                            if(!SpawningSphereProvider.hasSpawningSphereInDimension(Player.getDimensionId())) {
+                            if (!SpawningSphereProvider.hasSpawningSphereInDimension(Player.getDimensionId())) {
                                 CommandHelper.feedback(context, "bbor.commands.spawningSphere.notSet");
                                 return 0;
                             }
@@ -42,7 +42,7 @@ public class SpawningSphereCommand {
                             World world = Minecraft.getInstance().world;
                             SpawningSphereProvider.calculateSpawnableSpacesCount(pos -> {
                                 counts.spawnable++;
-                                if(world.getLightFor(LightType.SKY, pos) > 7)
+                                if (world.getLightFor(LightType.SKY, pos) > 7)
                                     counts.nightSpawnable++;
                             });
                             SpawningSphereProvider.setSpawnableSpacesCount(counts.spawnable);

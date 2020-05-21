@@ -14,17 +14,14 @@ public class ColorHelper {
     private static Color decodeColor(HexColor hexColor) {
         try {
             int color = Integer.decode(hexColor.getValue());
-
-            int alpha = (color >> 24) & 0xFF;
             return new Color(color, hexColor.hasAlpha());
-        }
-        catch (Exception ignored) {
+        } catch (Exception ignored) {
             return null;
         }
     }
 
     public static Color getColor(Setting<HexColor> value) {
-        if(value == null) return Color.WHITE;
+        if (value == null) return Color.WHITE;
 
         Color color = getColor(value.get());
         return color != null ? color : getColor(value.defaultValue);

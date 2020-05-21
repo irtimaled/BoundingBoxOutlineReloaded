@@ -37,6 +37,7 @@ public class CustomLineProvider implements IBoundingBoxProvider<BoundingBoxLine>
         dimensionCache.values().forEach(Map::clear);
     }
 
+    @Override
     public Iterable<BoundingBoxLine> get(int dimensionId) {
         return getCache(dimensionId).values();
     }

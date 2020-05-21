@@ -21,7 +21,7 @@ public class LineRenderer extends AbstractRenderer<BoundingBoxLine> {
         }
 
         OffsetPoint[] cornerPoints = Arrays.stream(boundingBox.getCorners()).
-                map(point -> new OffsetPoint(point).offset(0,0.001f, 0)).
+                map(point -> new OffsetPoint(point).offset(0, 0.001f, 0)).
                 toArray(OffsetPoint[]::new);
 
         GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
@@ -30,7 +30,7 @@ public class LineRenderer extends AbstractRenderer<BoundingBoxLine> {
                 .addPoints(cornerPoints)
                 .render();
 
-        if(!ConfigManager.fill.get()) return;
+        if (!ConfigManager.fill.get()) return;
 
         GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
         GL11.glEnable(GL11.GL_BLEND);

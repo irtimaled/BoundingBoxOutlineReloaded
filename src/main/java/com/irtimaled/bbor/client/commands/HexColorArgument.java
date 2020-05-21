@@ -29,7 +29,7 @@ public class HexColorArgument implements ArgumentType<HexColor> {
         }
 
         HexColor color = HexColor.from(value);
-        if(color != null) {
+        if (color != null) {
             reader.setCursor(reader.getCursor() + 7);
             return color;
         }

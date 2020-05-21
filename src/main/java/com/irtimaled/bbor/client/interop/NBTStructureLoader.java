@@ -41,7 +41,7 @@ class NBTStructureLoader {
         this.chunkSaveLocation = null;
         this.loadedChunks.clear();
 
-        if(this.chunkLoader == null) return;
+        if (this.chunkLoader == null) return;
         try {
             this.chunkLoader.close();
         } catch (IOException ignored) {

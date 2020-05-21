@@ -15,7 +15,7 @@ public class MixinNetHandlerPlayClient {
         ClientInterop.disconnectedFromRemoteServer();
     }
 
-    @Inject(method="handleChunkData", at = @At("RETURN"))
+    @Inject(method = "handleChunkData", at = @At("RETURN"))
     private void onChunkData(SChunkDataPacket packet, CallbackInfo ci) {
         ClientInterop.receivedChunk(packet.getChunkX(), packet.getChunkZ());
     }

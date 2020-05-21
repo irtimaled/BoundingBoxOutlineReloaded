@@ -11,7 +11,7 @@ class BoundingBoxSerializer {
     private static final Map<Class, BiConsumer<AbstractBoundingBox, PayloadBuilder>> serializers = new HashMap<>();
 
     static {
-        serializers.put(BoundingBoxCuboid.class, (bb, pb) -> serializeStructure((BoundingBoxCuboid)bb, pb));
+        serializers.put(BoundingBoxCuboid.class, (bb, pb) -> serializeStructure((BoundingBoxCuboid) bb, pb));
     }
 
     static boolean canSerialize(AbstractBoundingBox key) {

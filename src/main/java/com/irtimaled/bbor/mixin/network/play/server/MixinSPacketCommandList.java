@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(SCommandListPacket.class)
 public class MixinSPacketCommandList {
-    @Inject(method = "processPacket", at= @At("RETURN"))
+    @Inject(method = "processPacket", at = @At("RETURN"))
     private void processPacket(IClientPlayNetHandler netHandlerPlayClient, CallbackInfo ci) {
         TypeHelper.doIfType(netHandlerPlayClient, ClientPlayNetHandler.class, handler ->
                 ClientInterop.registerClientCommands(handler.func_195515_i()));

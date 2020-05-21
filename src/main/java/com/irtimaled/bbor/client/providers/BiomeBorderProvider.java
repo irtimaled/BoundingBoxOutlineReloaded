@@ -29,7 +29,7 @@ public class BiomeBorderProvider implements IBoundingBoxProvider<BoundingBoxBiom
         Coords playerCoords = Player.getCoords();
         Integer renderDistance = ConfigManager.biomeBordersRenderDistance.get();
         Boolean renderAllTransitions = !ConfigManager.renderOnlyCurrentBiome.get();
-        Integer maxY = (int)Player.getMaxY(ConfigManager.biomeBordersMaxY.get());
+        Integer maxY = (int) Player.getMaxY(ConfigManager.biomeBordersMaxY.get());
         if (!playerCoords.equals(lastPlayerCoords) ||
                 !renderDistance.equals(lastRenderDistance) ||
                 renderAllTransitions != lastRenderAllTransitions ||

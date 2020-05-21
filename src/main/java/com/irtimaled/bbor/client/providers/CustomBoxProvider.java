@@ -37,6 +37,7 @@ public class CustomBoxProvider implements IBoundingBoxProvider<BoundingBoxCuboid
         dimensionCache.values().forEach(Map::clear);
     }
 
+    @Override
     public Iterable<BoundingBoxCuboid> get(int dimensionId) {
         return getCache(dimensionId).values();
     }

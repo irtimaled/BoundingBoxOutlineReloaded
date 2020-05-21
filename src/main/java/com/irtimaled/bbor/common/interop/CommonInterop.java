@@ -17,7 +17,7 @@ public class CommonInterop {
     public static void chunkLoaded(Chunk chunk) {
         int dimensionId = chunk.getWorld().getDimension().getType().getId();
         Map<String, StructureStart> structures = chunk.getStructureStarts();
-        if(structures.size() > 0) EventBus.publish(new StructuresLoaded(structures, dimensionId));
+        if (structures.size() > 0) EventBus.publish(new StructuresLoaded(structures, dimensionId));
     }
 
     public static void loadWorlds(Collection<ServerWorld> worlds) {

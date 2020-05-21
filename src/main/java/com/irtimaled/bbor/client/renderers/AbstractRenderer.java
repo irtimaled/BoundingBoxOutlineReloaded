@@ -38,7 +38,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
         double maxY = max.getY();
         double maxZ = max.getZ();
 
-        if(ConfigManager.invertBoxColorPlayerInside.get() &&
+        if (ConfigManager.invertBoxColorPlayerInside.get() &&
                 playerInsideBoundingBox(minX, minY, minZ, maxX, maxY, maxZ)) {
             color = new Color(255 - color.getRed(), 255 - color.getGreen(), 255 - color.getBlue());
         }
@@ -47,7 +47,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
                 .setColor(color)
                 .setAlpha(alpha);
 
-        if(minX != maxX && minZ != maxZ) {
+        if (minX != maxX && minZ != maxZ) {
             renderer.addPoint(minX, minY, minZ)
                     .addPoint(maxX, minY, minZ)
                     .addPoint(maxX, minY, maxZ)
@@ -61,26 +61,26 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
             }
         }
 
-        if(minX != maxX && minY != maxY) {
+        if (minX != maxX && minY != maxY) {
             renderer.addPoint(minX, minY, maxZ)
                     .addPoint(minX, maxY, maxZ)
                     .addPoint(maxX, maxY, maxZ)
                     .addPoint(maxX, minY, maxZ);
 
-            if(minZ != maxZ) {
+            if (minZ != maxZ) {
                 renderer.addPoint(minX, minY, minZ)
                         .addPoint(minX, maxY, minZ)
                         .addPoint(maxX, maxY, minZ)
                         .addPoint(maxX, minY, minZ);
             }
         }
-        if(minY != maxY && minZ != maxZ) {
+        if (minY != maxY && minZ != maxZ) {
             renderer.addPoint(minX, minY, minZ)
                     .addPoint(minX, minY, maxZ)
                     .addPoint(minX, maxY, maxZ)
                     .addPoint(minX, maxY, minZ);
 
-            if(minX != maxX) {
+            if (minX != maxX) {
                 renderer.addPoint(maxX, minY, minZ)
                         .addPoint(maxX, minY, maxZ)
                         .addPoint(maxX, maxY, maxZ)
