@@ -4,7 +4,7 @@ import com.irtimaled.bbor.client.config.BoundingBoxTypeHelper;
 import com.irtimaled.bbor.client.config.ColorHelper;
 import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.models.BoundingBoxConduit;
-import com.irtimaled.bbor.common.models.Point;
+import com.irtimaled.bbor.client.models.Point;
 
 import java.awt.*;
 

@@ -1,8 +1,8 @@
 package com.irtimaled.bbor.client.renderers;
 
 import com.irtimaled.bbor.client.Camera;
+import com.irtimaled.bbor.client.models.Point;
 import com.irtimaled.bbor.common.models.Coords;
-import com.irtimaled.bbor.common.models.Point;
 
 class OffsetPoint {
     private final Point point;

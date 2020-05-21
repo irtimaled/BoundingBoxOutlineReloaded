@@ -1,8 +1,6 @@
 package com.irtimaled.bbor.client.models;
 
 import com.irtimaled.bbor.common.BoundingBoxType;
-import com.irtimaled.bbor.common.models.BoundingBoxSphere;
-import com.irtimaled.bbor.common.models.Point;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.HashSet;

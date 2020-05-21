@@ -8,7 +8,6 @@ import com.irtimaled.bbor.client.renderers.*;
 import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBoxCuboid;
-import com.irtimaled.bbor.common.models.BoundingBoxSphere;
 import org.lwjgl.opengl.GL11;
 
 import java.util.HashMap;

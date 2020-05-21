@@ -1,8 +1,8 @@
 package com.irtimaled.bbor.client.renderers;
 
 import com.irtimaled.bbor.client.config.BoundingBoxTypeHelper;
-import com.irtimaled.bbor.common.models.BoundingBoxSphere;
-import com.irtimaled.bbor.common.models.Point;
+import com.irtimaled.bbor.client.models.BoundingBoxSphere;
+import com.irtimaled.bbor.client.models.Point;
 
 public class SphereRenderer extends AbstractRenderer<BoundingBoxSphere> {
     @Override

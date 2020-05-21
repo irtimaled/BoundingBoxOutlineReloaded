@@ -5,8 +5,8 @@ import com.irtimaled.bbor.client.config.BoundingBoxTypeHelper;
 import com.irtimaled.bbor.client.config.ColorHelper;
 import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.models.BoundingBoxSpawningSphere;
+import com.irtimaled.bbor.client.models.Point;
 import com.irtimaled.bbor.common.BoundingBoxType;
-import com.irtimaled.bbor.common.models.Point;
 import net.minecraft.client.resources.I18n;
 
 import java.awt.*;

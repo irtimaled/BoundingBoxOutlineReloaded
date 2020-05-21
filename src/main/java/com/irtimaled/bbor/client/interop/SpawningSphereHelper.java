@@ -1,8 +1,8 @@
 package com.irtimaled.bbor.client.interop;
 
 import com.irtimaled.bbor.client.models.BoundingBoxSpawningSphere;
+import com.irtimaled.bbor.client.models.Point;
 import com.irtimaled.bbor.common.models.Coords;
-import com.irtimaled.bbor.common.models.Point;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;

@@ -1,10 +1,10 @@
 package com.irtimaled.bbor.client.providers;
 
-import com.irtimaled.bbor.ReflectionHelper;
 import com.irtimaled.bbor.client.config.BoundingBoxTypeHelper;
 import com.irtimaled.bbor.client.interop.TileEntitiesHelper;
 import com.irtimaled.bbor.client.models.BoundingBoxConduit;
 import com.irtimaled.bbor.common.BoundingBoxType;
+import com.irtimaled.bbor.common.ReflectionHelper;
 import com.irtimaled.bbor.common.models.Coords;
 import net.minecraft.tileentity.ConduitTileEntity;
 import net.minecraft.util.math.BlockPos;

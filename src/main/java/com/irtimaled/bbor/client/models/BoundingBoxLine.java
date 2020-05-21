@@ -3,7 +3,6 @@ package com.irtimaled.bbor.client.models;
 import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.TypeHelper;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
-import com.irtimaled.bbor.common.models.Point;
 
 public class BoundingBoxLine extends AbstractBoundingBox {
     private final Point minPoint;

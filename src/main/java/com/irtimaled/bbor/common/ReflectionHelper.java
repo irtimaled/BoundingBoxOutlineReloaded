@@ -1,6 +1,4 @@
-package com.irtimaled.bbor;
-
-import com.irtimaled.bbor.common.TypeHelper;
+package com.irtimaled.bbor.common;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;

@@ -1,9 +1,9 @@
 package com.irtimaled.bbor.client.providers;
 
 import com.irtimaled.bbor.client.Player;
+import com.irtimaled.bbor.client.models.BoundingBoxSphere;
+import com.irtimaled.bbor.client.models.Point;
 import com.irtimaled.bbor.common.BoundingBoxType;
-import com.irtimaled.bbor.common.models.BoundingBoxSphere;
-import com.irtimaled.bbor.common.models.Point;
 
 import java.util.HashMap;
 import java.util.Map;

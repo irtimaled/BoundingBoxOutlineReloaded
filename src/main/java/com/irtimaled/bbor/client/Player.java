@@ -1,7 +1,7 @@
 package com.irtimaled.bbor.client;
 
+import com.irtimaled.bbor.client.models.Point;
 import com.irtimaled.bbor.common.models.Coords;
-import com.irtimaled.bbor.common.models.Point;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 
 public class Player {

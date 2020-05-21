@@ -1,8 +1,8 @@
 package com.irtimaled.bbor.client.commands;
 
 import com.irtimaled.bbor.client.config.HexColor;
+import com.irtimaled.bbor.client.models.Point;
 import com.irtimaled.bbor.common.models.Coords;
-import com.irtimaled.bbor.common.models.Point;
 import com.mojang.brigadier.arguments.*;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;

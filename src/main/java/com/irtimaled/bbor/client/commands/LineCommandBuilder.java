@@ -1,7 +1,7 @@
 package com.irtimaled.bbor.client.commands;
 
+import com.irtimaled.bbor.client.models.Point;
 import com.irtimaled.bbor.client.providers.CustomLineProvider;
-import com.irtimaled.bbor.common.models.Point;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;

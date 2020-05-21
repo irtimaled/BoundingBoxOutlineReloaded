@@ -2,9 +2,7 @@ package com.irtimaled.bbor.client.models;
 
 import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.TypeHelper;
-import com.irtimaled.bbor.common.models.BoundingBoxSphere;
 import com.irtimaled.bbor.common.models.Coords;
-import com.irtimaled.bbor.common.models.Point;
 
 public class BoundingBoxConduit extends BoundingBoxSphere {
     private final int level;

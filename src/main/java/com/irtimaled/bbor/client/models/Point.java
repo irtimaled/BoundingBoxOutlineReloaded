@@ -1,7 +1,8 @@
-package com.irtimaled.bbor.common.models;
+package com.irtimaled.bbor.client.models;
 
 import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.TypeHelper;
+import com.irtimaled.bbor.common.models.Coords;
 import net.minecraft.util.math.Vec3d;
 
 public class Point {
