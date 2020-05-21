@@ -1,6 +1,7 @@
 package com.irtimaled.bbor.client.gui;
 
 import com.irtimaled.bbor.client.interop.ClientInterop;
+import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.StringTextComponent;
@@ -27,7 +28,7 @@ public abstract class ListScreen extends Screen {
 
     @Override
     protected void init() {
-        this.controlList = new ControlList(this.width, this.height, 48, this.height - 28);
+        this.controlList = this.buildList(48, this.height - 28);
         this.searchField = new SearchField(this.font, this.width / 2 - 100, 22, 200, 20, this.controlList);
         this.doneButton = new AbstractButton(this.width / 2 - 100, this.height - 24, 200, I18n.format("gui.done")) {
             @Override
@@ -36,13 +37,12 @@ public abstract class ListScreen extends Screen {
             }
         };
 
-        this.children.add(this.doneButton);
-        this.children.add(this.controlList);
         this.children.add(this.searchField);
-        this.setup();
+        this.children.add(this.controlList);
+        this.children.add(this.doneButton);
     }
 
-    protected abstract void setup();
+    protected abstract ControlList buildList(int top, int bottom);
 
     @Override
     public void render(int mouseX, int mouseY, float unknown) {
@@ -82,11 +82,23 @@ public abstract class ListScreen extends Screen {
         this.controlList.close();
     }
 
-    ControlList getControlList() {
-        return this.controlList;
+    protected void setCanExit(boolean canExit) {
+        this.doneButton.active = canExit;
     }
 
-    AbstractButton getDoneButton() {
-        return doneButton;
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        for (IGuiEventListener control : this.children()) {
+            if (control.mouseClicked(mouseX, mouseY, button)) {
+                IGuiEventListener focused = getFocused();
+                if (focused instanceof IFocusableControl && focused != control) {
+                    ((IFocusableControl) focused).clearFocus();
+                }
+                this.setFocused(control);
+                if (button == 0) this.setDragging(true);
+                return true;
+            }
+        }
+        return false;
     }
 }

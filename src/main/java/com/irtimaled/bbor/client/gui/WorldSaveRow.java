@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.function.Consumer;
 
 public class WorldSaveRow extends ControlListEntry implements Comparable<WorldSaveRow> {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -30,15 +31,17 @@ public class WorldSaveRow extends ControlListEntry implements Comparable<WorldSa
     private final Minecraft client;
     private final WorldSummary worldSummary;
     private final SaveFormat saveLoader;
+    private final Consumer<ControlListEntry> setSelectedEntry;
     private final ResourceLocation iconLocation;
     private final DynamicTexture icon;
 
     private File iconFile;
     private long lastClickTime;
 
-    WorldSaveRow(WorldSummary worldSummary, SaveFormat saveLoader) {
+    WorldSaveRow(WorldSummary worldSummary, SaveFormat saveLoader, Consumer<ControlListEntry> setSelectedEntry) {
         this.worldSummary = worldSummary;
         this.saveLoader = saveLoader;
+        this.setSelectedEntry = setSelectedEntry;
         this.client = Minecraft.getInstance();
         this.iconLocation = new ResourceLocation("worlds/" + Hashing.sha1().hashUnencodedChars(worldSummary.getFileName()) + "/icon");
         this.iconFile = saveLoader.getFile(worldSummary.getFileName(), "icon.png");
@@ -50,23 +53,28 @@ public class WorldSaveRow extends ControlListEntry implements Comparable<WorldSa
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        this.list.setSelectedIndex(this.index);
-        if (Util.milliTime() - this.lastClickTime < 250L) {
-            loadWorld();
-            return true;
-        } else {
-            this.lastClickTime = Util.milliTime();
-            return false;
-        }
+    public boolean isMouseOver(double mouseX, double mouseY) {
+        return mouseX > this.getX() &&
+                mouseX < this.getX() + ControlList.CONTROLS_WIDTH &&
+                mouseY > this.getY() &&
+                mouseY < this.getY() + this.getControlHeight();
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        return false;
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (!isMouseOver(mouseX, mouseY)) return false;
+
+        this.setSelectedEntry.accept(this);
+        if (Util.milliTime() - this.lastClickTime < 250L) {
+            done();
+        } else {
+            this.lastClickTime = Util.milliTime();
+        }
+        return true;
     }
 
-    void loadWorld() {
+    @Override
+    public void done() {
         String fileName = this.worldSummary.getFileName();
         WorldInfo worldInfo = saveLoader.getWorldInfo(fileName);
         long seed = worldInfo.getSeed();
@@ -106,13 +114,8 @@ public class WorldSaveRow extends ControlListEntry implements Comparable<WorldSa
     }
 
     @Override
-    public int getControlWidth() {
-        return 310;
-    }
-
-    @Override
     public void filter(String lowerValue) {
-        setVisible(lowerValue == "" ||
+        super.setVisible(lowerValue.isEmpty() ||
                 this.worldSummary.getDisplayName().toLowerCase().contains(lowerValue) ||
                 this.worldSummary.getFileName().toLowerCase().contains(lowerValue));
     }

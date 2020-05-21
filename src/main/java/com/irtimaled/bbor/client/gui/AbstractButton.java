@@ -1,28 +1,36 @@
 package com.irtimaled.bbor.client.gui;
 
+import net.minecraft.client.Minecraft;
+
 abstract class AbstractButton extends AbstractControl {
     AbstractButton(int x, int y, int width, String name) {
         super(x, y, width, name);
     }
 
-    AbstractButton(int x, int y, int width, String name, boolean enabled) {
-        this(x, y, width, name);
+    AbstractButton(int width, String name, boolean enabled) {
+        this(0, 0, width, name);
         this.active = enabled;
-    }
-
-    @Override
-    protected int getYImage(boolean p_getHoverState_1_) {
-        return getState();
-    }
-
-    protected int getState() {
-        return this.active ? this.isHovered ? 2 : 1 : 0;
     }
 
     @Override
     public void onClick(double mouseX, double mouseY) {
         super.onClick(mouseX, mouseY);
         onPressed();
+    }
+
+    @Override
+    public boolean keyPressed(int key, int scanCode, int modifiers) {
+        if (this.active && this.visible) {
+            if (key != 257 && key != 32 && key != 335) {
+                return false;
+            } else {
+                this.playDownSound(Minecraft.getInstance().getSoundHandler());
+                this.onPressed();
+                return true;
+            }
+        } else {
+            return false;
+        }
     }
 
     protected abstract void onPressed();

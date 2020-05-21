@@ -25,6 +25,8 @@ public class MixinGuiOptions extends Screen {
             if (button.y >= top && button.y < bottom)
                 button.y -= 12;
         }
-        this.addButton(new SettingsScreenButton(this.width / 2 - 155, top + 84, 150, "BBOR", this));
+        SettingsScreenButton button = new SettingsScreenButton(this.width / 2 - 155, top + 84, 150, "BBOR", this);
+        this.buttons.add(this.buttons.size() - 1, button);
+        this.children.add(this.children.size() - 1, button);
     }
 }

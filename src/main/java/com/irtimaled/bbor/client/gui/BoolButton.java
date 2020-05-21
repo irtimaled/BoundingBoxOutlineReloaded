@@ -4,28 +4,15 @@ import com.irtimaled.bbor.client.config.ColorHelper;
 import com.irtimaled.bbor.client.config.ConfigManager;
 
 public abstract class BoolButton extends AbstractButton {
-    private boolean value;
-
     BoolButton(int width, String label, boolean enabled) {
-        super(0, 0, width, label, enabled);
+        super(width, label, enabled);
     }
 
     BoolButton(int width, String label) {
         super(0, 0, width, label);
     }
 
-    @Override
-    protected int getState() {
-        return active ? super.getState() : 0;
-    }
-
-    protected boolean getValue() {
-        return this.value;
-    }
-
-    protected void setValue(boolean value) {
-        this.value = value;
-    }
+    protected abstract boolean getValue();
 
     @Override
     protected void renderBackground(int mouseX, int mouseY) {

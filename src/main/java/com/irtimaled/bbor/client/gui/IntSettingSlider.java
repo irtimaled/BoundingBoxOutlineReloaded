@@ -12,16 +12,18 @@ class IntSettingSlider extends AbstractSlider {
 
     final Setting<Integer> setting;
     final int minValue;
-    final int range;
 
     IntSettingSlider(int width, int minValue, int maxValue, String format, Setting<Integer> setting) {
-        super(0, 0, width);
+        super(width, maxValue - minValue);
         this.setting = setting;
         this.minValue = minValue;
         this.format = format;
-        this.range = maxValue - minValue;
-        this.setProgress(getSliderValue());
+        setInitialPosition();
         this.updateText();
+    }
+
+    protected void setInitialPosition() {
+        this.setPosition(this.setting.get() - this.minValue);
     }
 
     IntSettingSlider addDisplayValue(int value, String displayValue) {
@@ -32,26 +34,18 @@ class IntSettingSlider extends AbstractSlider {
         return this;
     }
 
-    private String getDisplayValue() {
-        Integer value = setting.get();
-        return I18n.format(format, displayValues.getOrDefault(value, value.toString()));
-    }
-
     protected Integer getSettingValue() {
-        return minValue + (int) (range * progress);
+        return minValue + getPosition();
     }
 
-    protected double getSliderValue() {
-        return (setting.get() - minValue) / (double) range;
-    }
-
-    @Override
-    protected void updateText() {
-        this.setMessage(this.getDisplayValue());
+    private void updateText() {
+        Integer value = setting.get();
+        this.setMessage(I18n.format(format, displayValues.getOrDefault(value, value.toString())));
     }
 
     @Override
     protected void onProgressChanged() {
         this.setting.set(this.getSettingValue());
+        updateText();
     }
 }

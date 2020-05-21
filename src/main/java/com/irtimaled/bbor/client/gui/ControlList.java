@@ -4,34 +4,32 @@ import com.irtimaled.bbor.client.renderers.Renderer;
 import com.mojang.blaze3d.platform.GLX;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.FocusableGui;
-import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-public class ControlList extends FocusableGui {
-    private static final int CONTROLS_WIDTH = 310;
+public class ControlList extends AbstractGui implements IControlSet {
+    public static final int CONTROLS_WIDTH = 310;
+    protected static final int PADDING = 8;
+
+    protected final int listLeft;
+    protected final List<ControlListEntry> entries = new ArrayList<>();
     private final int scrollBarLeft;
     private final int listHeight;
-    private final int listLeft;
-    private final int listRight;
     private final Minecraft minecraft;
-    private final List<ControlListEntry> entries = new ArrayList<>();
     private final int width;
     private final int height;
     private final int top;
     private final int bottom;
 
-    private int contentHeight = 8;
-    private int selectedElement;
+    protected int contentHeight = PADDING;
     private double amountScrolled;
     private boolean clickedScrollbar;
-    private boolean showSelectionBox;
     private boolean transparentBackground;
+    private IControl focused;
+    private boolean isDragging;
 
     ControlList(int width, int height, int top, int bottom) {
         this.minecraft = Minecraft.getInstance();
@@ -42,12 +40,9 @@ public class ControlList extends FocusableGui {
         this.bottom = bottom;
         this.listHeight = bottom - top;
         this.listLeft = width / 2 - CONTROLS_WIDTH / 2;
-        this.listRight = this.listLeft + CONTROLS_WIDTH;
-        this.selectedElement = -1;
     }
 
     void add(ControlListEntry entry) {
-        entry.list = this;
         entry.index = entries.size();
         addEntry(entry);
     }
@@ -57,18 +52,18 @@ public class ControlList extends FocusableGui {
         this.contentHeight += entry.getControlHeight();
     }
 
-    ControlListEntry getSelectedEntry() {
-        return this.selectedElement >= 0 && this.selectedElement < this.entries.size() ? this.entries.get(this.selectedElement) : null;
-    }
-
-    void filter(String lowerValue) {
+    public void filter(String lowerValue) {
         int height = 0;
-        for (IControl entry : entries) {
+
+        for (ControlListEntry entry : entries) {
             entry.filter(lowerValue);
-            if (entry.getVisible())
+            if (entry.isVisible()) {
                 height += entry.getControlHeight();
+            } else if (entry == focused) {
+                focused = null;
+            }
         }
-        this.contentHeight = height + 8;
+        this.contentHeight = height + PADDING;
     }
 
     void close() {
@@ -78,43 +73,47 @@ public class ControlList extends FocusableGui {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         this.clickedScrollbar = button == 0 && mouseX >= (double) this.scrollBarLeft;
-        if (mouseY >= (double) this.top && mouseY <= (double) this.bottom) {
-            ControlListEntry entry = this.getEntryAt(mouseX, mouseY);
-            if (entry != null && entry.mouseClicked(mouseX, mouseY, button)) {
-                this.setDragging(true);
-                this.setSelectedIndex(entry.index);
-                return true;
-            } else {
-                return this.clickedScrollbar;
-            }
-        } else {
-            return false;
-        }
+        return isMouseOver(mouseX, mouseY) &&
+                (IControlSet.super.mouseClicked(mouseX, mouseY, button) ||
+                        this.clickedScrollbar);
     }
 
-    void setSelectedIndex(int index) {
-        this.selectedElement = index;
+    @Override
+    public boolean isMouseOver(double mouseX, double mouseY) {
+        return mouseY >= (double) this.top && mouseY <= (double) this.bottom;
     }
 
-    private ControlListEntry getEntryAt(double mouseX, double mouseY) {
-        if (mouseX >= listLeft && mouseX <= listRight) {
-            for (ControlListEntry entry : entries) {
-                if (!entry.getVisible()) continue;
-
-                int top = entry.getY();
-                int bottom = top + entry.getControlHeight();
-                if (mouseY >= top && mouseY <= bottom)
-                    return entry;
-            }
+    @Override
+    public boolean changeFocus(boolean moveForward) {
+        boolean newControlFocused = IControlSet.super.changeFocus(moveForward);
+        if (newControlFocused) {
+            this.ensureVisible((ControlListEntry) this.getFocused());
         }
-        return null;
+
+        return newControlFocused;
+    }
+
+    private void ensureVisible(ControlListEntry control) {
+        int controlTop = control.getControlTop();
+        int controlHeight = control.getControlHeight();
+        int distanceAboveTop = this.top - controlTop;
+        if (distanceAboveTop > 0) {
+            this.amountScrolled -= Math.max(controlHeight, distanceAboveTop + PADDING);
+            return;
+        }
+
+        int distanceBelowBottom = controlTop + controlHeight - this.bottom;
+        if (distanceBelowBottom > 0) {
+            this.amountScrolled += Math.max(controlHeight, distanceBelowBottom + PADDING);
+        }
     }
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double p_mouseDragged_6_, double p_mouseDragged_8_) {
-        if (super.mouseDragged(mouseX, mouseY, button, p_mouseDragged_6_, p_mouseDragged_8_)) {
+        if (IControlSet.super.mouseDragged(mouseX, mouseY, button, p_mouseDragged_6_, p_mouseDragged_8_)) {
             return true;
-        } else if (button == 0 && this.clickedScrollbar) {
+        }
+        if (button == 0 && this.clickedScrollbar) {
             if (mouseY < (double) this.top) {
                 this.amountScrolled = 0.0D;
             } else if (mouseY > (double) this.bottom) {
@@ -134,9 +133,8 @@ public class ControlList extends FocusableGui {
             }
 
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     private int getMaxScroll() {
@@ -146,13 +144,7 @@ public class ControlList extends FocusableGui {
     private int getScrollBarHeight() {
         return MathHelper.clamp((int) ((float) (this.listHeight * this.listHeight) / (float) this.contentHeight),
                 32,
-                this.listHeight - 8);
-    }
-
-    @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        this.entries.forEach(entry -> entry.mouseReleased(mouseX, mouseY, button));
-        return false;
+                this.listHeight - PADDING);
     }
 
     @Override
@@ -168,7 +160,7 @@ public class ControlList extends FocusableGui {
         GL11.glDisable(GL11.GL_FOG);
         if (!transparentBackground) drawListBackground();
 
-        int listTop = this.top + 8 - (int) this.amountScrolled;
+        int listTop = this.top + PADDING - (int) this.amountScrolled;
 
         drawEntries(mouseX, mouseY, listTop);
 
@@ -207,35 +199,19 @@ public class ControlList extends FocusableGui {
 
     private void drawEntries(int mouseX, int mouseY, int top) {
         for (ControlListEntry entry : this.entries) {
-            if (!entry.getVisible()) continue;
+            if (!entry.isVisible()) continue;
 
             entry.setX(this.listLeft);
             entry.setY(top);
 
             int height = entry.getControlHeight();
-
-            if (this.showSelectionBox && this.selectedElement == entry.index) {
-                GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-                GL11.glDisable(GL11.GL_TEXTURE_2D);
-                Renderer.startTextured()
-                        .setAlpha(255)
-                        .setColor(128, 128, 128)
-                        .addPoint((double) this.listLeft - 2, (double) (top + height) - 2, 0.0D, 0.0D, 1.0D)
-                        .addPoint((double) this.listRight + 2, (double) (top + height) - 2, 0.0D, 1.0D, 1.0D)
-                        .addPoint((double) this.listRight + 2, top - 2, 0.0D, 1.0D, 0.0D)
-                        .addPoint((double) this.listLeft - 2, top - 2, 0.0D, 0.0D, 0.0D)
-                        .setColor(0, 0, 0)
-                        .addPoint(this.listLeft - 1, (double) (top + height) - 3, 0.0D, 0.0D, 1.0D)
-                        .addPoint(this.listRight + 1, (double) (top + height) - 3, 0.0D, 1.0D, 1.0D)
-                        .addPoint(this.listRight + 1, top - 1, 0.0D, 1.0D, 0.0D)
-                        .addPoint(this.listLeft - 1, top - 1, 0.0D, 0.0D, 0.0D)
-                        .render();
-                GL11.glEnable(GL11.GL_TEXTURE_2D);
-            }
-
-            entry.render(mouseX, mouseY);
-            top += entry.getControlHeight();
+            drawEntry(mouseX, mouseY, top, entry, height);
+            top += height;
         }
+    }
+
+    protected void drawEntry(int mouseX, int mouseY, int top, ControlListEntry entry, int height) {
+        entry.render(mouseX, mouseY);
     }
 
     private void overlayBackground(int top, int bottom) {
@@ -302,21 +278,37 @@ public class ControlList extends FocusableGui {
                 .render();
     }
 
-    @Override
-    public List<? extends IGuiEventListener> children() {
-        return Collections.emptyList();
-    }
-
     ControlList section(String title, CreateControl... createControls) {
         this.add(new ControlListSection(title, createControls));
         return this;
     }
 
-    void showSelectionBox() {
-        this.showSelectionBox = true;
-    }
-
     void setTransparentBackground() {
         this.transparentBackground = true;
+    }
+
+    @Override
+    public List<? extends IControl> controls() {
+        return entries;
+    }
+
+    @Override
+    public IControl getFocused() {
+        return focused;
+    }
+
+    @Override
+    public void setFocused(IControl control) {
+        this.focused = control;
+    }
+
+    @Override
+    public boolean isDragging() {
+        return isDragging;
+    }
+
+    @Override
+    public void setDragging(boolean dragging) {
+        this.isDragging = dragging;
     }
 }

@@ -9,7 +9,7 @@ class MaxYSettingSlider extends IntSettingSlider {
     MaxYSettingSlider(int width, int minValue, Setting<Integer> setting) {
         super(width, minValue - 2, 127, I18n.format("bbor.options.maxY", "%s"), setting);
         this.actualMinValue = minValue;
-        this.setProgress(getSliderValue());
+        this.setInitialPosition();
         this.addDisplayValue(-1, I18n.format("bbor.options.maxY.activated"));
         this.addDisplayValue(0, I18n.format("bbor.options.maxY.player"));
         this.addDisplayValue(63, I18n.format("bbor.options.maxY.seaLevel"));
@@ -24,11 +24,13 @@ class MaxYSettingSlider extends IntSettingSlider {
     }
 
     @Override
-    protected double getSliderValue() {
+    protected void setInitialPosition() {
+        if (actualMinValue != minValue + 2) return;
+
         int value = setting.get();
         if (value < actualMinValue)
             value = (value - 1) + actualMinValue;
 
-        return (value - minValue) / (double) range;
+        setPosition(value - minValue);
     }
 }
