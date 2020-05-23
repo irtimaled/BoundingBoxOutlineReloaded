@@ -7,6 +7,7 @@ import com.irtimaled.bbor.client.interop.SpawnableBlocksHelper;
 import com.irtimaled.bbor.client.models.BoundingBoxSpawnableBlocks;
 import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.MathHelper;
+import com.irtimaled.bbor.common.models.DimensionId;
 import net.minecraft.client.Minecraft;
 
 import java.util.HashSet;
@@ -29,13 +30,13 @@ public class SpawnableBlocksProvider implements IBoundingBoxProvider<BoundingBox
     }
 
     @Override
-    public boolean canProvide(int dimensionId) {
+    public boolean canProvide(DimensionId dimensionId) {
         return BoundingBoxTypeHelper.shouldRender(BoundingBoxType.SpawnableBlocks) &&
                 !isWithinActiveSpawningSphere();
     }
 
     @Override
-    public Iterable<BoundingBoxSpawnableBlocks> get(int dimensionId) {
+    public Iterable<BoundingBoxSpawnableBlocks> get(DimensionId dimensionId) {
         long gameTime = minecraft.world.getGameTime();
         if (lastBoundingBox == null || (!((Long) gameTime).equals(lastGameTime) && gameTime % 2L == 0L)) {
             lastGameTime = gameTime;

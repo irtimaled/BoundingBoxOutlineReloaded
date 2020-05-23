@@ -2,18 +2,19 @@ package com.irtimaled.bbor.common.messages;
 
 import com.irtimaled.bbor.client.events.AddBoundingBoxReceived;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
+import com.irtimaled.bbor.common.models.DimensionId;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public class AddBoundingBox {
-    public static final String NAME = "bbor:add_bounding_box";
+    public static final String NAME = "bbor:add_bounding_box_v2";
 
-    public static PayloadBuilder getPayload(int dimensionId, AbstractBoundingBox key, Set<AbstractBoundingBox> boundingBoxes) {
+    public static PayloadBuilder getPayload(DimensionId dimensionId, AbstractBoundingBox key, Set<AbstractBoundingBox> boundingBoxes) {
         if (!BoundingBoxSerializer.canSerialize(key)) return null;
 
         PayloadBuilder builder = PayloadBuilder.clientBound(NAME)
-                .writeVarInt(dimensionId);
+                .writeDimensionId(dimensionId);
         BoundingBoxSerializer.serialize(key, builder);
         if (boundingBoxes != null && boundingBoxes.size() > 1) {
             for (AbstractBoundingBox boundingBox : boundingBoxes) {
@@ -24,7 +25,7 @@ public class AddBoundingBox {
     }
 
     public static AddBoundingBoxReceived getEvent(PayloadReader reader) {
-        int dimensionId = reader.readVarInt();
+        DimensionId dimensionId = reader.readDimensionId();
         AbstractBoundingBox key = BoundingBoxDeserializer.deserialize(reader);
         if (key == null) return null;
 

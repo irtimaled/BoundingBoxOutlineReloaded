@@ -1,6 +1,7 @@
 package com.irtimaled.bbor.common.messages;
 
 import com.irtimaled.bbor.common.models.Coords;
+import com.irtimaled.bbor.common.models.DimensionId;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.PacketBuffer;
@@ -69,5 +70,11 @@ public class PayloadBuilder {
         return writeVarInt(coords.getX())
                 .writeVarInt(coords.getY())
                 .writeVarInt(coords.getZ());
+    }
+
+    public PayloadBuilder writeDimensionId(DimensionId dimensionId) {
+        buffer.writeResourceLocation(dimensionId.getValue());
+        packet = null;
+        return this;
     }
 }

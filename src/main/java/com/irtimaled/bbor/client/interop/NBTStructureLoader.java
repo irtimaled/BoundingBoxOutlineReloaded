@@ -2,6 +2,7 @@ package com.irtimaled.bbor.client.interop;
 
 import com.irtimaled.bbor.common.EventBus;
 import com.irtimaled.bbor.common.events.StructuresLoaded;
+import com.irtimaled.bbor.common.models.DimensionId;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.math.ChunkPos;
@@ -23,7 +24,7 @@ import java.io.IOException;
 import java.util.*;
 
 class NBTStructureLoader {
-    private final int dimensionId;
+    private final DimensionId dimensionId;
     private final Set<String> loadedChunks = new HashSet<>();
 
     private LegacyStructureDataUtil legacyStructureDataUtil = null;
@@ -31,12 +32,13 @@ class NBTStructureLoader {
     private File chunkSaveLocation = null;
     private ChunkLoader chunkLoader;
 
-    NBTStructureLoader(int dimensionId, SaveHandler saveHandler, File worldDirectory) {
+    NBTStructureLoader(DimensionId dimensionId, SaveHandler saveHandler, File worldDirectory) {
         this.dimensionId = dimensionId;
         this.configure(saveHandler, worldDirectory);
     }
 
     void clear() {
+        this.legacyStructureDataUtil = null;
         this.saveHandler = null;
         this.chunkSaveLocation = null;
         this.loadedChunks.clear();
@@ -46,12 +48,13 @@ class NBTStructureLoader {
             this.chunkLoader.close();
         } catch (IOException ignored) {
         }
+        this.chunkLoader = null;
     }
 
     void configure(SaveHandler saveHandler, File worldDirectory) {
         this.saveHandler = saveHandler;
         if (worldDirectory != null) {
-            this.chunkSaveLocation = new File(DimensionType.getById(dimensionId).getDirectory(worldDirectory), "region");
+            this.chunkSaveLocation = new File(dimensionId.getDimensionType().getDirectory(worldDirectory), "region");
             this.chunkLoader = new ChunkLoader(this.chunkSaveLocation);
         }
     }
@@ -59,7 +62,7 @@ class NBTStructureLoader {
     private LegacyStructureDataUtil getLegacyStructureDataUtil() {
         if (this.legacyStructureDataUtil == null) {
             File dataFolder = new File(DimensionType.OVERWORLD.getDirectory(this.saveHandler.getWorldDirectory()), "data");
-            this.legacyStructureDataUtil = LegacyStructureDataUtil.func_215130_a(DimensionType.getById(dimensionId),
+            this.legacyStructureDataUtil = LegacyStructureDataUtil.func_215130_a(dimensionId.getDimensionType(),
                     new DimensionSavedDataManager(dataFolder, this.saveHandler.getFixer()));
         }
         return this.legacyStructureDataUtil;

@@ -2,6 +2,7 @@ package com.irtimaled.bbor.client;
 
 import com.irtimaled.bbor.client.models.Point;
 import com.irtimaled.bbor.common.models.Coords;
+import com.irtimaled.bbor.common.models.DimensionId;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 
 public class Player {
@@ -9,13 +10,13 @@ public class Player {
     private static double y;
     private static double z;
     private static double activeY;
-    private static int dimensionId;
+    private static DimensionId dimensionId;
 
     public static void setPosition(double partialTicks, ClientPlayerEntity player) {
         x = player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTicks;
         y = player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTicks;
         z = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * partialTicks;
-        dimensionId = player.dimension.getId();
+        dimensionId = DimensionId.from(player.dimension);
     }
 
     static void setActiveY() {
@@ -44,7 +45,7 @@ public class Player {
         return configMaxY;
     }
 
-    public static int getDimensionId() {
+    public static DimensionId getDimensionId() {
         return dimensionId;
     }
 

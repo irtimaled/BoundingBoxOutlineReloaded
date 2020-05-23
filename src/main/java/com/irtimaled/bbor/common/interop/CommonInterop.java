@@ -2,6 +2,7 @@ package com.irtimaled.bbor.common.interop;
 
 import com.irtimaled.bbor.common.EventBus;
 import com.irtimaled.bbor.common.events.*;
+import com.irtimaled.bbor.common.models.DimensionId;
 import com.irtimaled.bbor.common.models.ServerPlayer;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.NetworkManager;
@@ -15,7 +16,7 @@ import java.util.Map;
 
 public class CommonInterop {
     public static void chunkLoaded(Chunk chunk) {
-        int dimensionId = chunk.getWorld().getDimension().getType().getId();
+        DimensionId dimensionId = DimensionId.from(chunk.getWorld().getDimension().getType());
         Map<String, StructureStart> structures = chunk.getStructureStarts();
         if (structures.size() > 0) EventBus.publish(new StructuresLoaded(structures, dimensionId));
     }

@@ -8,6 +8,7 @@ import com.irtimaled.bbor.client.renderers.*;
 import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBoxCuboid;
+import com.irtimaled.bbor.common.models.DimensionId;
 import org.lwjgl.opengl.GL11;
 
 import java.util.HashMap;
@@ -82,7 +83,7 @@ public class ClientRenderer {
         return boundingBox.intersectsBounds(minX, minZ, maxX, maxZ);
     }
 
-    public static void render(int dimensionId) {
+    public static void render(DimensionId dimensionId) {
         if (!active) return;
 
         Set<AbstractBoundingBox> boundingBoxes = getBoundingBoxes(dimensionId);
@@ -108,7 +109,7 @@ public class ClientRenderer {
         GL11.glEnable(GL11.GL_TEXTURE_2D);
     }
 
-    private static Set<AbstractBoundingBox> getBoundingBoxes(int dimensionId) {
+    private static Set<AbstractBoundingBox> getBoundingBoxes(DimensionId dimensionId) {
         Set<AbstractBoundingBox> boundingBoxes = new HashSet<>();
         for (IBoundingBoxProvider<?> provider : providers) {
             if (provider.canProvide(dimensionId)) {

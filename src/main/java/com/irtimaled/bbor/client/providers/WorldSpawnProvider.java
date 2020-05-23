@@ -3,8 +3,8 @@ package com.irtimaled.bbor.client.providers;
 import com.irtimaled.bbor.client.config.BoundingBoxTypeHelper;
 import com.irtimaled.bbor.client.models.BoundingBoxWorldSpawn;
 import com.irtimaled.bbor.common.BoundingBoxType;
-import com.irtimaled.bbor.common.Dimensions;
 import com.irtimaled.bbor.common.models.Coords;
+import com.irtimaled.bbor.common.models.DimensionId;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -50,12 +50,12 @@ public class WorldSpawnProvider implements IBoundingBoxProvider<BoundingBoxWorld
     }
 
     @Override
-    public boolean canProvide(int dimensionId) {
-        return dimensionId == Dimensions.OVERWORLD;
+    public boolean canProvide(DimensionId dimensionId) {
+        return dimensionId == DimensionId.OVERWORLD;
     }
 
     @Override
-    public Iterable<BoundingBoxWorldSpawn> get(int dimensionId) {
+    public Iterable<BoundingBoxWorldSpawn> get(DimensionId dimensionId) {
         Set<BoundingBoxWorldSpawn> boundingBoxes = new HashSet<>();
         if (BoundingBoxTypeHelper.shouldRender(BoundingBoxType.WorldSpawn)) {
             if (worldSpawn != null) boundingBoxes.add(worldSpawn);

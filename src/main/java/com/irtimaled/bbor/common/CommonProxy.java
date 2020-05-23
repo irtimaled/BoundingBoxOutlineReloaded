@@ -6,6 +6,7 @@ import com.irtimaled.bbor.common.messages.AddBoundingBox;
 import com.irtimaled.bbor.common.messages.InitializeClient;
 import com.irtimaled.bbor.common.messages.PayloadBuilder;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
+import com.irtimaled.bbor.common.models.DimensionId;
 import com.irtimaled.bbor.common.models.ServerPlayer;
 
 import java.util.HashMap;
@@ -17,8 +18,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CommonProxy {
     private final Map<Integer, ServerPlayer> players = new ConcurrentHashMap<>();
     private final Map<Integer, Set<AbstractBoundingBox>> playerBoundingBoxesCache = new HashMap<>();
-    private final Map<Integer, StructureProcessor> structureProcessors = new HashMap<>();
-    private final Map<Integer, BoundingBoxCache> dimensionCache = new ConcurrentHashMap<>();
+    private final Map<DimensionId, StructureProcessor> structureProcessors = new HashMap<>();
+    private final Map<DimensionId, BoundingBoxCache> dimensionCache = new ConcurrentHashMap<>();
     private Long seed = null;
     private Integer spawnX = null;
     private Integer spawnZ = null;
@@ -43,9 +44,9 @@ public class CommonProxy {
     }
 
     private void worldLoaded(WorldLoaded event) {
-        int dimensionId = event.getDimensionId();
+        DimensionId dimensionId = event.getDimensionId();
         long seed = event.getSeed();
-        if (dimensionId == Dimensions.OVERWORLD) {
+        if (dimensionId == DimensionId.OVERWORLD) {
             setSeed(seed);
             setWorldSpawn(event.getSpawnX(), event.getSpawnZ());
         }
@@ -53,12 +54,12 @@ public class CommonProxy {
     }
 
     private void structuresLoaded(StructuresLoaded event) {
-        int dimensionId = event.getDimensionId();
+        DimensionId dimensionId = event.getDimensionId();
         StructureProcessor structureProcessor = getStructureProcessor(dimensionId);
         structureProcessor.process(event.getStructures());
     }
 
-    private StructureProcessor getStructureProcessor(int dimensionId) {
+    private StructureProcessor getStructureProcessor(DimensionId dimensionId) {
         StructureProcessor structureProcessor = structureProcessors.get(dimensionId);
         if (structureProcessor == null) {
             structureProcessor = new StructureProcessor(getOrCreateCache(dimensionId));
@@ -89,8 +90,8 @@ public class CommonProxy {
     }
 
     private void sendToPlayer(int playerId, ServerPlayer player) {
-        for (Map.Entry<Integer, BoundingBoxCache> entry : dimensionCache.entrySet()) {
-            int dimensionId = entry.getKey();
+        for (Map.Entry<DimensionId, BoundingBoxCache> entry : dimensionCache.entrySet()) {
+            DimensionId dimensionId = entry.getKey();
             BoundingBoxCache boundingBoxCache = entry.getValue();
             if (boundingBoxCache == null) return;
 
@@ -121,11 +122,11 @@ public class CommonProxy {
         }
     }
 
-    protected BoundingBoxCache getCache(int dimensionId) {
+    protected BoundingBoxCache getCache(DimensionId dimensionId) {
         return dimensionCache.get(dimensionId);
     }
 
-    protected BoundingBoxCache getOrCreateCache(int dimensionId) {
+    protected BoundingBoxCache getOrCreateCache(DimensionId dimensionId) {
         return dimensionCache.computeIfAbsent(dimensionId, dt -> new BoundingBoxCache());
     }
 

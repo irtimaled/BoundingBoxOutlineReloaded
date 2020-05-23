@@ -7,15 +7,15 @@ import net.minecraft.network.IPacket;
 import java.util.function.Consumer;
 
 public class ServerPlayer {
-    private final int dimensionId;
+    private final DimensionId dimensionId;
     private final Consumer<IPacket<?>> packetConsumer;
 
     public ServerPlayer(ServerPlayerEntity player) {
-        this.dimensionId = player.dimension.getId();
+        this.dimensionId = DimensionId.from(player.dimension);
         this.packetConsumer = player.connection::sendPacket;
     }
 
-    public int getDimensionId() {
+    public DimensionId getDimensionId() {
         return dimensionId;
     }
 

@@ -1,7 +1,9 @@
 package com.irtimaled.bbor.common.messages;
 
 import com.irtimaled.bbor.common.models.Coords;
+import com.irtimaled.bbor.common.models.DimensionId;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
 
 public class PayloadReader {
     private final PacketBuffer buffer;
@@ -39,5 +41,9 @@ public class PayloadReader {
         int y = readVarInt();
         int z = readVarInt();
         return new Coords(x, y, z);
+    }
+
+    DimensionId readDimensionId() {
+        return DimensionId.from(buffer.readResourceLocation());
     }
 }

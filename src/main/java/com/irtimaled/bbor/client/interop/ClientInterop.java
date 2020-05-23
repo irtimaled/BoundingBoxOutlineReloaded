@@ -9,6 +9,7 @@ import com.irtimaled.bbor.client.events.UpdateWorldSpawnReceived;
 import com.irtimaled.bbor.client.providers.SlimeChunkProvider;
 import com.irtimaled.bbor.common.EventBus;
 import com.irtimaled.bbor.common.TypeHelper;
+import com.irtimaled.bbor.common.models.DimensionId;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.client.Minecraft;
@@ -29,7 +30,7 @@ public class ClientInterop {
 
     public static void render(float partialTicks, ClientPlayerEntity player) {
         Player.setPosition(partialTicks, player);
-        ClientRenderer.render(player.dimension.getId());
+        ClientRenderer.render(DimensionId.from(player.dimension));
     }
 
     public static boolean interceptChatMessage(String message) {

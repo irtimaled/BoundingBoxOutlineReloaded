@@ -4,27 +4,28 @@ import com.irtimaled.bbor.client.Player;
 import com.irtimaled.bbor.client.models.BoundingBoxSphere;
 import com.irtimaled.bbor.client.models.Point;
 import com.irtimaled.bbor.common.BoundingBoxType;
+import com.irtimaled.bbor.common.models.DimensionId;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CustomSphereProvider implements IBoundingBoxProvider<BoundingBoxSphere> {
-    private static final Map<Integer, Map<Integer, BoundingBoxSphere>> dimensionCache = new HashMap<>();
+    private static final Map<DimensionId, Map<Integer, BoundingBoxSphere>> dimensionCache = new HashMap<>();
 
-    private static Map<Integer, BoundingBoxSphere> getCache(int dimensionId) {
+    private static Map<Integer, BoundingBoxSphere> getCache(DimensionId dimensionId) {
         return dimensionCache.computeIfAbsent(dimensionId, i -> new ConcurrentHashMap<>());
     }
 
     public static void add(Point center, double radius) {
-        int dimensionId = Player.getDimensionId();
+        DimensionId dimensionId = Player.getDimensionId();
         int cacheKey = center.hashCode();
         BoundingBoxSphere sphere = new BoundingBoxSphere(center, radius, BoundingBoxType.Custom);
         getCache(dimensionId).put(cacheKey, sphere);
     }
 
     public static boolean remove(Point center) {
-        int dimensionId = Player.getDimensionId();
+        DimensionId dimensionId = Player.getDimensionId();
         int cacheKey = center.hashCode();
         return getCache(dimensionId).remove(cacheKey) != null;
     }
@@ -34,7 +35,7 @@ public class CustomSphereProvider implements IBoundingBoxProvider<BoundingBoxSph
     }
 
     @Override
-    public Iterable<BoundingBoxSphere> get(int dimensionId) {
+    public Iterable<BoundingBoxSphere> get(DimensionId dimensionId) {
         return getCache(dimensionId).values();
     }
 }

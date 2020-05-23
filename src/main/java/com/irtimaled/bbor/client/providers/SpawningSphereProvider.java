@@ -9,6 +9,7 @@ import com.irtimaled.bbor.client.models.BoundingBoxSpawningSphere;
 import com.irtimaled.bbor.client.models.Point;
 import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.MathHelper;
+import com.irtimaled.bbor.common.models.DimensionId;
 import net.minecraft.client.Minecraft;
 
 import java.util.HashSet;
@@ -20,7 +21,7 @@ public class SpawningSphereProvider implements IBoundingBoxProvider<BoundingBoxS
 
     private static Set<BoundingBoxSpawningSphere> lastBoundingBox = null;
     private static BoundingBoxSpawningSphere spawningSphere;
-    private static Integer dimensionId;
+    private static DimensionId dimensionId;
 
     public static void setSphere(Point point) {
         if (spawningSphere != null && spawningSphere.getPoint().equals(point)) return;
@@ -53,7 +54,7 @@ public class SpawningSphereProvider implements IBoundingBoxProvider<BoundingBoxS
         return hasSpawningSphereInDimension(Player.getDimensionId()) && spawningSphere.isWithinSphere(Player.getPoint());
     }
 
-    public static boolean hasSpawningSphereInDimension(int dimensionId) {
+    public static boolean hasSpawningSphereInDimension(DimensionId dimensionId) {
         return spawningSphere != null && SpawningSphereProvider.dimensionId == dimensionId;
     }
 
@@ -64,12 +65,12 @@ public class SpawningSphereProvider implements IBoundingBoxProvider<BoundingBoxS
     }
 
     @Override
-    public boolean canProvide(int dimensionId) {
+    public boolean canProvide(DimensionId dimensionId) {
         return hasSpawningSphereInDimension(dimensionId) && BoundingBoxTypeHelper.shouldRender(BoundingBoxType.AFKSphere);
     }
 
     @Override
-    public Iterable<BoundingBoxSpawningSphere> get(int dimensionId) {
+    public Iterable<BoundingBoxSpawningSphere> get(DimensionId dimensionId) {
         long gameTime = minecraft.world.getGameTime();
         if (lastBoundingBox == null || (!((Long) gameTime).equals(lastGameTime) && gameTime % 2L == 0L)) {
             lastGameTime = gameTime;

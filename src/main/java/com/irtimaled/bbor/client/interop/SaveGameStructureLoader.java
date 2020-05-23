@@ -1,6 +1,7 @@
 package com.irtimaled.bbor.client.interop;
 
 import com.irtimaled.bbor.client.Player;
+import com.irtimaled.bbor.common.models.DimensionId;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.storage.SaveFormat;
 import net.minecraft.world.storage.SaveHandler;
@@ -10,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SaveGameStructureLoader {
-    private static final Map<Integer, NBTStructureLoader> nbtStructureLoaders = new HashMap<>();
+    private static final Map<DimensionId, NBTStructureLoader> nbtStructureLoaders = new HashMap<>();
     private static SaveHandler saveHandler = null;
     private static File worldDirectory = null;
 
@@ -20,7 +21,7 @@ public class SaveGameStructureLoader {
         saveHandler = saveLoader.getSaveLoader(fileName, null);
         worldDirectory = saveLoader.func_215781_c().resolve(fileName).toFile();
 
-        for (int dimensionId : nbtStructureLoaders.keySet()) {
+        for (DimensionId dimensionId : nbtStructureLoaders.keySet()) {
             NBTStructureLoader dimensionProcessor = getNBTStructureLoader(dimensionId);
             dimensionProcessor.configure(saveHandler, worldDirectory);
         }
@@ -52,7 +53,7 @@ public class SaveGameStructureLoader {
         dimensionProcessor.loadStructures(chunkX, chunkZ);
     }
 
-    private static NBTStructureLoader getNBTStructureLoader(int dimensionId) {
+    private static NBTStructureLoader getNBTStructureLoader(DimensionId dimensionId) {
         return nbtStructureLoaders.computeIfAbsent(dimensionId,
                 id -> new NBTStructureLoader(id, saveHandler, worldDirectory));
     }

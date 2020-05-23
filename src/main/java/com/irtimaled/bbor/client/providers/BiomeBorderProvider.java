@@ -8,6 +8,7 @@ import com.irtimaled.bbor.client.models.BoundingBoxBiomeBorder;
 import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.models.Coords;
+import com.irtimaled.bbor.common.models.DimensionId;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,12 +21,12 @@ public class BiomeBorderProvider implements IBoundingBoxProvider<BoundingBoxBiom
     private static Map<Coords, BoundingBoxBiomeBorder> lastBorders = new HashMap<>();
 
     @Override
-    public boolean canProvide(int dimensionId) {
+    public boolean canProvide(DimensionId dimensionId) {
         return BoundingBoxTypeHelper.shouldRender(BoundingBoxType.BiomeBorder);
     }
 
     @Override
-    public Iterable<BoundingBoxBiomeBorder> get(int dimensionId) {
+    public Iterable<BoundingBoxBiomeBorder> get(DimensionId dimensionId) {
         Coords playerCoords = Player.getCoords();
         Integer renderDistance = ConfigManager.biomeBordersRenderDistance.get();
         Boolean renderAllTransitions = !ConfigManager.renderOnlyCurrentBiome.get();
