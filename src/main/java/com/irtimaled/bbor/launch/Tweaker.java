@@ -33,8 +33,8 @@ public abstract class Tweaker implements ITweaker {
     @Override
     public void injectIntoClassLoader(LaunchClassLoader classLoader) {
         MixinBootstrap.init();
-        Mixins.addConfiguration("mixins.bbor.json");
         MixinEnvironment.getDefaultEnvironment().setSide(isClient() ? MixinEnvironment.Side.CLIENT : MixinEnvironment.Side.SERVER);
+        Mixins.addConfiguration("mixins.bbor.json");
     }
 
     protected abstract boolean isClient();

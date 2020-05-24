@@ -17,7 +17,7 @@
       "url": "https://github.com/irtimaled/maven/releases/download/"
     },
     {
-      "name": "org.spongepowered:mixin:0.7.11-SNAPSHOT",
+      "name": "org.spongepowered:mixin:0.8",
       "url": "https://github.com/irtimaled/maven/releases/download/"
     },
     {
@@ -25,7 +25,19 @@
       "url": "https://repo1.maven.org/maven2/"
     },
     {
+      "name": "org.ow2.asm:asm-tree:6.2",
+      "url": "https://repo1.maven.org/maven2/"
+    },
+    {
       "name": "org.ow2.asm:asm-commons:6.2",
+      "url": "https://repo1.maven.org/maven2/"
+    },
+    {
+      "name": "org.ow2.asm:asm-util:6.2",
+      "url": "https://repo1.maven.org/maven2/"
+    },
+    {
+      "name": "org.ow2.asm:asm-analysis:6.2",
       "url": "https://repo1.maven.org/maven2/"
     },
     {

@@ -30,10 +30,11 @@ repositories {
 }
 
 dependencies {
-    implementation('org.spongepowered:mixin:0.7.11-SNAPSHOT') { transitive = false }
+    implementation('org.spongepowered:mixin:0.8') { transitive = false }
     implementation('net.minecraft:launchwrapper:1.12') { transitive = false }
-    implementation 'org.ow2.asm:asm:6.2'
+    implementation 'org.ow2.asm:asm-tree:6.2'
     implementation 'org.ow2.asm:asm-commons:6.2'
+    implementation "org.ow2.asm:asm-util:6.2"
 }
 
 minecraft {
