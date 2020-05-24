@@ -42,6 +42,7 @@ minecraft {
     runDir = 'run'
     tweakClass = 'com.irtimaled.bbor.launch.ClientTweaker'
     makeObfSourceJar = false
+    clientJvmArgs = ['-XstartOnFirstThread']
 
     replace "@VERSION@", project.version
     replaceIn "com/irtimaled/bbor/Main.java"
