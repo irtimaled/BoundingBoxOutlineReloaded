@@ -3,7 +3,6 @@ package com.irtimaled.bbor.common.messages;
 import com.irtimaled.bbor.common.models.Coords;
 import com.irtimaled.bbor.common.models.DimensionId;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
 
 public class PayloadReader {
     private final PacketBuffer buffer;
