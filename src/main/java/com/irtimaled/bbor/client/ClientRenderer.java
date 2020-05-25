@@ -92,6 +92,7 @@ public class ClientRenderer {
         GL11.glLineWidth(2.0f);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glDisable(GL11.GL_CULL_FACE);
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
 
         if (ConfigManager.alwaysVisible.get()) {
             GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
