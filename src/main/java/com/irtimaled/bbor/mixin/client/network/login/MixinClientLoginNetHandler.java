@@ -1,4 +1,4 @@
-package com.irtimaled.bbor.mixin.client.network;
+package com.irtimaled.bbor.mixin.client.network.login;
 
 import com.irtimaled.bbor.client.interop.ClientInterop;
 import net.minecraft.client.network.login.ClientLoginNetHandler;
@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ClientLoginNetHandler.class)
-public abstract class MixinNetHandlerLoginClient {
+public class MixinClientLoginNetHandler {
     @Inject(method = "onDisconnect", at = @At("HEAD"))
     private void onDisconnect(CallbackInfo ci) {
         ClientInterop.disconnectedFromRemoteServer();

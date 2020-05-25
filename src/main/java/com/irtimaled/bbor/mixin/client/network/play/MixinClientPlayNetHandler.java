@@ -1,16 +1,16 @@
-package com.irtimaled.bbor.mixin.client.multiplayer;
+package com.irtimaled.bbor.mixin.client.network.play;
 
 import com.irtimaled.bbor.client.interop.ClientInterop;
-import net.minecraft.client.world.ClientWorld;
+import net.minecraft.client.network.play.ClientPlayNetHandler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(ClientWorld.class)
-public class MixinWorldClient {
-    @Inject(method = "sendQuittingDisconnectingPacket", at = @At("RETURN"))
-    private void sendQuittingDisconnectingPacket(CallbackInfo ci) {
+@Mixin(ClientPlayNetHandler.class)
+public class MixinClientPlayNetHandler {
+    @Inject(method = "onDisconnect", at = @At("HEAD"))
+    private void onDisconnect(CallbackInfo ci) {
         ClientInterop.disconnectedFromRemoteServer();
     }
 }

@@ -1,4 +1,4 @@
-package com.irtimaled.bbor.mixin.client.settings;
+package com.irtimaled.bbor.mixin.client;
 
 import com.irtimaled.bbor.client.ClientProxy;
 import com.irtimaled.bbor.client.keyboard.KeyListener;

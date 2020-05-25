@@ -1,4 +1,4 @@
-package com.irtimaled.bbor.mixin.client.gui;
+package com.irtimaled.bbor.mixin.client.gui.screen;
 
 import com.irtimaled.bbor.client.gui.SettingsScreenButton;
 import net.minecraft.client.gui.screen.OptionsScreen;
@@ -10,8 +10,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(OptionsScreen.class)
-public class MixinGuiOptions extends Screen {
-    private MixinGuiOptions() {
+public class MixinOptionsScreen extends Screen {
+    private MixinOptionsScreen() {
         super(null);
     }
 

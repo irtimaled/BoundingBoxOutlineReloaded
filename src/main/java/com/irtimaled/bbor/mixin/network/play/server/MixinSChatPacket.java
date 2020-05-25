@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(SChatPacket.class)
-public class MixinSPacketChat {
+public class MixinSChatPacket {
     @Shadow
     private ITextComponent chatComponent;
 

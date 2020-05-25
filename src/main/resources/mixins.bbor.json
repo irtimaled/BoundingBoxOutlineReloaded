@@ -6,26 +6,27 @@
   "package": "com.irtimaled.bbor.mixin",
   "refmap": "mixins.bbor.refmap.json",
   "mixins": [
-    "network.play.client.MixinCPacketCustomPayload",
+    "network.play.client.MixinCCustomPayloadPacket",
     "server.MixinMinecraftServer",
     "server.management.MixinPlayerList",
     "world.chunk.MixinChunk"
   ],
   "client": [
+    "client.MixinGameSettings",
     "client.MixinMinecraft",
-    "client.entity.MixinEntityPlayerSP",
-    "client.gui.MixinGuiChat",
-    "client.gui.MixinGuiOptions",
-    "client.multiplayer.MixinWorldClient",
-    "client.network.MixinNetHandlerLoginClient",
-    "client.network.MixinNetHandlerPlayClient",
-    "client.renderer.MixinEntityRenderer",
-    "client.settings.MixinGameSettings",
+    "client.entity.player.MixinClientPlayerEntity",
+    "client.gui.screen.MixinChatScreen",
+    "client.gui.screen.MixinOptionsScreen",
+    "client.network.login.MixinClientLoginNetHandler",
+    "client.network.play.MixinClientPlayNetHandler",
+    "client.renderer.MixinGameRenderer",
+    "client.world.MixinClientWorld",
     "client.settings.MixinKeyBinding",
-    "network.play.server.MixinSPacketChat",
-    "network.play.server.MixinSPacketCommandList",
-    "network.play.server.MixinSPacketCustomPayload",
-    "network.play.server.MixinSPacketSpawnPosition"
+    "network.play.server.MixinSChatPacket",
+    "network.play.server.MixinSChunkDataPacket",
+    "network.play.server.MixinSCommandListPacket",
+    "network.play.server.MixinSCustomPayloadPlayPacket",
+    "network.play.server.MixinSSpawnPositionPacket"
   ],
   "server": [
     "server.dedicated.MixinDedicatedServer"

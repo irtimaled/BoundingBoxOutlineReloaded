@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(CCustomPayloadPacket.class)
-public class MixinCPacketCustomPayload {
+public class MixinCCustomPayloadPacket {
     @Shadow
     private ResourceLocation channel;
 
