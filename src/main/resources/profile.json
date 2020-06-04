@@ -1,6 +1,6 @@
 {
   "inheritsFrom": "${mcVersion}",
-  "id": "BBOR-${version}",
+  "id": "BBOR-${mcVersion}",
   "jar": "${mcVersion}",
   "time": "${formattedTime}",
   "type": "release",
@@ -13,7 +13,7 @@
   "mainClass": "net.minecraft.launchwrapper.Launch",
   "libraries": [
     {
-      "name": "com.irtimaled:bbor:${version}",
+      "name": "com.irtimaled:bbor:${mcVersion}",
       "url": "https://github.com/irtimaled/maven/releases/download/"
     },
     {
