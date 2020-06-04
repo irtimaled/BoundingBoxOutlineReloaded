@@ -115,6 +115,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
     void renderText(OffsetPoint offsetPoint, String... texts) {
         FontRenderer fontRenderer = Minecraft.getInstance().fontRenderer;
 
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
         GL11.glPushMatrix();
         GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
         GL11.glTranslated(offsetPoint.getX(), offsetPoint.getY() + 0.002D, offsetPoint.getZ());
@@ -123,12 +124,9 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
         GL11.glRotatef(90.0F, 1.0F, 0.0F, 0.0F);
         GL11.glScalef(-0.0175F, -0.0175F, 0.0175F);
         GL11.glEnable(GL11.GL_TEXTURE_2D);
-
         GL11.glEnable(GL11.GL_BLEND);
         GLX.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glDepthMask(true);
         float top = -(fontRenderer.FONT_HEIGHT * texts.length) / 2f;
         for (String text : texts) {
@@ -139,6 +137,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glDisable(GL11.GL_BLEND);
         GL11.glPopMatrix();
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
     }
 
     void renderSphere(Point center, double radius, Color color, int density, int dotSize) {
