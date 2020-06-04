@@ -1,5 +1,7 @@
 package com.irtimaled.bbor.install;
 
+import com.irtimaled.bbor.Versions;
+
 import javax.swing.*;
 import java.io.File;
 import java.io.PrintWriter;
@@ -12,7 +14,9 @@ import java.util.Date;
 import java.util.Locale;
 
 public class Installer {
-    public static void install(final String version, final String mcVersion) {
+    public static void install() {
+        String version = Versions.build;
+        String mcVersion = Versions.minecraft;
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Throwable t) {

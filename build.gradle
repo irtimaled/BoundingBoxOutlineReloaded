@@ -44,12 +44,6 @@ minecraft {
     tweakClass = 'com.irtimaled.bbor.launch.ClientTweaker'
     makeObfSourceJar = false
     clientJvmArgs = ['-XstartOnFirstThread']
-
-    replace "@VERSION@", project.version
-    replaceIn "com/irtimaled/bbor/Main.java"
-
-    replace "@MC_VERSION@", project.mcVersion
-    replaceIn "com/irtimaled/bbor/Main.java"
 }
 
 mixin {
@@ -80,9 +74,18 @@ processResources {
 
 jar {
     finalizedBy reobfJar
-    manifest.attributes(
-            'Main-Class': 'com.irtimaled.bbor.Main'
-    )
+    manifest {
+        attributes([
+                "Main-Class": "com.irtimaled.bbor.Main",
+                "Specification-Title": "bbor",
+                "Specification-Vendor": "Irtimaled",
+                "Specification-Version": "1", // We are version 1 of ourselves
+                "Implementation-Title": project.name,
+                "Implementation-Version": "${version}",
+                "Implementation-Vendor": "Irtimaled",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
 
     classifier = 'vanilla'
 }

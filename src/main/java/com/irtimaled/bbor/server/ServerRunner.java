@@ -1,5 +1,6 @@
 package com.irtimaled.bbor.server;
 
+import com.irtimaled.bbor.Versions;
 import net.minecraft.launchwrapper.Launch;
 
 import java.io.File;
@@ -46,8 +47,8 @@ public class ServerRunner {
         addURL.accept(file.toURI().toURL());
     }
 
-    public static void run(String version, List<String> args) throws IOException {
-        String serverJarUrl = VANILLA_SERVER_JARS.get(version);
+    public static void run(List<String> args) throws IOException {
+        String serverJarUrl = VANILLA_SERVER_JARS.get(Versions.minecraft);
 
         addURLToClasspath(getOrDownload(new File("."), serverJarUrl));
         for (String url : LIBRARIES) {

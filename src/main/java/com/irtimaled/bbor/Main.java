@@ -9,9 +9,9 @@ import java.util.Arrays;
 public class Main {
     public static void main(String... args) throws IOException {
         if (args.length > 0 && args[0].equals("--server")) {
-            ServerRunner.run("@MC_VERSION@", Arrays.asList(args).subList(1, args.length));
+            ServerRunner.run(Arrays.asList(args).subList(1, args.length));
         } else {
-            Installer.install("@VERSION@", "@MC_VERSION@");
+            Installer.install();
         }
     }
 }
