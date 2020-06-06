@@ -78,8 +78,8 @@ public class Key {
     }
 
     public Key register(String keyName) {
-        InputUtil.KeyCode input = InputUtil.fromName(keyName);
-        Key key = new Key(input.getKeyCode());
+        InputUtil.Key input = InputUtil.fromTranslationKey(keyName);
+        Key key = new Key(input.getCode());
         subKeys.add(key);
         return key;
     }

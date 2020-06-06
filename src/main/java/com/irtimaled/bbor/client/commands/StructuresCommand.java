@@ -4,8 +4,8 @@ import com.irtimaled.bbor.client.gui.LoadSavesScreen;
 import com.irtimaled.bbor.client.interop.ClientInterop;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import net.minecraft.command.CommandSource;
 import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.CommandSource;
 
 public class StructuresCommand {
     private static final String COMMAND = "bbor:structures";

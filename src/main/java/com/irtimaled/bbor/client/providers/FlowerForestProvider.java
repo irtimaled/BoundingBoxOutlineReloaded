@@ -10,14 +10,13 @@ import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.models.Coords;
 import com.irtimaled.bbor.common.models.DimensionId;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.biome.Biomes;
+import net.minecraft.util.registry.BuiltinRegistries;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class FlowerForestProvider implements IBoundingBoxProvider<BoundingBoxFlowerForest>, ICachingProvider {
-    public static final int FLOWER_FOREST_BIOME_ID = Registry.BIOME.getRawId(Biomes.FLOWER_FOREST);
+    public static final int FLOWER_FOREST_BIOME_ID = BuiltinRegistries.BIOME.getRawId(FlowerForestHelper.BIOME);
     private static Coords lastPlayerCoords = null;
     private static Integer lastRenderDistance = null;
     private static Map<Coords, BoundingBoxFlowerForest> lastBoundingBoxes = new HashMap<>();

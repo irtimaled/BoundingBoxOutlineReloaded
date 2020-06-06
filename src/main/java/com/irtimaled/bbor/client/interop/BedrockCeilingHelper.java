@@ -21,7 +21,7 @@ public class BedrockCeilingHelper {
 
     public static Random getRandomForChunk(int chunkX, int chunkZ) {
         ChunkRandom random = new ChunkRandom();
-        random.setSeed(chunkX, chunkZ);
+        random.setTerrainSeed(chunkX, chunkZ);
         return random;
     }
 }

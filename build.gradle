@@ -24,8 +24,8 @@ targetCompatibility = 1.8
 
 dependencies {
     minecraft 'com.mojang:minecraft:' + project.mcVersion
-    mappings 'net.fabricmc:yarn:' + project.mcVersion + '+build.9'
-    modCompile 'net.fabricmc:fabric-loader:0.8.3+build.196'
+    mappings 'net.fabricmc:yarn:' + project.mcVersion + '+build.27'
+    modCompile 'net.fabricmc:fabric-loader:0.9.3+build.207'
 }
 
 minecraft {

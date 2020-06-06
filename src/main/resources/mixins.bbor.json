@@ -20,13 +20,14 @@
     "client.network.login.MixinClientLoginNetHandler",
     "client.network.play.MixinClientPlayNetHandler",
     "client.renderer.MixinGameRenderer",
-    "client.world.MixinClientWorld",
     "client.settings.MixinKeyBinding",
+    "client.world.MixinClientWorld",
     "network.play.server.MixinSChatPacket",
     "network.play.server.MixinSChunkDataPacket",
     "network.play.server.MixinSCommandListPacket",
     "network.play.server.MixinSCustomPayloadPlayPacket",
-    "network.play.server.MixinSSpawnPositionPacket"
+    "network.play.server.MixinSSpawnPositionPacket",
+    "resource.MixinResourcePackManager"
   ],
   "server": [
     "server.dedicated.MixinDedicatedServer"

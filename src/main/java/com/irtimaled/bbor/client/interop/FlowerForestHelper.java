@@ -8,8 +8,10 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.biome.Biomes;
-import net.minecraft.world.gen.feature.DecoratedFeatureConfig;
+import net.minecraft.util.registry.BuiltinRegistries;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.BiomeKeys;
+import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.FeatureConfig;
 import net.minecraft.world.gen.feature.FlowerFeature;
 
@@ -24,6 +26,8 @@ public class FlowerForestHelper {
     private static final FlowerFeature flowersFeature;
     private static final FeatureConfig flowersConfig;
 
+    public static final Biome BIOME = BuiltinRegistries.BIOME.get(BiomeKeys.FLOWER_FOREST);
+
     static {
         flowerColorMap.put(Blocks.DANDELION.getDefaultState(), ConfigManager.colorFlowerForestDandelion);
         flowerColorMap.put(Blocks.POPPY.getDefaultState(), ConfigManager.colorFlowerForestPoppy);
@@ -36,16 +40,15 @@ public class FlowerForestHelper {
         flowerColorMap.put(Blocks.OXEYE_DAISY.getDefaultState(), ConfigManager.colorFlowerForestOxeyeDaisy);
         flowerColorMap.put(Blocks.CORNFLOWER.getDefaultState(), ConfigManager.colorFlowerForestCornflower);
         flowerColorMap.put(Blocks.LILY_OF_THE_VALLEY.getDefaultState(), ConfigManager.colorFlowerForestLilyOfTheValley);
-
-        DecoratedFeatureConfig config = (DecoratedFeatureConfig) Biomes.FLOWER_FOREST.getFlowerFeatures().get(0).config;
-        flowersFeature = (FlowerFeature) config.feature.feature;
-        flowersConfig = config.feature.config;
+        ConfiguredFeature<?, ?> config = BIOME.getGenerationSettings().getFlowerFeatures().get(0);
+        flowersFeature = (FlowerFeature) config.feature;
+        flowersConfig = config.config;
     }
 
     public static Setting<HexColor> getFlowerColorAtPos(Coords coords) {
         int x = coords.getX();
         int z = coords.getZ();
-        BlockState blockState = flowersFeature.getFlowerToPlace(random, new BlockPos(x, coords.getY(), z), flowersConfig);
+        BlockState blockState = flowersFeature.getFlowerState(random, new BlockPos(x, coords.getY(), z), flowersConfig);
         return flowerColorMap.get(blockState);
     }
 

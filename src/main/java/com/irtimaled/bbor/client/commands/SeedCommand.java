@@ -3,8 +3,8 @@ package com.irtimaled.bbor.client.commands;
 import com.irtimaled.bbor.client.providers.SlimeChunkProvider;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import net.minecraft.command.CommandSource;
 import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.CommandSource;
 
 public class SeedCommand {
     private static final String COMMAND = "bbor:seed";
