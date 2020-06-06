@@ -12,9 +12,9 @@ class CustomKeyBinding extends KeyBinding {
     }
 
     @Override
-    public void setKeyCode(InputUtil.KeyCode input) {
-        super.setKeyCode(input);
-        int keyCode = input.getKeyCode();
+    public void setBoundKey(InputUtil.Key input) {
+        super.setBoundKey(input);
+        int keyCode = input.getCode();
         key.updateKeyCode(keyCode);
     }
 

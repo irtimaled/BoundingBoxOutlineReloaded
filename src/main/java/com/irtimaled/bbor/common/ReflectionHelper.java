@@ -4,11 +4,12 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class ReflectionHelper {
     public static <T, R> Function<T, R> getPrivateFieldGetter(Class<?> clazz, Type fieldType, Type... genericTypeArguments) {
-        Field field = findField(clazz, fieldType, genericTypeArguments);
+        Field field = getGenericField(clazz, fieldType, genericTypeArguments);
         if (field == null) return obj -> null;
 
         field.setAccessible(true);
@@ -19,6 +20,11 @@ public class ReflectionHelper {
                 return null;
             }
         };
+    }
+
+    public static Field getGenericField(Class<?> clazz, Type fieldType, Type[] genericTypeArguments) {
+        Field field = findField(clazz, fieldType, genericTypeArguments);
+        return field != null ? field : findField(clazz, fieldType, null);
     }
 
     private static Field findField(Class<?> clazz, Type fieldType, Type[] genericTypeArguments) {
@@ -32,6 +38,8 @@ public class ReflectionHelper {
 
             Type rawType = genericType.getRawType();
             if (rawType != fieldType) continue;
+
+            if (genericTypeArguments == null) return field;
 
             Type[] actualTypeArguments = genericType.getActualTypeArguments();
             if (!typesMatch(genericTypeArguments, actualTypeArguments)) continue;
@@ -52,14 +60,14 @@ public class ReflectionHelper {
         return true;
     }
 
-    public static <T, R> Function<T, R> getPrivateInstanceBuilder(Class<R> clazz, Class<T> parameter) {
-        Constructor<R> constructor = findConstructor(clazz, parameter);
-        if (constructor == null) return obj -> null;
+    public static <T, R, S> BiFunction<T, R, S> getPrivateInstanceBuilder(Class<S> clazz, Class<T> parameter1, Class<R> parameter2) {
+        Constructor<S> constructor = findConstructor(clazz, parameter1, parameter2);
+        if (constructor == null) return (obj1, obj2) -> null;
 
         constructor.setAccessible(true);
-        return obj -> {
+        return (obj1, obj2) -> {
             try {
-                return (R) constructor.newInstance(obj);
+                return (S) constructor.newInstance(obj1, obj2);
             } catch (Exception ignored) {
                 return null;
             }

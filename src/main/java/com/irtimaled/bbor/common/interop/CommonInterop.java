@@ -12,12 +12,14 @@ import net.minecraft.structure.StructureStart;
 import net.minecraft.world.chunk.WorldChunk;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 public class CommonInterop {
     public static void chunkLoaded(WorldChunk chunk) {
-        DimensionId dimensionId = DimensionId.from(chunk.getWorld().getDimension().getType());
-        Map<String, StructureStart> structures = chunk.getStructureStarts();
+        DimensionId dimensionId = DimensionId.from(chunk.getWorld().getRegistryKey());
+        Map<String, StructureStart<?>> structures = new HashMap<>();
+        chunk.getStructureStarts().entrySet().forEach(es -> structures.put(es.getKey().getName(), es.getValue()));
         if (structures.size() > 0) EventBus.publish(new StructuresLoaded(structures, dimensionId));
     }
 
@@ -39,7 +41,7 @@ public class CommonInterop {
         ServerPlayNetworkHandler connection = player.networkHandler;
         if (connection == null) return;
 
-        ClientConnection networkManager = connection.client;
+        ClientConnection networkManager = connection.connection;
         if (networkManager.isLocal()) return;
 
         EventBus.publish(new PlayerLoggedIn(new ServerPlayer(player)));

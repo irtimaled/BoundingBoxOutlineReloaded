@@ -3,6 +3,7 @@ package com.irtimaled.bbor.client.gui;
 import com.irtimaled.bbor.client.renderers.Renderer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
@@ -153,7 +154,7 @@ public class ControlList extends DrawableHelper implements IControlSet {
         return true;
     }
 
-    public void render(int mouseX, int mouseY) {
+    public void render(MatrixStack matrixStack, int mouseX, int mouseY) {
         this.amountScrolled = MathHelper.clamp(this.amountScrolled, 0.0D, this.getMaxScroll());
 
         GL11.glDisable(GL11.GL_LIGHTING);
@@ -162,11 +163,16 @@ public class ControlList extends DrawableHelper implements IControlSet {
 
         int listTop = this.top + PADDING - (int) this.amountScrolled;
 
-        drawEntries(mouseX, mouseY, listTop);
+        drawEntries(matrixStack, mouseX, mouseY, listTop);
 
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GL11.glDepthFunc(GL11.GL_ALWAYS);
+
         this.overlayBackground(0, this.top);
         this.overlayBackground(this.bottom, this.height);
+
+        GL11.glDepthFunc(GL11.GL_LEQUAL);
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
         GL11.glEnable(GL11.GL_BLEND);
         GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ZERO, GL11.GL_ONE);
         GL11.glDisable(GL11.GL_ALPHA_TEST);
@@ -186,7 +192,7 @@ public class ControlList extends DrawableHelper implements IControlSet {
     }
 
     private void drawListBackground() {
-        this.minecraft.getTextureManager().bindTexture(DrawableHelper.BACKGROUND_LOCATION);
+        this.minecraft.getTextureManager().bindTexture(DrawableHelper.BACKGROUND_TEXTURE);
         Renderer.startTextured()
                 .setColor(32, 32, 32)
                 .setAlpha(255)
@@ -197,7 +203,7 @@ public class ControlList extends DrawableHelper implements IControlSet {
                 .render();
     }
 
-    private void drawEntries(int mouseX, int mouseY, int top) {
+    private void drawEntries(MatrixStack matrixStack, int mouseX, int mouseY, int top) {
         for (ControlListEntry entry : this.entries) {
             if (!entry.isVisible()) continue;
 
@@ -205,25 +211,28 @@ public class ControlList extends DrawableHelper implements IControlSet {
             entry.setY(top);
 
             int height = entry.getControlHeight();
-            drawEntry(mouseX, mouseY, top, entry, height);
-            top += height;
+            int bottom = top + height;
+            if(top <= this.bottom && bottom >= this.top) {
+                drawEntry(matrixStack, mouseX, mouseY, top, entry, height);
+            }
+            top = bottom;
         }
     }
 
-    protected void drawEntry(int mouseX, int mouseY, int top, ControlListEntry entry, int height) {
-        entry.render(mouseX, mouseY);
+    protected void drawEntry(MatrixStack matrixStack, int mouseX, int mouseY, int top, ControlListEntry entry, int height) {
+        entry.render(matrixStack, mouseX, mouseY);
     }
 
     private void overlayBackground(int top, int bottom) {
-        this.minecraft.getTextureManager().bindTexture(DrawableHelper.BACKGROUND_LOCATION);
+        this.minecraft.getTextureManager().bindTexture(DrawableHelper.BACKGROUND_TEXTURE);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         Renderer.startTextured()
                 .setColor(64, 64, 64)
                 .setAlpha(255)
-                .addPoint(0, bottom, 0.0D, 0.0D, (float) bottom / 32.0F)
-                .addPoint(this.width, bottom, 0.0D, (float) this.width / 32.0F, (float) bottom / 32.0F)
-                .addPoint(this.width, top, 0.0D, (float) this.width / 32.0F, (float) top / 32.0F)
-                .addPoint(0, top, 0.0D, 0.0D, (float) top / 32.0F)
+                .addPoint(0, bottom, -100.0D, 0.0D, (float) bottom / 32.0F)
+                .addPoint(this.width, bottom, -100.0D, (float) this.width / 32.0F, (float) bottom / 32.0F)
+                .addPoint(this.width, top, -100.0D, (float) this.width / 32.0F, (float) top / 32.0F)
+                .addPoint(0, top, -100.0D, 0.0D, (float) top / 32.0F)
                 .render();
     }
 

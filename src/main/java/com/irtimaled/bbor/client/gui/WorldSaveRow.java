@@ -6,9 +6,11 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.nbt.NbtIo;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
-import net.minecraft.world.level.LevelProperties;
+import net.minecraft.util.WorldSavePath;
 import net.minecraft.world.level.storage.LevelStorage;
 import net.minecraft.world.level.storage.LevelSummary;
 import org.apache.logging.log4j.LogManager;
@@ -17,6 +19,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -44,7 +47,7 @@ public class WorldSaveRow extends ControlListEntry implements Comparable<WorldSa
         this.setSelectedEntry = setSelectedEntry;
         this.client = MinecraftClient.getInstance();
         this.iconLocation = new Identifier("worlds/" + Hashing.sha1().hashUnencodedChars(worldSummary.getName()) + "/icon");
-        this.iconFile = saveLoader.resolveFile(worldSummary.getName(), "icon.png");
+        this.iconFile = worldSummary.getFile();
         if (!this.iconFile.isFile()) {
             this.iconFile = null;
         }
@@ -76,9 +79,19 @@ public class WorldSaveRow extends ControlListEntry implements Comparable<WorldSa
     @Override
     public void done() {
         String fileName = this.worldSummary.getName();
-        LevelProperties worldInfo = saveLoader.getLevelProperties(fileName);
-        long seed = worldInfo.getSeed();
-        ClientInterop.saveLoaded(fileName, seed);
+        LevelStorage.Session worldInfo = null;
+        try {
+            worldInfo = saveLoader.createSession(fileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            long seed = NbtIo.readCompressed(new FileInputStream(worldInfo.getDirectory(WorldSavePath.LEVEL_DAT).toFile()))
+                    .getCompound("Data")
+                    .getCompound("WorldGenSettings").getLong("seed");
+            ClientInterop.saveLoaded(fileName, seed);
+        } catch (IOException ignored) {
+        }
     }
 
     private NativeImageBackedTexture loadIcon() {
@@ -99,17 +112,17 @@ public class WorldSaveRow extends ControlListEntry implements Comparable<WorldSa
     }
 
     @Override
-    public void render(int mouseX, int mouseY) {
+    public void render(MatrixStack matrixStack, int mouseX, int mouseY) {
         String displayName = this.worldSummary.getDisplayName();
         String details = this.worldSummary.getName() + " (" + DATE_FORMAT.format(new Date(this.worldSummary.getLastPlayed())) + ")";
 
         int x = this.getX();
         int y = this.getY();
-        this.client.textRenderer.draw(displayName, (float) (x + ICON_SIZE + 3), (float) (y + 1), 16777215);
-        this.client.textRenderer.draw(details, (float) (x + ICON_SIZE + 3), (float) (y + 1 + this.client.textRenderer.fontHeight + 1), 8421504);
+        this.client.textRenderer.draw(matrixStack, displayName, (float) (x + ICON_SIZE + 3), (float) (y + 1), 16777215);
+        this.client.textRenderer.draw(matrixStack, details, (float) (x + ICON_SIZE + 3), (float) (y + 1 + this.client.textRenderer.fontHeight + 1), 8421504);
         this.client.getTextureManager().bindTexture(this.icon != null ? this.iconLocation : ICON_MISSING);
         GL11.glEnable(GL11.GL_BLEND);
-        DrawableHelper.blit(x, y, 0.0F, 0.0F, ICON_SIZE, ICON_SIZE, 32, 32);
+        DrawableHelper.drawTexture(matrixStack, x, y, 0.0F, 0.0F, ICON_SIZE, ICON_SIZE, 32, 32);
         GL11.glDisable(GL11.GL_BLEND);
     }
 

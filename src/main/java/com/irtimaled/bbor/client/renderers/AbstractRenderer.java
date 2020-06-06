@@ -130,8 +130,8 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
         GL11.glDepthMask(true);
         float top = -(fontRenderer.fontHeight * texts.length) / 2f;
         for (String text : texts) {
-            float left = fontRenderer.getStringWidth(text) / 2f;
-            fontRenderer.draw(text, -left, top, -1);
+            float left = fontRenderer.getWidth(text) / 2f;
+            //fontRenderer.draw(text, -left, top, -1);
             top += fontRenderer.fontHeight;
         }
         GL11.glDisable(GL11.GL_TEXTURE_2D);

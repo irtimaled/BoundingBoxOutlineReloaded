@@ -4,8 +4,8 @@ import com.irtimaled.bbor.common.models.Coords;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.EntityCategory;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.SpawnGroup;
 import net.minecraft.tag.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -13,9 +13,10 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.LightType;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.dimension.DimensionType;
 
 public class SpawnableBlocksHelper {
-    private static final EntityType entityType = EntityType.Builder.create(EntityCategory.MONSTER)
+    private static final EntityType entityType = EntityType.Builder.create(SpawnGroup.MONSTER)
             .setDimensions(0f, 0f).disableSaving().build(null);
 
     public static void findSpawnableBlocks(Coords coords, int width, int height, BlockProcessor blockProcessor) {
@@ -51,18 +52,18 @@ public class SpawnableBlocksHelper {
 
     static boolean isBiomeHostileSpawnProof(World world, BlockPos pos) {
         Biome biome = world.getBiome(pos);
-        return biome.getMaxSpawnLimit() == 0 ||
-                biome.getEntitySpawnList(EntityCategory.MONSTER).isEmpty();
+        return biome.getMaxSpawnChance() == 0 ||
+                biome.getEntitySpawnList(SpawnGroup.MONSTER).isEmpty();
     }
 
     static boolean isSpawnable(World world, BlockPos pos, BlockState spawnBlockState, BlockState upperBlockState) {
         VoxelShape collisionShape = upperBlockState.getCollisionShape(world, pos);
-        boolean isNether = world.dimension.isNether();
-        return spawnBlockState.allowsSpawning(world, pos.down(), isNether ? EntityType.ZOMBIE_PIGMAN : entityType) &&
+        boolean isNether = world.getDimensionRegistryKey() == DimensionType.THE_NETHER_REGISTRY_KEY;
+        return spawnBlockState.allowsSpawning(world, pos.down(), isNether ? EntityType.ZOMBIFIED_PIGLIN : entityType) &&
                 !Block.isFaceFullSquare(collisionShape, Direction.UP) &&
                 !upperBlockState.emitsRedstonePower() &&
-                !upperBlockState.matches(BlockTags.RAILS) &&
-                collisionShape.getMaximum(Direction.Axis.Y) <= 0 &&
+                !upperBlockState.isIn(BlockTags.RAILS) &&
+                collisionShape.getMax(Direction.Axis.Y) <= 0 &&
                 upperBlockState.getFluidState().isEmpty() &&
                 (isNether || world.getLightLevel(LightType.BLOCK, pos) <= 7);
     }

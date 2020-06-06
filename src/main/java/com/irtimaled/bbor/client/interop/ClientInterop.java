@@ -30,7 +30,7 @@ public class ClientInterop {
 
     public static void render(float partialTicks, ClientPlayerEntity player) {
         Player.setPosition(partialTicks, player);
-        ClientRenderer.render(DimensionId.from(player.dimension));
+        ClientRenderer.render(DimensionId.from(player.getEntityWorld().getRegistryKey()));
     }
 
     public static boolean interceptChatMessage(String message) {
@@ -44,9 +44,9 @@ public class ClientInterop {
                 } catch (CommandSyntaxException exception) {
                     commandSource.sendError(Texts.toText(exception.getRawMessage()));
                     if (exception.getInput() != null && exception.getCursor() >= 0) {
-                        Text suggestion = new LiteralText("")
+                        MutableText suggestion = new LiteralText("")
                                 .formatted(Formatting.GRAY)
-                                .styled(style -> style.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, message)));
+                                .styled(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, message)));
                         int textLength = Math.min(exception.getInput().length(), exception.getCursor());
                         if (textLength > 10) {
                             suggestion.append("...");

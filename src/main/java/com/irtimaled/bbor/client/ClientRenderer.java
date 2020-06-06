@@ -10,11 +10,10 @@ import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBoxCuboid;
 import com.irtimaled.bbor.common.models.DimensionId;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Stream;
 
 public class ClientRenderer {
     private static final int CHUNK_SIZE = 16;
@@ -88,11 +87,13 @@ public class ClientRenderer {
 
         Set<AbstractBoundingBox> boundingBoxes = getBoundingBoxes(dimensionId);
 
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
         GL11.glLineWidth(2.0f);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glDisable(GL11.GL_CULL_FACE);
         GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GL11.glDisable(GL11.GL_BLEND);
+        GL11.glDepthMask(true);
 
         if (ConfigManager.alwaysVisible.get()) {
             GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
@@ -108,6 +109,7 @@ public class ClientRenderer {
         GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
         GL11.glEnable(GL11.GL_CULL_FACE);
         GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glEnable(GL11.GL_BLEND);
     }
 
     private static Set<AbstractBoundingBox> getBoundingBoxes(DimensionId dimensionId) {

@@ -21,8 +21,8 @@ public class KeyListener {
     }
 
     public static Key register(String description, String keyName) {
-        InputUtil.KeyCode input = InputUtil.fromName(keyName);
-        CustomKeyBinding keyBinding = new CustomKeyBinding(description, input.getKeyCode());
+        InputUtil.Key input = InputUtil.fromTranslationKey(keyName);
+        CustomKeyBinding keyBinding = new CustomKeyBinding(description, input.getCode());
         keyBindings.add(keyBinding);
 
         Key key = keyBinding.getKey();

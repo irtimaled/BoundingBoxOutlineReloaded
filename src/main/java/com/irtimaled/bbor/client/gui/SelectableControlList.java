@@ -1,6 +1,7 @@
 package com.irtimaled.bbor.client.gui;
 
 import com.irtimaled.bbor.client.renderers.Renderer;
+import net.minecraft.client.util.math.MatrixStack;
 import org.lwjgl.opengl.GL11;
 
 public class SelectableControlList extends ControlList {
@@ -79,7 +80,7 @@ public class SelectableControlList extends ControlList {
     }
 
     @Override
-    protected void drawEntry(int mouseX, int mouseY, int top, ControlListEntry entry, int height) {
+    protected void drawEntry(MatrixStack matrixStack, int mouseX, int mouseY, int top, ControlListEntry entry, int height) {
         if (this.selectedElement == entry.index) {
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
             GL11.glDisable(GL11.GL_TEXTURE_2D);
@@ -99,7 +100,7 @@ public class SelectableControlList extends ControlList {
                     .render();
             GL11.glEnable(GL11.GL_TEXTURE_2D);
         }
-        super.drawEntry(mouseX, mouseY, top, entry, height);
+        super.drawEntry(matrixStack, mouseX, mouseY, top, entry, height);
     }
 
     @Override
