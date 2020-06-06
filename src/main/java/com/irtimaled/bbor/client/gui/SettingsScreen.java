@@ -31,11 +31,11 @@ public class SettingsScreen extends ListScreen {
     protected ControlList buildList(int top, int bottom) {
         String version = SharedConstants.getGameVersion().getName();
         ControlList controlList = new ControlList(this.width, this.height, top, bottom);
-        if (this.minecraft.world != null) controlList.setTransparentBackground();
+        if (this.client.world != null) controlList.setTransparentBackground();
 
         controlList
                 .section(null,
-                        width -> new BoolButton(width, I18n.translate("bbor.options.active"), this.minecraft.world != null) {
+                        width -> new BoolButton(width, I18n.translate("bbor.options.active"), this.client.world != null) {
                             @Override
                             public void onPressed() {
                                 ClientRenderer.toggleActive();

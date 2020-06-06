@@ -2,6 +2,7 @@ package com.irtimaled.bbor.client.gui;
 
 import com.irtimaled.bbor.client.config.BoundingBoxTypeHelper;
 import com.irtimaled.bbor.common.BoundingBoxType;
+import net.minecraft.client.util.math.MatrixStack;
 
 import java.awt.*;
 
@@ -14,8 +15,8 @@ public class BoundingBoxTypeButton extends BoolSettingButton {
     }
 
     @Override
-    protected void renderBackground(int mouseX, int mouseY) {
-        super.renderBackground(mouseX, mouseY);
+    protected void renderBackground(MatrixStack matrixStack, int mouseX, int mouseY) {
+        super.renderBackground(matrixStack, mouseX, mouseY);
 
         int left = x + 1;
         int top = y + 1;
@@ -25,17 +26,17 @@ public class BoundingBoxTypeButton extends BoolSettingButton {
         Color color = BoundingBoxTypeHelper.getColor(type);
 
         // top & left
-        drawRectangle(left, top, right, top + 1, color);
-        drawRectangle(left, top, left + 1, bottom, color);
+        drawRectangle(matrixStack, left, top, right, top + 1, color);
+        drawRectangle(matrixStack, left, top, left + 1, bottom, color);
 
         Color darker = color.darker();
         // bottom left & top right
-        drawRectangle(left, bottom - 2, left + 1, bottom, darker);
-        drawRectangle(right - 1, top, right, top + 1, darker);
+        drawRectangle(matrixStack, left, bottom - 2, left + 1, bottom, darker);
+        drawRectangle(matrixStack, right - 1, top, right, top + 1, darker);
 
         Color darkest = darker.darker();
         // bottom & right
-        drawRectangle(left + 1, bottom - 2, right, bottom, darkest);
-        drawRectangle(right - 1, top + 1, right, bottom, darkest);
+        drawRectangle(matrixStack, left + 1, bottom - 2, right, bottom, darkest);
+        drawRectangle(matrixStack, right - 1, top + 1, right, bottom, darkest);
     }
 }

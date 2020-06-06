@@ -135,4 +135,12 @@ public class RenderHelper {
     public static void blendFuncGui() {
         GlStateManager.blendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ZERO, GL11.GL_ONE);
     }
+
+    public static void depthFuncAlways() {
+        GlStateManager.depthFunc(GL11.GL_ALWAYS);
+    }
+
+    public static void depthFuncLessEqual() {
+        GlStateManager.depthFunc(GL11.GL_LEQUAL);
+    }
 }

@@ -5,12 +5,13 @@ import com.irtimaled.bbor.client.config.ColorHelper;
 import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.models.BoundingBoxConduit;
 import com.irtimaled.bbor.client.models.Point;
+import net.minecraft.client.util.math.MatrixStack;
 
 import java.awt.*;
 
 public class ConduitRenderer extends AbstractRenderer<BoundingBoxConduit> {
     @Override
-    public void render(BoundingBoxConduit boundingBox) {
+    public void render(MatrixStack matrixStack, BoundingBoxConduit boundingBox) {
         int level = boundingBox.getLevel();
         Point point = boundingBox.getPoint();
         Color color = BoundingBoxTypeHelper.getColor(boundingBox.getType());

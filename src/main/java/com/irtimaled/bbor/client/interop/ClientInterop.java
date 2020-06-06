@@ -16,7 +16,8 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.server.command.CommandSource;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.command.CommandSource;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
@@ -28,9 +29,9 @@ public class ClientInterop {
         EventBus.publish(new DisconnectedFromRemoteServer());
     }
 
-    public static void render(float partialTicks, ClientPlayerEntity player) {
+    public static void render(MatrixStack matrixStack, float partialTicks, ClientPlayerEntity player) {
         Player.setPosition(partialTicks, player);
-        ClientRenderer.render(DimensionId.from(player.dimension));
+        ClientRenderer.render(matrixStack, DimensionId.from(player.getEntityWorld().getRegistryKey()));
     }
 
     public static void renderDeferred() {
@@ -48,9 +49,9 @@ public class ClientInterop {
                 } catch (CommandSyntaxException exception) {
                     commandSource.sendError(Texts.toText(exception.getRawMessage()));
                     if (exception.getInput() != null && exception.getCursor() >= 0) {
-                        Text suggestion = new LiteralText("")
+                        MutableText suggestion = new LiteralText("")
                                 .formatted(Formatting.GRAY)
-                                .styled(style -> style.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, message)));
+                                .styled(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, message)));
                         int textLength = Math.min(exception.getInput().length(), exception.getCursor());
                         if (textLength > 10) {
                             suggestion.append("...");

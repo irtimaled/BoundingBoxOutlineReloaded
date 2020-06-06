@@ -4,12 +4,13 @@ import com.irtimaled.bbor.client.config.BoundingBoxTypeHelper;
 import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.models.BoundingBoxBiomeBorder;
 import com.irtimaled.bbor.common.models.Coords;
+import net.minecraft.client.util.math.MatrixStack;
 
 import java.awt.*;
 
 public class BiomeBorderRenderer extends AbstractRenderer<BoundingBoxBiomeBorder> {
     @Override
-    public void render(BoundingBoxBiomeBorder boundingBox) {
+    public void render(MatrixStack matrixStack, BoundingBoxBiomeBorder boundingBox) {
         Coords coords = boundingBox.getCoords();
         OffsetPoint northWest = new OffsetPoint(coords).offset(0, 0.001F, 0);
         OffsetPoint northEast = northWest.offset(1, 0, 0);

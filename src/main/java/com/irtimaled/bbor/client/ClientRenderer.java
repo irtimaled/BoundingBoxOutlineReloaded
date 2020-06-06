@@ -9,8 +9,10 @@ import com.irtimaled.bbor.common.TypeHelper;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBoxCuboid;
 import com.irtimaled.bbor.common.models.DimensionId;
+import net.minecraft.client.util.math.MatrixStack;
 
 import java.util.*;
+import java.util.Set;
 import java.util.stream.Stream;
 
 public class ClientRenderer {
@@ -84,14 +86,14 @@ public class ClientRenderer {
         return boundingBox.intersectsBounds(minX, minZ, maxX, maxZ);
     }
 
-    public static void render(DimensionId dimensionId) {
+    public static void render(MatrixStack matrixStack, DimensionId dimensionId) {
         if (!active) return;
 
         RenderHelper.beforeRender();
 
         getBoundingBoxes(dimensionId).forEach(key -> {
             AbstractRenderer renderer = boundingBoxRendererMap.get(key.getClass());
-            if (renderer != null) renderer.render(key);
+            if (renderer != null) renderer.render(matrixStack, key);
         });
 
         RenderHelper.afterRender();

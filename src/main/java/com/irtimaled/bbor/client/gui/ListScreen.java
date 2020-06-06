@@ -5,6 +5,7 @@ import com.irtimaled.bbor.client.interop.ClientInterop;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resource.language.I18n;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
 
 public abstract class ListScreen extends Screen {
@@ -31,7 +32,7 @@ public abstract class ListScreen extends Screen {
     @Override
     protected void init() {
         this.controlList = this.buildList(48, this.height - 28);
-        this.searchField = new SearchField(this.font, this.width / 2 - 100, 22, 200, 20, this.controlList);
+        this.searchField = new SearchField(this.textRenderer, this.width / 2 - 100, 22, 200, 20, this.controlList);
         this.doneButton = new AbstractButton(this.width / 2 - 100, this.height - 24, 200, I18n.translate("gui.done")) {
             @Override
             public void onPressed() {
@@ -47,20 +48,20 @@ public abstract class ListScreen extends Screen {
     protected abstract ControlList buildList(int top, int bottom);
 
     @Override
-    public void render(int mouseX, int mouseY, float unknown) {
-        render(mouseX, mouseY);
+    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float unknown) {
+        render(matrixStack, mouseX, mouseY);
     }
 
-    protected void render(int mouseX, int mouseY) {
-        this.controlList.render(mouseX, mouseY);
+    protected void render(MatrixStack matrixStack, int mouseX, int mouseY) {
+        this.controlList.render(matrixStack, mouseX, mouseY);
 
-        this.drawCenteredString(this.font, this.title.asString(), this.width / 2, 8, 16777215);
-        this.searchField.render(mouseX, mouseY);
-        this.doneButton.render(mouseX, mouseY);
+        this.drawCenteredString(matrixStack, this.textRenderer, this.title.asString(), this.width / 2, 8, 16777215);
+        this.searchField.render(matrixStack, mouseX, mouseY);
+        this.doneButton.render(matrixStack, mouseX, mouseY);
 
-        int left = this.width - this.font.getStringWidth(version) - 2;
+        int left = this.width - this.textRenderer.getWidth(version) - 2;
         int top = this.height - 10;
-        this.drawString(this.font, version, left, top, -10658467);
+        this.drawStringWithShadow(matrixStack, this.textRenderer, version, left, top, -10658467);
     }
 
     @Override

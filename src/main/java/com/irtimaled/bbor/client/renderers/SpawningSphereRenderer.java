@@ -8,12 +8,13 @@ import com.irtimaled.bbor.client.models.BoundingBoxSpawningSphere;
 import com.irtimaled.bbor.client.models.Point;
 import com.irtimaled.bbor.common.BoundingBoxType;
 import net.minecraft.client.resource.language.I18n;
+import net.minecraft.client.util.math.MatrixStack;
 
 import java.awt.*;
 
 public class SpawningSphereRenderer extends AbstractRenderer<BoundingBoxSpawningSphere> {
     @Override
-    public void render(BoundingBoxSpawningSphere boundingBox) {
+    public void render(MatrixStack matrixStack, BoundingBoxSpawningSphere boundingBox) {
         Point point = boundingBox.getPoint();
         OffsetPoint sphereCenter = new OffsetPoint(point);
 

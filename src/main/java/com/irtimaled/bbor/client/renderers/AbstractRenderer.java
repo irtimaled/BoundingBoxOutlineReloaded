@@ -6,7 +6,7 @@ import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
-import org.lwjgl.opengl.GL14;
+import net.minecraft.client.util.math.MatrixStack;
 
 import java.awt.*;
 import java.util.function.Supplier;
@@ -17,7 +17,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
     private static final double PI = TAU / 2D;
     public static final double THETA_SEGMENT = PHI_SEGMENT / 2D;
 
-    public abstract void render(T boundingBox);
+    public abstract void render(MatrixStack matrixStack, T boundingBox);
 
     void renderCuboid(OffsetBox bb, Color color) {
         OffsetBox nudge = bb.nudge();
@@ -117,12 +117,11 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
 
     void renderText(OffsetPoint offsetPoint, String... texts) {
         TextRenderer fontRenderer = MinecraftClient.getInstance().textRenderer;
-
         RenderHelper.beforeRenderFont(offsetPoint);
         float top = -(fontRenderer.fontHeight * texts.length) / 2f;
         for (String text : texts) {
-            float left = fontRenderer.getStringWidth(text) / 2f;
-            fontRenderer.draw(text, -left, top, -1);
+            float left = fontRenderer.getWidth(text) / 2f;
+            fontRenderer.draw(new MatrixStack(), text, -left, top, -1);
             top += fontRenderer.fontHeight;
         }
         RenderHelper.afterRenderFont();

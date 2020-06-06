@@ -3,13 +3,14 @@ package com.irtimaled.bbor.client.renderers;
 import com.irtimaled.bbor.client.config.BoundingBoxTypeHelper;
 import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.models.BoundingBoxLine;
+import net.minecraft.client.util.math.MatrixStack;
 
 import java.awt.*;
 import java.util.Arrays;
 
 public class LineRenderer extends AbstractRenderer<BoundingBoxLine> {
     @Override
-    public void render(BoundingBoxLine boundingBox) {
+    public void render(MatrixStack matrixStack, BoundingBoxLine boundingBox) {
         Color color = BoundingBoxTypeHelper.getColor(boundingBox.getType());
 
         if (boundingBox.getWidth() == 0) {

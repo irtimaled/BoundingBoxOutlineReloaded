@@ -2,10 +2,11 @@ package com.irtimaled.bbor.client.renderers;
 
 import com.irtimaled.bbor.client.models.BoundingBoxFlowerForest;
 import com.irtimaled.bbor.common.models.Coords;
+import net.minecraft.client.util.math.MatrixStack;
 
 public class FlowerForestRenderer extends AbstractRenderer<BoundingBoxFlowerForest> {
     @Override
-    public void render(BoundingBoxFlowerForest boundingBox) {
+    public void render(MatrixStack matrixStack, BoundingBoxFlowerForest boundingBox) {
         Coords coords = boundingBox.getCoords();
         int x = coords.getX();
         int y = coords.getY();
