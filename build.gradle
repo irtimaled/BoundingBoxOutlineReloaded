@@ -6,7 +6,7 @@ buildscript {
         maven { url 'https://files.minecraftforge.net/maven' }
     }
     dependencies {
-        classpath 'com.github.Irtimaled:ForgeGradle:' + project.mcVersion + '-SNAPSHOT'
+        classpath 'com.github.Irtimaled:ForgeGradle:2.6-SNAPSHOT'
         classpath 'org.spongepowered:mixingradle:0.6-SNAPSHOT'
     }
 }
