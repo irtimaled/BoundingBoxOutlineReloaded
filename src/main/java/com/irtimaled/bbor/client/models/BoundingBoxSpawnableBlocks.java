@@ -22,4 +22,19 @@ public class BoundingBoxSpawnableBlocks extends AbstractBoundingBox {
     public Boolean intersectsBounds(int minX, int minZ, int maxX, int maxZ) {
         return true;
     }
+
+    @Override
+    protected double getDistanceX(double x) {
+        return 0;
+    }
+
+    @Override
+    protected double getDistanceY(double y) {
+        return 0;
+    }
+
+    @Override
+    protected double getDistanceZ(double z) {
+        return 0;
+    }
 }

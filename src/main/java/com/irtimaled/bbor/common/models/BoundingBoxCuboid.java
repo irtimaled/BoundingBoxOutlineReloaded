@@ -1,6 +1,7 @@
 package com.irtimaled.bbor.common.models;
 
 import com.irtimaled.bbor.common.BoundingBoxType;
+import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.TypeHelper;
 
 public class BoundingBoxCuboid extends AbstractBoundingBox {
@@ -53,5 +54,20 @@ public class BoundingBoxCuboid extends AbstractBoundingBox {
 
     private boolean isBetween(int val, int min, int max) {
         return val >= min && val <= max;
+    }
+
+    @Override
+    public double getDistanceX(double x) {
+        return x - MathHelper.clamp(x, minCoords.getX(), maxCoords.getX());
+    }
+
+    @Override
+    public double getDistanceY(double y) {
+        return y - MathHelper.clamp(y, minCoords.getY(), maxCoords.getY());
+    }
+
+    @Override
+    public double getDistanceZ(double z) {
+        return z - MathHelper.clamp(z, minCoords.getZ(), maxCoords.getZ());
     }
 }

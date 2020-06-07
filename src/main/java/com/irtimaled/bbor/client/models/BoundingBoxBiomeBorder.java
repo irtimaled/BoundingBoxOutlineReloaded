@@ -32,6 +32,21 @@ public class BoundingBoxBiomeBorder extends AbstractBoundingBox {
                 coords.getZ() <= maxZ;
     }
 
+    @Override
+    protected double getDistanceX(double x) {
+        return x - coords.getX();
+    }
+
+    @Override
+    protected double getDistanceY(double y) {
+        return y - coords.getY();
+    }
+
+    @Override
+    protected double getDistanceZ(double z) {
+        return z - coords.getZ();
+    }
+
     public Coords getCoords() {
         return coords;
     }

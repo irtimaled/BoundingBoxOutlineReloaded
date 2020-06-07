@@ -32,6 +32,21 @@ public class BoundingBoxSphere extends AbstractBoundingBox {
                 this.minZ <= maxZ;
     }
 
+    @Override
+    protected double getDistanceX(double x) {
+        return x - point.getX();
+    }
+
+    @Override
+    protected double getDistanceY(double y) {
+        return y - point.getY();
+    }
+
+    @Override
+    protected double getDistanceZ(double z) {
+        return z - point.getZ();
+    }
+
     public double getRadius() {
         return radius;
     }

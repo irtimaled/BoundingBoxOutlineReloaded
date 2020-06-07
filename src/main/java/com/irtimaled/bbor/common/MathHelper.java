@@ -14,4 +14,14 @@ public class MathHelper {
         if (fraction % midpoint == 1) fraction++;
         return floor + (fraction / multiplier);
     }
+
+    public static int clamp(int value, int min, int max) {
+        if (value < min) return min;
+        return Math.min(value, max);
+    }
+
+    public static double clamp(double value, double min, double max) {
+        if (value < min) return min;
+        return Math.min(value, max);
+    }
 }

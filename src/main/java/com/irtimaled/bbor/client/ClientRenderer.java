@@ -11,10 +11,8 @@ import com.irtimaled.bbor.common.models.BoundingBoxCuboid;
 import com.irtimaled.bbor.common.models.DimensionId;
 import org.lwjgl.opengl.GL11;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Stream;
 
 public class ClientRenderer {
     private static final int CHUNK_SIZE = 16;
@@ -86,8 +84,6 @@ public class ClientRenderer {
     public static void render(DimensionId dimensionId) {
         if (!active) return;
 
-        Set<AbstractBoundingBox> boundingBoxes = getBoundingBoxes(dimensionId);
-
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GL11.glLineWidth(2.0f);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
@@ -98,29 +94,32 @@ public class ClientRenderer {
             GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
         }
 
-        for (AbstractBoundingBox key : boundingBoxes) {
+        getBoundingBoxes(dimensionId).forEach(key -> {
             AbstractRenderer renderer = boundingBoxRendererMap.get(key.getClass());
-            if (renderer == null) continue;
-
-            renderer.render(key);
-        }
+            if (renderer != null) renderer.render(key);
+        });
 
         GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
         GL11.glEnable(GL11.GL_CULL_FACE);
         GL11.glEnable(GL11.GL_TEXTURE_2D);
     }
 
-    private static Set<AbstractBoundingBox> getBoundingBoxes(DimensionId dimensionId) {
-        Set<AbstractBoundingBox> boundingBoxes = new HashSet<>();
+    public static Stream<AbstractBoundingBox> getBoundingBoxes(DimensionId dimensionId) {
+        Stream.Builder<AbstractBoundingBox> boundingBoxes = Stream.builder();
         for (IBoundingBoxProvider<?> provider : providers) {
             if (provider.canProvide(dimensionId)) {
                 for (AbstractBoundingBox boundingBox : provider.get(dimensionId)) {
                     if (isWithinRenderDistance(boundingBox)) {
-                        boundingBoxes.add(boundingBox);
+                        boundingBoxes.accept(boundingBox);
                     }
                 }
             }
         }
-        return boundingBoxes;
+
+        Point point = Player.getPoint();
+        return boundingBoxes.build()
+                .sorted(Comparator
+                        .comparingDouble((AbstractBoundingBox boundingBox) -> boundingBox.getDistance(point.getX(), point.getY(), point.getZ())).reversed());
     }
+
 }

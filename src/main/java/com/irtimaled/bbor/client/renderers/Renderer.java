@@ -1,5 +1,6 @@
 package com.irtimaled.bbor.client.renderers;
 
+import com.irtimaled.bbor.client.Camera;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -9,6 +10,8 @@ import org.lwjgl.opengl.GL11;
 import java.awt.*;
 
 public class Renderer {
+    private final int glMode;
+
     static Renderer startLines() {
         return new Renderer(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
     }
@@ -29,8 +32,8 @@ public class Renderer {
         return new Renderer(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
     }
 
-    private final Tessellator tessellator;
-    private final BufferBuilder bufferBuilder;
+    private static final Tessellator tessellator = new Tessellator(2097152);
+    private static final BufferBuilder bufferBuilder = tessellator.getBuffer();
 
     private int red;
     private int green;
@@ -38,9 +41,8 @@ public class Renderer {
     private int alpha;
 
     private Renderer(int glMode, VertexFormat vertexFormat) {
-        tessellator = Tessellator.getInstance();
-        bufferBuilder = tessellator.getBuffer();
         bufferBuilder.begin(glMode, vertexFormat);
+        this.glMode = glMode;
     }
 
     public Renderer setColor(Color color) {
@@ -88,6 +90,9 @@ public class Renderer {
     }
 
     public void render() {
+        if (glMode == GL11.GL_QUADS) {
+            bufferBuilder.sortVertexData((float) Camera.getX(), (float) Camera.getY(), (float) Camera.getZ());
+        }
         tessellator.draw();
     }
 

@@ -15,15 +15,16 @@ public class ConduitRenderer extends AbstractRenderer<BoundingBoxConduit> {
         Point point = boundingBox.getPoint();
         Color color = BoundingBoxTypeHelper.getColor(boundingBox.getType());
 
+        if (level != 0) {
+            renderSphere(point, boundingBox.getRadius() + 0.5, color, 5, 5);
+        }
+
         OffsetPoint center = new OffsetPoint(point);
         OffsetBox centerBox = new OffsetBox(center, center).grow(0.5, 0.5, 0.5);
         renderCuboid(centerBox, color);
         if (level == 6 && ConfigManager.renderConduitMobHarmArea.get()) {
             renderCuboid(centerBox.grow(8, 8, 8),
                     ColorHelper.getColor(ConfigManager.colorConduitMobHarmArea));
-        }
-        if (level != 0) {
-            renderSphere(point, boundingBox.getRadius() + 0.5, color, 5, 5);
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.irtimaled.bbor.client.models;
 
 import com.irtimaled.bbor.common.BoundingBoxType;
+import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.TypeHelper;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 
@@ -87,6 +88,21 @@ public class BoundingBoxLine extends AbstractBoundingBox {
                 (maxXWithinBounds && maxZWithinBounds) ||
                 (minXWithinBounds && maxZWithinBounds) ||
                 (maxXWithinBounds && minZWithinBounds);
+    }
+
+    @Override
+    protected double getDistanceX(double x) {
+        return x - MathHelper.clamp(x, minPoint.getX(), maxPoint.getX());
+    }
+
+    @Override
+    protected double getDistanceY(double y) {
+        return y - MathHelper.clamp(y, minPoint.getY(), maxPoint.getY());
+    }
+
+    @Override
+    protected double getDistanceZ(double z) {
+        return z - MathHelper.clamp(z, minPoint.getZ(), maxPoint.getZ());
     }
 
     private boolean isBetween(double val, int min, int max) {

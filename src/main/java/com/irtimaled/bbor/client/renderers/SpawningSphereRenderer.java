@@ -17,8 +17,12 @@ public class SpawningSphereRenderer extends AbstractRenderer<BoundingBoxSpawning
         Point point = boundingBox.getPoint();
         OffsetPoint sphereCenter = new OffsetPoint(point);
 
-        OffsetBox offsetBox = new OffsetBox(sphereCenter, sphereCenter).grow(0.5, 0, 0.5);
         Color safeAreaColor = ColorHelper.getColor(ConfigManager.colorAFKSpheresSafeArea);
+        renderSphere(point, BoundingBoxSpawningSphere.SAFE_RADIUS, safeAreaColor, 5, 5);
+
+        renderOuterSphere(boundingBox, point);
+
+        OffsetBox offsetBox = new OffsetBox(sphereCenter, sphereCenter).grow(0.5, 0, 0.5);
         renderCuboid(offsetBox, safeAreaColor);
 
         Integer spawnableSpacesCount = boundingBox.getSpawnableSpacesCount();
@@ -28,10 +32,6 @@ public class SpawningSphereRenderer extends AbstractRenderer<BoundingBoxSpawning
                             I18n.format("bbor.renderer.spawningSphere.none") :
                             String.format("%,d", spawnableSpacesCount));
         }
-
-        renderSphere(point, BoundingBoxSpawningSphere.SAFE_RADIUS, safeAreaColor, 5, 5);
-
-        renderOuterSphere(boundingBox, point);
 
         if (ConfigManager.renderAFKSpawnableBlocks.get() && boundingBox.isWithinSphere(Player.getPoint())) {
             renderSpawnableSpaces(boundingBox);

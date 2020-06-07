@@ -18,10 +18,10 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
 
     void renderCuboid(OffsetBox bb, Color color) {
         OffsetBox nudge = bb.nudge();
+        renderOutlinedCuboid(nudge, color);
         if (ConfigManager.fill.get()) {
             renderFilledFaces(nudge.getMin(), nudge.getMax(), color, 30);
         }
-        renderOutlinedCuboid(nudge, color);
     }
 
     void renderOutlinedCuboid(OffsetBox bb, Color color) {
