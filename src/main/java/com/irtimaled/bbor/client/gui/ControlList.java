@@ -1,11 +1,10 @@
 package com.irtimaled.bbor.client.gui;
 
+import com.irtimaled.bbor.client.renderers.RenderHelper;
 import com.irtimaled.bbor.client.renderers.Renderer;
-import com.mojang.blaze3d.platform.GLX;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.util.math.MathHelper;
-import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -156,22 +155,22 @@ public class ControlList extends AbstractGui implements IControlSet {
     public void render(int mouseX, int mouseY) {
         this.amountScrolled = MathHelper.clamp(this.amountScrolled, 0.0D, this.getMaxScroll());
 
-        GL11.glDisable(GL11.GL_LIGHTING);
-        GL11.glDisable(GL11.GL_FOG);
+        RenderHelper.disableLighting();
+        RenderHelper.disableFog();
         if (!transparentBackground) drawListBackground();
 
         int listTop = this.top + PADDING - (int) this.amountScrolled;
 
         drawEntries(mouseX, mouseY, listTop);
 
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        RenderHelper.disableDepthTest();
         this.overlayBackground(0, this.top);
         this.overlayBackground(this.bottom, this.height);
-        GL11.glEnable(GL11.GL_BLEND);
-        GLX.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ZERO, GL11.GL_ONE);
-        GL11.glDisable(GL11.GL_ALPHA_TEST);
-        GL11.glShadeModel(GL11.GL_SMOOTH);
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        RenderHelper.enableBlend();
+        RenderHelper.blendFuncGui();
+        RenderHelper.disableAlphaTest();
+        RenderHelper.shadeModelSmooth();
+        RenderHelper.disableTexture();
         drawOverlayShadows();
 
         int maxScroll = this.getMaxScroll();
@@ -179,10 +178,10 @@ public class ControlList extends AbstractGui implements IControlSet {
             drawScrollBar(maxScroll);
         }
 
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glShadeModel(GL11.GL_FLAT);
-        GL11.glEnable(GL11.GL_ALPHA_TEST);
-        GL11.glDisable(GL11.GL_BLEND);
+        RenderHelper.enableTexture();
+        RenderHelper.shadeModelFlat();
+        RenderHelper.enableAlphaTest();
+        RenderHelper.disableBlend();
     }
 
     private void drawListBackground() {
@@ -216,7 +215,6 @@ public class ControlList extends AbstractGui implements IControlSet {
 
     private void overlayBackground(int top, int bottom) {
         this.minecraft.getTextureManager().bindTexture(AbstractGui.BACKGROUND_LOCATION);
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         Renderer.startTextured()
                 .setColor(64, 64, 64)
                 .setAlpha(255)

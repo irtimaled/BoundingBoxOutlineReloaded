@@ -1,7 +1,7 @@
 package com.irtimaled.bbor.client.gui;
 
+import com.irtimaled.bbor.client.renderers.RenderHelper;
 import com.irtimaled.bbor.client.renderers.Renderer;
-import org.lwjgl.opengl.GL11;
 
 public class SelectableControlList extends ControlList {
     private final int listRight;
@@ -81,8 +81,7 @@ public class SelectableControlList extends ControlList {
     @Override
     protected void drawEntry(int mouseX, int mouseY, int top, ControlListEntry entry, int height) {
         if (this.selectedElement == entry.index) {
-            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-            GL11.glDisable(GL11.GL_TEXTURE_2D);
+            RenderHelper.disableTexture();
             int color = this.isFocused ? 255 : 128;
             Renderer.startTextured()
                     .setAlpha(255)
@@ -97,7 +96,7 @@ public class SelectableControlList extends ControlList {
                     .addPoint(this.listRight + 1, top - 1, 0.0D, 1.0D, 0.0D)
                     .addPoint(this.listLeft - 1, top - 1, 0.0D, 0.0D, 0.0D)
                     .render();
-            GL11.glEnable(GL11.GL_TEXTURE_2D);
+            RenderHelper.enableTexture();
         }
         super.drawEntry(mouseX, mouseY, top, entry, height);
     }

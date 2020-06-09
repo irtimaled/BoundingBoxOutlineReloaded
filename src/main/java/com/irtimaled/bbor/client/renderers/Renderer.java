@@ -5,7 +5,6 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 
@@ -13,23 +12,23 @@ public class Renderer {
     private final int glMode;
 
     static Renderer startLines() {
-        return new Renderer(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
+        return new Renderer(RenderHelper.LINES, DefaultVertexFormats.POSITION_COLOR);
     }
 
     static Renderer startLineLoop() {
-        return new Renderer(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION_COLOR);
+        return new Renderer(RenderHelper.LINE_LOOP, DefaultVertexFormats.POSITION_COLOR);
     }
 
     static Renderer startQuads() {
-        return new Renderer(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+        return new Renderer(RenderHelper.QUADS, DefaultVertexFormats.POSITION_COLOR);
     }
 
     static Renderer startPoints() {
-        return new Renderer(GL11.GL_POINTS, DefaultVertexFormats.POSITION_COLOR);
+        return new Renderer(RenderHelper.POINTS, DefaultVertexFormats.POSITION_COLOR);
     }
 
     public static Renderer startTextured() {
-        return new Renderer(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+        return new Renderer(RenderHelper.QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
     }
 
     private static final Tessellator tessellator = new Tessellator(2097152);
@@ -90,7 +89,7 @@ public class Renderer {
     }
 
     public void render() {
-        if (glMode == GL11.GL_QUADS) {
+        if (glMode == RenderHelper.QUADS) {
             bufferBuilder.sortVertexData((float) Camera.getX(), (float) Camera.getY(), (float) Camera.getZ());
         }
         tessellator.draw();

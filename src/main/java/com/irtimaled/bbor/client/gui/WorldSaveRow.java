@@ -2,6 +2,7 @@ package com.irtimaled.bbor.client.gui;
 
 import com.google.common.hash.Hashing;
 import com.irtimaled.bbor.client.interop.ClientInterop;
+import com.irtimaled.bbor.client.renderers.RenderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.renderer.texture.DynamicTexture;
@@ -13,7 +14,6 @@ import net.minecraft.world.storage.WorldInfo;
 import net.minecraft.world.storage.WorldSummary;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.lwjgl.opengl.GL11;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -108,9 +108,9 @@ public class WorldSaveRow extends ControlListEntry implements Comparable<WorldSa
         this.client.fontRenderer.drawString(displayName, (float) (x + ICON_SIZE + 3), (float) (y + 1), 16777215);
         this.client.fontRenderer.drawString(details, (float) (x + ICON_SIZE + 3), (float) (y + 1 + this.client.fontRenderer.FONT_HEIGHT + 1), 8421504);
         this.client.getTextureManager().bindTexture(this.icon != null ? this.iconLocation : ICON_MISSING);
-        GL11.glEnable(GL11.GL_BLEND);
+        RenderHelper.enableBlend();
         AbstractGui.blit(x, y, 0.0F, 0.0F, ICON_SIZE, ICON_SIZE, 32, 32);
-        GL11.glDisable(GL11.GL_BLEND);
+        RenderHelper.disableBlend();
     }
 
     @Override

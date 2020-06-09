@@ -16,7 +16,7 @@ public class ConduitRenderer extends AbstractRenderer<BoundingBoxConduit> {
         Color color = BoundingBoxTypeHelper.getColor(boundingBox.getType());
 
         if (level != 0) {
-            renderSphere(point, boundingBox.getRadius() + 0.5, color, 5, 5);
+            renderSphere(point, boundingBox.getRadius() + 0.5, color);
         }
 
         OffsetPoint center = new OffsetPoint(point);

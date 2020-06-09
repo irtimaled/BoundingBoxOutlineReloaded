@@ -1,6 +1,5 @@
 package com.irtimaled.bbor.client;
 
-import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.interop.ClientInterop;
 import com.irtimaled.bbor.client.models.*;
 import com.irtimaled.bbor.client.providers.*;
@@ -9,7 +8,6 @@ import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBoxCuboid;
 import com.irtimaled.bbor.common.models.DimensionId;
-import org.lwjgl.opengl.GL11;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -84,24 +82,14 @@ public class ClientRenderer {
     public static void render(DimensionId dimensionId) {
         if (!active) return;
 
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glLineWidth(2.0f);
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glDisable(GL11.GL_CULL_FACE);
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-
-        if (ConfigManager.alwaysVisible.get()) {
-            GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
-        }
+        RenderHelper.beforeRender();
 
         getBoundingBoxes(dimensionId).forEach(key -> {
             AbstractRenderer renderer = boundingBoxRendererMap.get(key.getClass());
             if (renderer != null) renderer.render(key);
         });
 
-        GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
-        GL11.glEnable(GL11.GL_CULL_FACE);
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        RenderHelper.afterRender();
     }
 
     public static Stream<AbstractBoundingBox> getBoundingBoxes(DimensionId dimensionId) {
