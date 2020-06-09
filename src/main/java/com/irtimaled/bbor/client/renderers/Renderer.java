@@ -16,7 +16,7 @@ public class Renderer {
         return new Renderer(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
     }
 
-    static Renderer startCircle() {
+    static Renderer startLineLoop() {
         return new Renderer(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION_COLOR);
     }
 

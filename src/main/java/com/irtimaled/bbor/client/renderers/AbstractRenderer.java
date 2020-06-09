@@ -9,6 +9,7 @@ import net.minecraft.client.gui.FontRenderer;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
+import java.util.function.Supplier;
 
 public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
     private static final double TAU = 6.283185307179586D;
@@ -19,17 +20,17 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
     void renderCuboid(OffsetBox bb, Color color) {
         OffsetBox nudge = bb.nudge();
         renderOutlinedCuboid(nudge, color);
-        if (ConfigManager.fill.get()) {
-            renderFilledFaces(nudge.getMin(), nudge.getMax(), color, 30);
-        }
+        renderFilledFaces(nudge.getMin(), nudge.getMax(), color, 30);
     }
 
     void renderOutlinedCuboid(OffsetBox bb, Color color) {
         GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
-        renderFaces(bb.getMin(), bb.getMax(), color, 255);
+        OffsetPoint min = bb.getMin();
+        OffsetPoint max = bb.getMax();
+        renderFaces(min, max, color, 255, min.getY() == max.getY() ? Renderer::startLineLoop : Renderer::startLines);
     }
 
-    private void renderFaces(OffsetPoint min, OffsetPoint max, Color color, int alpha) {
+    private void renderFaces(OffsetPoint min, OffsetPoint max, Color color, int alpha, Supplier<Renderer> rendererSupplier) {
         double minX = min.getX();
         double minY = min.getY();
         double minZ = min.getZ();
@@ -43,7 +44,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
             color = new Color(255 - color.getRed(), 255 - color.getGreen(), 255 - color.getBlue());
         }
 
-        Renderer renderer = Renderer.startQuads()
+        Renderer renderer = rendererSupplier.get()
                 .setColor(color)
                 .setAlpha(alpha);
 
@@ -104,9 +105,11 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
     }
 
     void renderFilledFaces(OffsetPoint min, OffsetPoint max, Color color, int alpha) {
+        if (!ConfigManager.fill.get()) return;
+
         GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
         GL11.glEnable(GL11.GL_BLEND);
-        renderFaces(min, max, color, alpha);
+        renderFaces(min, max, color, alpha, Renderer::startQuads);
         GL11.glDisable(GL11.GL_BLEND);
         GL11.glEnable(GL11.GL_POLYGON_OFFSET_LINE);
         GL11.glPolygonOffset(-1.f, -1.f);
@@ -161,7 +164,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
     }
 
     private void renderCircle(Point center, double radius, Color color, int segments, double dy) {
-        Renderer renderer = Renderer.startCircle()
+        Renderer renderer = Renderer.startLineLoop()
                 .setColor(color);
 
         for (int a = 0; a < 360; a += 360 / segments) {
