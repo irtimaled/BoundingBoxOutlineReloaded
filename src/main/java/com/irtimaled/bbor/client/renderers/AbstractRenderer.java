@@ -3,10 +3,8 @@ package com.irtimaled.bbor.client.renderers;
 import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.models.Point;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
-import com.mojang.blaze3d.platform.GLX;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.util.function.Supplier;
@@ -20,11 +18,11 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
     void renderCuboid(OffsetBox bb, Color color) {
         OffsetBox nudge = bb.nudge();
         renderOutlinedCuboid(nudge, color);
-        renderFilledFaces(nudge.getMin(), nudge.getMax(), color, 30);
+        renderFilledFaces(nudge.getMin(), nudge.getMax(), color);
     }
 
     void renderOutlinedCuboid(OffsetBox bb, Color color) {
-        GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+        RenderHelper.polygonModeLine();
         OffsetPoint min = bb.getMin();
         OffsetPoint max = bb.getMax();
         renderFaces(min, max, color, 255, min.getY() == max.getY() ? Renderer::startLineLoop : Renderer::startLines);
@@ -96,7 +94,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
     }
 
     void renderLine(OffsetPoint startPoint, OffsetPoint endPoint, Color color) {
-        GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+        RenderHelper.polygonModeLine();
         Renderer.startLines()
                 .setColor(color)
                 .addPoint(startPoint)
@@ -104,70 +102,54 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
                 .render();
     }
 
-    void renderFilledFaces(OffsetPoint min, OffsetPoint max, Color color, int alpha) {
+    void renderFilledFaces(OffsetPoint min, OffsetPoint max, Color color) {
         if (!ConfigManager.fill.get()) return;
 
-        GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
-        GL11.glEnable(GL11.GL_BLEND);
-        renderFaces(min, max, color, alpha, Renderer::startQuads);
-        GL11.glDisable(GL11.GL_BLEND);
-        GL11.glEnable(GL11.GL_POLYGON_OFFSET_LINE);
-        GL11.glPolygonOffset(-1.f, -1.f);
+        RenderHelper.polygonModeFill();
+        RenderHelper.enableBlend();
+        renderFaces(min, max, color, 30, Renderer::startQuads);
+        RenderHelper.disableBlend();
+        RenderHelper.enablePolygonOffsetLine();
+        RenderHelper.polygonOffsetMinusOne();
     }
 
     void renderText(OffsetPoint offsetPoint, String... texts) {
         FontRenderer fontRenderer = Minecraft.getInstance().fontRenderer;
 
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-        GL11.glPushMatrix();
-        GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
-        GL11.glTranslated(offsetPoint.getX(), offsetPoint.getY() + 0.002D, offsetPoint.getZ());
-        GL11.glNormal3f(0.0F, 1.0F, 0.0F);
-        GL11.glRotatef(0.0F, 0.0F, 1.0F, 0.0F);
-        GL11.glRotatef(90.0F, 1.0F, 0.0F, 0.0F);
-        GL11.glScalef(-0.0175F, -0.0175F, 0.0175F);
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glEnable(GL11.GL_BLEND);
-        GLX.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
-
-        GL11.glDepthMask(true);
+        RenderHelper.beforeRenderFont(offsetPoint);
         float top = -(fontRenderer.FONT_HEIGHT * texts.length) / 2f;
         for (String text : texts) {
             float left = fontRenderer.getStringWidth(text) / 2f;
             fontRenderer.drawString(text, -left, top, -1);
             top += fontRenderer.FONT_HEIGHT;
         }
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glDisable(GL11.GL_BLEND);
-        GL11.glPopMatrix();
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        RenderHelper.afterRenderFont();
     }
 
-    void renderSphere(Point center, double radius, Color color, int density, int dotSize) {
+    void renderSphere(Point center, double radius, Color color) {
         if (ConfigManager.renderSphereAsDots.get()) {
-            renderDotSphere(center, radius, color, density, dotSize);
+            renderDotSphere(center, radius, color);
         } else {
-            renderLineSphere(center, radius, color, density);
+            renderLineSphere(center, radius, color);
         }
     }
 
-    private void renderLineSphere(Point center, double radius, Color color, int density) {
-        GL11.glLineWidth(2f);
-        int segments = 24 + (density * 8);
+    private void renderLineSphere(Point center, double radius, Color color) {
+        RenderHelper.lineWidth2();
 
         double offset = ((radius - (int) radius) == 0) ? center.getY() - (int) center.getY() : 0;
         for (double dy = offset - radius; dy <= radius + 1; dy++) {
             double circleRadius = Math.sqrt((radius * radius) - (dy * dy));
             if (circleRadius == 0) circleRadius = Math.sqrt(2) / 2;
-            renderCircle(center, circleRadius, color, segments, dy + 0.001F);
+            renderCircle(center, circleRadius, color, dy + 0.001F);
         }
     }
 
-    private void renderCircle(Point center, double radius, Color color, int segments, double dy) {
+    private void renderCircle(Point center, double radius, Color color, double dy) {
         Renderer renderer = Renderer.startLineLoop()
                 .setColor(color);
 
-        for (int a = 0; a < 360; a += 360 / segments) {
+        for (int a = 0; a < 360; a += 5) {
             double heading = a * PI / 180;
             renderer.addPoint(new OffsetPoint(center.offset(Math.cos(heading) * radius, dy, Math.sin(heading) * radius)));
         }
@@ -175,13 +157,13 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
         renderer.render();
     }
 
-    private void renderDotSphere(Point center, double radius, Color color, int density, int dotSize) {
-        GL11.glEnable(GL11.GL_POINT_SMOOTH);
-        GL11.glPointSize(dotSize);
+    private void renderDotSphere(Point center, double radius, Color color) {
+        RenderHelper.enablePointSmooth();
+        RenderHelper.pointSize5();
         Renderer renderer = Renderer.startPoints()
                 .setColor(color);
-        int segments = 24 + (density * 8);
 
+        int segments = 64;
         double thetaSegment = PI / (double) segments;
         double phiSegment = TAU / (double) segments;
 

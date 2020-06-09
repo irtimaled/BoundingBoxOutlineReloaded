@@ -3,7 +3,6 @@ package com.irtimaled.bbor.client.renderers;
 import com.irtimaled.bbor.client.config.BoundingBoxTypeHelper;
 import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.models.BoundingBoxLine;
-import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.util.Arrays;
@@ -24,7 +23,7 @@ public class LineRenderer extends AbstractRenderer<BoundingBoxLine> {
                 map(point -> new OffsetPoint(point).offset(0, 0.001f, 0)).
                 toArray(OffsetPoint[]::new);
 
-        GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+        RenderHelper.polygonModeLine();
         Renderer.startQuads()
                 .setColor(color)
                 .addPoints(cornerPoints)
@@ -32,15 +31,15 @@ public class LineRenderer extends AbstractRenderer<BoundingBoxLine> {
 
         if (!ConfigManager.fill.get()) return;
 
-        GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
-        GL11.glEnable(GL11.GL_BLEND);
+        RenderHelper.polygonModeFill();
+        RenderHelper.enableBlend();
         Renderer.startQuads()
                 .setColor(color)
                 .setAlpha(30)
                 .addPoints(cornerPoints)
                 .render();
-        GL11.glDisable(GL11.GL_BLEND);
-        GL11.glEnable(GL11.GL_POLYGON_OFFSET_LINE);
-        GL11.glPolygonOffset(-1.f, -1.f);
+        RenderHelper.disableBlend();
+        RenderHelper.enablePolygonOffsetLine();
+        RenderHelper.polygonOffsetMinusOne();
     }
 }

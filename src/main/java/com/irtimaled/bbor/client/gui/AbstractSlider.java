@@ -3,7 +3,6 @@ package com.irtimaled.bbor.client.gui;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.util.math.MathHelper;
-import org.lwjgl.opengl.GL11;
 
 abstract class AbstractSlider extends AbstractControl {
     private final int optionCount;
@@ -19,7 +18,6 @@ abstract class AbstractSlider extends AbstractControl {
     @Override
     protected void renderBackground(int mouseX, int mouseY) {
         this.minecraft.getTextureManager().bindTexture(WIDGETS_LOCATION);
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         int hoverState = super.getYImage(this.isHovered());
         this.blit(this.x + (int) getProgressPercentage(), this.y, 0, 46 + hoverState * 20, 4, this.height);
         this.blit(this.x + (int) getProgressPercentage() + 4, this.y, 196, 46 + hoverState * 20, 4, 20);

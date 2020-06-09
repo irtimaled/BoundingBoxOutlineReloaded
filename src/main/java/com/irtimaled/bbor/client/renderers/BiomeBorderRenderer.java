@@ -47,7 +47,7 @@ public class BiomeBorderRenderer extends AbstractRenderer<BoundingBoxBiomeBorder
 
         renderLine(topCorner1, topCorner2, color);
         OffsetPoint bottomCorner2 = topCorner2.offset(0, 1, 0);
-        renderFilledFaces(topCorner1, bottomCorner2, color, 30);
+        renderFilledFaces(topCorner1, bottomCorner2, color);
         OffsetPoint bottomCorner1 = topCorner1.offset(0, 1, 0);
         renderLine(bottomCorner1, bottomCorner2, color);
     }

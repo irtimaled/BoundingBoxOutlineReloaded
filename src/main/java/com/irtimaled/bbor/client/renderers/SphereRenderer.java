@@ -9,6 +9,6 @@ public class SphereRenderer extends AbstractRenderer<BoundingBoxSphere> {
     public void render(BoundingBoxSphere boundingBox) {
         Point point = boundingBox.getPoint();
         double radius = boundingBox.getRadius();
-        renderSphere(point, radius, BoundingBoxTypeHelper.getColor(boundingBox.getType()), 5, 5);
+        renderSphere(point, radius, BoundingBoxTypeHelper.getColor(boundingBox.getType()));
     }
 }
