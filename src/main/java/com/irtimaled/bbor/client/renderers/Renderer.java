@@ -100,7 +100,7 @@ public class Renderer {
     }
 
     private void tex(double u, double v) {
-        bufferBuilder.tex(u, v);
+        bufferBuilder.tex((float) u, (float) v);
     }
 
     private void color() {

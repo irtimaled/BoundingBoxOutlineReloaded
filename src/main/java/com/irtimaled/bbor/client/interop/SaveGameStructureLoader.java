@@ -19,7 +19,7 @@ public class SaveGameStructureLoader {
         Minecraft minecraft = Minecraft.getInstance();
         SaveFormat saveLoader = minecraft.getSaveLoader();
         saveHandler = saveLoader.getSaveLoader(fileName, null);
-        worldDirectory = saveLoader.func_215781_c().resolve(fileName).toFile();
+        worldDirectory = saveLoader.getSavesDir().resolve(fileName).toFile();
 
         for (DimensionId dimensionId : nbtStructureLoaders.keySet()) {
             NBTStructureLoader dimensionProcessor = getNBTStructureLoader(dimensionId);

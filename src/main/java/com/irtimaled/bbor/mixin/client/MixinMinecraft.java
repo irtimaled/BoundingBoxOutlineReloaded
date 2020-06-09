@@ -18,16 +18,14 @@ public class MixinMinecraft {
     @Shadow
     @Final
     private ResourcePackList<ClientResourcePackInfo> resourcePackRepository;
-    private ClientProxy clientProxy;
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void constructor(GameConfiguration configuration, CallbackInfo ci) {
-        clientProxy = new ClientProxy();
-        this.resourcePackRepository.addPackFinder(new ModPackFinder());
+        new ClientProxy().init();
     }
 
-    @Inject(method = "init", at = @At("RETURN"))
-    private void init(CallbackInfo ci) {
-        clientProxy.init();
+    @Inject(method = "startTimerHackThread", at = @At("HEAD"))
+    private void registerLocalizations(CallbackInfo ci) {
+        this.resourcePackRepository.addPackFinder(new ModPackFinder());
     }
 }

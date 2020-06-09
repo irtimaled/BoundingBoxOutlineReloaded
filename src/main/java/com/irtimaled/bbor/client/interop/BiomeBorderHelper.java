@@ -13,7 +13,7 @@ public class BiomeBorderHelper {
 
     public static int getBiomeId(int x, int y, int z) {
         BlockPos pos = new BlockPos(x, y, z);
-        Biome biome = Minecraft.getInstance().world.getBiome(pos);
+        Biome biome = Minecraft.getInstance().world.getBiomeManager().getBiome(pos);
         return Registry.BIOME.getId(biome);
     }
 }

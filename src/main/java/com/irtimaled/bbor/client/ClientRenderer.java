@@ -88,12 +88,21 @@ public class ClientRenderer {
         if (!active) return;
 
         RenderHelper.beforeRender();
-
         getBoundingBoxes(dimensionId).forEach(key -> {
             AbstractRenderer renderer = boundingBoxRendererMap.get(key.getClass());
             if (renderer != null) renderer.render(key);
         });
+        RenderHelper.afterRender();
+    }
 
+    public static void renderDeferred() {
+        RenderHelper.beforeRender();
+        RenderHelper.polygonModeFill();
+        RenderHelper.enableBlend();
+        RenderQueue.renderDeferred();
+        RenderHelper.disableBlend();
+        RenderHelper.enablePolygonOffsetLine();
+        RenderHelper.polygonOffsetMinusOne();
         RenderHelper.afterRender();
     }
 
