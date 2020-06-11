@@ -1,5 +1,6 @@
 package com.irtimaled.bbor.client.gui;
 
+import com.irtimaled.bbor.Versions;
 import com.irtimaled.bbor.client.interop.ClientInterop;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
@@ -9,6 +10,7 @@ import net.minecraft.text.LiteralText;
 
 public abstract class ListScreen extends Screen {
     private final Screen lastScreen;
+    private static final String version = Versions.build;
 
     private AbstractButton doneButton;
     private ControlList controlList;
@@ -56,6 +58,10 @@ public abstract class ListScreen extends Screen {
         this.drawCenteredString(matrixStack, this.textRenderer, this.title.asString(), this.width / 2, 8, 16777215);
         this.searchField.render(matrixStack, mouseX, mouseY);
         this.doneButton.render(matrixStack, mouseX, mouseY);
+
+        int left = this.width-this.font.getStringWidth(version)-2;
+        int top = this.height-10;
+        this.drawString(this.font, version, left, top, -10658467);
     }
 
     @Override
