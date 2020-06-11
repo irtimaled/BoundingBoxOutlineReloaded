@@ -10,14 +10,37 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class DimensionId {
     private static final Function<DimensionType, Optional<RegistryKey<DimensionType>>> getRegistryKey =
-            ReflectionHelper.getPrivateFieldGetter(DimensionType.class, Optional.class);
+            ReflectionHelper.getPrivateFieldGetter(DimensionType.class, Optional.class, RegistryKey.class, DimensionType.class);
     private static final Map<Identifier, DimensionType> typeMap = new HashMap<>();
     private static final Map<Identifier, DimensionId> dimensionIdMap = new HashMap<>();
+    private static final Logger LOGGER = LogManager.getLogger();
 
     public static DimensionId from(DimensionType dimensionType) {
-        Identifier value = getRegistryKey.apply(dimensionType).get().getValue();
+        Optional<RegistryKey<DimensionType>> dimesion = getRegistryKey.apply(dimensionType);
+        Identifier value;
+        if (dimesion.isPresent())
+        {
+            value = dimesion.get().getValue();
+        } 
+        else
+        {
+            // I don't know why all return false
+            // when it call from Player.setPosition
+            // when client connect to online server
+            // LOGGER.error("isOverworld:{}", dimensionType.isOverworld());
+            // LOGGER.error("isNether:{}", dimensionType.isNether());
+            // LOGGER.error("isEnd:{}", dimensionType.isEnd());
+            // LOGGER.error("fuck!!!!!");
+            value = null;
+        }
+
+        //Identifier value = getRegistryKey.apply(dimensionType).get().getValue();
+
         typeMap.put(value, dimensionType);
         return from(value);
     }
@@ -26,7 +49,7 @@ public class DimensionId {
         return dimensionIdMap.computeIfAbsent(value, DimensionId::new);
     }
 
-    public static DimensionId OVERWORLD = DimensionId.from(DimensionType.getDefaultDimensionType());
+    public static DimensionId OVERWORLD = DimensionId.from(DimensionType.getOverworldDimensionType());
 
     private final Identifier value;
 

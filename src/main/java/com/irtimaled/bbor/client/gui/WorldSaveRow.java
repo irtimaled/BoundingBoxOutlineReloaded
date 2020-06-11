@@ -11,6 +11,13 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.world.level.storage.LevelStorage;
 import net.minecraft.world.level.storage.LevelSummary;
+import net.minecraft.util.registry.RegistryTracker;
+import net.minecraft.nbt.Tag;
+import net.minecraft.datafixer.NbtOps;
+import net.minecraft.util.dynamic.RegistryOps;
+import net.minecraft.resource.DataPackSettings;
+import net.minecraft.resource.ResourceManager;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.opengl.GL11;
@@ -83,7 +90,9 @@ public class WorldSaveRow extends ControlListEntry implements Comparable<WorldSa
         } catch (IOException e) {
             e.printStackTrace();
         }
-        long seed = worldInfo.readLevelProperties().method_28057().getSeed();
+        RegistryTracker.Modifiable dimTracker = RegistryTracker.create();
+        RegistryOps<Tag> registryOpsTag = RegistryOps.of(NbtOps.INSTANCE, ResourceManager.Empty.INSTANCE, dimTracker);
+        long seed = worldInfo.readLevelProperties(registryOpsTag, DataPackSettings.SAFE_MODE).getGeneratorOptions().getSeed();
         ClientInterop.saveLoaded(fileName, seed);
     }
 

@@ -3,9 +3,12 @@ package com.irtimaled.bbor.client.interop;
 import net.minecraft.resource.DefaultResourcePack;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourcePackProfile;
+import net.minecraft.resource.ResourcePackProfile.Factory;
 import net.minecraft.resource.ResourcePackProvider;
+import net.minecraft.resource.ResourcePackManager;
+import net.minecraft.resource.ResourcePackSource;
 
-import java.util.Map;
+import java.util.function.Consumer;
 
 public class ModPackFinder implements ResourcePackProvider {
     private static final String BBOR = "bbor";
@@ -16,14 +19,15 @@ public class ModPackFinder implements ResourcePackProvider {
     }
 
     @Override
-    public <T extends ResourcePackProfile> void register(Map<String, T> map, ResourcePackProfile.Factory<T> factory) {
+    public <T extends ResourcePackProfile> void register(Consumer<T> consumer, Factory<T> factory) {
         T resourcePackInfo = ResourcePackProfile.of(BBOR,
                 true,
                 () -> this.modPack,
                 factory,
-                ResourcePackProfile.InsertionPosition.BOTTOM);
+                ResourcePackProfile.InsertionPosition.BOTTOM,
+                ResourcePackSource.PACK_SOURCE_WORLD);
         if (resourcePackInfo != null) {
-            map.put(BBOR, resourcePackInfo);
+            consumer.accept(resourcePackInfo);
         }
     }
 }

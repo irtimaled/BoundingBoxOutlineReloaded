@@ -10,14 +10,22 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.structure.StructureStart;
 import net.minecraft.world.chunk.WorldChunk;
+import net.minecraft.world.gen.feature.StructureFeature;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.HashMap;
 
 public class CommonInterop {
     public static void chunkLoaded(WorldChunk chunk) {
         DimensionId dimensionId = DimensionId.from(chunk.getWorld().getDimension());
-        Map<String, StructureStart<?>> structures = chunk.getStructureStarts();
+        Map<StructureFeature<?>, StructureStart<?>> tmpsStructures = chunk.getStructureStarts();
+        Map<String, StructureStart<?>> structures = new HashMap<>();
+
+        for (StructureFeature<?> key : tmpsStructures.keySet()) {
+            structures.put(key.getName(), tmpsStructures.get(key));
+        }
+
         if (structures.size() > 0) EventBus.publish(new StructuresLoaded(structures, dimensionId));
     }
 

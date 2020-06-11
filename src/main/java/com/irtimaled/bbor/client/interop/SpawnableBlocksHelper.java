@@ -62,7 +62,7 @@ public class SpawnableBlocksHelper {
                 !Block.isFaceFullSquare(collisionShape, Direction.UP) &&
                 !upperBlockState.emitsRedstonePower() &&
                 !upperBlockState.isIn(BlockTags.RAILS) &&
-                collisionShape.getMaximum(Direction.Axis.Y) <= 0 &&
+                collisionShape.getMax(Direction.Axis.Y) <= 0 &&
                 upperBlockState.getFluidState().isEmpty() &&
                 (isNether || world.getLightLevel(LightType.BLOCK, pos) <= 7);
     }

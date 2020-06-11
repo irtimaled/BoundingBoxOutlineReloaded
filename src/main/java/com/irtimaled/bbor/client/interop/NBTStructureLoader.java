@@ -25,6 +25,7 @@ import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.feature.FeatureConfig;
 import net.minecraft.world.level.storage.LevelStorage;
 import net.minecraft.world.storage.RegionBasedStorage;
+import net.minecraft.world.World;
 
 import java.io.File;
 import java.io.IOException;
@@ -62,7 +63,7 @@ class NBTStructureLoader {
     void configure(LevelStorage.Session saveHandler, File worldDirectory) {
         this.saveHandler = saveHandler;
         if (worldDirectory != null) {
-            RegistryKey<DimensionType> registryKey = RegistryKey.of(Registry.DIMENSION_TYPE_KEY, dimensionId.getValue());
+            RegistryKey<World> registryKey = RegistryKey.of(Registry.DIMENSION, dimensionId.getValue());
             this.chunkSaveLocation = new File(DimensionType.getSaveDirectory(registryKey, worldDirectory), "region");
             this.chunkLoader = new ChunkLoader(this.chunkSaveLocation);
         }
@@ -70,8 +71,8 @@ class NBTStructureLoader {
 
     private FeatureUpdater getLegacyStructureDataUtil() {
         if (this.legacyStructureDataUtil == null) {
-            File dataFolder = new File(this.saveHandler.method_27424(DimensionType.OVERWORLD_REGISTRY_KEY), "data");
-            this.legacyStructureDataUtil = FeatureUpdater.create(dimensionId.getDimensionType(),
+            File dataFolder = new File(this.saveHandler.method_27424(World.OVERWORLD), "data");
+            this.legacyStructureDataUtil = FeatureUpdater.create(RegistryKey.of(Registry.DIMENSION, dimensionId.getValue()),
                     new PersistentStateManager(dataFolder, MinecraftClient.getInstance().getDataFixer()));
         }
         return this.legacyStructureDataUtil;
