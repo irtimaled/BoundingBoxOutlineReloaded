@@ -42,11 +42,7 @@ public class ReflectionHelper {
             if (genericTypeArguments == null) return field;
 
             Type[] actualTypeArguments = genericType.getActualTypeArguments();
-            if (actualTypeArguments.length != genericTypeArguments.length) continue;
-
-            for (int typeIndex = 0; typeIndex < actualTypeArguments.length; typeIndex++) {
-                if (actualTypeArguments[typeIndex] != genericTypeArguments[typeIndex]) return null;
-            }
+            if (!typesMatch(genericTypeArguments, actualTypeArguments)) continue;
 
             return field;
         }
@@ -73,5 +69,16 @@ public class ReflectionHelper {
         } catch (NoSuchMethodException ignored) {
             return null;
         }
+    }
+
+    private static boolean typesMatch(Type[] left, Type[] right) {
+        if (left.length != right.length) return false;
+
+        for (int index = 0; index < right.length; index++) {
+            if (right[index] != left[index]) {
+                return false;
+            }
+        }
+        return true;
     }
 }
