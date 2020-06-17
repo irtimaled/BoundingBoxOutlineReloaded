@@ -57,7 +57,7 @@ public class SpawnableBlocksHelper {
 
     static boolean isSpawnable(World world, BlockPos pos, BlockState spawnBlockState, BlockState upperBlockState) {
         VoxelShape collisionShape = upperBlockState.getCollisionShape(world, pos);
-        boolean isNether = world.getDimension().isNether();
+        boolean isNether = world.getRegistryKey() == World.NETHER;
         return spawnBlockState.allowsSpawning(world, pos.down(), isNether ? EntityType.ZOMBIFIED_PIGLIN : entityType) &&
                 !Block.isFaceFullSquare(collisionShape, Direction.UP) &&
                 !upperBlockState.emitsRedstonePower() &&

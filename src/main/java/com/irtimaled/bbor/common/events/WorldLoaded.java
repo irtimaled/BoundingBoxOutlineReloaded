@@ -12,7 +12,7 @@ public class WorldLoaded {
 
     public WorldLoaded(ServerWorld world) {
         WorldProperties info = world.getLevelProperties();
-        this.dimensionId = DimensionId.from(world.getDimension());
+        this.dimensionId = DimensionId.from(world);
         this.seed = world.getSeed();
         this.spawnX = info.getSpawnX();
         this.spawnZ = info.getSpawnZ();

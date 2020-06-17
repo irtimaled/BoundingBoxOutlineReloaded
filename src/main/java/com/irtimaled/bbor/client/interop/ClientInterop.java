@@ -30,7 +30,7 @@ public class ClientInterop {
 
     public static void render(float partialTicks, ClientPlayerEntity player) {
         Player.setPosition(partialTicks, player);
-        ClientRenderer.render(DimensionId.from(player.getEntityWorld().getDimension()));
+        ClientRenderer.render(DimensionId.from(player.getEntityWorld()));
     }
 
     public static boolean interceptChatMessage(String message) {

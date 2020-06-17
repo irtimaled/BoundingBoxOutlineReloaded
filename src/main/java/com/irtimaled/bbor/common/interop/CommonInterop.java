@@ -18,7 +18,7 @@ import java.util.HashMap;
 
 public class CommonInterop {
     public static void chunkLoaded(WorldChunk chunk) {
-        DimensionId dimensionId = DimensionId.from(chunk.getWorld().getDimension());
+        DimensionId dimensionId = DimensionId.from(chunk.getWorld());
         Map<StructureFeature<?>, StructureStart<?>> tmpsStructures = chunk.getStructureStarts();
         Map<String, StructureStart<?>> structures = new HashMap<>();
 
