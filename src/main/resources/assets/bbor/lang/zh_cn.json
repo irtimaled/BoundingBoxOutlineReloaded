@@ -1,0 +1,97 @@
+{
+  "bbor.key.toggleActive": "切换 启用",
+
+  "bbor.tabs.structures": "结构",
+  "bbor.tabs.villages": "村庄",
+
+  "bbor.options.active": "启用",
+  "bbor.options.outerBoxOnly": "仅外框",
+  "bbor.options.fill": "填充",
+
+  "bbor.options.maxY": "最大 Y: %s",
+  "bbor.options.maxY.activated": "灵活",
+  "bbor.options.maxY.player": "玩家",
+  "bbor.options.maxY.seaLevel": "海平面",
+
+  "bbor.options.distance": "距离: %s",
+  "bbor.options.distance.nearest": "最近",
+  "bbor.options.distance.nearer": "更近",
+  "bbor.options.distance.normal": "正常",
+  "bbor.options.distance.y": "距离 (Y): %s",
+  "bbor.options.distance.xz": "距离 (X/Z): %s",
+
+  "bbor.features.spawnChunks": "出生点区块",
+  "bbor.features.lazyChunks": "懒区块",
+  "bbor.features.slimeChunks": "史莱姆区块",
+  "bbor.features.mobSpawners": "刷怪笼",
+  "bbor.features.mobSpawners.spawnArea": "刷怪笼范围",
+  "bbor.features.mobSpawners.activationLines": "启用目标线",
+  "bbor.features.spawningSpheres": "生成范围",
+  "bbor.features.spawnableBlocks": "可生成方块",
+  "bbor.features.biomeBorders": "群系边界",
+
+  "bbor.sections.beaconsAndConduits": "信标 & 潮涌核心",
+  "bbor.features.beacons": "信标",
+  "bbor.features.conduits": "潮涌核心",
+  "bbor.features.conduits.mobHarmArea": "怪物伤害范围",
+
+  "bbor.structures.desertTemples": "沙漠神殿",
+  "bbor.structures.jungleTemples": "丛林神殿",
+  "bbor.structures.witchHuts": "女巫小屋",
+  "bbor.structures.mansions": "林地府邸",
+  "bbor.structures.monuments": "遗迹",
+  "bbor.structures.igloos": "雪屋",
+  "bbor.structures.oceanRuins": "海底神殿",
+  "bbor.structures.buriedTreasure": "埋藏的宝藏",
+  "bbor.structures.shipwrecks": "沉船",
+  "bbor.structures.strongholds": "要塞",
+  "bbor.structures.mineshafts": "矿井",
+  "bbor.structures.pillagerOutposts": "掠夺者哨站",
+  "bbor.structures.villages": "村庄",
+  "bbor.structures.fortresses": "下届堡垒",
+  "bbor.structures.endCities": "末地城",
+  "bbor.structures.netherFossils": "化石遗迹",
+  "bbor.structures.bastionRemnants": "堡垒遗迹",
+  "bbor.structures.ruinedPortal": "废弃传送门",
+
+  "bbor.features.villageSpheres": "村庄范围",
+  "bbor.features.villageSpheres.doorLines": "门目标线",
+  "bbor.features.villageSpheres.golemSpawn": "铁傀儡生成",
+  "bbor.features.villageSpheres.dotSize": "点尺寸: %s",
+  "bbor.features.villageSpheres.density": "密度: %s",
+  "bbor.features.villageSpheres.density.fewest": "最小",
+  "bbor.features.villageSpheres.density.fewer": "更少",
+  "bbor.features.villageSpheres.density.normal": "正常",
+  "bbor.features.villageSpheres.density.more": "更多",
+  "bbor.features.villageSpheres.density.most": "最多",
+
+  "bbor.commands.custom.cleared.all": "清除所有自定义框",
+
+  "bbor.commands.beacon.added": "自定义信标添加到 [x=%d, y=%d, z=%d] with level %d",
+  "bbor.commands.beacon.cleared.all": "清除所有自定义信标",
+  "bbor.commands.beacon.cleared": "自定义信标清除时间 [x=%d, y=%d, z=%d]",
+  "bbor.commands.beacon.notFound": "没有自定义信标 found at [x=%d, y=%d, z=%d]",
+
+  "bbor.commands.box.added": "开始添加框 [x=%d, y=%d, z=%d] and end [x=%d, y=%d, z=%d]",
+  "bbor.commands.box.cleared.all": "清除所有框",
+  "bbor.commands.box.cleared": "开始清除框 [x=%d, y=%d, z=%d] and end [x=%d, y=%d, z=%d]",
+  "bbor.commands.box.notFound": "找不到框 [x=%d, y=%d, z=%d] and end [x=%d, y=%d, z=%d]",
+
+  "bbor.commands.line.added": "开始添加目标线 [x=%d, y=%d, z=%d] and end [x=%d, y=%d, z=%d]",
+  "bbor.commands.line.cleared":  "清除所有目标线",
+  "bbor.commands.line.cleared.all": "开始清除框目标线 [x=%d, y=%d, z=%d] and end [x=%d, y=%d, z=%d]",
+  "bbor.commands.line.notFound":  "找不到目标线 [x=%d, y=%d, z=%d] and end [x=%d, y=%d, z=%d]",
+
+  "bbor.commands.sphere.added": "添加中心领域 [x=%d, y=%d, z=%d] and radius %d",
+  "bbor.commands.sphere.cleared":  "清除所有领域",
+  "bbor.commands.sphere.cleared.all": "用中心清除领域 [x=%d, y=%d, z=%d]",
+  "bbor.commands.sphere.notFound":  "找不到中心领域 [x=%d, y=%d, z=%d]",
+
+  "bbor.commands.spawningSphere.set": "生成区域集",
+  "bbor.commands.spawningSphere.notSet": "没有生成区域集",
+  "bbor.commands.spawningSphere.cleared": "生成区域清除",
+  "bbor.commands.spawningSphere.calculated": "计算 %s 可生成空间 (%s 仅晚上)",
+
+  "bbor.renderer.spawningSphere.spawnable": "可生成:",
+  "bbor.renderer.spawningSphere.none": "无"
+}
