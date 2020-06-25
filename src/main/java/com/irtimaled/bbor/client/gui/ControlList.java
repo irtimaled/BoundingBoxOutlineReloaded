@@ -2,9 +2,9 @@ package com.irtimaled.bbor.client.gui;
 
 import com.irtimaled.bbor.client.renderers.RenderHelper;
 import com.irtimaled.bbor.client.renderers.Renderer;
+import com.irtimaled.bbor.common.MathHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.util.math.MathHelper;
 
 import java.util.ArrayList;
 import java.util.List;

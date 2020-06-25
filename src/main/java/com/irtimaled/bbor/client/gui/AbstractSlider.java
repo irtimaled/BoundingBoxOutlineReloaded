@@ -1,8 +1,8 @@
 package com.irtimaled.bbor.client.gui;
 
+import com.irtimaled.bbor.common.MathHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundHandler;
-import net.minecraft.util.math.MathHelper;
 
 abstract class AbstractSlider extends AbstractControl {
     private final int optionCount;
