@@ -3,7 +3,7 @@
   "bbor.tabs.structures": "建筑",
   "bbor.tabs.villages": "村庄",
   "bbor.options.active": "启用",
-  "bbor.options.outerBoxOnly": "仅显示可见棱线",
+  "bbor.options.outerBoxOnly": "仅显示外部框线",
   "bbor.options.fill": "填充面",
   "bbor.options.maxY": "显示高度限制（Y）： %s",
   "bbor.options.maxY.activated": "激活时玩家所处高度",
