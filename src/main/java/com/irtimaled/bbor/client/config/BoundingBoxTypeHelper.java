@@ -25,6 +25,7 @@ public class BoundingBoxTypeHelper {
         registerType(BoundingBoxType.Custom, ConfigManager.drawConduits, ConfigManager.colorCustom);
         registerType(BoundingBoxType.Conduit, ConfigManager.drawConduits, ConfigManager.colorConduits);
         registerType(BoundingBoxType.SpawnableBlocks, ConfigManager.drawSpawnableBlocks, ConfigManager.colorSpawnableBlocks);
+        registerType(BoundingBoxType.FlowerForestFlowers, ConfigManager.drawFlowerForests, null);
 
         registerType(BoundingBoxType.JungleTemple, ConfigManager.drawJungleTemples, ConfigManager.colorJungleTemples);
         registerType(BoundingBoxType.DesertTemple, ConfigManager.drawDesertTemples, ConfigManager.colorDesertTemples);

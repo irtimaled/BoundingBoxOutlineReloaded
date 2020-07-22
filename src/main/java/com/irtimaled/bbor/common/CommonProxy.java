@@ -12,129 +12,138 @@ import com.irtimaled.bbor.common.models.ServerPlayer;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CommonProxy {
-    private final Map<Integer, ServerPlayer> players = new ConcurrentHashMap<>();
-    private final Map<Integer, Set<AbstractBoundingBox>> playerBoundingBoxesCache = new HashMap<>();
-    private final Map<DimensionId, StructureProcessor> structureProcessors = new HashMap<>();
-    private final Map<DimensionId, BoundingBoxCache> dimensionCache = new ConcurrentHashMap<>();
-    private Long seed = null;
-    private Integer spawnX = null;
-    private Integer spawnZ = null;
+	private final Map<Integer, ServerPlayer> players = new ConcurrentHashMap<>();
+	private final Map<Integer, Set<AbstractBoundingBox>> playerBoundingBoxesCache = new HashMap<>();
+	private final Map<DimensionId, StructureProcessor> structureProcessors = new HashMap<>();
+	private final Map<DimensionId, BoundingBoxCache> dimensionCache = new ConcurrentHashMap<>();
+	private Long seed = null;
+	private Integer spawnX = null;
+	private Integer spawnZ = null;
+	private Random random = null;
 
-    public void init() {
-        BoundingBoxType.registerTypes();
-        EventBus.subscribe(WorldLoaded.class, this::worldLoaded);
-        EventBus.subscribe(StructuresLoaded.class, this::structuresLoaded);
-        EventBus.subscribe(PlayerLoggedIn.class, this::playerLoggedIn);
-        EventBus.subscribe(PlayerLoggedOut.class, this::playerLoggedOut);
-        EventBus.subscribe(PlayerSubscribed.class, this::onPlayerSubscribed);
-        EventBus.subscribe(ServerTick.class, e -> serverTick());
-    }
+	public void init() {
+		BoundingBoxType.registerTypes();
+		EventBus.subscribe(WorldLoaded.class, this::worldLoaded);
+		EventBus.subscribe(StructuresLoaded.class, this::structuresLoaded);
+		EventBus.subscribe(PlayerLoggedIn.class, this::playerLoggedIn);
+		EventBus.subscribe(PlayerLoggedOut.class, this::playerLoggedOut);
+		EventBus.subscribe(PlayerSubscribed.class, this::onPlayerSubscribed);
+		EventBus.subscribe(ServerTick.class, e -> serverTick());
+	}
 
-    protected void setSeed(long seed) {
-        this.seed = seed;
-    }
+	protected void setSeed(long seed) {
+		this.seed = seed;
+	}
 
-    protected void setWorldSpawn(int spawnX, int spawnZ) {
-        this.spawnX = spawnX;
-        this.spawnZ = spawnZ;
-    }
+	protected void setWorldSpawn(int spawnX, int spawnZ) {
+		this.spawnX = spawnX;
+		this.spawnZ = spawnZ;
+	}
 
-    private void worldLoaded(WorldLoaded event) {
-        DimensionId dimensionId = event.getDimensionId();
-        long seed = event.getSeed();
-        if (dimensionId == DimensionId.OVERWORLD) {
-            setSeed(seed);
-            setWorldSpawn(event.getSpawnX(), event.getSpawnZ());
-        }
-        Logger.info("create world dimension: %s (seed: %d)", dimensionId, seed);
-    }
+	protected void setRandom(Random random) {
+		this.random = random;
+	}
 
-    private void structuresLoaded(StructuresLoaded event) {
-        DimensionId dimensionId = event.getDimensionId();
-        StructureProcessor structureProcessor = getStructureProcessor(dimensionId);
-        structureProcessor.process(event.getStructures());
-    }
+	private void worldLoaded(WorldLoaded event) {
+		DimensionId dimensionId = event.getDimensionId();
+		long seed = event.getSeed();
+		if (dimensionId == DimensionId.OVERWORLD) {
+			setSeed(seed);
+			setRandom(event.getRandom());
+			setWorldSpawn(event.getSpawnX(), event.getSpawnZ());
+		}
+		Logger.info("create world dimension: %s (seed: %d)", dimensionId, seed);
+	}
 
-    private StructureProcessor getStructureProcessor(DimensionId dimensionId) {
-        StructureProcessor structureProcessor = structureProcessors.get(dimensionId);
-        if (structureProcessor == null) {
-            structureProcessor = new StructureProcessor(getOrCreateCache(dimensionId));
-            structureProcessors.put(dimensionId, structureProcessor);
-        }
-        return structureProcessor;
-    }
+	private void structuresLoaded(StructuresLoaded event) {
+		DimensionId dimensionId = event.getDimensionId();
+		StructureProcessor structureProcessor = getStructureProcessor(dimensionId);
+		structureProcessor.process(event.getStructures());
+	}
 
-    private void playerLoggedIn(PlayerLoggedIn event) {
-        if (seed == null || spawnX == null || spawnZ == null) {
-            return;
-        }
-        ServerPlayer player = event.getPlayer();
-        player.sendPacket(InitializeClient.getPayload(seed, spawnX, spawnZ));
-    }
+	private StructureProcessor getStructureProcessor(DimensionId dimensionId) {
+		StructureProcessor structureProcessor = structureProcessors.get(dimensionId);
+		if (structureProcessor == null) {
+			structureProcessor = new StructureProcessor(getOrCreateCache(dimensionId));
+			structureProcessors.put(dimensionId, structureProcessor);
+		}
+		return structureProcessor;
+	}
 
-    private void playerLoggedOut(PlayerLoggedOut event) {
-        int playerId = event.getPlayerId();
-        players.remove(playerId);
-        playerBoundingBoxesCache.remove(playerId);
-    }
+	private void playerLoggedIn(PlayerLoggedIn event) {
+		if (seed == null || spawnX == null || spawnZ == null) {
+			return;
+		}
+		ServerPlayer player = event.getPlayer();
+		player.sendPacket(InitializeClient.getPayload(seed, spawnX, spawnZ));
+	}
 
-    private void onPlayerSubscribed(PlayerSubscribed event) {
-        int playerId = event.getPlayerId();
-        ServerPlayer player = event.getPlayer();
-        players.put(playerId, player);
-        sendToPlayer(playerId, player);
-    }
+	private void playerLoggedOut(PlayerLoggedOut event) {
+		int playerId = event.getPlayerId();
+		players.remove(playerId);
+		playerBoundingBoxesCache.remove(playerId);
+	}
 
-    private void sendToPlayer(int playerId, ServerPlayer player) {
-        for (Map.Entry<DimensionId, BoundingBoxCache> entry : dimensionCache.entrySet()) {
-            DimensionId dimensionId = entry.getKey();
-            BoundingBoxCache boundingBoxCache = entry.getValue();
-            if (boundingBoxCache == null) return;
+	private void onPlayerSubscribed(PlayerSubscribed event) {
+		int playerId = event.getPlayerId();
+		ServerPlayer player = event.getPlayer();
+		players.put(playerId, player);
+		sendToPlayer(playerId, player);
+	}
 
-            Set<AbstractBoundingBox> playerBoundingBoxes = playerBoundingBoxesCache.computeIfAbsent(playerId, k -> new HashSet<>());
+	private void sendToPlayer(int playerId, ServerPlayer player) {
+		for (Map.Entry<DimensionId, BoundingBoxCache> entry : dimensionCache.entrySet()) {
+			DimensionId dimensionId = entry.getKey();
+			BoundingBoxCache boundingBoxCache = entry.getValue();
+			if (boundingBoxCache == null)
+				return;
 
-            Map<AbstractBoundingBox, Set<AbstractBoundingBox>> boundingBoxMap = boundingBoxCache.getBoundingBoxes();
-            for (AbstractBoundingBox key : boundingBoxMap.keySet()) {
-                if (playerBoundingBoxes.contains(key)) {
-                    continue;
-                }
+			Set<AbstractBoundingBox> playerBoundingBoxes = playerBoundingBoxesCache.computeIfAbsent(playerId,
+					k -> new HashSet<>());
 
-                Set<AbstractBoundingBox> boundingBoxes = boundingBoxMap.get(key);
-                PayloadBuilder payload = AddBoundingBox.getPayload(dimensionId, key, boundingBoxes);
-                if (payload != null)
-                    player.sendPacket(payload);
+			Map<AbstractBoundingBox, Set<AbstractBoundingBox>> boundingBoxMap = boundingBoxCache.getBoundingBoxes();
+			for (AbstractBoundingBox key : boundingBoxMap.keySet()) {
+				if (playerBoundingBoxes.contains(key)) {
+					continue;
+				}
 
-                playerBoundingBoxes.add(key);
-            }
-        }
-    }
+				Set<AbstractBoundingBox> boundingBoxes = boundingBoxMap.get(key);
+				PayloadBuilder payload = AddBoundingBox.getPayload(dimensionId, key, boundingBoxes);
+				if (payload != null)
+					player.sendPacket(payload);
 
-    private void serverTick() {
-        for (Map.Entry<Integer, ServerPlayer> playerEntry : players.entrySet()) {
-            int playerId = playerEntry.getKey();
-            ServerPlayer player = playerEntry.getValue();
+				playerBoundingBoxes.add(key);
+			}
+		}
+	}
 
-            sendToPlayer(playerId, player);
-        }
-    }
+	private void serverTick() {
+		for (Map.Entry<Integer, ServerPlayer> playerEntry : players.entrySet()) {
+			int playerId = playerEntry.getKey();
+			ServerPlayer player = playerEntry.getValue();
 
-    protected BoundingBoxCache getCache(DimensionId dimensionId) {
-        return dimensionCache.get(dimensionId);
-    }
+			sendToPlayer(playerId, player);
+		}
+	}
 
-    protected BoundingBoxCache getOrCreateCache(DimensionId dimensionId) {
-        return dimensionCache.computeIfAbsent(dimensionId, dt -> new BoundingBoxCache());
-    }
+	protected BoundingBoxCache getCache(DimensionId dimensionId) {
+		return dimensionCache.get(dimensionId);
+	}
 
-    protected void clearCaches() {
-        structureProcessors.clear();
-        for (BoundingBoxCache cache : dimensionCache.values()) {
-            cache.clear();
-        }
-        dimensionCache.clear();
-    }
+	protected BoundingBoxCache getOrCreateCache(DimensionId dimensionId) {
+		return dimensionCache.computeIfAbsent(dimensionId, dt -> new BoundingBoxCache());
+	}
+
+	protected void clearCaches() {
+		structureProcessors.clear();
+		for (BoundingBoxCache cache : dimensionCache.values()) {
+			cache.clear();
+		}
+		dimensionCache.clear();
+	}
 }

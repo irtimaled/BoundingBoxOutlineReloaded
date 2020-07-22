@@ -40,6 +40,7 @@ public class ConfigManager {
     public static Setting<Integer> afkSpawnableBlocksRenderDistance;
     public static Setting<Boolean> drawBeacons;
     public static Setting<Boolean> drawBiomeBorders;
+    public static Setting<Boolean> drawFlowerForests;
     public static Setting<Boolean> renderOnlyCurrentBiome;
     public static Setting<Integer> biomeBordersRenderDistance;
     public static Setting<Integer> biomeBordersMaxY;
@@ -113,6 +114,8 @@ public class ConfigManager {
         biomeBordersRenderDistance = setup(config, "biomeBorders", "biomeBordersRenderDistance", 3, "The distance from the player where biome borders will be drawn.");
         biomeBordersMaxY = setup(config, "biomeBorders", "biomeBordersMaxY", -1, "The maximum top of the biome borders. If set to -1 it will use the value when activated, if set to 0 it will always track the players feet.");
 
+        drawFlowerForests = setup(config, "biomeBorders", "drawFlowerForesets", true, "Draw flower forests");
+        
         drawVillages = setup(config, "structures", "drawVillages", false, "If set to true village bounding boxes will be drawn.");
         drawDesertTemples = setup(config, "structures", "drawDesertTemples", true, "If set to true desert temple bounding boxes are drawn.");
         drawJungleTemples = setup(config, "structures", "drawJungleTemples", true, "If set to true jungle temple bounding boxes are drawn.");

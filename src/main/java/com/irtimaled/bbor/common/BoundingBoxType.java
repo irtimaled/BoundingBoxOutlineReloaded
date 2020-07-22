@@ -36,6 +36,8 @@ public class BoundingBoxType {
     public static final BoundingBoxType NetherFossil = register("nether_fossil");
     public static final BoundingBoxType BastionRemnant = register("bastion_remnant");
     public static final BoundingBoxType RuinedPortal = register("ruined_portal");
+    
+    public static final BoundingBoxType FlowerForestFlowers = register("Flower Forest");
 
     private static BoundingBoxType register(String name) {
         return structureTypeMap.computeIfAbsent(name.hashCode(), k -> new BoundingBoxType(name));
