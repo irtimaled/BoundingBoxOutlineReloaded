@@ -13,10 +13,8 @@ import net.minecraft.structure.StructureStart;
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.FeatureUpdater;
-import net.minecraft.world.PersistentStateManager;
-import net.minecraft.world.ServerWorldAccess;
-import net.minecraft.world.World;
+import net.minecraft.util.registry.DynamicRegistryManager;
+import net.minecraft.world.*;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.gen.StructureAccessor;
@@ -68,7 +66,7 @@ class NBTStructureLoader {
 
     private FeatureUpdater getLegacyStructureDataUtil() {
         if (this.legacyStructureDataUtil == null) {
-            File dataFolder = new File(this.saveHandler.method_27424(World.OVERWORLD), "data");
+            File dataFolder = new File(this.saveHandler.getWorldDirectory(World.OVERWORLD), "data");
             this.legacyStructureDataUtil = FeatureUpdater.create(dimensionId.getDimensionType(),
                     new PersistentStateManager(dataFolder, MinecraftClient.getInstance().getDataFixer()));
         }
@@ -127,8 +125,7 @@ class NBTStructureLoader {
         }
 
         @Override
-        public void init(ChunkGenerator chunkGenerator, StructureManager structureManager, int i, int i1, Biome biome, FeatureConfig featureConfig) {
-
+        public void init(DynamicRegistryManager dynamicRegistryManager, ChunkGenerator chunkGenerator, StructureManager structureManager, int i, int j, Biome biome, FeatureConfig featureConfig) {
         }
     }
 
@@ -143,7 +140,7 @@ class NBTStructureLoader {
         }
 
         @Override
-        public boolean generate(ServerWorldAccess serverWorldAccess, StructureAccessor structureAccessor, ChunkGenerator chunkGenerator, Random random, BlockBox blockBox, ChunkPos chunkPos, BlockPos blockPos) {
+        public boolean generate(StructureWorldAccess structureWorldAccess, StructureAccessor structureAccessor, ChunkGenerator chunkGenerator, Random random, BlockBox blockBox, ChunkPos chunkPos, BlockPos blockPos) {
             return false;
         }
     }

@@ -16,14 +16,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.Map;
 
 @Mixin(ResourcePackManager.class)
-public class MixinResourcePackManager<T extends ResourcePackProfile> {
+public abstract class MixinResourcePackManager implements AutoCloseable {
     private static final String BBOR = "bbor";
     @Shadow
     @Final
-    private ResourcePackProfile.Factory<T> profileFactory;
-    private T resourcePackProfile;
+    private ResourcePackProfile.Factory profileFactory;
+    private ResourcePackProfile resourcePackProfile;
 
-    @Inject(method = "<init>", at = @At("RETURN"))
+    @Inject(method = "<init>(Lnet/minecraft/resource/ResourcePackProfile$Factory;[Lnet/minecraft/resource/ResourcePackProvider;)V",
+            at = @At("RETURN"))
     private void afterConstructor(CallbackInfo ci) {
         resourcePackProfile = ResourcePackProfile.of(BBOR,
                 true,
@@ -34,7 +35,7 @@ public class MixinResourcePackManager<T extends ResourcePackProfile> {
     }
 
     @Redirect(method = "providePackProfiles", at = @At(value = "INVOKE", target = "Lcom/google/common/collect/ImmutableMap;copyOf(Ljava/util/Map;)Lcom/google/common/collect/ImmutableMap;"))
-    private ImmutableMap<String, T> beforeReturn(Map<String, T> map) {
+    private ImmutableMap<String, ResourcePackProfile> beforeReturn(Map<String, ResourcePackProfile> map) {
         map.put(BBOR, resourcePackProfile);
         return ImmutableMap.copyOf(map);
     }

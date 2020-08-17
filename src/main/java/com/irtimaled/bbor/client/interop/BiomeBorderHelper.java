@@ -14,6 +14,6 @@ public class BiomeBorderHelper {
     public static int getBiomeId(int x, int y, int z) {
         BlockPos pos = new BlockPos(x, y, z);
         Biome biome = MinecraftClient.getInstance().world.getBiome(pos);
-        return Registry.BIOME.getRawId(biome);
+        return MinecraftClient.getInstance().world.getRegistryManager().get(Registry.BIOME_KEY).getRawId(biome);
     }
 }

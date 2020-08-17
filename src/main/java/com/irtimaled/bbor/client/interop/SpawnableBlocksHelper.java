@@ -52,13 +52,13 @@ public class SpawnableBlocksHelper {
 
     static boolean isBiomeHostileSpawnProof(World world, BlockPos pos) {
         Biome biome = world.getBiome(pos);
-        return biome.getMaxSpawnChance() == 0 ||
-                biome.getEntitySpawnList(SpawnGroup.MONSTER).isEmpty();
+        return biome.getSpawnSettings().getCreatureSpawnProbability() == 0 ||
+                biome.getSpawnSettings().getSpawnEntry(SpawnGroup.MONSTER).isEmpty();
     }
 
     static boolean isSpawnable(World world, BlockPos pos, BlockState spawnBlockState, BlockState upperBlockState) {
         VoxelShape collisionShape = upperBlockState.getCollisionShape(world, pos);
-        boolean isNether = world.getDimensionRegistryKey() == DimensionType.THE_NETHER_REGISTRY_KEY;
+        boolean isNether = world.getDimension().getSkyProperties() == DimensionType.THE_NETHER_ID;
         return spawnBlockState.allowsSpawning(world, pos.down(), isNether ? EntityType.ZOMBIFIED_PIGLIN : entityType) &&
                 !Block.isFaceFullSquare(collisionShape, Direction.UP) &&
                 !upperBlockState.emitsRedstonePower() &&

@@ -6,8 +6,8 @@ import com.irtimaled.bbor.common.models.Coords;
 import com.mojang.brigadier.arguments.*;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.command.arguments.BlockPosArgumentType;
-import net.minecraft.command.arguments.Vec3ArgumentType;
+import net.minecraft.command.argument.BlockPosArgumentType;
+import net.minecraft.command.argument.Vec3ArgumentType;
 import net.minecraft.server.command.ServerCommandSource;
 
 import java.util.function.Supplier;
