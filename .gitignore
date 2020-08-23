@@ -8,3 +8,4 @@ classes
 *.iws
 *.ipr
 out
+logs/
