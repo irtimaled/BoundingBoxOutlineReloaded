@@ -9,3 +9,7 @@ Submit your new and corrected translations here https://crowdin.com/project/Boun
 - Nakahi Nui
 - LoupDuQc
 - RengarPlayer exe (Quoz2)
+- Maple Cat (BotCat)
+- Enaium
+- Preliterate
+- dozbamb
