@@ -4,6 +4,7 @@ import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.events.*;
 import com.irtimaled.bbor.client.gui.LoadSavesScreen;
 import com.irtimaled.bbor.client.gui.SettingsScreen;
+import com.irtimaled.bbor.client.interop.FlowerForestHelper;
 import com.irtimaled.bbor.client.keyboard.Key;
 import com.irtimaled.bbor.client.keyboard.KeyListener;
 import com.irtimaled.bbor.client.providers.*;
@@ -77,6 +78,7 @@ public class ClientProxy extends CommonProxy {
     protected void setSeed(long seed) {
         super.setSeed(seed);
         SlimeChunkProvider.setSeed(seed);
+        FlowerForestHelper.setSeed(seed);
     }
 
     @Override

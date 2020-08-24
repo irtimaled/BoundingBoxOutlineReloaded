@@ -106,11 +106,15 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
     }
 
     void renderFilledFaces(OffsetPoint min, OffsetPoint max, Color color) {
+        renderFilledFaces(min, max, color, 30);
+    }
+
+    void renderFilledFaces(OffsetPoint min, OffsetPoint max, Color color, int alpha) {
         if (!ConfigManager.fill.get()) return;
 
         RenderHelper.polygonModeFill();
         RenderHelper.enableBlend();
-        renderFaces(min, max, color, 30, Renderer::startQuads);
+        renderFaces(min, max, color, alpha, Renderer::startQuads);
         RenderHelper.disableBlend();
         RenderHelper.enablePolygonOffsetLine();
         RenderHelper.polygonOffsetMinusOne();

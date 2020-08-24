@@ -53,6 +53,8 @@ public class ConfigManager {
     public static Setting<Integer> spawnableBlocksRenderHeight;
     public static Setting<Boolean> invertBoxColorPlayerInside;
     public static Setting<Boolean> renderSphereAsDots;
+    public static Setting<Boolean> drawFlowerForests;
+    public static Setting<Integer> flowerForestsRenderDistance;
 
     public static Setting<HexColor> colorWorldSpawn;
     public static Setting<HexColor> colorLazySpawnChunks;
@@ -87,6 +89,17 @@ public class ConfigManager {
     public static Setting<HexColor> colorNetherFossils;
     public static Setting<HexColor> colorBastionRemnants;
     public static Setting<HexColor> colorRuinedPortals;
+    public static Setting<HexColor> colorFlowerForestDandelion;
+    public static Setting<HexColor> colorFlowerForestPoppy;
+    public static Setting<HexColor> colorFlowerForestAllium;
+    public static Setting<HexColor> colorFlowerForestAzureBluet;
+    public static Setting<HexColor> colorFlowerForestRedTulip;
+    public static Setting<HexColor> colorFlowerForestOrangeTulip;
+    public static Setting<HexColor> colorFlowerForestWhiteTulip;
+    public static Setting<HexColor> colorFlowerForestPinkTulip;
+    public static Setting<HexColor> colorFlowerForestOxeyeDaisy;
+    public static Setting<HexColor> colorFlowerForestCornflower;
+    public static Setting<HexColor> colorFlowerForestLilyOfTheValley;
 
     public static Setting<HexColor> buttonOnOverlay;
 
@@ -112,6 +125,9 @@ public class ConfigManager {
         renderOnlyCurrentBiome = setup(config, "biomeBorders", "renderOnlyCurrentBiome", true, "If set to true only the biome border for the current biome will be drawn.");
         biomeBordersRenderDistance = setup(config, "biomeBorders", "biomeBordersRenderDistance", 3, "The distance from the player where biome borders will be drawn.");
         biomeBordersMaxY = setup(config, "biomeBorders", "biomeBordersMaxY", -1, "The maximum top of the biome borders. If set to -1 it will use the value when activated, if set to 0 it will always track the players feet.");
+
+        drawFlowerForests = setup(config, "flowerForests", "drawFlowerForests", true, "If set to true flower forest flower overlays will be drawn.");
+        flowerForestsRenderDistance = setup(config, "flowerForests", "flowerForestsRenderDistance", 3, "The distance from the player where flower forests will be drawn.");
 
         drawVillages = setup(config, "structures", "drawVillages", false, "If set to true village bounding boxes will be drawn.");
         drawDesertTemples = setup(config, "structures", "drawDesertTemples", true, "If set to true desert temple bounding boxes are drawn.");
@@ -184,6 +200,17 @@ public class ConfigManager {
         colorNetherFossils = setup(config, "colors", "colorNetherFossils", HexColor.from("#ffffff"), "Color of nether fossils.");
         colorBastionRemnants = setup(config, "colors", "colorBastionRemnants", HexColor.from("#c0c0c0"), "Color of bastion remnants.");
         colorRuinedPortals = setup(config, "colors", "colorRuinedPortals", HexColor.from("#c800ff"), "Color of ruined portals.");
+        colorFlowerForestDandelion = setup(config, "colors", "colorFlowerForestDandelion", HexColor.from("#ffff00"), "Color of Flower Forest Dandelion");
+        colorFlowerForestPoppy = setup(config, "colors", "colorFlowerForestPoppy", HexColor.from("#ff0000"), "Color of Flower Forest Poppy");
+        colorFlowerForestAllium = setup(config, "colors", "colorFlowerForestAllium", HexColor.from("#ff00ff"), "Color of Flower Forest Allium");
+        colorFlowerForestAzureBluet = setup(config, "colors", "colorFlowerForestAzureBluet", HexColor.from("#d3d3d3"), "Color of Flower Forest Azure Bluet");
+        colorFlowerForestRedTulip = setup(config, "colors", "colorFlowerForestRedTulip", HexColor.from("#ff0000"), "Color of Flower Forest Red Tulip");
+        colorFlowerForestOrangeTulip = setup(config, "colors", "colorFlowerForestOrangeTulip", HexColor.from("#ff681f"), "Color of Flower Forest Orange Tulip");
+        colorFlowerForestWhiteTulip = setup(config, "colors", "colorFlowerForestWhiteTulip", HexColor.from("#d3d3d3"), "Color of Flower Forest White Tulip");
+        colorFlowerForestPinkTulip = setup(config, "colors", "colorFlowerForestPinkTulip", HexColor.from("#ff69b4"), "Color of Flower Forest Pink Tulip");
+        colorFlowerForestOxeyeDaisy = setup(config, "colors", "colorFlowerForestOxeyeDaisy", HexColor.from("#d3d3d3"), "Color of Flower Forest Oxeye Daisy");
+        colorFlowerForestCornflower = setup(config, "colors", "colorFlowerForestCornflower", HexColor.from("#0000ff"), "Color of Flower Forest Cornflower");
+        colorFlowerForestLilyOfTheValley = setup(config, "colors", "colorFlowerForestLilyOfTheValley", HexColor.from("#ffffff"), "Color of Flower Forest Lily Of The Valley");
 
         config.save();
     }

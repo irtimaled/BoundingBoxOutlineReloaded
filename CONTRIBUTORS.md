@@ -4,3 +4,4 @@
 - cameron-gagnon
 - plusls
 - LoupDuQc
+- OroArmor
