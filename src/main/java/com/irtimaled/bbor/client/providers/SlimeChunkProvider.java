@@ -8,9 +8,9 @@ import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.models.Coords;
 import com.irtimaled.bbor.common.models.DimensionId;
+import net.minecraft.util.SharedSeedRandom;
 
 import java.util.HashSet;
-import java.util.Random;
 import java.util.Set;
 
 public class SlimeChunkProvider implements IBoundingBoxProvider<BoundingBoxSlimeChunk> {
@@ -23,12 +23,7 @@ public class SlimeChunkProvider implements IBoundingBoxProvider<BoundingBoxSlime
     }
 
     private static boolean isSlimeChunk(int chunkX, int chunkZ) {
-        Random r = new Random(seed +
-                (long) (chunkX * chunkX * 4987142) +
-                (long) (chunkX * 5947611) +
-                (long) (chunkZ * chunkZ) * 4392871L +
-                (long) (chunkZ * 389711) ^ 987234911L);
-        return r.nextInt(10) == 0;
+        return SharedSeedRandom.seedSlimeChunk(chunkX, chunkZ,seed, 987234911L).nextInt(10) == 0;
     }
 
     public static void clear() {
