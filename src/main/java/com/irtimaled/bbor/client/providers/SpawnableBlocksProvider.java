@@ -13,13 +13,14 @@ import net.minecraft.client.Minecraft;
 import java.util.HashSet;
 import java.util.Set;
 
-public class SpawnableBlocksProvider implements IBoundingBoxProvider<BoundingBoxSpawnableBlocks> {
+public class SpawnableBlocksProvider implements IBoundingBoxProvider<BoundingBoxSpawnableBlocks>, ICachingProvider {
     public static final Minecraft minecraft = Minecraft.getInstance();
     private static Long lastGameTime = null;
 
     private static Set<BoundingBoxSpawnableBlocks> lastBoundingBox = null;
 
-    public static void clear() {
+    public void clearCache() {
+        lastGameTime = null;
         lastBoundingBox = null;
     }
 

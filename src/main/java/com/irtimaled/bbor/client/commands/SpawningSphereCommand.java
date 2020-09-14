@@ -25,7 +25,7 @@ public class SpawningSphereCommand {
                         .executes(SpawningSphereCommand::setSphere))
                 .then(Commands.literal(ArgumentNames.CLEAR)
                         .executes(context -> {
-                            boolean cleared = SpawningSphereProvider.clear();
+                            boolean cleared = SpawningSphereProvider.clearSphere();
 
                             String format = cleared ? "bbor.commands.spawningSphere.cleared" : "bbor.commands.spawningSphere.notSet";
                             CommandHelper.feedback(context, format);

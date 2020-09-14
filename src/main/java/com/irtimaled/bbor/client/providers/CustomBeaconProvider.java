@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class CustomBeaconProvider implements IBoundingBoxProvider<BoundingBoxBeacon> {
+public class CustomBeaconProvider implements IBoundingBoxProvider<BoundingBoxBeacon>, ICachingProvider {
     private static final Map<DimensionId, Map<Coords, BoundingBoxBeacon>> dimensionsCache = new HashMap<>();
 
     private static Map<Coords, BoundingBoxBeacon> getCache(DimensionId dimensionId) {
@@ -30,6 +30,10 @@ public class CustomBeaconProvider implements IBoundingBoxProvider<BoundingBoxBea
 
     public static void clear() {
         dimensionsCache.values().forEach(Map::clear);
+    }
+
+    public void clearCache() {
+        clear();
     }
 
     @Override

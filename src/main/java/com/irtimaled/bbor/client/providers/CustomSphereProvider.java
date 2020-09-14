@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class CustomSphereProvider implements IBoundingBoxProvider<BoundingBoxSphere> {
+public class CustomSphereProvider implements IBoundingBoxProvider<BoundingBoxSphere>, ICachingProvider {
     private static final Map<DimensionId, Map<Integer, BoundingBoxSphere>> dimensionCache = new HashMap<>();
 
     private static Map<Integer, BoundingBoxSphere> getCache(DimensionId dimensionId) {
@@ -32,6 +32,10 @@ public class CustomSphereProvider implements IBoundingBoxProvider<BoundingBoxSph
 
     public static void clear() {
         dimensionCache.values().forEach(Map::clear);
+    }
+
+    public void clearCache() {
+        clear();
     }
 
     @Override

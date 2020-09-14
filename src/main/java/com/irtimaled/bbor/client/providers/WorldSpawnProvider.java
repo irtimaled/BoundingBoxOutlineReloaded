@@ -9,7 +9,7 @@ import com.irtimaled.bbor.common.models.DimensionId;
 import java.util.HashSet;
 import java.util.Set;
 
-public class WorldSpawnProvider implements IBoundingBoxProvider<BoundingBoxWorldSpawn> {
+public class WorldSpawnProvider implements IBoundingBoxProvider<BoundingBoxWorldSpawn>, ICachingProvider {
     private static final double CHUNK_SIZE = 16d;
     private static BoundingBoxWorldSpawn spawnChunks;
     private static BoundingBoxWorldSpawn lazyChunks;
@@ -21,7 +21,7 @@ public class WorldSpawnProvider implements IBoundingBoxProvider<BoundingBoxWorld
         lazyChunks = buildSpawnChunksBoundingBox(spawnX, spawnZ, 16, BoundingBoxType.LazySpawnChunks);
     }
 
-    public static void clear() {
+    public void clearCache() {
         worldSpawn = null;
         spawnChunks = null;
         lazyChunks = null;

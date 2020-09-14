@@ -5,6 +5,7 @@ import com.irtimaled.bbor.client.models.*;
 import com.irtimaled.bbor.client.providers.*;
 import com.irtimaled.bbor.client.renderers.*;
 import com.irtimaled.bbor.common.MathHelper;
+import com.irtimaled.bbor.common.TypeHelper;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBoxCuboid;
 import com.irtimaled.bbor.common.models.DimensionId;
@@ -112,4 +113,9 @@ public class ClientRenderer {
                         .comparingDouble((AbstractBoundingBox boundingBox) -> boundingBox.getDistance(point.getX(), point.getY(), point.getZ())).reversed());
     }
 
+    public static void clear() {
+        for(IBoundingBoxProvider<?> provider : providers) {
+            TypeHelper.doIfType(provider, ICachingProvider.class, ICachingProvider::clearCache);
+        }
+    }
 }

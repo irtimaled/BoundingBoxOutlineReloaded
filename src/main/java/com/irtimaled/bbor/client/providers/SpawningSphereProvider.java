@@ -15,7 +15,7 @@ import net.minecraft.client.Minecraft;
 import java.util.HashSet;
 import java.util.Set;
 
-public class SpawningSphereProvider implements IBoundingBoxProvider<BoundingBoxSpawningSphere> {
+public class SpawningSphereProvider implements IBoundingBoxProvider<BoundingBoxSpawningSphere>, ICachingProvider {
     public static final Minecraft minecraft = Minecraft.getInstance();
     private static Long lastGameTime = null;
 
@@ -25,14 +25,13 @@ public class SpawningSphereProvider implements IBoundingBoxProvider<BoundingBoxS
 
     public static void setSphere(Point point) {
         if (spawningSphere != null && spawningSphere.getPoint().equals(point)) return;
-        clear();
 
         dimensionId = Player.getDimensionId();
         spawningSphere = new BoundingBoxSpawningSphere(point);
         lastBoundingBox = null;
     }
 
-    public static boolean clear() {
+    public static boolean clearSphere() {
         if (spawningSphere != null) {
             lastBoundingBox = null;
             spawningSphere = null;
@@ -40,6 +39,10 @@ public class SpawningSphereProvider implements IBoundingBoxProvider<BoundingBoxS
             return true;
         }
         return false;
+    }
+
+    public void clearCache() {
+        clearSphere();
     }
 
     public static void calculateSpawnableSpacesCount(BlockProcessor blockProcessor) {

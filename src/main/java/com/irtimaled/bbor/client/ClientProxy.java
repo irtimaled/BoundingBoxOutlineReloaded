@@ -49,12 +49,7 @@ public class ClientProxy extends CommonProxy {
     }
 
     private void clear() {
-        SlimeChunkProvider.clear();
-        WorldSpawnProvider.clear();
-        SpawningSphereProvider.clear();
-        CustomBeaconProvider.clear();
-        CustomBoxProvider.clear();
-        BiomeBorderProvider.clear();
+        ClientRenderer.clear();
         clearCaches();
     }
 

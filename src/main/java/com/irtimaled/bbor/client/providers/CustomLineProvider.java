@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class CustomLineProvider implements IBoundingBoxProvider<BoundingBoxLine> {
+public class CustomLineProvider implements IBoundingBoxProvider<BoundingBoxLine>, ICachingProvider {
     private static final Map<DimensionId, Map<Integer, BoundingBoxLine>> dimensionCache = new HashMap<>();
 
     private static int getHashKey(Point minPoint, Point maxPoint) {
@@ -36,6 +36,10 @@ public class CustomLineProvider implements IBoundingBoxProvider<BoundingBoxLine>
 
     public static void clear() {
         dimensionCache.values().forEach(Map::clear);
+    }
+
+    public void clearCache() {
+        clear();
     }
 
     @Override

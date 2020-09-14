@@ -13,7 +13,7 @@ import net.minecraft.util.SharedSeedRandom;
 import java.util.HashSet;
 import java.util.Set;
 
-public class SlimeChunkProvider implements IBoundingBoxProvider<BoundingBoxSlimeChunk> {
+public class SlimeChunkProvider implements IBoundingBoxProvider<BoundingBoxSlimeChunk>, ICachingProvider {
     private static final double CHUNK_SIZE = 16d;
 
     private static Long seed;
@@ -26,7 +26,7 @@ public class SlimeChunkProvider implements IBoundingBoxProvider<BoundingBoxSlime
         return SharedSeedRandom.seedSlimeChunk(chunkX, chunkZ,seed, 987234911L).nextInt(10) == 0;
     }
 
-    public static void clear() {
+    public void clearCache() {
         seed = null;
     }
 

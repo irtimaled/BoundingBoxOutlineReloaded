@@ -16,7 +16,7 @@ import net.minecraft.world.biome.Biomes;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FlowerForestProvider implements IBoundingBoxProvider<BoundingBoxFlowerForest> {
+public class FlowerForestProvider implements IBoundingBoxProvider<BoundingBoxFlowerForest>, ICachingProvider {
     public static final int FLOWER_FOREST_BIOME_ID = Registry.BIOME.getId(Biomes.FLOWER_FOREST);
     private static Coords lastPlayerCoords = null;
     private static Integer lastRenderDistance = null;
@@ -39,7 +39,7 @@ public class FlowerForestProvider implements IBoundingBoxProvider<BoundingBoxFlo
         return lastBoundingBoxes.values();
     }
 
-    public static void clear() {
+    public void clearCache() {
         lastBoundingBoxes = new HashMap<>();
         lastPlayerCoords = null;
     }

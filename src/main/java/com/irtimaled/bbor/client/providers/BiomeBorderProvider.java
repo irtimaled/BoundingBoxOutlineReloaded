@@ -13,7 +13,7 @@ import com.irtimaled.bbor.common.models.DimensionId;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BiomeBorderProvider implements IBoundingBoxProvider<BoundingBoxBiomeBorder> {
+public class BiomeBorderProvider implements IBoundingBoxProvider<BoundingBoxBiomeBorder>, ICachingProvider {
     private static Coords lastPlayerCoords = null;
     private static Boolean lastRenderAllTransitions = null;
     private static Integer lastRenderDistance = null;
@@ -44,7 +44,7 @@ public class BiomeBorderProvider implements IBoundingBoxProvider<BoundingBoxBiom
         return lastBorders.values();
     }
 
-    public static void clear() {
+    public void clearCache() {
         lastBorders = new HashMap<>();
         lastPlayerCoords = null;
     }
