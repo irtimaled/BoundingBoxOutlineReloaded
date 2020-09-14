@@ -29,7 +29,8 @@ public class ConduitProvider implements IBoundingBoxProvider<BoundingBoxConduit>
             if (blocks == null) return null;
 
             Coords coords = new Coords(conduit.getPos());
-            return BoundingBoxConduit.from(coords, conduit.isActive() ? blocks.size() / 7 : 0);
+            int level = conduit.isActive() ? blocks.size() / 7 : 0;
+            return new BoundingBoxConduit(coords, level);
         });
     }
 }

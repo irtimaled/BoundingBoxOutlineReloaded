@@ -11,17 +11,13 @@ public class BoundingBoxBiomeBorder extends AbstractBoundingBox {
     private final boolean south;
     private final boolean west;
 
-    private BoundingBoxBiomeBorder(Coords coords, boolean north, boolean east, boolean south, boolean west) {
+    public BoundingBoxBiomeBorder(Coords coords, boolean north, boolean east, boolean south, boolean west) {
         super(BoundingBoxType.BiomeBorder);
         this.coords = coords;
         this.north = north;
         this.east = east;
         this.south = south;
         this.west = west;
-    }
-
-    public static BoundingBoxBiomeBorder from(Coords coords, boolean north, boolean east, boolean south, boolean west) {
-        return new BoundingBoxBiomeBorder(coords, north, east, south, west);
     }
 
     @Override

@@ -93,7 +93,7 @@ public class BiomeBorderProvider implements IBoundingBoxProvider<BoundingBoxBiom
                         boolean south = biomeIds[matchX][matchZ + 1] != biomeId;
                         boolean west = biomeIds[matchX - 1][matchZ] != biomeId;
                         if (north || east || south || west) {
-                            borders.put(coords, BoundingBoxBiomeBorder.from(coords, north, east, south, west));
+                            borders.put(coords, new BoundingBoxBiomeBorder(coords, north, east, south, west));
                         }
                     }
                 }

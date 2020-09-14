@@ -53,7 +53,7 @@ public class SlimeChunkProvider implements IBoundingBoxProvider<BoundingBoxSlime
                     int chunkZStart = chunkZ << 4;
                     Coords minCoords = new Coords(chunkXStart, 1, chunkZStart);
                     Coords maxCoords = new Coords(chunkXStart + 15, 38, chunkZStart + 15);
-                    slimeChunks.add(BoundingBoxSlimeChunk.from(minCoords, maxCoords));
+                    slimeChunks.add(new BoundingBoxSlimeChunk(minCoords, maxCoords));
                 }
             }
         }

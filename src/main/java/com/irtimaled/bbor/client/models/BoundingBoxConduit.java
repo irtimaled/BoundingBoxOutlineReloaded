@@ -13,9 +13,8 @@ public class BoundingBoxConduit extends BoundingBoxSphere {
         this.level = level;
     }
 
-    public static BoundingBoxConduit from(Coords coords, int level) {
-        int radius = 16 * level;
-        return new BoundingBoxConduit(coords, level, radius);
+    public BoundingBoxConduit(Coords coords, int level) {
+        this(coords, level, 16 * level);
     }
 
     @Override

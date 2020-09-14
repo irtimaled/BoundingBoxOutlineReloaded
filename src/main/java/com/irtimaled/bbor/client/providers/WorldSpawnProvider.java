@@ -31,7 +31,7 @@ public class WorldSpawnProvider implements IBoundingBoxProvider<BoundingBoxWorld
         Coords minCoords = new Coords(spawnX - 10, 0, spawnZ - 10);
         Coords maxCoords = new Coords(spawnX + 10, 0, spawnZ + 10);
 
-        return BoundingBoxWorldSpawn.from(minCoords, maxCoords, BoundingBoxType.WorldSpawn);
+        return new BoundingBoxWorldSpawn(minCoords, maxCoords, BoundingBoxType.WorldSpawn);
     }
 
     private static BoundingBoxWorldSpawn buildSpawnChunksBoundingBox(int spawnX, int spawnZ, int size, BoundingBoxType type) {
@@ -46,7 +46,7 @@ public class WorldSpawnProvider implements IBoundingBoxProvider<BoundingBoxWorld
             midZ -= CHUNK_SIZE;
         }
         Coords minCoords = new Coords(midX - midOffset, 0, midZ - midOffset);
-        return BoundingBoxWorldSpawn.from(minCoords, maxCoords, type);
+        return new BoundingBoxWorldSpawn(minCoords, maxCoords, type);
     }
 
     @Override
