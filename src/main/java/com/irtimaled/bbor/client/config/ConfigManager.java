@@ -55,6 +55,7 @@ public class ConfigManager {
     public static Setting<Boolean> renderSphereAsDots;
     public static Setting<Boolean> drawFlowerForests;
     public static Setting<Integer> flowerForestsRenderDistance;
+    public static Setting<Boolean> drawBedrockCeilingBlocks;
 
     public static Setting<HexColor> colorWorldSpawn;
     public static Setting<HexColor> colorLazySpawnChunks;
@@ -100,6 +101,7 @@ public class ConfigManager {
     public static Setting<HexColor> colorFlowerForestOxeyeDaisy;
     public static Setting<HexColor> colorFlowerForestCornflower;
     public static Setting<HexColor> colorFlowerForestLilyOfTheValley;
+    public static Setting<HexColor> colorBedrockCeilingBlocks;
 
     public static Setting<HexColor> buttonOnOverlay;
 
@@ -128,6 +130,8 @@ public class ConfigManager {
 
         drawFlowerForests = setup(config, "flowerForests", "drawFlowerForests", true, "If set to true flower forest flower overlays will be drawn.");
         flowerForestsRenderDistance = setup(config, "flowerForests", "flowerForestsRenderDistance", 3, "The distance from the player where flower forests will be drawn.");
+
+        drawBedrockCeilingBlocks = setup(config, "bedrockCeiling", "drawBedrockCeilingBlocks", true, "If set to true position with only one layer of bedrock will be drawn.");
 
         drawVillages = setup(config, "structures", "drawVillages", false, "If set to true village bounding boxes will be drawn.");
         drawDesertTemples = setup(config, "structures", "drawDesertTemples", true, "If set to true desert temple bounding boxes are drawn.");
@@ -211,7 +215,7 @@ public class ConfigManager {
         colorFlowerForestOxeyeDaisy = setup(config, "colors", "colorFlowerForestOxeyeDaisy", HexColor.from("#d3d3d3"), "Color of Flower Forest Oxeye Daisy");
         colorFlowerForestCornflower = setup(config, "colors", "colorFlowerForestCornflower", HexColor.from("#0000ff"), "Color of Flower Forest Cornflower");
         colorFlowerForestLilyOfTheValley = setup(config, "colors", "colorFlowerForestLilyOfTheValley", HexColor.from("#ffffff"), "Color of Flower Forest Lily Of The Valley");
-
+        colorBedrockCeilingBlocks = setup(config, "colors", "colorBedrockCeilingBlocks", HexColor.from("#00ff00"), "Color of Bedrock Ceiling Blocks");
         config.save();
     }
 

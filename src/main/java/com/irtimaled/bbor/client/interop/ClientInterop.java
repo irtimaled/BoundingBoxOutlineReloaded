@@ -119,4 +119,8 @@ public class ClientInterop {
     public static void displayScreen(Screen screen) {
         Minecraft.getInstance().displayGuiScreen(screen);
     }
+
+    public static long getGameTime() {
+        return Minecraft.getInstance().world.getGameTime();
+    }
 }
