@@ -24,6 +24,8 @@
   "bbor.features.spawningSpheres": "Sphères de spawn",
   "bbor.features.spawnableBlocks": "Bloc Spawnable",
   "bbor.features.biomeBorders": "Bordures de biome",
+  "bbor.features.flowerForests": "Forêt fleurie",
+  "bbor.features.bedrockCeilingBlocks": "Plafond de Bedrock",
   "bbor.sections.beaconsAndConduits": "Balises et conduits",
   "bbor.features.beacons": "Balises",
   "bbor.features.conduits": "Conduits",
