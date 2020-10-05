@@ -31,7 +31,6 @@ public class RenderHelper {
     }
 
     public static void beforeRenderFont(OffsetPoint offsetPoint) {
-        disableDepthTest();
         GlStateManager.pushMatrix();
         polygonModeFill();
         GlStateManager.translated(offsetPoint.getX(), offsetPoint.getY() + 0.002D, offsetPoint.getZ());
