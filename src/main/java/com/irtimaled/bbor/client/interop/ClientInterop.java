@@ -30,7 +30,7 @@ public class ClientInterop {
 
     public static void render(float partialTicks, ClientPlayerEntity player) {
         Player.setPosition(partialTicks, player);
-        ClientRenderer.render(DimensionId.from(player.dimension));
+        ClientRenderer.render(DimensionId.from(player.getEntityWorld().getDimensionKey()));
     }
 
     public static void renderDeferred() {
@@ -48,22 +48,22 @@ public class ClientInterop {
                 } catch (CommandSyntaxException exception) {
                     commandSource.sendErrorMessage(TextComponentUtils.toTextComponent(exception.getRawMessage()));
                     if (exception.getInput() != null && exception.getCursor() >= 0) {
-                        ITextComponent suggestion = new StringTextComponent("")
-                                .applyTextStyle(TextFormatting.GRAY)
-                                .applyTextStyle(style -> style.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, message)));
+                        IFormattableTextComponent suggestion = new StringTextComponent("")
+                                .mergeStyle(TextFormatting.GRAY)
+                                .modifyStyle(style -> style.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, message)));
                         int textLength = Math.min(exception.getInput().length(), exception.getCursor());
                         if (textLength > 10) {
-                            suggestion.appendText("...");
+                            suggestion.appendString("...");
                         }
 
-                        suggestion.appendText(exception.getInput().substring(Math.max(0, textLength - 10), textLength));
+                        suggestion.appendString(exception.getInput().substring(Math.max(0, textLength - 10), textLength));
                         if (textLength < exception.getInput().length()) {
-                            suggestion.appendSibling(new StringTextComponent(exception.getInput().substring(textLength))
-                                    .applyTextStyles(TextFormatting.RED, TextFormatting.UNDERLINE));
+                            suggestion.append(new StringTextComponent(exception.getInput().substring(textLength))
+                                    .mergeStyle(TextFormatting.RED, TextFormatting.UNDERLINE));
                         }
 
-                        suggestion.appendSibling(new TranslationTextComponent("command.context.here")
-                                .applyTextStyles(TextFormatting.RED, TextFormatting.ITALIC));
+                        suggestion.append(new TranslationTextComponent("command.context.here")
+                                .mergeStyle(TextFormatting.RED, TextFormatting.ITALIC));
                         commandSource.sendErrorMessage(suggestion);
                     }
                 }

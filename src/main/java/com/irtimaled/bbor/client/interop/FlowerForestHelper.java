@@ -8,7 +8,10 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.WorldGenRegistries;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
+import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.DecoratedFeatureConfig;
 import net.minecraft.world.gen.feature.FlowersFeature;
 import net.minecraft.world.gen.feature.IFeatureConfig;
@@ -24,6 +27,8 @@ public class FlowerForestHelper {
     private static final FlowersFeature flowersFeature;
     private static final IFeatureConfig flowersConfig;
 
+    public static final Biome BIOME = WorldGenRegistries.BIOME.getValueForKey(Biomes.FLOWER_FOREST);
+
     static {
         flowerColorMap.put(Blocks.DANDELION.getDefaultState(), ConfigManager.colorFlowerForestDandelion);
         flowerColorMap.put(Blocks.POPPY.getDefaultState(), ConfigManager.colorFlowerForestPoppy);
@@ -38,9 +43,9 @@ public class FlowerForestHelper {
         flowerColorMap.put(Blocks.LILY_OF_THE_VALLEY.getDefaultState(), ConfigManager.colorFlowerForestLilyOfTheValley);
 
 
-        DecoratedFeatureConfig config = (DecoratedFeatureConfig) Biomes.FLOWER_FOREST.getFlowers().get(0).config;
-        flowersFeature = (FlowersFeature) config.feature.feature;
-        flowersConfig = config.feature.config;
+        ConfiguredFeature<?, ?> config = BIOME.getGenerationSettings().getFlowerFeatures().get(0);
+        flowersFeature = (FlowersFeature) config.feature;
+        flowersConfig = config.config;
     }
 
     public static Setting<HexColor> getFlowerColorAtPos(Coords coords) {

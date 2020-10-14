@@ -16,7 +16,7 @@ public class Player {
         x = player.lastTickPosX + (player.getPosX() - player.lastTickPosX) * partialTicks;
         y = player.lastTickPosY + (player.getPosY() - player.lastTickPosY) * partialTicks;
         z = player.lastTickPosZ + (player.getPosZ() - player.lastTickPosZ) * partialTicks;
-        dimensionId = DimensionId.from(player.dimension);
+        dimensionId = DimensionId.from(player.getEntityWorld().getDimensionKey());
     }
 
     static void setActiveY() {

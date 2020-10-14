@@ -11,7 +11,7 @@ public class ServerPlayer {
     private final Consumer<IPacket<?>> packetConsumer;
 
     public ServerPlayer(ServerPlayerEntity player) {
-        this.dimensionId = DimensionId.from(player.dimension);
+        this.dimensionId = DimensionId.from(player.getEntityWorld().getDimensionKey());
         this.packetConsumer = player.connection::sendPacket;
     }
 

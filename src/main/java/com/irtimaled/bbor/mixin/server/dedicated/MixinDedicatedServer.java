@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(DedicatedServer.class)
 public class MixinDedicatedServer {
-    @Inject(method = "init", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/dedicated/DedicatedServer;loadAllWorlds(Ljava/lang/String;Ljava/lang/String;JLnet/minecraft/world/WorldType;Lcom/google/gson/JsonElement;)V"))
+    @Inject(method = "init", at = @At(value = "NEW", target = "net/minecraft/server/dedicated/DedicatedPlayerList"))
     private void init(CallbackInfoReturnable<Boolean> cir) {
         new CommonProxy().init();
     }

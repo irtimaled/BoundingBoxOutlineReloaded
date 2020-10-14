@@ -3,6 +3,7 @@ package com.irtimaled.bbor.client.interop;
 import com.irtimaled.bbor.common.models.Coords;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
@@ -34,8 +35,6 @@ public class SpawnableBlocksHelper {
         World world = Minecraft.getInstance().world;
         for (int x = minX; x < maxX; x++) {
             for (int z = minZ; z < maxZ; z++) {
-                if (isBiomeHostileSpawnProof(world, new BlockPos(x, 1, z))) continue;
-
                 BlockState upperBlockState = world.getBlockState(new BlockPos(x, minY - 1, z));
                 for (int y = Math.max(1, minY); y < maxY; y++) {
                     BlockState spawnBlockState = upperBlockState;
@@ -49,16 +48,12 @@ public class SpawnableBlocksHelper {
         }
     }
 
-    static boolean isBiomeHostileSpawnProof(World world, BlockPos pos) {
-        Biome biome = world.getBiome(pos);
-        return biome.getSpawningChance() == 0 ||
-                biome.getSpawns(EntityClassification.MONSTER).isEmpty();
-    }
-
     static boolean isSpawnable(World world, BlockPos pos, BlockState spawnBlockState, BlockState upperBlockState) {
         VoxelShape collisionShape = upperBlockState.getCollisionShape(world, pos);
-        boolean isNether = world.dimension.isNether();
-        return spawnBlockState.canEntitySpawn(world, pos.down(), isNether ? EntityType.ZOMBIE_PIGMAN : entityType) &&
+        Biome biome = world.getBiome(pos);
+        boolean isNether = biome.getCategory() == Biome.Category.NETHER;
+        return biome.getCategory() != Biome.Category.MUSHROOM &&
+                spawnBlockState.canEntitySpawn(world, pos.down(), isNether ? EntityType.ZOMBIFIED_PIGLIN : entityType) &&
                 !Block.doesSideFillSquare(collisionShape, Direction.UP) &&
                 !upperBlockState.canProvidePower() &&
                 !upperBlockState.isIn(BlockTags.RAILS) &&

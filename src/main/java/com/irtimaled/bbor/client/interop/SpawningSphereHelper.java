@@ -30,8 +30,6 @@ public class SpawningSphereHelper {
                 double distance = center.getDistance(new Point(closestX, center.getY(), closestZ));
                 if (distance > BoundingBoxSpawningSphere.SPAWN_RADIUS) continue;
 
-                if (SpawnableBlocksHelper.isBiomeHostileSpawnProof(world, new BlockPos(x, 1, z))) continue;
-
                 BlockState upperBlockState = world.getBlockState(new BlockPos(x, minY - 1, z));
                 for (int y = minY; y < maxY; y++) {
                     BlockState spawnBlockState = upperBlockState;

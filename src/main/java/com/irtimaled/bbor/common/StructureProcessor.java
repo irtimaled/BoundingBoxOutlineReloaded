@@ -24,8 +24,7 @@ class StructureProcessor {
 
     private final BoundingBoxCache boundingBoxCache;
 
-    private void addStructures(BoundingBoxType type, Map<String, StructureStart> structureMap) {
-        StructureStart structureStart = structureMap.get(type.getName());
+    private void addStructures(BoundingBoxType type, StructureStart<?> structureStart) {
         if (structureStart == null) return;
 
         MutableBoundingBox bb = structureStart.getBoundingBox();
@@ -47,9 +46,9 @@ class StructureProcessor {
         return BoundingBoxCuboid.from(min, max, type);
     }
 
-    void process(Map<String, StructureStart> structures) {
+    void process(Map<String, StructureStart<?>> structures) {
         if (structures.size() > 0) {
-            supportedStructures.forEach(type -> addStructures(type, structures));
+            supportedStructures.forEach(type -> addStructures(type, structures.get(type.getName())));
         }
     }
 }

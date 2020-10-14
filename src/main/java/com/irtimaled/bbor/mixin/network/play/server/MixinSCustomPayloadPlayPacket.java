@@ -34,8 +34,7 @@ public abstract class MixinSCustomPayloadPlayPacket {
                         ((ClientPlayNetHandler) netHandlerPlayClient).sendPacket(SubscribeToServer.getPayload().build());
                         break;
                     }
-                    case AddBoundingBox.NAME:
-                    case AddBoundingBox.LEGACY: {
+                    case AddBoundingBox.NAME: {
                         EventBus.publish(AddBoundingBox.getEvent(reader, channelName));
                         break;
                     }

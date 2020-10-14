@@ -8,16 +8,19 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.ServerPlayNetHandler;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraft.world.gen.feature.structure.StructureStart;
 import net.minecraft.world.server.ServerWorld;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 public class CommonInterop {
     public static void chunkLoaded(Chunk chunk) {
-        DimensionId dimensionId = DimensionId.from(chunk.getWorld().getDimension().getType());
-        Map<String, StructureStart> structures = chunk.getStructureStarts();
+        DimensionId dimensionId = DimensionId.from(chunk.getWorld().getDimensionKey());
+        Map<String, StructureStart<?>> structures = new HashMap<>();
+        chunk.getStructureStarts().entrySet().forEach(es -> structures.put(es.getKey().getStructureName(), es.getValue()));;
         if (structures.size() > 0) EventBus.publish(new StructuresLoaded(structures, dimensionId));
     }
 

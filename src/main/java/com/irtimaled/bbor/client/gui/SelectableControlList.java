@@ -2,6 +2,7 @@ package com.irtimaled.bbor.client.gui;
 
 import com.irtimaled.bbor.client.renderers.RenderHelper;
 import com.irtimaled.bbor.client.renderers.Renderer;
+import com.mojang.blaze3d.matrix.MatrixStack;
 
 public class SelectableControlList extends ControlList {
     private final int listRight;
@@ -79,7 +80,7 @@ public class SelectableControlList extends ControlList {
     }
 
     @Override
-    protected void drawEntry(int mouseX, int mouseY, int top, ControlListEntry entry, int height) {
+    protected void drawEntry(MatrixStack matrixStack, int mouseX, int mouseY, int top, ControlListEntry entry, int height) {
         if (this.selectedElement == entry.index) {
             RenderHelper.disableTexture();
             int color = this.isFocused ? 255 : 128;
@@ -98,7 +99,7 @@ public class SelectableControlList extends ControlList {
                     .render();
             RenderHelper.enableTexture();
         }
-        super.drawEntry(mouseX, mouseY, top, entry, height);
+        super.drawEntry(matrixStack, mouseX, mouseY, top, entry, height);
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.irtimaled.bbor.client.gui;
 
 import com.irtimaled.bbor.Versions;
 import com.irtimaled.bbor.client.interop.ClientInterop;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resources.I18n;
@@ -47,20 +48,20 @@ public abstract class ListScreen extends Screen {
     protected abstract ControlList buildList(int top, int bottom);
 
     @Override
-    public void render(int mouseX, int mouseY, float unknown) {
-        render(mouseX, mouseY);
+    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float unknown) {
+        render(matrixStack, mouseX, mouseY);
     }
 
-    protected void render(int mouseX, int mouseY) {
-        this.controlList.render(mouseX, mouseY);
+    protected void render(MatrixStack matrixStack, int mouseX, int mouseY) {
+        this.controlList.render(matrixStack, mouseX, mouseY);
 
-        this.drawCenteredString(this.font, this.title.getUnformattedComponentText(), this.width / 2, 8, 16777215);
-        this.searchField.render(mouseX, mouseY);
-        this.doneButton.render(mouseX, mouseY);
+        drawCenteredString(matrixStack, this.font, this.title.getUnformattedComponentText(), this.width / 2, 8, 16777215);
+        this.searchField.render(matrixStack, mouseX, mouseY);
+        this.doneButton.render(matrixStack, mouseX, mouseY);
 
         int left = this.width - this.font.getStringWidth(version) - 2;
         int top = this.height - 10;
-        this.drawString(this.font, version, left, top, -10658467);
+        drawString(matrixStack, this.font, version, left, top, -10658467);
     }
 
     @Override
@@ -84,7 +85,7 @@ public abstract class ListScreen extends Screen {
     }
 
     @Override
-    public void removed() {
+    public void onClose() {
         this.controlList.close();
     }
 
@@ -94,13 +95,13 @@ public abstract class ListScreen extends Screen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        for (IGuiEventListener control : this.children()) {
+        for (IGuiEventListener control : this.children) {
             if (control.mouseClicked(mouseX, mouseY, button)) {
-                IGuiEventListener focused = getFocused();
+                IGuiEventListener focused = getListener();
                 if (focused instanceof IFocusableControl && focused != control) {
                     ((IFocusableControl) focused).clearFocus();
                 }
-                this.setFocused(control);
+                this.setListener(control);
                 if (button == 0) this.setDragging(true);
                 return true;
             }

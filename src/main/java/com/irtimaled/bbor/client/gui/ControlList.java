@@ -3,6 +3,7 @@ package com.irtimaled.bbor.client.gui;
 import com.irtimaled.bbor.client.renderers.RenderHelper;
 import com.irtimaled.bbor.client.renderers.Renderer;
 import com.irtimaled.bbor.common.MathHelper;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 
@@ -152,7 +153,7 @@ public class ControlList extends AbstractGui implements IControlSet {
         return true;
     }
 
-    public void render(int mouseX, int mouseY) {
+    public void render(MatrixStack matrixStack, int mouseX, int mouseY) {
         this.amountScrolled = MathHelper.clamp(this.amountScrolled, 0.0D, this.getMaxScroll());
 
         RenderHelper.disableLighting();
@@ -161,11 +162,15 @@ public class ControlList extends AbstractGui implements IControlSet {
 
         int listTop = this.top + PADDING - (int) this.amountScrolled;
 
-        drawEntries(mouseX, mouseY, listTop);
+        drawEntries(matrixStack, mouseX, mouseY, listTop);
 
-        RenderHelper.disableDepthTest();
+        RenderHelper.enableDepthTest();
+        RenderHelper.depthFuncAlways();
+
         this.overlayBackground(0, this.top);
         this.overlayBackground(this.bottom, this.height);
+        RenderHelper.depthFuncLessEqual();
+        RenderHelper.disableDepthTest();
         RenderHelper.enableBlend();
         RenderHelper.blendFuncGui();
         RenderHelper.disableAlphaTest();
@@ -196,7 +201,7 @@ public class ControlList extends AbstractGui implements IControlSet {
                 .render();
     }
 
-    private void drawEntries(int mouseX, int mouseY, int top) {
+    private void drawEntries(MatrixStack matrixStack, int mouseX, int mouseY, int top) {
         for (ControlListEntry entry : this.entries) {
             if (!entry.isVisible()) continue;
 
@@ -204,13 +209,16 @@ public class ControlList extends AbstractGui implements IControlSet {
             entry.setY(top);
 
             int height = entry.getControlHeight();
-            drawEntry(mouseX, mouseY, top, entry, height);
-            top += height;
+            int bottom = top + height;
+            if(top <= this.bottom && bottom >= this.top) {
+                drawEntry(matrixStack, mouseX, mouseY, top, entry, height);
+            }
+            top = bottom;
         }
     }
 
-    protected void drawEntry(int mouseX, int mouseY, int top, ControlListEntry entry, int height) {
-        entry.render(mouseX, mouseY);
+    protected void drawEntry(MatrixStack matrixStack, int mouseX, int mouseY, int top, ControlListEntry entry, int height) {
+        entry.render(matrixStack, mouseX, mouseY);
     }
 
     private void overlayBackground(int top, int bottom) {
@@ -218,10 +226,10 @@ public class ControlList extends AbstractGui implements IControlSet {
         Renderer.startTextured()
                 .setColor(64, 64, 64)
                 .setAlpha(255)
-                .addPoint(0, bottom, 0.0D, 0.0D, (float) bottom / 32.0F)
-                .addPoint(this.width, bottom, 0.0D, (float) this.width / 32.0F, (float) bottom / 32.0F)
-                .addPoint(this.width, top, 0.0D, (float) this.width / 32.0F, (float) top / 32.0F)
-                .addPoint(0, top, 0.0D, 0.0D, (float) top / 32.0F)
+                .addPoint(0, bottom, -100.0D, 0.0D, (float) bottom / 32.0F)
+                .addPoint(this.width, bottom, -100.0D, (float) this.width / 32.0F, (float) bottom / 32.0F)
+                .addPoint(this.width, top, -100.0D, (float) this.width / 32.0F, (float) top / 32.0F)
+                .addPoint(0, top, -100.0D, 0.0D, (float) top / 32.0F)
                 .render();
     }
 

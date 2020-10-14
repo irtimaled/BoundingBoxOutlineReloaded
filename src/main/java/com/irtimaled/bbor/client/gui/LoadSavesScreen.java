@@ -1,6 +1,7 @@
 package com.irtimaled.bbor.client.gui;
 
 import com.irtimaled.bbor.client.interop.ClientInterop;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.AnvilConverterException;
 import net.minecraft.world.storage.SaveFormat;
 import net.minecraft.world.storage.WorldSummary;
@@ -34,10 +35,10 @@ public class LoadSavesScreen extends ListScreen {
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float unknown) {
+    public void render(MatrixStack matrixStack, int mouseX, int mouseY) {
         ControlListEntry selectedEntry = getSelectedEntry();
         this.setCanExit(selectedEntry != null && selectedEntry.isVisible());
-        super.render(mouseX, mouseY, unknown);
+        super.render(matrixStack, mouseX, mouseY);
     }
 
     private ControlListEntry getSelectedEntry() {

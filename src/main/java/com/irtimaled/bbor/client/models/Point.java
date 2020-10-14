@@ -3,7 +3,7 @@ package com.irtimaled.bbor.client.models;
 import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.TypeHelper;
 import com.irtimaled.bbor.common.models.Coords;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class Point {
     private final double x;
@@ -22,7 +22,7 @@ public class Point {
         this.z = Coords.getZ();
     }
 
-    public Point(Vec3d pos) {
+    public Point(Vector3d pos) {
         this.x = pos.x;
         this.y = pos.y;
         this.z = pos.z;

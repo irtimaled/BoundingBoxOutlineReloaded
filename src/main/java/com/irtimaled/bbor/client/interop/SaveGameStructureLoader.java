@@ -4,21 +4,25 @@ import com.irtimaled.bbor.client.Player;
 import com.irtimaled.bbor.common.models.DimensionId;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.storage.SaveFormat;
-import net.minecraft.world.storage.SaveHandler;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class SaveGameStructureLoader {
     private static final Map<DimensionId, NBTStructureLoader> nbtStructureLoaders = new HashMap<>();
-    private static SaveHandler saveHandler = null;
+    private static SaveFormat.LevelSave saveHandler = null;
     private static File worldDirectory = null;
 
     static void loadSaveGame(String fileName) {
         Minecraft minecraft = Minecraft.getInstance();
         SaveFormat saveLoader = minecraft.getSaveLoader();
-        saveHandler = saveLoader.getSaveLoader(fileName, null);
+        try {
+            saveHandler = saveLoader.getLevelSave(fileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         worldDirectory = saveLoader.getSavesDir().resolve(fileName).toFile();
 
         for (DimensionId dimensionId : nbtStructureLoaders.keySet()) {

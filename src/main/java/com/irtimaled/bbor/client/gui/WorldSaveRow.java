@@ -3,20 +3,23 @@ package com.irtimaled.bbor.client.gui;
 import com.google.common.hash.Hashing;
 import com.irtimaled.bbor.client.interop.ClientInterop;
 import com.irtimaled.bbor.client.renderers.RenderHelper;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.NativeImage;
+import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
+import net.minecraft.world.storage.FolderName;
 import net.minecraft.world.storage.SaveFormat;
-import net.minecraft.world.storage.WorldInfo;
 import net.minecraft.world.storage.WorldSummary;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -44,7 +47,7 @@ public class WorldSaveRow extends ControlListEntry implements Comparable<WorldSa
         this.setSelectedEntry = setSelectedEntry;
         this.client = Minecraft.getInstance();
         this.iconLocation = new ResourceLocation("worlds/" + Hashing.sha1().hashUnencodedChars(worldSummary.getFileName()) + "/icon");
-        this.iconFile = saveLoader.getFile(worldSummary.getFileName(), "icon.png");
+        this.iconFile = worldSummary.getIconFile();
         if (!this.iconFile.isFile()) {
             this.iconFile = null;
         }
@@ -76,9 +79,20 @@ public class WorldSaveRow extends ControlListEntry implements Comparable<WorldSa
     @Override
     public void done() {
         String fileName = this.worldSummary.getFileName();
-        WorldInfo worldInfo = saveLoader.getWorldInfo(fileName);
-        long seed = worldInfo.getSeed();
-        ClientInterop.saveLoaded(fileName, seed);
+        SaveFormat.LevelSave worldInfo = null;
+        try {
+            worldInfo = saveLoader.getLevelSave(fileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            long seed = CompressedStreamTools.readCompressed(new FileInputStream(worldInfo.resolveFilePath(FolderName.LEVEL_DAT).toFile()))
+                    .getCompound("Data")
+                    .getCompound("WorldGenSettings").getLong("seed");
+            worldInfo.close();
+            ClientInterop.saveLoaded(fileName, seed);
+        } catch (IOException ignored) {
+        }
     }
 
     private DynamicTexture loadIcon() {
@@ -99,17 +113,17 @@ public class WorldSaveRow extends ControlListEntry implements Comparable<WorldSa
     }
 
     @Override
-    public void render(int mouseX, int mouseY) {
+    public void render(MatrixStack matrixStack, int mouseX, int mouseY) {
         String displayName = this.worldSummary.getDisplayName();
         String details = this.worldSummary.getFileName() + " (" + DATE_FORMAT.format(new Date(this.worldSummary.getLastTimePlayed())) + ")";
 
         int x = this.getX();
         int y = this.getY();
-        this.client.fontRenderer.drawString(displayName, (float) (x + ICON_SIZE + 3), (float) (y + 1), 16777215);
-        this.client.fontRenderer.drawString(details, (float) (x + ICON_SIZE + 3), (float) (y + 1 + this.client.fontRenderer.FONT_HEIGHT + 1), 8421504);
+        this.client.fontRenderer.drawStringWithShadow(matrixStack, displayName, (float) (x + ICON_SIZE + 3), (float) (y + 1), 16777215);
+        this.client.fontRenderer.drawStringWithShadow(matrixStack, details, (float) (x + ICON_SIZE + 3), (float) (y + 1 + this.client.fontRenderer.FONT_HEIGHT + 1), 8421504);
         this.client.getTextureManager().bindTexture(this.icon != null ? this.iconLocation : ICON_MISSING);
         RenderHelper.enableBlend();
-        AbstractGui.blit(x, y, 0.0F, 0.0F, ICON_SIZE, ICON_SIZE, 32, 32);
+        AbstractGui.blit(matrixStack, x, y, 0.0F, 0.0F, ICON_SIZE, ICON_SIZE, 32, 32);
         RenderHelper.disableBlend();
     }
 

@@ -1,6 +1,7 @@
 package com.irtimaled.bbor.client.gui;
 
 import com.irtimaled.bbor.common.MathHelper;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundHandler;
 
@@ -16,11 +17,11 @@ abstract class AbstractSlider extends AbstractControl {
     }
 
     @Override
-    protected void renderBackground(int mouseX, int mouseY) {
+    protected void renderBackground(MatrixStack matrixStack, int mouseX, int mouseY) {
         this.minecraft.getTextureManager().bindTexture(WIDGETS_LOCATION);
         int hoverState = super.getYImage(this.isHovered());
-        this.blit(this.x + (int) getProgressPercentage(), this.y, 0, 46 + hoverState * 20, 4, this.height);
-        this.blit(this.x + (int) getProgressPercentage() + 4, this.y, 196, 46 + hoverState * 20, 4, 20);
+        this.blit(matrixStack,this.x + (int) getProgressPercentage(), this.y, 0, 46 + hoverState * 20, 4, this.height);
+        this.blit(matrixStack, this.x + (int) getProgressPercentage() + 4, this.y, 196, 46 + hoverState * 20, 4, 20);
     }
 
     private double getProgressPercentage() {

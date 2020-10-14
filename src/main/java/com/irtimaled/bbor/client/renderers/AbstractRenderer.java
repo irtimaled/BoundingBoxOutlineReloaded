@@ -4,6 +4,7 @@ import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.models.Point;
 import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 
@@ -121,7 +122,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
         float top = -(fontRenderer.FONT_HEIGHT * texts.length) / 2f;
         for (String text : texts) {
             float left = fontRenderer.getStringWidth(text) / 2f;
-            fontRenderer.drawString(text, -left, top, -1);
+            fontRenderer.drawString(new MatrixStack(), text, -left, top, -1);
             top += fontRenderer.FONT_HEIGHT;
         }
         RenderHelper.afterRenderFont();

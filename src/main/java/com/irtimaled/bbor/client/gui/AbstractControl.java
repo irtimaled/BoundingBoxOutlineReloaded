@@ -1,7 +1,9 @@
 package com.irtimaled.bbor.client.gui;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.Widget;
+import net.minecraft.util.text.StringTextComponent;
 
 import java.awt.*;
 
@@ -10,13 +12,13 @@ abstract class AbstractControl extends Widget implements IControl {
     protected final Minecraft minecraft;
 
     AbstractControl(int x, int y, int width, String name) {
-        super(x, y, width, 20, name);
+        super(x, y, width, 20, new StringTextComponent(name));
         this.minecraft = Minecraft.getInstance();
     }
 
     @Override
-    public void render(int mouseX, int mouseY) {
-        super.render(mouseX, mouseY, 0f);
+    public void render(MatrixStack matrixStack, int mouseX, int mouseY) {
+        super.render(matrixStack, mouseX, mouseY, 0f);
     }
 
     public void setX(int x) {
@@ -36,11 +38,11 @@ abstract class AbstractControl extends Widget implements IControl {
     }
 
     @Override
-    protected void renderBg(Minecraft minecraft, int mouseX, int mouseY) {
-        if (active) renderBackground(mouseX, mouseY);
+    protected void renderBg(MatrixStack matrixStack, Minecraft minecraft, int mouseX, int mouseY) {
+        if (active) renderBackground(matrixStack, mouseX, mouseY);
     }
 
-    protected void renderBackground(int mouseX, int mouseY) {
+    protected void renderBackground(MatrixStack matrixStack, int mouseX, int mouseY) {
     }
 
     @Override
@@ -49,14 +51,14 @@ abstract class AbstractControl extends Widget implements IControl {
     }
 
     public void filter(String lowerValue) {
-        String lowerString = this.getMessage().toLowerCase();
+        String lowerString = this.getMessage().getString().toLowerCase();
         this.visible = lowerValue.equals("") ||
                 lowerString.startsWith(lowerValue) ||
                 lowerString.contains(" " + lowerValue);
     }
 
-    void drawRectangle(int left, int top, int right, int bottom, Color color) {
-        fill(left, top, right, bottom, color.getRGB());
+    void drawRectangle(MatrixStack matrixStack, int left, int top, int right, int bottom, Color color) {
+        fill(matrixStack, left, top, right, bottom, color.getRGB());
     }
 
     @Override

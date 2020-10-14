@@ -1,5 +1,6 @@
 package com.irtimaled.bbor.client.gui;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 
 import java.util.ArrayList;
@@ -47,12 +48,12 @@ public class ControlListSection extends ControlListEntry implements IControlSet 
     }
 
     @Override
-    public void render(int mouseX, int mouseY) {
+    public void render(MatrixStack matrixStack, int mouseX, int mouseY) {
         int x = this.getX();
         int y = this.getY();
         int top = y;
         if (this.title != null) {
-            this.minecraft.fontRenderer.drawString(this.title, x + 4, y + ((TITLE_HEIGHT - this.minecraft.fontRenderer.FONT_HEIGHT) / 1.5f), 16777215);
+            this.minecraft.fontRenderer.drawStringWithShadow(matrixStack, this.title, x + 4, y + ((TITLE_HEIGHT - this.minecraft.fontRenderer.FONT_HEIGHT) / 1.5f), 16777215);
             top += titleHeight;
         }
 
@@ -63,7 +64,7 @@ public class ControlListSection extends ControlListEntry implements IControlSet 
 
             control.setX(left + x);
             control.setY(top);
-            control.render(mouseX, mouseY);
+            control.render(matrixStack, mouseX, mouseY);
             if (left == 0) {
                 height = control.getControlHeight();
             }
