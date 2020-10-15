@@ -20,24 +20,24 @@ public class BoundingBoxType {
     public static final BoundingBoxType FlowerForest = register("Flower Forest");
     public static final BoundingBoxType BedrockCeiling = register("Bedrock Ceiling");
 
-    public static final BoundingBoxType JungleTemple = register("Jungle_Pyramid");
-    public static final BoundingBoxType DesertTemple = register("Desert_Pyramid");
-    public static final BoundingBoxType WitchHut = register("Swamp_Hut");
-    public static final BoundingBoxType OceanMonument = register("Monument");
-    public static final BoundingBoxType Shipwreck = register("Shipwreck");
-    public static final BoundingBoxType OceanRuin = register("Ocean_Ruin");
-    public static final BoundingBoxType BuriedTreasure = register("Buried_Treasure");
-    public static final BoundingBoxType Stronghold = register("Stronghold");
-    public static final BoundingBoxType MineShaft = register("Mineshaft");
-    public static final BoundingBoxType NetherFortress = register("Fortress");
-    public static final BoundingBoxType EndCity = register("EndCity");
-    public static final BoundingBoxType Mansion = register("Mansion");
-    public static final BoundingBoxType Igloo = register("Igloo");
-    public static final BoundingBoxType PillagerOutpost = register("Pillager_Outpost");
-    public static final BoundingBoxType Village = register("Village");
-    public static final BoundingBoxType NetherFossil = register("Nether_Fossil");
-    public static final BoundingBoxType BastionRemnant = register("Bastion_Remnant");
-    public static final BoundingBoxType RuinedPortal = register("Ruined_Portal");
+    public static final BoundingBoxType JungleTemple = register("jungle_pyramid");
+    public static final BoundingBoxType DesertTemple = register("desert_pyramid");
+    public static final BoundingBoxType WitchHut = register("swamp_hut");
+    public static final BoundingBoxType OceanMonument = register("monument");
+    public static final BoundingBoxType Shipwreck = register("shipwreck");
+    public static final BoundingBoxType OceanRuin = register("ocean_ruin");
+    public static final BoundingBoxType BuriedTreasure = register("buried_treasure");
+    public static final BoundingBoxType Stronghold = register("stronghold");
+    public static final BoundingBoxType MineShaft = register("mineshaft");
+    public static final BoundingBoxType NetherFortress = register("fortress");
+    public static final BoundingBoxType EndCity = register("endcity");
+    public static final BoundingBoxType Mansion = register("mansion");
+    public static final BoundingBoxType Igloo = register("igloo");
+    public static final BoundingBoxType PillagerOutpost = register("pillager_outpost");
+    public static final BoundingBoxType Village = register("village");
+    public static final BoundingBoxType NetherFossil = register("nether_fossil");
+    public static final BoundingBoxType BastionRemnant = register("bastion_remnant");
+    public static final BoundingBoxType RuinedPortal = register("ruined_portal");
 
     private static BoundingBoxType register(String name) {
         return structureTypeMap.computeIfAbsent(name.hashCode(), k -> new BoundingBoxType(name));

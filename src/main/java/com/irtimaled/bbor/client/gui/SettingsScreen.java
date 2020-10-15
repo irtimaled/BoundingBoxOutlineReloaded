@@ -17,7 +17,7 @@ public class SettingsScreen extends ListScreen {
         ClientInterop.displayScreen(new SettingsScreen(null));
     }
 
-    SettingsScreen(Screen lastScreen) {
+    public SettingsScreen(Screen lastScreen) {
         super(lastScreen);
     }
 

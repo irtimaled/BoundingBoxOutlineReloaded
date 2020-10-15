@@ -25,7 +25,7 @@ public class KeyListener {
         CustomKeyBinding keyBinding = new CustomKeyBinding(description, input.getKeyCode());
         keyBindings.add(keyBinding);
 
-        Key key = keyBinding.getKey();
+        Key key = keyBinding.getCustomKey();
         keys.add(key);
         return key;
     }
