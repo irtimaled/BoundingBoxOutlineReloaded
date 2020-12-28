@@ -20,11 +20,12 @@ public class RenderHelper {
         enableDepthTest();
 
         if (ConfigManager.alwaysVisible.get()) {
-            GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT, Minecraft.IS_RUNNING_ON_MAC);
+            disableDepthTest();
         }
     }
 
     public static void afterRender() {
+        enableDepthTest();
         polygonModeFill();
         GlStateManager.enableCull();
         enableTexture();
