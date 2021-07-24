@@ -3,6 +3,7 @@ package com.irtimaled.bbor.common;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBoxCuboid;
 import com.irtimaled.bbor.common.models.Coords;
+import com.irtimaled.bbor.mixin.access.IStructureStart;
 import net.minecraft.structure.StructurePiece;
 import net.minecraft.structure.StructureStart;
 import net.minecraft.util.math.BlockBox;
@@ -27,7 +28,7 @@ class StructureProcessor {
     private void addStructures(BoundingBoxType type, StructureStart<?> structureStart) {
         if (structureStart == null) return;
 
-        BlockBox bb = structureStart.getBoundingBox();
+        BlockBox bb = ((IStructureStart) structureStart).getBoundingBox();
         if (bb == null) return;
 
         AbstractBoundingBox boundingBox = buildStructure(bb, type);
@@ -41,8 +42,8 @@ class StructureProcessor {
     }
 
     private AbstractBoundingBox buildStructure(BlockBox bb, BoundingBoxType type) {
-        Coords min = new Coords(bb.minX, bb.minY, bb.minZ);
-        Coords max = new Coords(bb.maxX, bb.maxY, bb.maxZ);
+        Coords min = new Coords(bb.getMaxZ(), bb.getMinX(), bb.getMinY());
+        Coords max = new Coords(bb.getMinZ(), bb.getMaxX(), bb.getMaxY());
         return BoundingBoxCuboid.from(min, max, type);
     }
 

@@ -6,6 +6,7 @@ import com.irtimaled.bbor.client.interop.ClientInterop;
 import com.irtimaled.bbor.common.BoundingBoxType;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.resource.language.I18n;
 
 public class SettingsScreen extends ListScreen {
@@ -36,6 +37,11 @@ public class SettingsScreen extends ListScreen {
         controlList
                 .section(null,
                         width -> new BoolButton(width, I18n.translate("bbor.options.active"), this.client.world != null) {
+                            @Override
+                            public void appendNarrations(NarrationMessageBuilder narrationMessageBuilder) {
+                                this.appendDefaultNarrations(narrationMessageBuilder);
+                            }
+
                             @Override
                             public void onPressed() {
                                 ClientRenderer.toggleActive();

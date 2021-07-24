@@ -7,6 +7,7 @@ import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.models.Coords;
 import com.irtimaled.bbor.common.models.DimensionId;
 import net.minecraft.block.entity.BeaconBlockEntity;
+import com.irtimaled.bbor.mixin.access.IBeaconBlockEntity;
 
 
 public class BeaconProvider implements IBoundingBoxProvider<BoundingBoxBeacon> {
@@ -18,7 +19,7 @@ public class BeaconProvider implements IBoundingBoxProvider<BoundingBoxBeacon> {
     @Override
     public Iterable<BoundingBoxBeacon> get(DimensionId dimensionId) {
         return TileEntitiesHelper.map(BeaconBlockEntity.class, beacon -> {
-            int levels = beacon.getLevel();
+            int levels = ((IBeaconBlockEntity) beacon).getLevel();
             Coords coords = new Coords(beacon.getPos());
             return BoundingBoxBeacon.from(coords, levels);
         });

@@ -48,10 +48,10 @@ public class CommonInterop {
     }
 
     public static void playerLoggedOut(ServerPlayerEntity player) {
-        EventBus.publish(new PlayerLoggedOut(player.getEntityId()));
+        EventBus.publish(new PlayerLoggedOut(player.getId()));
     }
 
     public static void playerSubscribed(ServerPlayerEntity player) {
-        EventBus.publish(new PlayerSubscribed(player.getEntityId(), new ServerPlayer(player)));
+        EventBus.publish(new PlayerSubscribed(player.getId(), new ServerPlayer(player)));
     }
 }

@@ -1,6 +1,7 @@
 package com.irtimaled.bbor.client.gui;
 
 import com.irtimaled.bbor.client.config.Setting;
+import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.text.LiteralText;
 
@@ -48,5 +49,10 @@ class IntSettingSlider extends AbstractSlider {
     protected void onProgressChanged() {
         this.setting.set(this.getSettingValue());
         updateText();
+    }
+
+    @Override
+    public void appendNarrations(NarrationMessageBuilder narrationMessageBuilder) {
+        this.appendDefaultNarrations(narrationMessageBuilder);
     }
 }

@@ -2,6 +2,7 @@ package com.irtimaled.bbor.client.renderers;
 
 import com.irtimaled.bbor.client.config.ConfigManager;
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import org.lwjgl.opengl.GL11;
 
@@ -13,34 +14,35 @@ public class RenderHelper {
 
     public static void beforeRender() {
         enableBlend();
-        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager._blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         lineWidth2();
         disableTexture();
-        GlStateManager.disableCull();
+        GlStateManager._disableCull();
         enableDepthTest();
 
         if (ConfigManager.alwaysVisible.get()) {
-            GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT, MinecraftClient.IS_SYSTEM_MAC);
+            GlStateManager._clear(GL11.GL_DEPTH_BUFFER_BIT, MinecraftClient.IS_SYSTEM_MAC);
         }
     }
 
     public static void afterRender() {
         polygonModeFill();
-        GlStateManager.enableCull();
+        GlStateManager._enableCull();
         enableTexture();
     }
 
     public static void beforeRenderFont(OffsetPoint offsetPoint) {
-        GlStateManager.pushMatrix();
+        RenderSystem.assertThread(RenderSystem::isOnRenderThread);
+        GL11.glPushMatrix();
         polygonModeFill();
-        GlStateManager.translated(offsetPoint.getX(), offsetPoint.getY() + 0.002D, offsetPoint.getZ());
-        GlStateManager.normal3f(0.0F, 1.0F, 0.0F);
-        GlStateManager.rotatef(0.0F, 0.0F, 1.0F, 0.0F);
-        GlStateManager.rotatef(90.0F, 1.0F, 0.0F, 0.0F);
-        GlStateManager.scalef(-0.0175F, -0.0175F, 0.0175F);
+        GL11.glTranslated(offsetPoint.getX(), offsetPoint.getY() + 0.002D, offsetPoint.getZ());
+        GL11.glNormal3f(0.0F, 1.0F, 0.0F);
+        GL11.glRotatef(0.0F, 0.0F, 1.0F, 0.0F);
+        GL11.glRotatef(90.0F, 1.0F, 0.0F, 0.0F);
+        GL11.glScalef(-0.0175F, -0.0175F, 0.0175F);
         enableTexture();
         enableBlend();
-        GlStateManager.blendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+        GlStateManager._blendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
         depthMaskTrue();
     }
@@ -48,56 +50,63 @@ public class RenderHelper {
     public static void afterRenderFont() {
         disableTexture();
         disableBlend();
-        GlStateManager.popMatrix();
+        RenderSystem.assertThread(RenderSystem::isOnRenderThread);
+        GL11.glPopMatrix();
         enableDepthTest();
     }
 
     public static void disableLighting() {
-        GlStateManager.disableLighting();
+        // TODO disableLighting
+        // GlStateManager._disableLighting();
     }
 
     public static void disableDepthTest() {
-        GlStateManager.disableDepthTest();
+        GlStateManager._disableDepthTest();
     }
 
     public static void enableDepthTest() {
-        GlStateManager.enableDepthTest();
+        GlStateManager._enableDepthTest();
     }
 
     public static void disableFog() {
-        GlStateManager.disableFog();
+        // TODO disableFog
+        // GlStateManager._disableFog();
     }
 
     public static void disableBlend() {
-        GlStateManager.disableBlend();
+        GlStateManager._disableBlend();
     }
 
     public static void enableBlend() {
-        GlStateManager.enableBlend();
+        GlStateManager._enableBlend();
     }
 
     public static void disableAlphaTest() {
-        GlStateManager.disableAlphaTest();
+        // TODO disableAlphaTest
+        // GlStateManager.disableAlphaTest();
     }
 
     public static void enableAlphaTest() {
-        GlStateManager.enableAlphaTest();
+        // TODO enableAlphaTest
+        // GlStateManager.enableAlphaTest();
     }
 
     public static void disableTexture() {
-        GlStateManager.disableTexture();
+        GlStateManager._disableTexture();
     }
 
     public static void enableTexture() {
-        GlStateManager.enableTexture();
+        GlStateManager._enableTexture();
     }
 
     public static void shadeModelSmooth() {
-        GlStateManager.shadeModel(GL11.GL_SMOOTH);
+        RenderSystem.assertThread(RenderSystem::isOnRenderThreadOrInit);
+        GL11.glShadeModel(GL11.GL_SMOOTH);
     }
 
     public static void shadeModelFlat() {
-        GlStateManager.shadeModel(GL11.GL_FLAT);
+        RenderSystem.assertThread(RenderSystem::isOnRenderThreadOrInit);
+        GL11.glShadeModel(GL11.GL_FLAT);
     }
 
     public static void enablePointSmooth() {
@@ -105,27 +114,29 @@ public class RenderHelper {
     }
 
     public static void lineWidth2() {
-        GlStateManager.lineWidth(2f);
+        RenderSystem.assertThread(RenderSystem::isOnRenderThread);
+        GL11.glLineWidth(2f);
     }
 
     public static void polygonModeLine() {
-        GlStateManager.polygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+        GlStateManager._polygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
     }
 
     public static void polygonModeFill() {
-        GlStateManager.polygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
+        GlStateManager._polygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
     }
 
     public static void polygonOffsetMinusOne() {
-        GlStateManager.polygonOffset(-1.f, -1.f);
+        GlStateManager._polygonOffset(-1.f, -1.f);
     }
 
     public static void enablePolygonOffsetLine() {
-        GlStateManager.enableLineOffset();
+        // TODO enablePolygonOffsetLine
+        // GlStateManager.enableLineOffset();
     }
 
     public static void depthMaskTrue() {
-        GlStateManager.depthMask(true);
+        GlStateManager._depthMask(true);
     }
 
     public static void pointSize5() {
@@ -133,14 +144,14 @@ public class RenderHelper {
     }
 
     public static void blendFuncGui() {
-        GlStateManager.blendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ZERO, GL11.GL_ONE);
+        GlStateManager._blendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ZERO, GL11.GL_ONE);
     }
 
     public static void depthFuncAlways() {
-        GlStateManager.depthFunc(GL11.GL_ALWAYS);
+        GlStateManager._depthFunc(GL11.GL_ALWAYS);
     }
 
     public static void depthFuncLessEqual() {
-        GlStateManager.depthFunc(GL11.GL_LEQUAL);
+        GlStateManager._depthFunc(GL11.GL_LEQUAL);
     }
 }

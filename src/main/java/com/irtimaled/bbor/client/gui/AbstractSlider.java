@@ -18,7 +18,7 @@ abstract class AbstractSlider extends AbstractControl {
 
     @Override
     protected void renderBackground(MatrixStack matrixStack, int mouseX, int mouseY) {
-        this.minecraft.getTextureManager().bindTexture(WIDGETS_LOCATION);
+        this.minecraft.getTextureManager().bindTexture(WIDGETS_TEXTURE);
         int hoverState = super.getYImage(this.isHovered());
         this.drawTexture(matrixStack, this.x + (int) getProgressPercentage(), this.y, 0, 46 + hoverState * 20, 4, this.height);
         this.drawTexture(matrixStack, this.x + (int) getProgressPercentage() + 4, this.y, 196, 46 + hoverState * 20, 4, 20);

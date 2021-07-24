@@ -12,7 +12,6 @@ import com.irtimaled.bbor.common.models.DimensionId;
 import net.minecraft.client.util.math.MatrixStack;
 
 import java.util.*;
-import java.util.Set;
 import java.util.stream.Stream;
 
 public class ClientRenderer {

@@ -5,8 +5,9 @@ import com.irtimaled.bbor.common.ReflectionHelper;
 import com.irtimaled.bbor.common.events.StructuresLoaded;
 import com.irtimaled.bbor.common.models.DimensionId;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.structure.StructureManager;
 import net.minecraft.structure.StructurePiece;
 import net.minecraft.structure.StructureStart;
@@ -14,7 +15,11 @@ import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.registry.DynamicRegistryManager;
-import net.minecraft.world.*;
+import net.minecraft.world.FeatureUpdater;
+import net.minecraft.world.HeightLimitView;
+import net.minecraft.world.PersistentStateManager;
+import net.minecraft.world.StructureWorldAccess;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.gen.StructureAccessor;
@@ -25,7 +30,11 @@ import net.minecraft.world.storage.RegionBasedStorage;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 import java.util.function.BiFunction;
 
 class NBTStructureLoader {
@@ -78,9 +87,9 @@ class NBTStructureLoader {
         return this.legacyStructureDataUtil;
     }
 
-    private CompoundTag loadStructureStarts(int chunkX, int chunkZ) {
+    private NbtCompound loadStructureStarts(int chunkX, int chunkZ) {
         try {
-            CompoundTag compound = this.chunkLoader.readChunk(chunkX, chunkZ);
+            NbtCompound compound = this.chunkLoader.readChunk(chunkX, chunkZ);
             if (compound == null) return null;
             int dataVersion = compound.contains("DataVersion", 99) ? compound.getInt("DataVersion") : -1;
             if (dataVersion < 1493) {
@@ -99,12 +108,12 @@ class NBTStructureLoader {
 
         if (!loadedChunks.add(String.format("%s,%s", chunkX, chunkZ))) return;
 
-        CompoundTag structureStarts = loadStructureStarts(chunkX, chunkZ);
+        NbtCompound structureStarts = loadStructureStarts(chunkX, chunkZ);
         if (structureStarts == null || structureStarts.getSize() == 0) return;
 
         Map<String, StructureStart<?>> structureStartMap = new HashMap<>();
         for (String key : structureStarts.getKeys()) {
-            CompoundTag compound = structureStarts.getCompound(key);
+            NbtCompound compound = structureStarts.getCompound(key);
             if (compound.contains("BB")) {
                 structureStartMap.put(key, new SimpleStructureStart(compound));
             }
@@ -114,34 +123,47 @@ class NBTStructureLoader {
     }
 
     private static class SimpleStructureStart extends StructureStart<FeatureConfig> {
-        SimpleStructureStart(CompoundTag compound) {
+        private final BlockBox parsedBoundingBox;
+
+        SimpleStructureStart(NbtCompound compound) {
             super(null,
-                    0,
-                    0,
-                    new BlockBox(compound.getIntArray("BB")),
+                    new ChunkPos(0, 0),
                     0,
                     0);
 
-            ListTag children = compound.getList("Children", 10);
+            this.parsedBoundingBox = create(compound.getIntArray("BB"));
+
+            NbtList children = compound.getList("Children", 10);
             for (int index = 0; index < children.size(); ++index) {
-                CompoundTag child = children.getCompound(index);
+                NbtCompound child = children.getCompound(index);
                 if (child.contains("BB")) this.children.add(new SimpleStructurePiece(child));
             }
         }
 
+        private static BlockBox create(int[] compound) {
+            if (compound.length == 6)
+                return new BlockBox(compound[0], compound[1], compound[2], compound[3], compound[4], compound[5]);
+            else
+                return new BlockBox(0, 0, 0, 0, 0, 0);
+        }
+
         @Override
-        public void init(DynamicRegistryManager dynamicRegistryManager, ChunkGenerator chunkGenerator, StructureManager structureManager, int i, int j, Biome biome, FeatureConfig featureConfig) {
+        public void init(DynamicRegistryManager dynamicRegistryManager, ChunkGenerator chunkGenerator, StructureManager structureManager, ChunkPos chunkPos, Biome biome, FeatureConfig featureConfig, HeightLimitView heightLimitView) {
+        }
+
+        @Override
+        protected BlockBox calculateBoundingBox() {
+            return this.parsedBoundingBox;
         }
     }
 
     private static class SimpleStructurePiece extends StructurePiece {
-        SimpleStructurePiece(CompoundTag compound) {
+        SimpleStructurePiece(NbtCompound compound) {
             super(null, compound);
         }
 
         @Override
-        protected void toNbt(CompoundTag compoundTag) {
-
+        protected void writeNbt(ServerWorld serverWorld, NbtCompound nbtCompound) {
         }
 
         @Override
@@ -160,7 +182,7 @@ class NBTStructureLoader {
             this.regionFileCache = creator.apply(file, false);
         }
 
-        public CompoundTag readChunk(int chunkX, int chunkZ) throws IOException {
+        public NbtCompound readChunk(int chunkX, int chunkZ) throws IOException {
             if (regionFileCache == null) return null;
             return regionFileCache.getTagAt(new ChunkPos(chunkX, chunkZ));
         }

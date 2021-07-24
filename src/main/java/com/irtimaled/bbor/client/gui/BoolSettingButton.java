@@ -2,6 +2,7 @@ package com.irtimaled.bbor.client.gui;
 
 import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.config.Setting;
+import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 
 public class BoolSettingButton extends BoolButton {
     private final Setting<Boolean> setting;
@@ -19,5 +20,11 @@ public class BoolSettingButton extends BoolButton {
     @Override
     protected boolean getValue() {
         return this.setting.get();
+    }
+
+    @Override
+    public void appendNarrations(NarrationMessageBuilder narrationMessageBuilder) {
+        // TODO
+        this.appendDefaultNarrations(narrationMessageBuilder);
     }
 }

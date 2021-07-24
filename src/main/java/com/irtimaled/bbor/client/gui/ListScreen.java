@@ -4,15 +4,18 @@ import com.irtimaled.bbor.Versions;
 import com.irtimaled.bbor.client.interop.ClientInterop;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.resource.language.I18n;
+import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.TranslatableText;
+
+import java.util.List;
 
 public abstract class ListScreen extends Screen {
     private final Screen lastScreen;
     private static final String version = Versions.build;
 
-    private AbstractButton doneButton;
+    private ButtonWidget doneButton;
     private ControlList controlList;
     private SearchField searchField;
 
@@ -33,16 +36,11 @@ public abstract class ListScreen extends Screen {
     protected void init() {
         this.controlList = this.buildList(48, this.height - 28);
         this.searchField = new SearchField(this.textRenderer, this.width / 2 - 100, 22, 200, 20, this.controlList);
-        this.doneButton = new AbstractButton(this.width / 2 - 100, this.height - 24, 200, I18n.translate("gui.done")) {
-            @Override
-            public void onPressed() {
-                onDoneClicked();
-            }
-        };
+        this.doneButton = new ButtonWidget(this.width / 2 - 100, this.height - 24, 200, 20, new TranslatableText("gui.done"), buttonWidget -> onDoneClicked());
 
-        this.children.add(this.searchField);
-        this.children.add(this.controlList);
-        this.children.add(this.doneButton);
+        this.addDrawableChild(this.searchField);
+        ((List<Element>) this.children()).add(this.controlList);
+        this.addDrawableChild(this.doneButton);
     }
 
     protected abstract ControlList buildList(int top, int bottom);
@@ -55,9 +53,9 @@ public abstract class ListScreen extends Screen {
     protected void render(MatrixStack matrixStack, int mouseX, int mouseY) {
         this.controlList.render(matrixStack, mouseX, mouseY);
 
-        this.drawCenteredString(matrixStack, this.textRenderer, this.title.asString(), this.width / 2, 8, 16777215);
+        this.drawCenteredText(matrixStack, this.textRenderer, this.title.asString(), this.width / 2, 8, 16777215);
         this.searchField.render(matrixStack, mouseX, mouseY);
-        this.doneButton.render(matrixStack, mouseX, mouseY);
+        this.doneButton.render(matrixStack, mouseX, mouseY, 0f);
 
         int left = this.width - this.textRenderer.getWidth(version) - 2;
         int top = this.height - 10;

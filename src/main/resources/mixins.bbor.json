@@ -1,11 +1,13 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "compatibilityLevel": "JAVA_8",
+  "compatibilityLevel": "JAVA_16",
   "target": "@env(DEFAULT)",
   "package": "com.irtimaled.bbor.mixin",
   "refmap": "mixins.bbor.refmap.json",
   "mixins": [
+    "access.IBeaconBlockEntity",
+    "access.IStructureStart",
     "network.play.client.MixinCCustomPayloadPacket",
     "server.MixinMinecraftServer",
     "server.management.MixinPlayerList",
@@ -14,6 +16,8 @@
   "client": [
     "client.MixinGameSettings",
     "client.MixinMinecraft",
+    "client.access.IClientChunkManager",
+    "client.access.IClientChunkManagerClientChunkMap",
     "client.entity.player.MixinClientPlayerEntity",
     "client.gui.screen.MixinChatScreen",
     "client.gui.screen.MixinOptionsScreen",

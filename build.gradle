@@ -7,7 +7,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath "net.fabricmc:fabric-loom:0.2.7-SNAPSHOT"
+        classpath "net.fabricmc:fabric-loom:0.8-SNAPSHOT"
     }
 }
 
@@ -19,13 +19,17 @@ group 'com.irtimaled'
 version project.buildVersion + '-' + project.mcVersion
 archivesBaseName = 'BBOutlineReloaded'
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 16
+targetCompatibility = 16
 
 dependencies {
     minecraft 'com.mojang:minecraft:' + project.mcVersion
-    mappings 'net.fabricmc:yarn:' + project.mcVersion + '+build.27'
-    modCompile 'net.fabricmc:fabric-loader:0.9.3+build.207'
+    mappings 'net.fabricmc:yarn:' + project.mcVersion + '+build.29'
+    modImplementation 'net.fabricmc:fabric-loader:0.11.6'
+}
+
+loom {
+    accessWidener "src/main/resources/bbor.accesswidener"
 }
 
 minecraft {
