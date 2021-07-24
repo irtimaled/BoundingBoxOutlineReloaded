@@ -88,6 +88,7 @@ public class ClientRenderer {
     public static void render(MatrixStack matrixStack, DimensionId dimensionId) {
         if (!active) return;
 
+        matrixStack.push();
         RenderHelper.beforeRender();
 
         getBoundingBoxes(dimensionId).forEach(key -> {
@@ -96,6 +97,7 @@ public class ClientRenderer {
         });
 
         RenderHelper.afterRender();
+        matrixStack.pop();
     }
 
     public static void renderDeferred() {

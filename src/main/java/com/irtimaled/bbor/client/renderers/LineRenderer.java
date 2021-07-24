@@ -16,7 +16,7 @@ public class LineRenderer extends AbstractRenderer<BoundingBoxLine> {
         if (boundingBox.getWidth() == 0) {
             OffsetPoint startPoint = new OffsetPoint(boundingBox.getMinPoint()).offset(0, 0.001f, 0);
             OffsetPoint endPoint = new OffsetPoint(boundingBox.getMaxPoint()).offset(0, 0.001f, 0);
-            renderLine(startPoint, endPoint, color);
+            renderLine(matrixStack, startPoint, endPoint, color);
             return;
         }
 
@@ -26,12 +26,14 @@ public class LineRenderer extends AbstractRenderer<BoundingBoxLine> {
 
         RenderHelper.polygonModeLine();
         Renderer.startQuads()
+                .setMatrixStack(matrixStack)
                 .setColor(color)
                 .addPoints(cornerPoints)
                 .render();
 
         if (!ConfigManager.fill.get()) return;
         RenderQueue.deferRendering(() -> Renderer.startQuads()
+                .setMatrixStack(matrixStack)
                 .setColor(color)
                 .setAlpha(30)
                 .addPoints(cornerPoints)

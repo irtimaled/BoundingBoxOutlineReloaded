@@ -1,11 +1,11 @@
 package com.irtimaled.bbor.client.renderers;
 
+import com.irtimaled.bbor.client.Camera;
 import com.irtimaled.bbor.client.config.ConfigManager;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.Matrix3f;
 import net.minecraft.util.math.Quaternion;
 import org.lwjgl.opengl.GL11;
 
@@ -18,9 +18,9 @@ public class RenderHelper {
     public static void beforeRender() {
         enableBlend();
         GlStateManager._blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        lineWidth2();
+        // lineWidth2();
         disableTexture();
-        GlStateManager._disableCull();
+        // GlStateManager._disableCull();
         enableDepthTest();
 
         if (ConfigManager.alwaysVisible.get()) {
@@ -30,7 +30,7 @@ public class RenderHelper {
 
     public static void afterRender() {
         polygonModeFill();
-        GlStateManager._enableCull();
+        // GlStateManager._enableCull();
         enableTexture();
     }
 
@@ -140,10 +140,6 @@ public class RenderHelper {
 
     public static void depthMaskTrue() {
         GlStateManager._depthMask(true);
-    }
-
-    public static void pointSize5() {
-        GL11.glPointSize(5);
     }
 
     public static void blendFuncGui() {

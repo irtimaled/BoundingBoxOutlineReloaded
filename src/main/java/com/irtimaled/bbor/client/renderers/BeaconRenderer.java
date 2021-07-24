@@ -12,9 +12,9 @@ public class BeaconRenderer extends AbstractRenderer<BoundingBoxBeacon> {
     public void render(MatrixStack matrixStack, BoundingBoxBeacon boundingBox) {
         Coords coords = boundingBox.getCoords();
         Color color = BoundingBoxTypeHelper.getColor(boundingBox.getType());
-        renderCuboid(new OffsetBox(coords, coords), color);
+        renderCuboid(matrixStack, new OffsetBox(coords, coords), color);
         if (boundingBox.getLevel() != 0) {
-            renderCuboid(new OffsetBox(boundingBox.getMinCoords(), boundingBox.getMaxCoords()), color);
+            renderCuboid(matrixStack, new OffsetBox(boundingBox.getMinCoords(), boundingBox.getMaxCoords()), color);
         }
     }
 }

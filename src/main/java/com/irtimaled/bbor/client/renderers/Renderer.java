@@ -1,10 +1,13 @@
 package com.irtimaled.bbor.client.renderers;
 
 import com.irtimaled.bbor.client.Camera;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormats;
+import net.minecraft.client.util.math.MatrixStack;
 
 import java.awt.*;
 
@@ -27,17 +30,24 @@ public class Renderer {
         return new Renderer(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE_COLOR);
     }
 
-    private static final Tessellator tessellator = new Tessellator(2097152);
+    private static final Tessellator tessellator = Tessellator.getInstance();
     private static final BufferBuilder bufferBuilder = tessellator.getBuffer();
 
     private int red;
     private int green;
     private int blue;
     private int alpha;
+    private MatrixStack matrixStack;
 
     private Renderer(VertexFormat.DrawMode glMode, VertexFormat vertexFormat) {
         bufferBuilder.begin(glMode, vertexFormat);
         this.glMode = glMode;
+    }
+
+    public Renderer setMatrixStack(MatrixStack stack) {
+        this.matrixStack = stack;
+        matrixStack.push();
+        return this;
     }
 
     public Renderer setColor(Color color) {
@@ -70,9 +80,11 @@ public class Renderer {
     }
 
     Renderer addPoint(double x, double y, double z) {
+        matrixStack.push();
         pos(x, y, z);
         color();
         end();
+        matrixStack.pop();
         return this;
     }
 
@@ -85,14 +97,21 @@ public class Renderer {
     }
 
     public void render() {
-        if (glMode == VertexFormat.DrawMode.QUADS) {
-            bufferBuilder.setCameraPosition((float) Camera.getX(), (float) Camera.getY(), (float) Camera.getZ());
-        }
+        RenderSystem.enableDepthTest();
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        RenderSystem.disableTexture();
+        RenderSystem.disableBlend();
+        RenderSystem.lineWidth(1.0F);
+        bufferBuilder.setCameraPosition(0, 0, 0);
         tessellator.draw();
+        matrixStack.pop();
+        RenderSystem.lineWidth(1.0F);
+        RenderSystem.enableBlend();
+        RenderSystem.enableTexture();
     }
 
     private void pos(double x, double y, double z) {
-        bufferBuilder.vertex(x, y, z);
+        bufferBuilder.vertex(matrixStack.peek().getModel(), (float) x, (float) y, (float) z);
     }
 
     private void tex(double u, double v) {
@@ -100,7 +119,7 @@ public class Renderer {
     }
 
     private void color() {
-        bufferBuilder.color(red, green, blue, alpha);
+        bufferBuilder.color(red / 255F, green / 255F, blue / 255F, alpha / 255F);
     }
 
     private void end() {

@@ -85,6 +85,7 @@ public class SelectableControlList extends ControlList {
             RenderHelper.disableTexture();
             int color = this.isFocused ? 255 : 128;
             Renderer.startTextured()
+                    .setMatrixStack(matrixStack)
                     .setAlpha(255)
                     .setColor(color, color, color)
                     .addPoint((double) this.listLeft - 2, (double) (top + height) - 2, 0.0D, 0.0D, 1.0D)

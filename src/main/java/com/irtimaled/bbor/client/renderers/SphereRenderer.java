@@ -10,6 +10,6 @@ public class SphereRenderer extends AbstractRenderer<BoundingBoxSphere> {
     public void render(MatrixStack matrixStack, BoundingBoxSphere boundingBox) {
         Point point = boundingBox.getPoint();
         double radius = boundingBox.getRadius();
-        renderSphere(point, radius, BoundingBoxTypeHelper.getColor(boundingBox.getType()));
+        renderSphere(matrixStack, point, radius, BoundingBoxTypeHelper.getColor(boundingBox.getType()));
     }
 }

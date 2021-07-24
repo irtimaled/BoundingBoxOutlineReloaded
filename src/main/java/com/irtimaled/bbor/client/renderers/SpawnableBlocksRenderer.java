@@ -15,7 +15,7 @@ public class SpawnableBlocksRenderer extends AbstractRenderer<BoundingBoxSpawnab
             int y = c.getY();
             int z = c.getZ();
             OffsetBox offsetBox = new OffsetBox(x, y, z, x + 1, y, z + 1);
-            renderCuboid(offsetBox, color);
+            renderCuboid(matrixStack, offsetBox, color);
         });
     }
 }

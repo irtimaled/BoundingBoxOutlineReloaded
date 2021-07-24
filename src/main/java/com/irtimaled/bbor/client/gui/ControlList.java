@@ -158,7 +158,7 @@ public class ControlList extends DrawableHelper implements IControlSet {
 
 //        RenderHelper.disableLighting();
 //        RenderHelper.disableFog();
-        if (!transparentBackground) drawListBackground();
+        if (!transparentBackground) drawListBackground(matrixStack);
 
         int listTop = this.top + PADDING - (int) this.amountScrolled;
 
@@ -167,19 +167,19 @@ public class ControlList extends DrawableHelper implements IControlSet {
         RenderHelper.enableDepthTest();
         RenderHelper.depthFuncAlways();
 
-        this.overlayBackground(0, this.top);
-        this.overlayBackground(this.bottom, this.height);
+        this.overlayBackground(matrixStack, 0, this.top);
+        this.overlayBackground(matrixStack, this.bottom, this.height);
         RenderHelper.depthFuncLessEqual();
         RenderHelper.disableDepthTest();
         RenderHelper.enableBlend();
         RenderHelper.blendFuncGui();
         // RenderHelper.shadeModelSmooth();
         RenderHelper.disableTexture();
-        drawOverlayShadows();
+        drawOverlayShadows(matrixStack);
 
         int maxScroll = this.getMaxScroll();
         if (maxScroll > 0) {
-            drawScrollBar(maxScroll);
+            drawScrollBar(matrixStack, maxScroll);
         }
 
         RenderHelper.enableTexture();
@@ -187,9 +187,10 @@ public class ControlList extends DrawableHelper implements IControlSet {
         RenderHelper.disableBlend();
     }
 
-    private void drawListBackground() {
+    private void drawListBackground(MatrixStack matrixStack) {
         this.minecraft.getTextureManager().bindTexture(DrawableHelper.OPTIONS_BACKGROUND_TEXTURE);
         Renderer.startTextured()
+                .setMatrixStack(matrixStack)
                 .setColor(32, 32, 32)
                 .setAlpha(255)
                 .addPoint(0, this.bottom, 0.0D, (float) 0 / 32.0F, (float) (this.bottom + (int) this.amountScrolled) / 32.0F)
@@ -219,9 +220,10 @@ public class ControlList extends DrawableHelper implements IControlSet {
         entry.render(matrixStack, mouseX, mouseY);
     }
 
-    private void overlayBackground(int top, int bottom) {
+    private void overlayBackground(MatrixStack matrixStack, int top, int bottom) {
         this.minecraft.getTextureManager().bindTexture(DrawableHelper.OPTIONS_BACKGROUND_TEXTURE);
         Renderer.startTextured()
+                .setMatrixStack(matrixStack)
                 .setColor(64, 64, 64)
                 .setAlpha(255)
                 .addPoint(0, bottom, -100.0D, 0.0D, (float) bottom / 32.0F)
@@ -231,7 +233,7 @@ public class ControlList extends DrawableHelper implements IControlSet {
                 .render();
     }
 
-    private void drawScrollBar(int maxScroll) {
+    private void drawScrollBar(MatrixStack matrixStack, int maxScroll) {
         int scrollBarHeight = this.getScrollBarHeight();
         int scrollBarTop = (int) this.amountScrolled * (this.listHeight - scrollBarHeight) / maxScroll + this.top;
         if (scrollBarTop < this.top) {
@@ -239,6 +241,7 @@ public class ControlList extends DrawableHelper implements IControlSet {
         }
 
         Renderer.startTextured()
+                .setMatrixStack(matrixStack)
                 .setAlpha(255)
                 .addPoint(this.scrollBarLeft, this.bottom, 0.0D, 0.0D, 1.0D)
                 .addPoint(this.width, this.bottom, 0.0D, 1.0D, 1.0D)
@@ -247,6 +250,7 @@ public class ControlList extends DrawableHelper implements IControlSet {
                 .render();
 
         Renderer.startTextured()
+                .setMatrixStack(matrixStack)
                 .setColor(128, 128, 128)
                 .setAlpha(255)
                 .addPoint(this.scrollBarLeft, scrollBarTop + scrollBarHeight, 0.0D, 0.0D, 1.0D)
@@ -256,6 +260,7 @@ public class ControlList extends DrawableHelper implements IControlSet {
                 .render();
 
         Renderer.startTextured()
+                .setMatrixStack(matrixStack)
                 .setColor(192, 192, 192)
                 .setAlpha(255)
                 .addPoint(this.scrollBarLeft, scrollBarTop + scrollBarHeight - 1, 0.0D, 0.0D, 1.0D)
@@ -265,8 +270,9 @@ public class ControlList extends DrawableHelper implements IControlSet {
                 .render();
     }
 
-    private void drawOverlayShadows() {
+    private void drawOverlayShadows(MatrixStack matrixStack) {
         Renderer.startTextured()
+                .setMatrixStack(matrixStack)
                 .addPoint(0, this.top + 4, 0.0D, 0.0D, 1.0D)
                 .addPoint(this.width, this.top + 4, 0.0D, 1.0D, 1.0D)
                 .setAlpha(255)
@@ -274,6 +280,7 @@ public class ControlList extends DrawableHelper implements IControlSet {
                 .addPoint(0, this.top, 0.0D, 0.0D, 0.0D)
                 .render();
         Renderer.startTextured()
+                .setMatrixStack(matrixStack)
                 .addPoint(this.width, this.bottom - 4, 0.0D, 1.0D, 0.0D)
                 .addPoint(0, this.bottom - 4, 0.0D, 0.0D, 0.0D)
                 .setAlpha(255)

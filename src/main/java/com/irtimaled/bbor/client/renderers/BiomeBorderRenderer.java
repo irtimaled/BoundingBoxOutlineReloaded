@@ -18,23 +18,23 @@ public class BiomeBorderRenderer extends AbstractRenderer<BoundingBoxBiomeBorder
 
         Color color = BoundingBoxTypeHelper.getColor(boundingBox.getType());
         if (boundingBox.renderNorth()) {
-            render(northWest, northEast, color);
+            render(matrixStack, northWest, northEast, color);
         }
         if (boundingBox.renderWest()) {
-            render(northWest, southWest, color);
+            render(matrixStack, northWest, southWest, color);
         }
         if (ConfigManager.renderOnlyCurrentBiome.get()) {
             OffsetPoint southEast = southWest.offset(1, 0, 0);
             if (boundingBox.renderSouth()) {
-                render(southWest, southEast, color);
+                render(matrixStack, southWest, southEast, color);
             }
             if (boundingBox.renderEast()) {
-                render(northEast, southEast, color);
+                render(matrixStack, northEast, southEast, color);
             }
         }
     }
 
-    private void render(OffsetPoint topCorner1, OffsetPoint topCorner2, Color color) {
+    private void render(MatrixStack matrixStack, OffsetPoint topCorner1, OffsetPoint topCorner2, Color color) {
         double xOffset = 0d;
         double zOffset = 0d;
         if (topCorner1.getX() == topCorner2.getX()) {
@@ -46,11 +46,11 @@ public class BiomeBorderRenderer extends AbstractRenderer<BoundingBoxBiomeBorder
         topCorner1 = topCorner1.offset(xOffset, 0, zOffset);
         topCorner2 = topCorner2.offset(xOffset, 0, zOffset);
 
-        renderLine(topCorner1, topCorner2, color);
+        renderLine(matrixStack, topCorner1, topCorner2, color);
         OffsetPoint bottomCorner2 = topCorner2.offset(0, 1, 0);
-        renderFilledFaces(topCorner1, bottomCorner2, color);
+        renderFilledFaces(matrixStack, topCorner1, bottomCorner2, color);
         OffsetPoint bottomCorner1 = topCorner1.offset(0, 1, 0);
-        renderLine(bottomCorner1, bottomCorner2, color);
+        renderLine(matrixStack, bottomCorner1, bottomCorner2, color);
     }
 
     private double getOffset(double value) {

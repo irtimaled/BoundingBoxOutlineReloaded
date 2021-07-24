@@ -4,10 +4,8 @@ import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.models.Point;
 import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 
 import java.awt.*;
@@ -21,20 +19,20 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
 
     public abstract void render(MatrixStack matrixStack, T boundingBox);
 
-    void renderCuboid(OffsetBox bb, Color color) {
+    void renderCuboid(MatrixStack matrixStack, OffsetBox bb, Color color) {
         OffsetBox nudge = bb.nudge();
-        renderOutlinedCuboid(nudge, color);
-        renderFilledFaces(nudge.getMin(), nudge.getMax(), color);
+        renderOutlinedCuboid(matrixStack, nudge, color);
+        renderFilledFaces(matrixStack, nudge.getMin(), nudge.getMax(), color);
     }
 
-    void renderOutlinedCuboid(OffsetBox bb, Color color) {
+    void renderOutlinedCuboid(MatrixStack matrixStack, OffsetBox bb, Color color) {
         RenderHelper.polygonModeLine();
         OffsetPoint min = bb.getMin();
         OffsetPoint max = bb.getMax();
-        renderFaces(min, max, color, 255, min.getY() == max.getY() ? Renderer::startLineLoop : Renderer::startLines);
+        renderFaces(matrixStack, min, max, color, 255, min.getY() == max.getY() ? Renderer::startLineLoop : Renderer::startLines);
     }
 
-    private void renderFaces(OffsetPoint min, OffsetPoint max, Color color, int alpha, Supplier<Renderer> rendererSupplier) {
+    private void renderFaces(MatrixStack matrixStack, OffsetPoint min, OffsetPoint max, Color color, int alpha, Supplier<Renderer> rendererSupplier) {
         double minX = min.getX();
         double minY = min.getY();
         double minZ = min.getZ();
@@ -49,6 +47,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
         }
 
         Renderer renderer = rendererSupplier.get()
+                .setMatrixStack(matrixStack)
                 .setColor(color)
                 .setAlpha(alpha);
 
@@ -99,22 +98,23 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
         return minX < 0 && maxX > 0 && minY < 0 && maxY > 0 && minZ < 0 && maxZ > 0;
     }
 
-    void renderLine(OffsetPoint startPoint, OffsetPoint endPoint, Color color) {
+    void renderLine(MatrixStack matrixStack, OffsetPoint startPoint, OffsetPoint endPoint, Color color) {
         RenderHelper.polygonModeLine();
         Renderer.startLines()
+                .setMatrixStack(matrixStack)
                 .setColor(color)
                 .addPoint(startPoint)
                 .addPoint(endPoint)
                 .render();
     }
 
-    void renderFilledFaces(OffsetPoint min, OffsetPoint max, Color color) {
-        renderFilledFaces(min, max, color, 30);
+    void renderFilledFaces(MatrixStack matrixStack, OffsetPoint min, OffsetPoint max, Color color) {
+        renderFilledFaces(matrixStack, min, max, color, 30);
     }
 
-    void renderFilledFaces(OffsetPoint min, OffsetPoint max, Color color, int alpha) {
+    void renderFilledFaces(MatrixStack matrixStack, OffsetPoint min, OffsetPoint max, Color color, int alpha) {
         if (!ConfigManager.fill.get()) return;
-        RenderQueue.deferRendering(() -> renderFaces(min, max, color, alpha, Renderer::startQuads));
+        RenderQueue.deferRendering(() -> renderFaces(matrixStack, min, max, color, alpha, Renderer::startQuads));
     }
 
     void renderText(MatrixStack matrixStack, OffsetPoint offsetPoint, String... texts) {
@@ -129,15 +129,15 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
         RenderHelper.afterRenderFont(matrixStack);
     }
 
-    void renderSphere(Point center, double radius, Color color) {
+    void renderSphere(MatrixStack matrixStack, Point center, double radius, Color color) {
         if (ConfigManager.renderSphereAsDots.get()) {
-            renderDotSphere(center, radius, color);
+            renderDotSphere(matrixStack, center, radius, color);
         } else {
-            renderLineSphere(center, radius, color);
+            renderLineSphere(matrixStack, center, radius, color);
         }
     }
 
-    private void renderLineSphere(Point center, double radius, Color color) {
+    private void renderLineSphere(MatrixStack matrixStack, Point center, double radius, Color color) {
         RenderHelper.lineWidth2();
 
         double offset = ((radius - (int) radius) == 0) ? center.getY() - (int) center.getY() : 0;
@@ -145,12 +145,13 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
         for (double dy = offset - radius; dy <= radius + 1; dy += dyStep) {
             double circleRadius = Math.sqrt((radius * radius) - (dy * dy));
             if (circleRadius == 0) circleRadius = Math.sqrt(2) / 2;
-            renderCircle(center, circleRadius, color, dy + 0.001F);
+            renderCircle(matrixStack, center, circleRadius, color, dy + 0.001F);
         }
     }
 
-    private void renderCircle(Point center, double radius, Color color, double dy) {
+    private void renderCircle(MatrixStack matrixStack, Point center, double radius, Color color, double dy) {
         Renderer renderer = Renderer.startLineLoop()
+                .setMatrixStack(matrixStack)
                 .setColor(color);
 
         for (double phi = 0.0D; phi < TAU; phi += PHI_SEGMENT) {
@@ -160,10 +161,9 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
         renderer.render();
     }
 
-    private void renderDotSphere(Point center, double radius, Color color) {
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        RenderSystem.setShaderColor(1, 1, 1, 1);
+    private void renderDotSphere(MatrixStack matrixStack, Point center, double radius, Color color) {
         Renderer renderer = Renderer.startQuads()
+                .setMatrixStack(matrixStack)
                 .setColor(color);
 
         for (double phi = 0.0D; phi < TAU; phi += PHI_SEGMENT) {
