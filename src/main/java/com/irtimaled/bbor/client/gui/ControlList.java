@@ -174,7 +174,7 @@ public class ControlList extends DrawableHelper implements IControlSet {
         RenderHelper.enableBlend();
         RenderHelper.blendFuncGui();
         RenderHelper.disableAlphaTest();
-        RenderHelper.shadeModelSmooth();
+        // RenderHelper.shadeModelSmooth();
         RenderHelper.disableTexture();
         drawOverlayShadows();
 
@@ -184,7 +184,7 @@ public class ControlList extends DrawableHelper implements IControlSet {
         }
 
         RenderHelper.enableTexture();
-        RenderHelper.shadeModelFlat();
+        // RenderHelper.shadeModelFlat();
         RenderHelper.enableAlphaTest();
         RenderHelper.disableBlend();
     }
