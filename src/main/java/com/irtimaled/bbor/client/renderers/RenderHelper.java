@@ -56,8 +56,8 @@ public class RenderHelper {
     }
 
     public static void disableLighting() {
-        // TODO disableLighting
-        // GlStateManager._disableLighting();
+        RenderSystem.assertThread(RenderSystem::isOnRenderThread);
+        GL11.glDisable(GL11.GL_LIGHTING);
     }
 
     public static void disableDepthTest() {
@@ -69,8 +69,8 @@ public class RenderHelper {
     }
 
     public static void disableFog() {
-        // TODO disableFog
-        // GlStateManager._disableFog();
+        RenderSystem.assertThread(RenderSystem::isOnRenderThread);
+        GL11.glDisable(GL11.GL_FOG);
     }
 
     public static void disableBlend() {
@@ -82,13 +82,13 @@ public class RenderHelper {
     }
 
     public static void disableAlphaTest() {
-        // TODO disableAlphaTest
-        // GlStateManager.disableAlphaTest();
+        RenderSystem.assertThread(RenderSystem::isOnRenderThread);
+        GL11.glDisable(GL11.GL_ALPHA_TEST);
     }
 
     public static void enableAlphaTest() {
-        // TODO enableAlphaTest
-        // GlStateManager.enableAlphaTest();
+        RenderSystem.assertThread(RenderSystem::isOnRenderThread);
+        GL11.glEnable(GL11.GL_ALPHA_TEST);
     }
 
     public static void disableTexture() {
@@ -131,8 +131,8 @@ public class RenderHelper {
     }
 
     public static void enablePolygonOffsetLine() {
-        // TODO enablePolygonOffsetLine
-        // GlStateManager.enableLineOffset();
+        RenderSystem.assertThread(RenderSystem::isOnRenderThread);
+        GL11.glEnable(GL11.GL_POLYGON_OFFSET_LINE);
     }
 
     public static void depthMaskTrue() {
