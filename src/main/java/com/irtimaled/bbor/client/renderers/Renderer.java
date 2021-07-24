@@ -90,8 +90,7 @@ public class Renderer {
 
     public void render() {
         if (glMode == VertexFormat.DrawMode.QUADS) {
-            // bufferBuilder.sortQuads((float) Camera.getX(), (float) Camera.getY(), (float) Camera.getZ());
-            bufferBuilder.end(); // yes ig
+            bufferBuilder.setCameraPosition((float) Camera.getX(), (float) Camera.getY(), (float) Camera.getZ());
         }
         tessellator.draw();
     }

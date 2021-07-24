@@ -19,7 +19,9 @@ public class TileEntitiesHelper {
         @SuppressWarnings("ConstantConditions") final AtomicReferenceArray<WorldChunk> chunks = ((IClientChunkManagerClientChunkMap) (Object) ((IClientChunkManager) MinecraftClient.getInstance().world.getChunkManager()).getChunks()).getChunks();
         Collection<BlockEntity> tileEntities = new HashSet<>();
         for (int i = 0; i < chunks.length(); i ++) {
-            tileEntities.addAll(chunks.get(i).getBlockEntities().values());
+            final WorldChunk worldChunk = chunks.get(i);
+            if(worldChunk == null) continue;
+            tileEntities.addAll(worldChunk.getBlockEntities().values());
         }
 
         Set<S> results = new HashSet<>();
