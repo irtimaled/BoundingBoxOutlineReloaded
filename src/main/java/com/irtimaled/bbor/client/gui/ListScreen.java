@@ -2,12 +2,14 @@ package com.irtimaled.bbor.client.gui;
 
 import com.irtimaled.bbor.Versions;
 import com.irtimaled.bbor.client.interop.ClientInterop;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
+import org.lwjgl.opengl.GL11;
 
 import java.util.List;
 
@@ -51,6 +53,8 @@ public abstract class ListScreen extends Screen {
     }
 
     protected void render(MatrixStack matrixStack, int mouseX, int mouseY) {
+        RenderSystem.assertThread(RenderSystem::isOnRenderThread);
+        this.renderBackground(matrixStack);
         this.controlList.render(matrixStack, mouseX, mouseY);
 
         this.drawCenteredText(matrixStack, this.textRenderer, this.title.asString(), this.width / 2, 8, 16777215);

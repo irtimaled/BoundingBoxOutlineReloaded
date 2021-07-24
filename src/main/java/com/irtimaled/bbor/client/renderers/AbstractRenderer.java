@@ -4,8 +4,10 @@ import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.models.Point;
 import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 
 import java.awt.*;
@@ -115,16 +117,16 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
         RenderQueue.deferRendering(() -> renderFaces(min, max, color, alpha, Renderer::startQuads));
     }
 
-    void renderText(OffsetPoint offsetPoint, String... texts) {
+    void renderText(MatrixStack matrixStack, OffsetPoint offsetPoint, String... texts) {
         TextRenderer fontRenderer = MinecraftClient.getInstance().textRenderer;
-        RenderHelper.beforeRenderFont(offsetPoint);
+        RenderHelper.beforeRenderFont(matrixStack, offsetPoint);
         float top = -(fontRenderer.fontHeight * texts.length) / 2f;
         for (String text : texts) {
             float left = fontRenderer.getWidth(text) / 2f;
             fontRenderer.draw(new MatrixStack(), text, -left, top, -1);
             top += fontRenderer.fontHeight;
         }
-        RenderHelper.afterRenderFont();
+        RenderHelper.afterRenderFont(matrixStack);
     }
 
     void renderSphere(Point center, double radius, Color color) {
@@ -159,9 +161,9 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
     }
 
     private void renderDotSphere(Point center, double radius, Color color) {
-        RenderHelper.enablePointSmooth();
-        RenderHelper.pointSize5();
-        Renderer renderer = Renderer.startPoints()
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        RenderSystem.setShaderColor(1, 1, 1, 1);
+        Renderer renderer = Renderer.startQuads()
                 .setColor(color);
 
         for (double phi = 0.0D; phi < TAU; phi += PHI_SEGMENT) {

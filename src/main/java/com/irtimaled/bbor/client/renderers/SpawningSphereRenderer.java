@@ -28,7 +28,7 @@ public class SpawningSphereRenderer extends AbstractRenderer<BoundingBoxSpawning
 
         Integer spawnableSpacesCount = boundingBox.getSpawnableSpacesCount();
         if (spawnableSpacesCount != null) {
-            renderText(sphereCenter, I18n.translate("bbor.renderer.spawningSphere.spawnable"),
+            renderText(matrixStack, sphereCenter, I18n.translate("bbor.renderer.spawningSphere.spawnable"),
                     spawnableSpacesCount == 0 ?
                             I18n.translate("bbor.renderer.spawningSphere.none") :
                             String.format("%,d", spawnableSpacesCount));

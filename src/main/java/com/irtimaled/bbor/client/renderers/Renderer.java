@@ -16,15 +16,11 @@ public class Renderer {
     }
 
     static Renderer startLineLoop() {
-        return new Renderer(UnsafeDrawModes.LINE_LOOP, VertexFormats.POSITION_COLOR);
+        return new Renderer(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION_COLOR);
     }
 
     static Renderer startQuads() {
         return new Renderer(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
-    }
-
-    static Renderer startPoints() {
-        return new Renderer(UnsafeDrawModes.POINTS, VertexFormats.POSITION_COLOR);
     }
 
     public static Renderer startTextured() {

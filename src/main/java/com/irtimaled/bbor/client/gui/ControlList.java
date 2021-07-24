@@ -156,8 +156,8 @@ public class ControlList extends DrawableHelper implements IControlSet {
     public void render(MatrixStack matrixStack, int mouseX, int mouseY) {
         this.amountScrolled = MathHelper.clamp(this.amountScrolled, 0.0D, this.getMaxScroll());
 
-        RenderHelper.disableLighting();
-        RenderHelper.disableFog();
+//        RenderHelper.disableLighting();
+//        RenderHelper.disableFog();
         if (!transparentBackground) drawListBackground();
 
         int listTop = this.top + PADDING - (int) this.amountScrolled;
@@ -173,7 +173,6 @@ public class ControlList extends DrawableHelper implements IControlSet {
         RenderHelper.disableDepthTest();
         RenderHelper.enableBlend();
         RenderHelper.blendFuncGui();
-        RenderHelper.disableAlphaTest();
         // RenderHelper.shadeModelSmooth();
         RenderHelper.disableTexture();
         drawOverlayShadows();
@@ -185,7 +184,6 @@ public class ControlList extends DrawableHelper implements IControlSet {
 
         RenderHelper.enableTexture();
         // RenderHelper.shadeModelFlat();
-        RenderHelper.enableAlphaTest();
         RenderHelper.disableBlend();
     }
 
