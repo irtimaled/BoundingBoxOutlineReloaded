@@ -5,8 +5,16 @@ import com.irtimaled.bbor.client.config.ConfigManager;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.VertexBuffer;
+import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.render.Tessellator;
+import net.minecraft.client.render.VertexFormat;
+import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Quaternion;
+import net.minecraft.util.math.Vec3d;
 import org.lwjgl.opengl.GL11;
 
 public class RenderHelper {
@@ -19,8 +27,8 @@ public class RenderHelper {
         enableBlend();
         GlStateManager._blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         // lineWidth2();
-        disableTexture();
-        // GlStateManager._disableCull();
+        // disableTexture();
+        GlStateManager._disableCull();
         enableDepthTest();
 
         if (ConfigManager.alwaysVisible.get()) {
@@ -30,8 +38,8 @@ public class RenderHelper {
 
     public static void afterRender() {
         polygonModeFill();
-        // GlStateManager._enableCull();
-        enableTexture();
+        GlStateManager._enableCull();
+        // enableTexture();
     }
 
     public static void beforeRenderFont(MatrixStack matrixStack, OffsetPoint offsetPoint) {
@@ -152,5 +160,103 @@ public class RenderHelper {
 
     public static void depthFuncLessEqual() {
         GlStateManager._depthFunc(GL11.GL_LEQUAL);
+    }
+
+    public static void drawSolidBox(Box box, VertexBuffer vertexBuffer) {
+        BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
+
+        bufferBuilder.begin(VertexFormat.DrawMode.QUADS,
+                VertexFormats.POSITION);
+
+        bufferBuilder.vertex(box.minX, box.minY, box.minZ).next();
+        bufferBuilder.vertex(box.maxX, box.minY, box.minZ).next();
+        bufferBuilder.vertex(box.maxX, box.minY, box.maxZ).next();
+        bufferBuilder.vertex(box.minX, box.minY, box.maxZ).next();
+
+        bufferBuilder.vertex(box.minX, box.maxY, box.minZ).next();
+        bufferBuilder.vertex(box.minX, box.maxY, box.maxZ).next();
+        bufferBuilder.vertex(box.maxX, box.maxY, box.maxZ).next();
+        bufferBuilder.vertex(box.maxX, box.maxY, box.minZ).next();
+
+        bufferBuilder.vertex(box.minX, box.minY, box.minZ).next();
+        bufferBuilder.vertex(box.minX, box.maxY, box.minZ).next();
+        bufferBuilder.vertex(box.maxX, box.maxY, box.minZ).next();
+        bufferBuilder.vertex(box.maxX, box.minY, box.minZ).next();
+
+        bufferBuilder.vertex(box.maxX, box.minY, box.minZ).next();
+        bufferBuilder.vertex(box.maxX, box.maxY, box.minZ).next();
+        bufferBuilder.vertex(box.maxX, box.maxY, box.maxZ).next();
+        bufferBuilder.vertex(box.maxX, box.minY, box.maxZ).next();
+
+        bufferBuilder.vertex(box.minX, box.minY, box.maxZ).next();
+        bufferBuilder.vertex(box.maxX, box.minY, box.maxZ).next();
+        bufferBuilder.vertex(box.maxX, box.maxY, box.maxZ).next();
+        bufferBuilder.vertex(box.minX, box.maxY, box.maxZ).next();
+
+        bufferBuilder.vertex(box.minX, box.minY, box.minZ).next();
+        bufferBuilder.vertex(box.minX, box.minY, box.maxZ).next();
+        bufferBuilder.vertex(box.minX, box.maxY, box.maxZ).next();
+        bufferBuilder.vertex(box.minX, box.maxY, box.minZ).next();
+
+        bufferBuilder.end();
+
+        vertexBuffer.upload(bufferBuilder);
+    }
+
+    public static void drawOutlinedBox(Box bb, VertexBuffer vertexBuffer) {
+        BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
+
+        bufferBuilder.begin(VertexFormat.DrawMode.DEBUG_LINES,
+                VertexFormats.POSITION);
+
+        bufferBuilder.vertex(bb.minX, bb.minY, bb.minZ).next();
+        bufferBuilder.vertex(bb.maxX, bb.minY, bb.minZ).next();
+
+        bufferBuilder.vertex(bb.maxX, bb.minY, bb.minZ).next();
+        bufferBuilder.vertex(bb.maxX, bb.minY, bb.maxZ).next();
+
+        bufferBuilder.vertex(bb.maxX, bb.minY, bb.maxZ).next();
+        bufferBuilder.vertex(bb.minX, bb.minY, bb.maxZ).next();
+
+        bufferBuilder.vertex(bb.minX, bb.minY, bb.maxZ).next();
+        bufferBuilder.vertex(bb.minX, bb.minY, bb.minZ).next();
+
+        bufferBuilder.vertex(bb.minX, bb.minY, bb.minZ).next();
+        bufferBuilder.vertex(bb.minX, bb.maxY, bb.minZ).next();
+
+        bufferBuilder.vertex(bb.maxX, bb.minY, bb.minZ).next();
+        bufferBuilder.vertex(bb.maxX, bb.maxY, bb.minZ).next();
+
+        bufferBuilder.vertex(bb.maxX, bb.minY, bb.maxZ).next();
+        bufferBuilder.vertex(bb.maxX, bb.maxY, bb.maxZ).next();
+
+        bufferBuilder.vertex(bb.minX, bb.minY, bb.maxZ).next();
+        bufferBuilder.vertex(bb.minX, bb.maxY, bb.maxZ).next();
+
+        bufferBuilder.vertex(bb.minX, bb.maxY, bb.minZ).next();
+        bufferBuilder.vertex(bb.maxX, bb.maxY, bb.minZ).next();
+
+        bufferBuilder.vertex(bb.maxX, bb.maxY, bb.minZ).next();
+        bufferBuilder.vertex(bb.maxX, bb.maxY, bb.maxZ).next();
+
+        bufferBuilder.vertex(bb.maxX, bb.maxY, bb.maxZ).next();
+        bufferBuilder.vertex(bb.minX, bb.maxY, bb.maxZ).next();
+
+        bufferBuilder.vertex(bb.minX, bb.maxY, bb.maxZ).next();
+        bufferBuilder.vertex(bb.minX, bb.maxY, bb.minZ).next();
+
+        bufferBuilder.end();
+
+        vertexBuffer.upload(bufferBuilder);
+    }
+
+    public static void applyRegionalRenderOffset(MatrixStack matrixStack)
+    {
+
+        int regionX = (((int) Camera.getX()) >> 9) * 512;
+        int regionZ = (((int) Camera.getZ()) >> 9) * 512;
+
+        matrixStack.translate(regionX - Camera.getX(), -Camera.getY(),
+                regionZ - Camera.getZ());
     }
 }

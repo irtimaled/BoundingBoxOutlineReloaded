@@ -20,15 +20,15 @@ class OffsetPoint {
     }
 
     double getX() {
-        return point.getX() - Camera.getX();
+        return point.getX();
     }
 
     double getY() {
-        return point.getY() - Camera.getY();
+        return point.getY();
     }
 
     double getZ() {
-        return point.getZ() - Camera.getZ();
+        return point.getZ();
     }
 
     OffsetPoint offset(double x, double y, double z) {

@@ -29,8 +29,7 @@ public class ClientInterop {
         EventBus.publish(new DisconnectedFromRemoteServer());
     }
 
-    public static void render(MatrixStack matrixStack, float partialTicks, ClientPlayerEntity player) {
-        Player.setPosition(partialTicks, player);
+    public static void render(MatrixStack matrixStack, ClientPlayerEntity player) {
         ClientRenderer.render(matrixStack, DimensionId.from(player.getEntityWorld().getRegistryKey()));
     }
 

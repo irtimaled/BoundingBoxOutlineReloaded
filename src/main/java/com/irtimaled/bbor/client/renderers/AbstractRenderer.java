@@ -1,15 +1,23 @@
 package com.irtimaled.bbor.client.renderers;
 
+import com.irtimaled.bbor.client.Camera;
 import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.models.Point;
 import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gl.VertexBuffer;
+import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.render.Shader;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Matrix4f;
+import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
-import java.util.function.Supplier;
 
 public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
     private static final double TAU = 6.283185307179586D;
@@ -17,85 +25,65 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
     private static final double PI = TAU / 2D;
     public static final double THETA_SEGMENT = PHI_SEGMENT / 2D;
 
+    private final VertexBuffer solidBox = new VertexBuffer();
+    private final VertexBuffer outlinedBox = new VertexBuffer();
+
+    {
+        final Box box = new Box(BlockPos.ORIGIN);
+        RenderHelper.drawSolidBox(box, solidBox);
+        RenderHelper.drawOutlinedBox(box, outlinedBox);
+    }
+
     public abstract void render(MatrixStack matrixStack, T boundingBox);
 
     void renderCuboid(MatrixStack matrixStack, OffsetBox bb, Color color) {
-        OffsetBox nudge = bb.nudge();
-        renderOutlinedCuboid(matrixStack, nudge, color);
-        renderFilledFaces(matrixStack, nudge.getMin(), nudge.getMax(), color);
+        OffsetBox nudge = bb;
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glEnable(GL11.GL_LINE_SMOOTH);
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+
+        matrixStack.push();
+
+        renderCuboidSolid(matrixStack, nudge, color);
+
+        matrixStack.pop();
+
+        RenderSystem.setShaderColor(1, 1, 1, 1);
+        GL11.glDisable(GL11.GL_BLEND);
+        GL11.glDisable(GL11.GL_LINE_SMOOTH);
     }
 
-    void renderOutlinedCuboid(MatrixStack matrixStack, OffsetBox bb, Color color) {
-        RenderHelper.polygonModeLine();
-        OffsetPoint min = bb.getMin();
-        OffsetPoint max = bb.getMax();
-        renderFaces(matrixStack, min, max, color, 255, min.getY() == max.getY() ? Renderer::startLineLoop : Renderer::startLines);
-    }
-
-    private void renderFaces(MatrixStack matrixStack, OffsetPoint min, OffsetPoint max, Color color, int alpha, Supplier<Renderer> rendererSupplier) {
-        double minX = min.getX();
-        double minY = min.getY();
-        double minZ = min.getZ();
-
-        double maxX = max.getX();
-        double maxY = max.getY();
-        double maxZ = max.getZ();
-
+    protected void renderCuboidSolid(MatrixStack stack, OffsetBox nudge, Color color) {
         if (ConfigManager.invertBoxColorPlayerInside.get() &&
-                playerInsideBoundingBox(minX, minY, minZ, maxX, maxY, maxZ)) {
+                playerInsideBoundingBox(nudge)) {
             color = new Color(255 - color.getRed(), 255 - color.getGreen(), 255 - color.getBlue());
         }
+        stack.push();
+        int regionX = (((int) Camera.getX()) >> 9) * 512;
+        int regionZ = (((int) Camera.getZ()) >> 9) * 512;
+        RenderHelper.applyRegionalRenderOffset(stack);
+        RenderSystem.setShader(GameRenderer::getPositionShader);
+        stack.translate(nudge.getMin().getX() - regionX, nudge.getMin().getY(), nudge.getMin().getZ() - regionZ);
+        stack.scale((float) (nudge.getMax().getX() - nudge.getMin().getX()),
+                (float) (nudge.getMax().getY() - nudge.getMin().getY()),
+                (float) (nudge.getMax().getZ() - nudge.getMin().getZ()));
 
-        Renderer renderer = rendererSupplier.get()
-                .setMatrixStack(matrixStack)
-                .setColor(color)
-                .setAlpha(alpha);
+        Matrix4f viewMatrix = stack.peek().getModel();
+        Matrix4f projMatrix = RenderSystem.getProjectionMatrix();
+        Shader shader = RenderSystem.getShader();
+        RenderSystem.setShaderColor(color.getRed() / 255F, color.getGreen() / 255F, color.getRed() / 255F, 0.25F);
+        solidBox.setShader(viewMatrix, projMatrix, shader);
+        RenderSystem.setShaderColor(color.getRed() / 255F, color.getGreen() / 255F, color.getRed() / 255F, 0.5F);
+        outlinedBox.setShader(viewMatrix, projMatrix, shader);
 
-        if (minX != maxX && minZ != maxZ) {
-            renderer.addPoint(minX, minY, minZ)
-                    .addPoint(maxX, minY, minZ)
-                    .addPoint(maxX, minY, maxZ)
-                    .addPoint(minX, minY, maxZ);
-
-            if (minY != maxY) {
-                renderer.addPoint(minX, maxY, minZ)
-                        .addPoint(maxX, maxY, minZ)
-                        .addPoint(maxX, maxY, maxZ)
-                        .addPoint(minX, maxY, maxZ);
-            }
-        }
-
-        if (minX != maxX && minY != maxY) {
-            renderer.addPoint(minX, minY, maxZ)
-                    .addPoint(minX, maxY, maxZ)
-                    .addPoint(maxX, maxY, maxZ)
-                    .addPoint(maxX, minY, maxZ);
-
-            if (minZ != maxZ) {
-                renderer.addPoint(minX, minY, minZ)
-                        .addPoint(minX, maxY, minZ)
-                        .addPoint(maxX, maxY, minZ)
-                        .addPoint(maxX, minY, minZ);
-            }
-        }
-        if (minY != maxY && minZ != maxZ) {
-            renderer.addPoint(minX, minY, minZ)
-                    .addPoint(minX, minY, maxZ)
-                    .addPoint(minX, maxY, maxZ)
-                    .addPoint(minX, maxY, minZ);
-
-            if (minX != maxX) {
-                renderer.addPoint(maxX, minY, minZ)
-                        .addPoint(maxX, minY, maxZ)
-                        .addPoint(maxX, maxY, maxZ)
-                        .addPoint(maxX, maxY, minZ);
-            }
-        }
-        renderer.render();
+        stack.pop();
     }
 
-    private boolean playerInsideBoundingBox(double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
-        return minX < 0 && maxX > 0 && minY < 0 && maxY > 0 && minZ < 0 && maxZ > 0;
+    private boolean playerInsideBoundingBox(OffsetBox nudge) {
+        return nudge.getMin().getX() < 0 && nudge.getMax().getX() > 0 &&
+                nudge.getMin().getY() < 0 && nudge.getMax().getY() > 0 &&
+                nudge.getMin().getZ() < 0 && nudge.getMax().getZ() > 0;
     }
 
     void renderLine(MatrixStack matrixStack, OffsetPoint startPoint, OffsetPoint endPoint, Color color) {
@@ -114,7 +102,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
 
     void renderFilledFaces(MatrixStack matrixStack, OffsetPoint min, OffsetPoint max, Color color, int alpha) {
         if (!ConfigManager.fill.get()) return;
-        RenderQueue.deferRendering(() -> renderFaces(matrixStack, min, max, color, alpha, Renderer::startQuads));
+        // RenderQueue.deferRendering(() -> renderFaces(matrixStack, min, max, color, alpha, Renderer::startQuads));
     }
 
     void renderText(MatrixStack matrixStack, OffsetPoint offsetPoint, String... texts) {
