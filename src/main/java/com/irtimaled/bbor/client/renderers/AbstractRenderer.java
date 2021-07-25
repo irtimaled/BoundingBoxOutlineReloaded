@@ -9,8 +9,13 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gl.VertexBuffer;
+import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.render.BufferRenderer;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.Shader;
+import net.minecraft.client.render.Tessellator;
+import net.minecraft.client.render.VertexFormat;
+import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
@@ -42,6 +47,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
         GL11.glEnable(GL11.GL_LINE_SMOOTH);
         GL11.glEnable(GL11.GL_CULL_FACE);
         GL11.glDisable(GL11.GL_DEPTH_TEST);
+        RenderHelper.polygonModeFill();
         matrixStack.push();
 
         RenderHelper.applyRegionalRenderOffset(matrixStack);
@@ -88,12 +94,39 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
 
     void renderLine(MatrixStack matrixStack, OffsetPoint startPoint, OffsetPoint endPoint, Color color) {
         RenderHelper.polygonModeLine();
-        Renderer.startLines()
-                .setMatrixStack(matrixStack)
-                .setColor(color)
-                .addPoint(startPoint)
-                .addPoint(endPoint)
-                .render();
+        GL11.glEnable(GL11.GL_LINE_SMOOTH);
+        GL11.glEnable(GL11.GL_CULL_FACE);
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        matrixStack.push();
+
+        RenderHelper.applyRegionalRenderOffset(matrixStack);
+        RenderSystem.setShader(GameRenderer::getPositionShader);
+        RenderSystem.setShaderColor(color.getRed() / 255F, color.getGreen() / 255F, color.getRed() / 255F, 0.55f);
+        int regionX = (((int) Camera.getX()) >> 9) * 512;
+        int regionZ = (((int) Camera.getZ()) >> 9) * 512;
+
+        BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
+        bufferBuilder.begin(VertexFormat.DrawMode.DEBUG_LINES,
+                VertexFormats.POSITION);
+        bufferBuilder
+                .vertex(matrixStack.peek().getModel(),
+                        (float) startPoint.getX() - regionX,
+                        (float) startPoint.getY(),
+                        (float) startPoint.getZ() - regionZ)
+                .next();
+        bufferBuilder
+                .vertex(matrixStack.peek().getModel(),
+                        (float) endPoint.getX() - regionX,
+                        (float) endPoint.getY(),
+                        (float) endPoint.getZ() - regionZ)
+                .next();
+        bufferBuilder.end();
+        BufferRenderer.draw(bufferBuilder);
+
+        matrixStack.pop();
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GL11.glDisable(GL11.GL_LINE_SMOOTH);
+        RenderSystem.setShaderColor(1, 1, 1, 1);
     }
 
     void renderText(MatrixStack matrixStack, OffsetPoint offsetPoint, String... texts) {
