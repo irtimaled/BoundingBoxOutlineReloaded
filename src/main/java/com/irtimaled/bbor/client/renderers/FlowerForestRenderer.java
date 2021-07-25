@@ -11,8 +11,8 @@ public class FlowerForestRenderer extends AbstractRenderer<BoundingBoxFlowerFore
         int x = coords.getX();
         int y = coords.getY();
         int z = coords.getZ();
-        renderFilledFaces(matrixStack, new OffsetPoint(x, y + 0.01d, z),
-                new OffsetPoint(x + 1, y + 0.01d, z + 1),
-                boundingBox.getColor(), 127);
+        renderCuboid(matrixStack, new OffsetBox(new OffsetPoint(x, y + 0.01d, z),
+                        new OffsetPoint(x + 1, y + 0.01d, z + 1)),
+                boundingBox.getColor()/*, 127 alpha*/);
     }
 }

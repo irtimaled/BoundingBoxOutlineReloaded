@@ -96,15 +96,6 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
                 .render();
     }
 
-    void renderFilledFaces(MatrixStack matrixStack, OffsetPoint min, OffsetPoint max, Color color) {
-        renderFilledFaces(matrixStack, min, max, color, 30);
-    }
-
-    void renderFilledFaces(MatrixStack matrixStack, OffsetPoint min, OffsetPoint max, Color color, int alpha) {
-        if (!ConfigManager.fill.get()) return;
-        // RenderQueue.deferRendering(() -> renderFaces(matrixStack, min, max, color, alpha, Renderer::startQuads));
-    }
-
     void renderText(MatrixStack matrixStack, OffsetPoint offsetPoint, String... texts) {
         TextRenderer fontRenderer = MinecraftClient.getInstance().textRenderer;
         RenderHelper.beforeRenderFont(matrixStack, offsetPoint);
