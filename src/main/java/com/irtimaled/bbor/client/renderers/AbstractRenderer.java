@@ -37,21 +37,20 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
     public abstract void render(MatrixStack matrixStack, T boundingBox);
 
     void renderCuboid(MatrixStack matrixStack, OffsetBox bb, Color color) {
-        OffsetBox nudge = bb;
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glEnable(GL11.GL_LINE_SMOOTH);
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        OffsetBox nudge = bb.nudge();
 
+        GL11.glEnable(GL11.GL_LINE_SMOOTH);
+        GL11.glEnable(GL11.GL_CULL_FACE);
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
         matrixStack.push();
 
+        RenderHelper.applyRegionalRenderOffset(matrixStack);
         renderCuboidSolid(matrixStack, nudge, color);
 
         matrixStack.pop();
-
-        RenderSystem.setShaderColor(1, 1, 1, 1);
-        GL11.glDisable(GL11.GL_BLEND);
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glDisable(GL11.GL_LINE_SMOOTH);
+        RenderSystem.setShaderColor(1, 1, 1, 1);
     }
 
     protected void renderCuboidSolid(MatrixStack stack, OffsetBox nudge, Color color) {
@@ -62,7 +61,6 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
         stack.push();
         int regionX = (((int) Camera.getX()) >> 9) * 512;
         int regionZ = (((int) Camera.getZ()) >> 9) * 512;
-        RenderHelper.applyRegionalRenderOffset(stack);
         RenderSystem.setShader(GameRenderer::getPositionShader);
         stack.translate(nudge.getMin().getX() - regionX, nudge.getMin().getY(), nudge.getMin().getZ() - regionZ);
         stack.scale((float) (nudge.getMax().getX() - nudge.getMin().getX()),
@@ -72,9 +70,11 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
         Matrix4f viewMatrix = stack.peek().getModel();
         Matrix4f projMatrix = RenderSystem.getProjectionMatrix();
         Shader shader = RenderSystem.getShader();
-        RenderSystem.setShaderColor(color.getRed() / 255F, color.getGreen() / 255F, color.getRed() / 255F, 0.25F);
-        solidBox.setShader(viewMatrix, projMatrix, shader);
-        RenderSystem.setShaderColor(color.getRed() / 255F, color.getGreen() / 255F, color.getRed() / 255F, 0.5F);
+        if (ConfigManager.fill.get()) {
+            RenderSystem.setShaderColor(color.getRed() / 255F, color.getGreen() / 255F, color.getRed() / 255F, 0.3F);
+            solidBox.setShader(viewMatrix, projMatrix, shader);
+        }
+        RenderSystem.setShaderColor(color.getRed() / 255F, color.getGreen() / 255F, color.getRed() / 255F, 0.6F);
         outlinedBox.setShader(viewMatrix, projMatrix, shader);
 
         stack.pop();

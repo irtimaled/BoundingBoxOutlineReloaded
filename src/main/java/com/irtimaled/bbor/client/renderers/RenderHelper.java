@@ -26,10 +26,10 @@ public class RenderHelper {
     public static void beforeRender() {
         enableBlend();
         GlStateManager._blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        // lineWidth2();
+        polygonModeFill();
         // disableTexture();
-        GlStateManager._disableCull();
-        enableDepthTest();
+        // GlStateManager._disableCull();
+        // enableDepthTest();
 
         if (ConfigManager.alwaysVisible.get()) {
             GlStateManager._clear(GL11.GL_DEPTH_BUFFER_BIT, MinecraftClient.IS_SYSTEM_MAC);
@@ -37,8 +37,8 @@ public class RenderHelper {
     }
 
     public static void afterRender() {
-        polygonModeFill();
-        GlStateManager._enableCull();
+        // GlStateManager._enableCull();
+        // disableDepthTest();
         // enableTexture();
     }
 
