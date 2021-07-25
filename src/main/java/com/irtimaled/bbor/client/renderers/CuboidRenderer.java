@@ -8,6 +8,6 @@ public class CuboidRenderer extends AbstractRenderer<BoundingBoxCuboid> {
     @Override
     public void render(MatrixStack matrixStack, BoundingBoxCuboid boundingBox) {
         OffsetBox bb = new OffsetBox(boundingBox.getMinCoords(), boundingBox.getMaxCoords());
-        renderCuboid(matrixStack, bb, BoundingBoxTypeHelper.getColor(boundingBox.getType()));
+        renderCuboid(matrixStack, bb, BoundingBoxTypeHelper.getColor(boundingBox.getType()), false);
     }
 }

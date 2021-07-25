@@ -13,14 +13,14 @@ public class SlimeChunkRenderer extends AbstractRenderer<BoundingBoxSlimeChunk> 
     public void render(MatrixStack matrixStack, BoundingBoxSlimeChunk boundingBox) {
         OffsetBox bb = new OffsetBox(boundingBox.getMinCoords(), boundingBox.getMaxCoords());
         Color color = BoundingBoxTypeHelper.getColor(boundingBox.getType());
-        renderCuboid(matrixStack, bb, color);
+        renderCuboid(matrixStack, bb, color, false);
 
         double maxY = Player.getMaxY(ConfigManager.slimeChunkMaxY.get());
         double dY = maxY - 39;
         if (dY > 0) {
             OffsetPoint min = bb.getMin().offset(0, 38, 0);
             OffsetPoint max = bb.getMax().offset(0, dY, 0);
-            renderCuboid(matrixStack, new OffsetBox(min, max), color);
+            renderCuboid(matrixStack, new OffsetBox(min, max), color, false);
         }
     }
 }

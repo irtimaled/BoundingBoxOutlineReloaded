@@ -16,7 +16,7 @@ public class MobSpawnerRenderer extends AbstractRenderer<BoundingBoxMobSpawner> 
         Coords coords = boundingBox.getCoords();
         Color color = BoundingBoxTypeHelper.getColor(boundingBox.getType());
 
-        renderCuboid(matrixStack, new OffsetBox(coords, coords), color);
+        renderCuboid(matrixStack, new OffsetBox(coords, coords), color, false);
 
         if (ConfigManager.renderMobSpawnerActivationLines.get()) {
             renderActivationLine(matrixStack, new OffsetPoint(coords).offset(0.5, 0.5, 0.5));
@@ -24,7 +24,7 @@ public class MobSpawnerRenderer extends AbstractRenderer<BoundingBoxMobSpawner> 
 
         if (ConfigManager.renderMobSpawnerSpawnArea.get()) {
             OffsetBox bb = new OffsetBox(boundingBox.getMinCoords(), boundingBox.getMaxCoords());
-            renderCuboid(matrixStack, bb, color);
+            renderCuboid(matrixStack, bb, color, false);
         }
     }
 

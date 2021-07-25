@@ -3,8 +3,15 @@ package com.irtimaled.bbor.client.gui;
 import com.irtimaled.bbor.client.renderers.RenderHelper;
 import com.irtimaled.bbor.client.renderers.Renderer;
 import com.irtimaled.bbor.common.MathHelper;
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.render.Tessellator;
+import net.minecraft.client.render.VertexFormat;
+import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.util.math.MatrixStack;
 
 import java.util.ArrayList;
@@ -156,10 +163,6 @@ public class ControlList extends DrawableHelper implements IControlSet {
     public void render(MatrixStack matrixStack, int mouseX, int mouseY) {
         this.amountScrolled = MathHelper.clamp(this.amountScrolled, 0.0D, this.getMaxScroll());
 
-//        RenderHelper.disableLighting();
-//        RenderHelper.disableFog();
-        if (!transparentBackground) drawListBackground(matrixStack);
-
         int listTop = this.top + PADDING - (int) this.amountScrolled;
 
         drawEntries(matrixStack, mouseX, mouseY, listTop);
@@ -167,19 +170,19 @@ public class ControlList extends DrawableHelper implements IControlSet {
         RenderHelper.enableDepthTest();
         RenderHelper.depthFuncAlways();
 
-        this.overlayBackground(matrixStack, 0, this.top);
-        this.overlayBackground(matrixStack, this.bottom, this.height);
+        this.overlayBackground(0, this.top);
+        this.overlayBackground(this.bottom, this.height);
         RenderHelper.depthFuncLessEqual();
         RenderHelper.disableDepthTest();
         RenderHelper.enableBlend();
         RenderHelper.blendFuncGui();
         // RenderHelper.shadeModelSmooth();
         RenderHelper.disableTexture();
-        drawOverlayShadows(matrixStack);
+        drawOverlayShadows();
 
         int maxScroll = this.getMaxScroll();
         if (maxScroll > 0) {
-            drawScrollBar(matrixStack, maxScroll);
+            drawScrollBar(maxScroll);
         }
 
         RenderHelper.enableTexture();
@@ -220,73 +223,93 @@ public class ControlList extends DrawableHelper implements IControlSet {
         entry.render(matrixStack, mouseX, mouseY);
     }
 
-    private void overlayBackground(MatrixStack matrixStack, int top, int bottom) {
-        this.minecraft.getTextureManager().bindTexture(DrawableHelper.OPTIONS_BACKGROUND_TEXTURE);
-        Renderer.startTextured()
-                .setMatrixStack(matrixStack)
-                .setColor(64, 64, 64)
-                .setAlpha(255)
-                .addPoint(0, bottom, -100.0D, 0.0D, (float) bottom / 32.0F)
-                .addPoint(this.width, bottom, -100.0D, (float) this.width / 32.0F, (float) bottom / 32.0F)
-                .addPoint(this.width, top, -100.0D, (float) this.width / 32.0F, (float) top / 32.0F)
-                .addPoint(0, top, -100.0D, 0.0D, (float) top / 32.0F)
-                .render();
+    private void overlayBackground(int top, int bottom) {
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferBuilder = tessellator.getBuffer();
+        RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
+        RenderSystem.setShaderTexture(0, DrawableHelper.OPTIONS_BACKGROUND_TEXTURE);
+
+        bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE_COLOR);
+        bufferBuilder
+                .vertex(0, bottom, -100.0D)
+                .texture(0.0F, (float) bottom / 32.0F)
+                .color(64, 64, 64, 255)
+                .next();
+        bufferBuilder
+                .vertex(this.width, bottom, -100.0D)
+                .texture((float) this.width / 32.0F, (float) bottom / 32.0F)
+                .color(64, 64, 64, 255)
+                .next();
+        bufferBuilder
+                .vertex(this.width, top, -100.0D)
+                .texture((float) this.width / 32.0F, (float) top / 32.0F)
+                .color(64, 64, 64, 255)
+                .next();
+        bufferBuilder
+                .vertex(0, top, -100.0D)
+                .texture(0.0f, (float) top / 32.0F)
+                .color(64, 64, 64, 255)
+                .next();
+        tessellator.draw();
     }
 
-    private void drawScrollBar(MatrixStack matrixStack, int maxScroll) {
+    private void drawScrollBar(int maxScroll) {
         int scrollBarHeight = this.getScrollBarHeight();
         int scrollBarTop = (int) this.amountScrolled * (this.listHeight - scrollBarHeight) / maxScroll + this.top;
         if (scrollBarTop < this.top) {
             scrollBarTop = this.top;
         }
 
-        Renderer.startTextured()
-                .setMatrixStack(matrixStack)
-                .setAlpha(255)
-                .addPoint(this.scrollBarLeft, this.bottom, 0.0D, 0.0D, 1.0D)
-                .addPoint(this.width, this.bottom, 0.0D, 1.0D, 1.0D)
-                .addPoint(this.width, this.top, 0.0D, 1.0D, 0.0D)
-                .addPoint(this.scrollBarLeft, this.top, 0.0D, 0.0D, 0.0D)
-                .render();
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferBuilder = tessellator.getBuffer();
+        RenderSystem.disableTexture();
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
-        Renderer.startTextured()
-                .setMatrixStack(matrixStack)
-                .setColor(128, 128, 128)
-                .setAlpha(255)
-                .addPoint(this.scrollBarLeft, scrollBarTop + scrollBarHeight, 0.0D, 0.0D, 1.0D)
-                .addPoint(this.width, scrollBarTop + scrollBarHeight, 0.0D, 1.0D, 1.0D)
-                .addPoint(this.width, scrollBarTop, 0.0D, 1.0D, 0.0D)
-                .addPoint(this.scrollBarLeft, scrollBarTop, 0.0D, 0.0D, 0.0D)
-                .render();
+        bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
 
-        Renderer.startTextured()
-                .setMatrixStack(matrixStack)
-                .setColor(192, 192, 192)
-                .setAlpha(255)
-                .addPoint(this.scrollBarLeft, scrollBarTop + scrollBarHeight - 1, 0.0D, 0.0D, 1.0D)
-                .addPoint(this.width - 1, scrollBarTop + scrollBarHeight - 1, 0.0D, 1.0D, 1.0D)
-                .addPoint(this.width - 1, scrollBarTop, 0.0D, 1.0D, 0.0D)
-                .addPoint(this.scrollBarLeft, scrollBarTop, 0.0D, 0.0D, 0.0D)
-                .render();
+        bufferBuilder.vertex(this.scrollBarLeft, this.bottom, 0.0D).color(0, 0, 0, 255).next();
+        bufferBuilder.vertex(this.width, this.bottom, 0.0D).color(0, 0, 0, 255).next();
+        bufferBuilder.vertex(this.width, this.top, 0.0D).color(0, 0, 0, 255).next();
+        bufferBuilder.vertex(this.scrollBarLeft, this.top, 0.0D).color(0, 0, 0, 255).next();
+
+        bufferBuilder.vertex(this.scrollBarLeft, scrollBarTop + scrollBarHeight, 0.0D).color(128, 128, 128, 255).next();
+        bufferBuilder.vertex(this.width, scrollBarTop + scrollBarHeight, 0.0D).color(128, 128, 128, 255).next();
+        bufferBuilder.vertex(this.width, scrollBarTop, 0.0D).color(128, 128, 128, 255).next();
+        bufferBuilder.vertex(this.scrollBarLeft, scrollBarTop, 0.0D).color(128, 128, 128, 255).next();
+
+        bufferBuilder.vertex(this.scrollBarLeft, scrollBarTop + scrollBarHeight - 1, 0.0D).color(192, 192, 192, 255).next();
+        bufferBuilder.vertex(this.width - 1, scrollBarTop + scrollBarHeight - 1, 0.0D).color(192, 192, 192, 255).next();
+        bufferBuilder.vertex(this.width - 1, scrollBarTop, 0.0D).color(192, 192, 192, 255).next();
+        bufferBuilder.vertex(this.scrollBarLeft, scrollBarTop, 0.0D).color(192, 192, 192, 255).next();
+
+        tessellator.draw();
+        RenderSystem.enableTexture();
     }
 
-    private void drawOverlayShadows(MatrixStack matrixStack) {
-        Renderer.startTextured()
-                .setMatrixStack(matrixStack)
-                .addPoint(0, this.top + 4, 0.0D, 0.0D, 1.0D)
-                .addPoint(this.width, this.top + 4, 0.0D, 1.0D, 1.0D)
-                .setAlpha(255)
-                .addPoint(this.width, this.top, 0.0D, 1.0D, 0.0D)
-                .addPoint(0, this.top, 0.0D, 0.0D, 0.0D)
-                .render();
-        Renderer.startTextured()
-                .setMatrixStack(matrixStack)
-                .addPoint(this.width, this.bottom - 4, 0.0D, 1.0D, 0.0D)
-                .addPoint(0, this.bottom - 4, 0.0D, 0.0D, 0.0D)
-                .setAlpha(255)
-                .addPoint(0, this.bottom, 0.0D, 0.0D, 1.0D)
-                .addPoint(this.width, this.bottom, 0.0D, 1.0D, 1.0D)
-                .render();
+    private void drawOverlayShadows() {
+        RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
+        RenderSystem.enableBlend();
+        RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SrcFactor.ZERO, GlStateManager.DstFactor.ONE);
+        RenderSystem.disableTexture();
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferBuilder = tessellator.getBuffer();
+
+        bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+
+        bufferBuilder.vertex(0, this.top + 4, 0.0D).color(0, 0, 0, 0).next();
+        bufferBuilder.vertex(this.width, this.top + 4, 0.0D).color(0, 0, 0, 0).next();
+        bufferBuilder.vertex(this.width, this.top, 0.0D).color(0, 0, 0, 255).next();
+        bufferBuilder.vertex(0, this.top, 0.0D).color(0, 0, 0, 255).next();
+
+        bufferBuilder.vertex(this.width, this.bottom - 4, 0.0D).color(0, 0, 0, 0).next();
+        bufferBuilder.vertex(0, this.bottom - 4, 0.0D).color(0, 0, 0, 0).next();
+        bufferBuilder.vertex(0, this.bottom, 0.0D).color(0, 0, 0, 255).next();
+        bufferBuilder.vertex(this.width, this.bottom, 0.0D).color(0, 0, 0, 255).next();
+
+        tessellator.draw();
+        RenderSystem.enableTexture();
+        RenderSystem.disableBlend();
     }
 
     ControlList section(String title, CreateControl... createControls) {

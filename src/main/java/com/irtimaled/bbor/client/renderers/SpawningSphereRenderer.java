@@ -24,7 +24,7 @@ public class SpawningSphereRenderer extends AbstractRenderer<BoundingBoxSpawning
         renderOuterSphere(matrixStack, boundingBox, point);
 
         OffsetBox offsetBox = new OffsetBox(sphereCenter, sphereCenter).grow(0.5, 0, 0.5);
-        renderCuboid(matrixStack, offsetBox, safeAreaColor);
+        renderCuboid(matrixStack, offsetBox, safeAreaColor, false);
 
         Integer spawnableSpacesCount = boundingBox.getSpawnableSpacesCount();
         if (spawnableSpacesCount != null) {
@@ -52,7 +52,7 @@ public class SpawningSphereRenderer extends AbstractRenderer<BoundingBoxSpawning
             int y = c.getY();
             int z = c.getZ();
             OffsetBox offsetBox = new OffsetBox(x, y, z, x + 1, y, z + 1);
-            renderCuboid(matrixStack, offsetBox, color);
+            renderCuboid(matrixStack, offsetBox, color, false);
         });
     }
 }
