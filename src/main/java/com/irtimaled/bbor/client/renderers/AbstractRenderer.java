@@ -77,11 +77,11 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
         Matrix4f projMatrix = RenderSystem.getProjectionMatrix();
         Shader shader = RenderSystem.getShader();
         if (fillOnly || ConfigManager.fill.get()) {
-            RenderSystem.setShaderColor(color.getRed() / 255F, color.getGreen() / 255F, color.getRed() / 255F, 0.3F);
+            RenderSystem.setShaderColor(color.getRed() / 255F, color.getGreen() / 255F, color.getBlue() / 255F, 0.3F);
             solidBox.setShader(viewMatrix, projMatrix, shader);
         }
         if (!fillOnly) {
-            RenderSystem.setShaderColor(color.getRed() / 255F, color.getGreen() / 255F, color.getRed() / 255F, 0.6F);
+            RenderSystem.setShaderColor(color.getRed() / 255F, color.getGreen() / 255F, color.getBlue() / 255F, 0.6F);
             outlinedBox.setShader(viewMatrix, projMatrix, shader);
         }
 
@@ -99,7 +99,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
 
         RenderHelper.applyRegionalRenderOffset(matrixStack);
         RenderSystem.setShader(GameRenderer::getPositionShader);
-        RenderSystem.setShaderColor(color.getRed() / 255F, color.getGreen() / 255F, color.getRed() / 255F, 0.55f);
+        RenderSystem.setShaderColor(color.getRed() / 255F, color.getGreen() / 255F, color.getBlue() / 255F, 0.55f);
         int regionX = (((int) Camera.getX()) >> 9) * 512;
         int regionZ = (((int) Camera.getZ()) >> 9) * 512;
 
@@ -161,7 +161,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
 
         RenderHelper.applyRegionalRenderOffset(matrixStack);
         RenderSystem.setShader(GameRenderer::getPositionShader);
-        RenderSystem.setShaderColor(color.getRed() / 255F, color.getGreen() / 255F, color.getRed() / 255F, 0.55f);
+        RenderSystem.setShaderColor(color.getRed() / 255F, color.getGreen() / 255F, color.getBlue() / 255F, 0.55f);
         int regionX = (((int) Camera.getX()) >> 9) * 512;
         int regionZ = (((int) Camera.getZ()) >> 9) * 512;
 
@@ -196,7 +196,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
         matrixStack.push();
         RenderHelper.applyRegionalRenderOffset(matrixStack);
         RenderSystem.setShader(GameRenderer::getPositionShader);
-        RenderSystem.setShaderColor(color.getRed() / 255F, color.getGreen() / 255F, color.getRed() / 255F, 0.55f);
+        RenderSystem.setShaderColor(color.getRed() / 255F, color.getGreen() / 255F, color.getBlue() / 255F, 0.55f);
         int regionX = (((int) Camera.getX()) >> 9) * 512;
         int regionZ = (((int) Camera.getZ()) >> 9) * 512;
 
