@@ -27,9 +27,9 @@ public class RenderHelper {
         enableBlend();
         GlStateManager._blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         polygonModeFill();
-        // disableTexture();
-        // GlStateManager._disableCull();
-        // enableDepthTest();
+        GL11.glEnable(GL11.GL_LINE_SMOOTH);
+        GL11.glEnable(GL11.GL_CULL_FACE);
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
 
         if (ConfigManager.alwaysVisible.get()) {
             GlStateManager._clear(GL11.GL_DEPTH_BUFFER_BIT, MinecraftClient.IS_SYSTEM_MAC);
@@ -37,9 +37,9 @@ public class RenderHelper {
     }
 
     public static void afterRender() {
-        // GlStateManager._enableCull();
-        // disableDepthTest();
-        // enableTexture();
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GL11.glDisable(GL11.GL_LINE_SMOOTH);
+        RenderSystem.setShaderColor(1, 1, 1, 1);
     }
 
     public static void beforeRenderFont(MatrixStack matrixStack, OffsetPoint offsetPoint) {
@@ -126,7 +126,7 @@ public class RenderHelper {
 
     public static void lineWidth2() {
         RenderSystem.assertThread(RenderSystem::isOnRenderThread);
-        GL11.glLineWidth(2f);
+        RenderSystem.lineWidth(2f);
     }
 
     public static void polygonModeLine() {
@@ -164,7 +164,6 @@ public class RenderHelper {
 
     public static void drawSolidBox(Box box, VertexBuffer vertexBuffer) {
         BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
-
         bufferBuilder.begin(VertexFormat.DrawMode.QUADS,
                 VertexFormats.POSITION);
 
@@ -199,13 +198,11 @@ public class RenderHelper {
         bufferBuilder.vertex(box.minX, box.maxY, box.minZ).next();
 
         bufferBuilder.end();
-
         vertexBuffer.upload(bufferBuilder);
     }
 
     public static void drawOutlinedBox(Box bb, VertexBuffer vertexBuffer) {
         BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
-
         bufferBuilder.begin(VertexFormat.DrawMode.DEBUG_LINES,
                 VertexFormats.POSITION);
 
@@ -246,15 +243,14 @@ public class RenderHelper {
         bufferBuilder.vertex(bb.minX, bb.maxY, bb.minZ).next();
 
         bufferBuilder.end();
-
         vertexBuffer.upload(bufferBuilder);
     }
 
     public static void applyRegionalRenderOffset(MatrixStack matrixStack)
     {
 
-        int regionX = (((int) Camera.getX()) >> 9) * 512;
-        int regionZ = (((int) Camera.getZ()) >> 9) * 512;
+        int regionX = (((int) Camera.getX()) >> 9) << 9;
+        int regionZ = (((int) Camera.getZ()) >> 9) << 9;
 
         matrixStack.translate(regionX - Camera.getX(), -Camera.getY(),
                 regionZ - Camera.getZ());

@@ -28,6 +28,11 @@ class StructureProcessor {
     private void addStructures(BoundingBoxType type, StructureStart<?> structureStart) {
         if (structureStart == null) return;
 
+        try {
+            structureStart.setBoundingBoxFromChildren();
+        } catch (Throwable ignored) {
+        }
+
         BlockBox bb = ((IStructureStart) structureStart).getBoundingBox();
         if (bb == null) return;
 
@@ -42,8 +47,8 @@ class StructureProcessor {
     }
 
     private AbstractBoundingBox buildStructure(BlockBox bb, BoundingBoxType type) {
-        Coords min = new Coords(bb.getMaxZ(), bb.getMinX(), bb.getMinY());
-        Coords max = new Coords(bb.getMinZ(), bb.getMaxX(), bb.getMaxY());
+        Coords min = new Coords(bb.getMinX(), bb.getMinY(), bb.getMinZ());
+        Coords max = new Coords(bb.getMaxX(), bb.getMaxY(), bb.getMaxZ());
         return BoundingBoxCuboid.from(min, max, type);
     }
 

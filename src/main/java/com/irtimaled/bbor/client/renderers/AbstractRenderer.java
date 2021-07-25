@@ -51,7 +51,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
         matrixStack.push();
 
         RenderHelper.applyRegionalRenderOffset(matrixStack);
-        renderCuboidSolid(matrixStack, nudge, color);
+        renderCuboid0(matrixStack, nudge, color);
 
         matrixStack.pop();
         GL11.glEnable(GL11.GL_DEPTH_TEST);
@@ -59,14 +59,14 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
         RenderSystem.setShaderColor(1, 1, 1, 1);
     }
 
-    protected void renderCuboidSolid(MatrixStack stack, OffsetBox nudge, Color color) {
+    private void renderCuboid0(MatrixStack stack, OffsetBox nudge, Color color) {
         if (ConfigManager.invertBoxColorPlayerInside.get() &&
                 playerInsideBoundingBox(nudge)) {
             color = new Color(255 - color.getRed(), 255 - color.getGreen(), 255 - color.getBlue());
         }
         stack.push();
-        int regionX = (((int) Camera.getX()) >> 9) * 512;
-        int regionZ = (((int) Camera.getZ()) >> 9) * 512;
+        int regionX = (((int) Camera.getX()) >> 9) << 9;
+        int regionZ = (((int) Camera.getZ()) >> 9) << 9;
         RenderSystem.setShader(GameRenderer::getPositionShader);
         stack.translate(nudge.getMin().getX() - regionX, nudge.getMin().getY(), nudge.getMin().getZ() - regionZ);
         stack.scale((float) (nudge.getMax().getX() - nudge.getMin().getX()),
@@ -93,10 +93,6 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
     }
 
     void renderLine(MatrixStack matrixStack, OffsetPoint startPoint, OffsetPoint endPoint, Color color) {
-        RenderHelper.polygonModeLine();
-        GL11.glEnable(GL11.GL_LINE_SMOOTH);
-        GL11.glEnable(GL11.GL_CULL_FACE);
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
         matrixStack.push();
 
         RenderHelper.applyRegionalRenderOffset(matrixStack);
@@ -124,9 +120,6 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
         BufferRenderer.draw(bufferBuilder);
 
         matrixStack.pop();
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glDisable(GL11.GL_LINE_SMOOTH);
-        RenderSystem.setShaderColor(1, 1, 1, 1);
     }
 
     void renderText(MatrixStack matrixStack, OffsetPoint offsetPoint, String... texts) {
@@ -162,21 +155,52 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
     }
 
     private void renderCircle(MatrixStack matrixStack, Point center, double radius, Color color, double dy) {
-        Renderer renderer = Renderer.startLineLoop()
-                .setMatrixStack(matrixStack)
-                .setColor(color);
+        matrixStack.push();
+
+        RenderHelper.applyRegionalRenderOffset(matrixStack);
+        RenderSystem.setShader(GameRenderer::getPositionShader);
+        RenderSystem.setShaderColor(color.getRed() / 255F, color.getGreen() / 255F, color.getRed() / 255F, 0.55f);
+        int regionX = (((int) Camera.getX()) >> 9) * 512;
+        int regionZ = (((int) Camera.getZ()) >> 9) * 512;
+
+        BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
+        bufferBuilder.begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP,
+                VertexFormats.POSITION);
+
+        Point firstPoint = null;
 
         for (double phi = 0.0D; phi < TAU; phi += PHI_SEGMENT) {
-            renderer.addPoint(new OffsetPoint(center.offset(Math.cos(phi) * radius, dy, Math.sin(phi) * radius)));
+            final Point point = center.offset(Math.cos(phi) * radius, dy, Math.sin(phi) * radius);
+            if (firstPoint == null) firstPoint = point;
+            bufferBuilder.vertex(matrixStack.peek().getModel(),
+                    (float) point.getX() - regionX,
+                    (float) point.getY(),
+                    (float) point.getZ() - regionZ)
+                    .next();
         }
 
-        renderer.render();
+        bufferBuilder.vertex(matrixStack.peek().getModel(),
+                (float) firstPoint.getX() - regionX,
+                (float) firstPoint.getY(),
+                (float) firstPoint.getZ() - regionZ)
+                .next();
+
+        bufferBuilder.end();
+        BufferRenderer.draw(bufferBuilder);
+        matrixStack.pop();
     }
 
     private void renderDotSphere(MatrixStack matrixStack, Point center, double radius, Color color) {
-        Renderer renderer = Renderer.startQuads()
-                .setMatrixStack(matrixStack)
-                .setColor(color);
+        matrixStack.push();
+        RenderHelper.applyRegionalRenderOffset(matrixStack);
+        RenderSystem.setShader(GameRenderer::getPositionShader);
+        RenderSystem.setShaderColor(color.getRed() / 255F, color.getGreen() / 255F, color.getRed() / 255F, 0.55f);
+        int regionX = (((int) Camera.getX()) >> 9) * 512;
+        int regionZ = (((int) Camera.getZ()) >> 9) * 512;
+
+        BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
+        bufferBuilder.begin(VertexFormat.DrawMode.QUADS,
+                VertexFormats.POSITION);
 
         for (double phi = 0.0D; phi < TAU; phi += PHI_SEGMENT) {
             double dy = radius * Math.cos(phi);
@@ -185,9 +209,17 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
                 double dx = radiusBySinPhi * Math.cos(theta);
                 double dz = radiusBySinPhi * Math.sin(theta);
 
-                renderer.addPoint(new OffsetPoint(center.offset(dx, dy, dz)));
+                final Point point = center.offset(dx, dy, dz);
+                bufferBuilder
+                        .vertex(matrixStack.peek().getModel(),
+                                (float) point.getX() - regionX,
+                                (float) point.getY(),
+                                (float) point.getZ() - regionZ)
+                        .next();
             }
         }
-        renderer.render();
+        bufferBuilder.end();
+        BufferRenderer.draw(bufferBuilder);
+        matrixStack.pop();
     }
 }
