@@ -83,19 +83,20 @@ public class SelectableControlList extends ControlList {
     protected void drawEntry(MatrixStack matrixStack, int mouseX, int mouseY, int top, ControlListEntry entry, int height) {
         if (this.selectedElement == entry.index) {
             RenderHelper.disableTexture();
+            RenderHelper.resetShader();
             int color = this.isFocused ? 255 : 128;
-            Renderer.startTextured()
+            Renderer.startQuads()
                     .setAlpha(255)
                     .setColor(color, color, color)
-                    .addPoint((double) this.listLeft - 2, (double) (top + height) - 2, 0.0D, 0.0D, 1.0D)
-                    .addPoint((double) this.listRight + 2, (double) (top + height) - 2, 0.0D, 1.0D, 1.0D)
-                    .addPoint((double) this.listRight + 2, top - 2, 0.0D, 1.0D, 0.0D)
-                    .addPoint((double) this.listLeft - 2, top - 2, 0.0D, 0.0D, 0.0D)
+                    .addPoint((double) this.listLeft - 2, (double) (top + height) - 2, 0.0D)
+                    .addPoint((double) this.listRight + 2, (double) (top + height) - 2, 0.0D)
+                    .addPoint((double) this.listRight + 2, top - 2, 0.0D)
+                    .addPoint((double) this.listLeft - 2, top - 2, 0.0D)
                     .setColor(0, 0, 0)
-                    .addPoint(this.listLeft - 1, (double) (top + height) - 3, 0.0D, 0.0D, 1.0D)
-                    .addPoint(this.listRight + 1, (double) (top + height) - 3, 0.0D, 1.0D, 1.0D)
-                    .addPoint(this.listRight + 1, top - 1, 0.0D, 1.0D, 0.0D)
-                    .addPoint(this.listLeft - 1, top - 1, 0.0D, 0.0D, 0.0D)
+                    .addPoint(this.listLeft - 1, (double) (top + height) - 3, 0.0D)
+                    .addPoint(this.listRight + 1, (double) (top + height) - 3, 0.0D)
+                    .addPoint(this.listRight + 1, top - 1, 0.0D)
+                    .addPoint(this.listLeft - 1, top - 1, 0.0D)
                     .render();
             RenderHelper.enableTexture();
         }

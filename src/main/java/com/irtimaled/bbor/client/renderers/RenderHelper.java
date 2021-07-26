@@ -32,6 +32,10 @@ public class RenderHelper {
         RenderSystem.setShaderTexture(0, texture);
     }
 
+    public static void resetShader() {
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+    }
+
     public static void afterRender() {
         polygonModeFill();
         RenderSystem.enableCull();

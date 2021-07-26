@@ -19,7 +19,7 @@ public class Renderer {
         return new Renderer(VertexFormat.DrawMode.LINES, VertexFormats.POSITION_COLOR);
     }
 
-    static Renderer startQuads() {
+    public static Renderer startQuads() {
         return new Renderer(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
     }
 
@@ -73,7 +73,7 @@ public class Renderer {
         return renderer;
     }
 
-    Renderer addPoint(double x, double y, double z) {
+    public Renderer addPoint(double x, double y, double z) {
         pos(x, y, z);
         color();
         end();
