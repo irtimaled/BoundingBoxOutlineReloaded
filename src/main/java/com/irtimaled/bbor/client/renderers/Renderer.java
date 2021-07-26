@@ -12,23 +12,23 @@ public class Renderer {
     private final int glMode;
 
     static Renderer startLines() {
-        return new Renderer(RenderHelper.LINES, VertexFormats.POSITION_COLOR);
+        return new Renderer(VertexFormat.DrawMode.LINES, VertexFormats.POSITION_COLOR);
     }
 
     static Renderer startLineLoop() {
-        return new Renderer(RenderHelper.LINE_LOOP, VertexFormats.POSITION_COLOR);
+        return new Renderer(VertexFormat.DrawMode.LINES, VertexFormats.POSITION_COLOR);
     }
 
     static Renderer startQuads() {
-        return new Renderer(RenderHelper.QUADS, VertexFormats.POSITION_COLOR);
+        return new Renderer(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
     }
 
     static Renderer startPoints() {
-        return new Renderer(RenderHelper.POINTS, VertexFormats.POSITION_COLOR);
+        return new Renderer(VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION_COLOR);
     }
 
     public static Renderer startTextured() {
-        return new Renderer(RenderHelper.QUADS, VertexFormats.POSITION_TEXTURE_COLOR);
+        return new Renderer(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE_COLOR);
     }
 
     private static final Tessellator tessellator = new Tessellator(2097152);
@@ -39,9 +39,9 @@ public class Renderer {
     private int blue;
     private int alpha;
 
-    private Renderer(int glMode, VertexFormat vertexFormat) {
+    private Renderer(VertexFormat.DrawMode glMode, VertexFormat vertexFormat) {
         bufferBuilder.begin(glMode, vertexFormat);
-        this.glMode = glMode;
+        this.glMode = glMode.mode;
     }
 
     public Renderer setColor(Color color) {
@@ -90,7 +90,7 @@ public class Renderer {
 
     public void render() {
         if (glMode == RenderHelper.QUADS) {
-            bufferBuilder.sortQuads((float) Camera.getX(), (float) Camera.getY(), (float) Camera.getZ());
+            bufferBuilder.setCameraPosition((float) Camera.getX(), (float) Camera.getY(), (float) Camera.getZ());
         }
         tessellator.draw();
     }

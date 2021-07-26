@@ -1,13 +1,14 @@
 package com.irtimaled.bbor.client.gui;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.widget.AbstractButtonWidget;
+import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
+import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
 
 import java.awt.*;
 
-abstract class AbstractControl extends AbstractButtonWidget implements IControl {
+abstract class AbstractControl extends ClickableWidget implements IControl {
     private static final int PADDING = 4;
     protected final MinecraftClient minecraft;
 
@@ -38,7 +39,7 @@ abstract class AbstractControl extends AbstractButtonWidget implements IControl 
     }
 
     @Override
-    protected void renderBg(MatrixStack matrixStack, MinecraftClient minecraft, int mouseX, int mouseY) {
+    protected void renderBackground(MatrixStack matrixStack, MinecraftClient minecraft, int mouseX, int mouseY) {
         if (active) renderBackground(matrixStack, mouseX, mouseY);
     }
 
@@ -64,5 +65,9 @@ abstract class AbstractControl extends AbstractButtonWidget implements IControl 
     @Override
     public void clearFocus() {
         this.setFocused(false);
+    }
+
+    @Override
+    public void appendNarrations(NarrationMessageBuilder builder) {
     }
 }

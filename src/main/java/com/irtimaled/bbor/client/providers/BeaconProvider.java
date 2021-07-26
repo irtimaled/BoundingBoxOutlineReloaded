@@ -18,7 +18,7 @@ public class BeaconProvider implements IBoundingBoxProvider<BoundingBoxBeacon> {
     @Override
     public Iterable<BoundingBoxBeacon> get(DimensionId dimensionId) {
         return TileEntitiesHelper.map(BeaconBlockEntity.class, beacon -> {
-            int levels = beacon.getLevel();
+            int levels = beacon.getBeamSegments().size();
             Coords coords = new Coords(beacon.getPos());
             return BoundingBoxBeacon.from(coords, levels);
         });

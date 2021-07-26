@@ -1,10 +1,7 @@
 package com.irtimaled.bbor.mixin.resource;
 
 import com.google.common.collect.ImmutableMap;
-import net.minecraft.resource.DefaultResourcePack;
-import net.minecraft.resource.ResourcePackManager;
-import net.minecraft.resource.ResourcePackProfile;
-import net.minecraft.resource.ResourcePackSource;
+import net.minecraft.resource.*;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -28,7 +25,7 @@ public class MixinResourcePackManager {
     private void afterConstructor(CallbackInfo ci) {
         resourcePackProfile = ResourcePackProfile.of(BBOR,
                 true,
-                () -> new DefaultResourcePack(BBOR),
+                () -> new DefaultResourcePack(VanillaDataPackProvider.DEFAULT_PACK_METADATA, BBOR),
                 this.profileFactory,
                 ResourcePackProfile.InsertionPosition.BOTTOM,
                 ResourcePackSource.PACK_SOURCE_BUILTIN);

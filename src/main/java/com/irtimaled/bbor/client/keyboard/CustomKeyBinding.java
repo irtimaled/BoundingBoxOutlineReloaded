@@ -1,6 +1,6 @@
 package com.irtimaled.bbor.client.keyboard;
 
-import net.minecraft.client.options.KeyBinding;
+import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 
 class CustomKeyBinding extends KeyBinding {

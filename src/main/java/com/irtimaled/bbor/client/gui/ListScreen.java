@@ -8,6 +8,8 @@ import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
 
+import java.util.List;
+
 public abstract class ListScreen extends Screen {
     private final Screen lastScreen;
     private static final String version = Versions.build;
@@ -40,9 +42,9 @@ public abstract class ListScreen extends Screen {
             }
         };
 
-        this.children.add(this.searchField);
-        this.children.add(this.controlList);
-        this.children.add(this.doneButton);
+        this.addDrawableChild(this.searchField);
+        ((List<Element>)this.children()).add(controlList);
+        this.addDrawableChild(this.doneButton);
     }
 
     protected abstract ControlList buildList(int top, int bottom);
@@ -55,7 +57,7 @@ public abstract class ListScreen extends Screen {
     protected void render(MatrixStack matrixStack, int mouseX, int mouseY) {
         this.controlList.render(matrixStack, mouseX, mouseY);
 
-        this.drawCenteredString(matrixStack, this.textRenderer, this.title.asString(), this.width / 2, 8, 16777215);
+        this.drawCenteredText(matrixStack, this.textRenderer, this.title.asString(), this.width / 2, 8, 16777215);
         this.searchField.render(matrixStack, mouseX, mouseY);
         this.doneButton.render(matrixStack, mouseX, mouseY);
 

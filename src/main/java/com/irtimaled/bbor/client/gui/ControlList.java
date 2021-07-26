@@ -3,7 +3,6 @@ package com.irtimaled.bbor.client.gui;
 import com.irtimaled.bbor.client.renderers.RenderHelper;
 import com.irtimaled.bbor.client.renderers.Renderer;
 import com.irtimaled.bbor.common.MathHelper;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.util.math.MatrixStack;
 
@@ -18,7 +17,6 @@ public class ControlList extends DrawableHelper implements IControlSet {
     protected final List<ControlListEntry> entries = new ArrayList<>();
     private final int scrollBarLeft;
     private final int listHeight;
-    private final MinecraftClient minecraft;
     private final int width;
     private final int height;
     private final int top;
@@ -32,7 +30,6 @@ public class ControlList extends DrawableHelper implements IControlSet {
     private boolean isDragging;
 
     ControlList(int width, int height, int top, int bottom) {
-        this.minecraft = MinecraftClient.getInstance();
         this.width = width;
         this.scrollBarLeft = width - 6;
         this.height = height;
@@ -157,7 +154,7 @@ public class ControlList extends DrawableHelper implements IControlSet {
         this.amountScrolled = MathHelper.clamp(this.amountScrolled, 0.0D, this.getMaxScroll());
 
         RenderHelper.disableLighting();
-        RenderHelper.disableFog();
+        // RenderHelper.disableFog();
         if (!transparentBackground) drawListBackground();
 
         int listTop = this.top + PADDING - (int) this.amountScrolled;
@@ -190,7 +187,7 @@ public class ControlList extends DrawableHelper implements IControlSet {
     }
 
     private void drawListBackground() {
-        this.minecraft.getTextureManager().bindTexture(DrawableHelper.OPTIONS_BACKGROUND_TEXTURE);
+        RenderHelper.setTexture(DrawableHelper.OPTIONS_BACKGROUND_TEXTURE);
         Renderer.startTextured()
                 .setColor(32, 32, 32)
                 .setAlpha(255)
@@ -222,7 +219,7 @@ public class ControlList extends DrawableHelper implements IControlSet {
     }
 
     private void overlayBackground(int top, int bottom) {
-        this.minecraft.getTextureManager().bindTexture(DrawableHelper.OPTIONS_BACKGROUND_TEXTURE);
+        RenderHelper.setTexture(DrawableHelper.OPTIONS_BACKGROUND_TEXTURE);
         Renderer.startTextured()
                 .setColor(64, 64, 64)
                 .setAlpha(255)

@@ -12,10 +12,10 @@ import java.util.function.Function;
 
 public class TileEntitiesHelper {
     public static <T extends BlockEntity, S extends AbstractBoundingBox> Iterable<S> map(Class<T> clazz, Function<T, S> map) {
-        Collection<BlockEntity> tileEntities = MinecraftClient.getInstance().world.blockEntities;
+        //Collection<BlockEntity> tileEntities = MinecraftClient.getInstance().world.blockEntities;
 
         Set<S> results = new HashSet<>();
-        for (BlockEntity tileEntity : tileEntities) {
+        /*for (BlockEntity tileEntity : tileEntities) {
             T typed = TypeHelper.as(tileEntity, clazz);
             if (typed == null) {
                 continue;
@@ -24,7 +24,7 @@ public class TileEntitiesHelper {
             if (result != null) {
                 results.add(result);
             }
-        }
+        }*/
         return results;
     }
 }

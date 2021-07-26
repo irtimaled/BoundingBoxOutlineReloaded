@@ -1,7 +1,7 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "compatibilityLevel": "JAVA_8",
+  "compatibilityLevel": "JAVA_16",
   "target": "@env(DEFAULT)",
   "package": "com.irtimaled.bbor.mixin",
   "refmap": "mixins.bbor.refmap.json",
