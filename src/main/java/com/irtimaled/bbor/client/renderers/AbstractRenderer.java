@@ -1,6 +1,8 @@
 package com.irtimaled.bbor.client.renderers;
 
 import com.irtimaled.bbor.client.Camera;
+import com.irtimaled.bbor.client.ClientRenderer;
+import com.irtimaled.bbor.client.RenderCulling;
 import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.models.Point;
 import com.irtimaled.bbor.common.MathHelper;
@@ -60,6 +62,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
     }
 
     private void renderCuboid0(MatrixStack stack, OffsetBox nudge, Color color, boolean fillOnly) {
+        if (!RenderCulling.isVisibleCulling(nudge.toBox())) return;
         if (ConfigManager.invertBoxColorPlayerInside.get() &&
                 playerInsideBoundingBox(nudge)) {
             color = new Color(255 - color.getRed(), 255 - color.getGreen(), 255 - color.getBlue());
@@ -95,6 +98,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
     }
 
     void renderLine(MatrixStack matrixStack, OffsetPoint startPoint, OffsetPoint endPoint, Color color) {
+        if (!RenderCulling.isVisibleCulling(new OffsetBox(startPoint, endPoint).toBox())) return; // TODO better culling
         matrixStack.push();
 
         RenderHelper.applyRegionalRenderOffset(matrixStack);
@@ -145,6 +149,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
     }
 
     private void renderLineSphere(MatrixStack matrixStack, Point center, double radius, Color color) {
+        if (!RenderCulling.isVisibleCulling(new Box(new BlockPos(center.getX(), center.getY(), center.getZ())).expand(radius))) return;
         RenderHelper.lineWidth2();
 
         double offset = ((radius - (int) radius) == 0) ? center.getY() - (int) center.getY() : 0;
@@ -193,6 +198,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
     }
 
     private void renderDotSphere(MatrixStack matrixStack, Point center, double radius, Color color) {
+        if (!RenderCulling.isVisibleCulling(new Box(new BlockPos(center.getX(), center.getY(), center.getZ())).expand(radius))) return;
         matrixStack.push();
         RenderHelper.applyRegionalRenderOffset(matrixStack);
         RenderSystem.setShader(GameRenderer::getPositionShader);

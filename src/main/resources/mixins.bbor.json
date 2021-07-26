@@ -8,6 +8,7 @@
   "mixins": [
     "access.IBeaconBlockEntity",
     "access.IStructureStart",
+    "client.renderer.MixinDebugHud",
     "client.renderer.MixinWorldRenderer",
     "network.play.client.MixinCCustomPayloadPacket",
     "server.MixinMinecraftServer",

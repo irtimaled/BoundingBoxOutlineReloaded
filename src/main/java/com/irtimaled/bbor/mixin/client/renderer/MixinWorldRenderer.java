@@ -1,8 +1,13 @@
 package com.irtimaled.bbor.mixin.client.renderer;
 
+import com.google.common.base.Preconditions;
+import com.irtimaled.bbor.client.ClientRenderer;
 import com.irtimaled.bbor.client.Player;
+import com.irtimaled.bbor.client.RenderCulling;
+import com.irtimaled.bbor.client.interop.ClientInterop;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Camera;
+import net.minecraft.client.render.Frustum;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.WorldRenderer;
@@ -18,12 +23,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(WorldRenderer.class)
 public class MixinWorldRenderer {
 
-
     @Shadow @Final private MinecraftClient client;
 
-    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/debug/DebugRenderer;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider$Immediate;DDD)V", shift = At.Shift.BEFORE))
-    private void renderFirst(MatrixStack matrixStack, float partialTicks, long ignored_2, boolean ignored_3, Camera ignored_4, GameRenderer ignored_5, LightmapTextureManager ignored_6, Matrix4f ignored_7, CallbackInfo ci) {
+    @Shadow private Frustum frustum;
+
+    @Inject(method = "render", at = @At("RETURN"))
+    private void postRender(MatrixStack matrixStack, float partialTicks, long ignored_2, boolean ignored_3, Camera ignored_4, GameRenderer ignored_5, LightmapTextureManager ignored_6, Matrix4f ignored_7, CallbackInfo ci) {
+        Preconditions.checkNotNull(this.client.player);
+        RenderCulling.setFrustum(frustum);
+        RenderCulling.flushStats();
         Player.setPosition(partialTicks, this.client.player);
+        ClientInterop.render(matrixStack, this.client.player);
+        ClientInterop.renderDeferred();
     }
 
 }
