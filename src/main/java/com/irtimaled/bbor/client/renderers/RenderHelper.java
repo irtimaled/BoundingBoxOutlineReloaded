@@ -4,7 +4,6 @@ import com.irtimaled.bbor.client.Camera;
 import com.irtimaled.bbor.client.config.ConfigManager;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.VertexBuffer;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.Tessellator;
@@ -16,27 +15,22 @@ import net.minecraft.util.math.Quaternion;
 import org.lwjgl.opengl.GL11;
 
 public class RenderHelper {
-    public static final int QUADS = GL11.GL_QUADS;
-    public static final int LINES = GL11.GL_LINES;
-    public static final int LINE_LOOP = GL11.GL_LINE_LOOP;
-    public static final int POINTS = GL11.GL_POINTS;
 
     public static void beforeRender() {
         enableBlend();
         GlStateManager._blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        polygonModeFill();
         GL11.glEnable(GL11.GL_LINE_SMOOTH);
         RenderSystem.disableCull();
-        RenderSystem.enableDepthTest();
+        enableDepthTest();
+        depthMaskTrue();
+        RenderSystem.depthFunc(GL11.GL_LEQUAL);
 
         if (ConfigManager.alwaysVisible.get()) {
-            GlStateManager._clear(GL11.GL_DEPTH_BUFFER_BIT, MinecraftClient.IS_SYSTEM_MAC);
+            RenderSystem.disableDepthTest();
         }
     }
 
     public static void afterRender() {
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-        RenderSystem.disableDepthTest();
         RenderSystem.enableCull();
         GL11.glDisable(GL11.GL_LINE_SMOOTH);
         RenderSystem.setShaderColor(1, 1, 1, 1);

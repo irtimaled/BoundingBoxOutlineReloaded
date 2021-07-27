@@ -26,8 +26,8 @@ public class MixinWorldRenderer {
 
     @Shadow private Frustum frustum;
 
-    @Inject(method = "render", at = @At("RETURN"))
-    private void postRender(MatrixStack matrixStack, float partialTicks, long ignored_2, boolean ignored_3, Camera ignored_4, GameRenderer ignored_5, LightmapTextureManager ignored_6, Matrix4f ignored_7, CallbackInfo ci) {
+    @Inject(method = "render", at = @At(value = "RETURN"))
+    private void onRender(MatrixStack matrixStack, float partialTicks, long ignored_2, boolean ignored_3, Camera ignored_4, GameRenderer ignored_5, LightmapTextureManager ignored_6, Matrix4f ignored_7, CallbackInfo ci) {
         Preconditions.checkNotNull(this.client.player);
         RenderCulling.setFrustum(frustum);
         RenderCulling.flushStats();

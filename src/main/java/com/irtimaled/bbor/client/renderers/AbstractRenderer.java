@@ -47,7 +47,6 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
 
         GL11.glEnable(GL11.GL_LINE_SMOOTH);
         GL11.glEnable(GL11.GL_CULL_FACE);
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
         RenderHelper.polygonModeFill();
         matrixStack.push();
 
@@ -55,7 +54,6 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
         renderCuboid0(matrixStack, nudge, color, fillOnly);
 
         matrixStack.pop();
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glDisable(GL11.GL_LINE_SMOOTH);
         RenderSystem.setShaderColor(1, 1, 1, 1);
     }
@@ -79,11 +77,11 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
         Matrix4f projMatrix = RenderSystem.getProjectionMatrix();
         Shader shader = RenderSystem.getShader();
         if (fillOnly || ConfigManager.fill.get()) {
-            RenderSystem.setShaderColor(color.getRed() / 255F, color.getGreen() / 255F, color.getBlue() / 255F, 0.3F);
+            RenderSystem.setShaderColor(color.getRed() / 255F, color.getGreen() / 255F, color.getBlue() / 255F, 30 / 255F);
             solidBox.setShader(viewMatrix, projMatrix, shader);
         }
         if (!fillOnly) {
-            RenderSystem.setShaderColor(color.getRed() / 255F, color.getGreen() / 255F, color.getBlue() / 255F, 0.6F);
+            RenderSystem.setShaderColor(color.getRed() / 255F, color.getGreen() / 255F, color.getBlue() / 255F, 1F);
             outlinedBox.setShader(viewMatrix, projMatrix, shader);
         }
 
