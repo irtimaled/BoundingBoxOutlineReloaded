@@ -1,9 +1,7 @@
 package com.irtimaled.bbor.client.renderers;
 
 import com.irtimaled.bbor.client.Camera;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormats;
@@ -22,7 +20,7 @@ public class Renderer {
         return new Renderer(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION_COLOR);
     }
 
-    static Renderer startQuads() {
+    public static Renderer startQuads() {
         return new Renderer(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
     }
 
@@ -79,7 +77,7 @@ public class Renderer {
         return renderer;
     }
 
-    Renderer addPoint(double x, double y, double z) {
+    public Renderer addPoint(double x, double y, double z) {
         matrixStack.push();
         pos(x, y, z);
         color();
@@ -97,17 +95,11 @@ public class Renderer {
     }
 
     public void render() {
-        RenderSystem.enableDepthTest();
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        RenderSystem.disableTexture();
-        RenderSystem.disableBlend();
-        RenderSystem.lineWidth(1.0F);
-        bufferBuilder.setCameraPosition(0, 0, 0);
+        if (glMode == VertexFormat.DrawMode.QUADS) {
+            bufferBuilder.setCameraPosition((float) Camera.getX(), (float) Camera.getY(), (float) Camera.getZ());
+        }
         tessellator.draw();
         matrixStack.pop();
-        RenderSystem.lineWidth(1.0F);
-        RenderSystem.enableBlend();
-        RenderSystem.enableTexture();
     }
 
     private void pos(double x, double y, double z) {

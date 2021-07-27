@@ -1,13 +1,19 @@
 package com.irtimaled.bbor.client;
 
 import com.irtimaled.bbor.client.config.ConfigManager;
-import com.irtimaled.bbor.client.events.*;
+import com.irtimaled.bbor.client.events.AddBoundingBoxReceived;
+import com.irtimaled.bbor.client.events.DisconnectedFromRemoteServer;
+import com.irtimaled.bbor.client.events.InitializeClientReceived;
+import com.irtimaled.bbor.client.events.SaveLoaded;
+import com.irtimaled.bbor.client.events.UpdateWorldSpawnReceived;
 import com.irtimaled.bbor.client.gui.LoadSavesScreen;
 import com.irtimaled.bbor.client.gui.SettingsScreen;
 import com.irtimaled.bbor.client.interop.FlowerForestHelper;
 import com.irtimaled.bbor.client.keyboard.Key;
 import com.irtimaled.bbor.client.keyboard.KeyListener;
-import com.irtimaled.bbor.client.providers.*;
+import com.irtimaled.bbor.client.providers.CacheProvider;
+import com.irtimaled.bbor.client.providers.SlimeChunkProvider;
+import com.irtimaled.bbor.client.providers.WorldSpawnProvider;
 import com.irtimaled.bbor.common.BoundingBoxCache;
 import com.irtimaled.bbor.common.CommonProxy;
 import com.irtimaled.bbor.common.EventBus;

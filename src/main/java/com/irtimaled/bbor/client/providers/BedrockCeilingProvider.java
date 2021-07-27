@@ -2,7 +2,6 @@ package com.irtimaled.bbor.client.providers;
 
 import com.irtimaled.bbor.client.Player;
 import com.irtimaled.bbor.client.config.BoundingBoxTypeHelper;
-import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.interop.BedrockCeilingHelper;
 import com.irtimaled.bbor.client.interop.ClientInterop;
 import com.irtimaled.bbor.client.models.BoundingBoxBedrockCeiling;
@@ -11,7 +10,12 @@ import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.models.Coords;
 import com.irtimaled.bbor.common.models.DimensionId;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 
 public class BedrockCeilingProvider implements IBoundingBoxProvider<BoundingBoxBedrockCeiling>, ICachingProvider {
     private static final double CHUNK_SIZE = 16d;

@@ -28,6 +28,6 @@ public class MixinOptionsScreen extends Screen {
                         button.y -= 12;
                 });
         SettingsScreenButton button = new SettingsScreenButton(this.width / 2 - 155, top + 84, 150, "BBOR", this);
-        addDrawableChild(button);
+        this.addDrawableChild(button);
     }
 }

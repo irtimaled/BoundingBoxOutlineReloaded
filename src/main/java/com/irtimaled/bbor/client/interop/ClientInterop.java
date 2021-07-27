@@ -1,8 +1,11 @@
 package com.irtimaled.bbor.client.interop;
 
 import com.irtimaled.bbor.client.ClientRenderer;
-import com.irtimaled.bbor.client.Player;
-import com.irtimaled.bbor.client.commands.*;
+import com.irtimaled.bbor.client.commands.ConfigCommand;
+import com.irtimaled.bbor.client.commands.CustomCommand;
+import com.irtimaled.bbor.client.commands.SeedCommand;
+import com.irtimaled.bbor.client.commands.SpawningSphereCommand;
+import com.irtimaled.bbor.client.commands.StructuresCommand;
 import com.irtimaled.bbor.client.events.DisconnectedFromRemoteServer;
 import com.irtimaled.bbor.client.events.SaveLoaded;
 import com.irtimaled.bbor.client.events.UpdateWorldSpawnReceived;
@@ -19,7 +22,12 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.command.CommandSource;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.*;
+import net.minecraft.text.ClickEvent;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
+import net.minecraft.text.Texts;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 

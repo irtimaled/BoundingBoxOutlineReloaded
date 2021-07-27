@@ -1,7 +1,6 @@
 package com.irtimaled.bbor.client.renderers;
 
 import com.irtimaled.bbor.client.Camera;
-import com.irtimaled.bbor.client.ClientRenderer;
 import com.irtimaled.bbor.client.RenderCulling;
 import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.models.Point;

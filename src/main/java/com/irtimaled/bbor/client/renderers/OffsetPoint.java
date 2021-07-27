@@ -1,6 +1,5 @@
 package com.irtimaled.bbor.client.renderers;
 
-import com.irtimaled.bbor.client.Camera;
 import com.irtimaled.bbor.client.models.Point;
 import com.irtimaled.bbor.common.models.Coords;
 

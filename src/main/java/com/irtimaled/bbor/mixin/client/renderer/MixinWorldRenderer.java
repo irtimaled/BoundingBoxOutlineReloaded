@@ -1,7 +1,6 @@
 package com.irtimaled.bbor.mixin.client.renderer;
 
 import com.google.common.base.Preconditions;
-import com.irtimaled.bbor.client.ClientRenderer;
 import com.irtimaled.bbor.client.Player;
 import com.irtimaled.bbor.client.RenderCulling;
 import com.irtimaled.bbor.client.interop.ClientInterop;

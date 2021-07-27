@@ -25,7 +25,6 @@ public class ControlList extends DrawableHelper implements IControlSet {
     protected final List<ControlListEntry> entries = new ArrayList<>();
     private final int scrollBarLeft;
     private final int listHeight;
-    private final MinecraftClient minecraft;
     private final int width;
     private final int height;
     private final int top;
@@ -39,7 +38,6 @@ public class ControlList extends DrawableHelper implements IControlSet {
     private boolean isDragging;
 
     ControlList(int width, int height, int top, int bottom) {
-        this.minecraft = MinecraftClient.getInstance();
         this.width = width;
         this.scrollBarLeft = width - 6;
         this.height = height;
@@ -191,7 +189,7 @@ public class ControlList extends DrawableHelper implements IControlSet {
     }
 
     private void drawListBackground(MatrixStack matrixStack) {
-        this.minecraft.getTextureManager().bindTexture(DrawableHelper.OPTIONS_BACKGROUND_TEXTURE);
+        MinecraftClient.getInstance().getTextureManager().bindTexture(DrawableHelper.OPTIONS_BACKGROUND_TEXTURE);
         Renderer.startTextured()
                 .setMatrixStack(matrixStack)
                 .setColor(32, 32, 32)
