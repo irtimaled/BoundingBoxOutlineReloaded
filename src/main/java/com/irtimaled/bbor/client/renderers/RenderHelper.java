@@ -22,7 +22,7 @@ public class RenderHelper {
         GL11.glEnable(GL11.GL_LINE_SMOOTH);
         RenderSystem.disableCull();
         enableDepthTest();
-        depthMaskTrue();
+        RenderSystem.depthMask(false);
         RenderSystem.depthFunc(GL11.GL_LEQUAL);
 
         if (ConfigManager.alwaysVisible.get()) {
