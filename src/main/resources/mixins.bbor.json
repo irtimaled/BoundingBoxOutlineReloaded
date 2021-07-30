@@ -6,6 +6,10 @@
   "package": "com.irtimaled.bbor.mixin",
   "refmap": "mixins.bbor.refmap.json",
   "mixins": [
+    "access.IBeaconBlockEntity",
+    "access.IStructureStart",
+    "client.renderer.MixinDebugHud",
+    "client.renderer.MixinWorldRenderer",
     "network.play.client.MixinCCustomPayloadPacket",
     "server.MixinMinecraftServer",
     "server.management.MixinPlayerList",
@@ -14,6 +18,8 @@
   "client": [
     "client.MixinGameSettings",
     "client.MixinMinecraft",
+    "client.access.IClientChunkManager",
+    "client.access.IClientChunkManagerClientChunkMap",
     "client.entity.player.MixinClientPlayerEntity",
     "client.gui.screen.MixinChatScreen",
     "client.gui.screen.MixinOptionsScreen",

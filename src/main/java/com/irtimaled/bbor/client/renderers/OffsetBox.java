@@ -1,6 +1,7 @@
 package com.irtimaled.bbor.client.renderers;
 
 import com.irtimaled.bbor.common.models.Coords;
+import net.minecraft.util.math.Box;
 
 class OffsetBox {
     private final OffsetPoint min;
@@ -39,5 +40,9 @@ class OffsetBox {
 
     OffsetPoint getMax() {
         return max;
+    }
+
+    public Box toBox() {
+        return new Box(getMin().getX(), getMin().getY(), getMin().getZ(), getMax().getX(), getMax().getY(), getMax().getZ());
     }
 }

@@ -15,7 +15,11 @@ import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.registry.DynamicRegistryManager;
-import net.minecraft.world.*;
+import net.minecraft.world.FeatureUpdater;
+import net.minecraft.world.HeightLimitView;
+import net.minecraft.world.PersistentStateManager;
+import net.minecraft.world.StructureWorldAccess;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.gen.StructureAccessor;
@@ -26,7 +30,11 @@ import net.minecraft.world.storage.RegionBasedStorage;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 import java.util.function.BiFunction;
 
 class NBTStructureLoader {
@@ -115,10 +123,15 @@ class NBTStructureLoader {
     }
 
     private static class SimpleStructureStart extends StructureStart<FeatureConfig> {
+        private final BlockBox parsedBoundingBox;
+
         SimpleStructureStart(NbtCompound compound) {
             super(null,
-                    null,
-                    0, 0);
+                    new ChunkPos(0, 0),
+                    0,
+                    0);
+
+            this.parsedBoundingBox = create(compound.getIntArray("BB"));
 
             NbtList children = compound.getList("Children", 10);
             for (int index = 0; index < children.size(); ++index) {
@@ -127,9 +140,20 @@ class NBTStructureLoader {
             }
         }
 
-        @Override
-        public void init(DynamicRegistryManager registryManager, ChunkGenerator chunkGenerator, StructureManager manager, ChunkPos pos, Biome biome, FeatureConfig config, HeightLimitView world) {
+        private static BlockBox create(int[] compound) {
+            if (compound.length == 6)
+                return new BlockBox(compound[0], compound[1], compound[2], compound[3], compound[4], compound[5]);
+            else
+                return new BlockBox(0, 0, 0, 0, 0, 0);
+        }
 
+        @Override
+        public void init(DynamicRegistryManager dynamicRegistryManager, ChunkGenerator chunkGenerator, StructureManager structureManager, ChunkPos chunkPos, Biome biome, FeatureConfig featureConfig, HeightLimitView heightLimitView) {
+        }
+
+        @Override
+        protected BlockBox calculateBoundingBox() {
+            return this.parsedBoundingBox;
         }
     }
 
@@ -139,8 +163,7 @@ class NBTStructureLoader {
         }
 
         @Override
-        protected void writeNbt(ServerWorld world, NbtCompound nbt) {
-
+        protected void writeNbt(ServerWorld serverWorld, NbtCompound nbtCompound) {
         }
 
         @Override

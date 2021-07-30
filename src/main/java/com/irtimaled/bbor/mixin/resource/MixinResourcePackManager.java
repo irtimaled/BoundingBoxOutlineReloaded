@@ -1,7 +1,11 @@
 package com.irtimaled.bbor.mixin.resource;
 
 import com.google.common.collect.ImmutableMap;
-import net.minecraft.resource.*;
+import net.minecraft.resource.DefaultResourcePack;
+import net.minecraft.resource.ResourcePackManager;
+import net.minecraft.resource.ResourcePackProfile;
+import net.minecraft.resource.ResourcePackSource;
+import net.minecraft.resource.VanillaDataPackProvider;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

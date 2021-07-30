@@ -83,9 +83,9 @@ public class SelectableControlList extends ControlList {
     protected void drawEntry(MatrixStack matrixStack, int mouseX, int mouseY, int top, ControlListEntry entry, int height) {
         if (this.selectedElement == entry.index) {
             RenderHelper.disableTexture();
-            RenderHelper.resetShader();
             int color = this.isFocused ? 255 : 128;
             Renderer.startQuads()
+                    .setMatrixStack(matrixStack)
                     .setAlpha(255)
                     .setColor(color, color, color)
                     .addPoint((double) this.listLeft - 2, (double) (top + height) - 2, 0.0D)

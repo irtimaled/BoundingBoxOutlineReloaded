@@ -1,7 +1,6 @@
 package com.irtimaled.bbor.client.gui;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
@@ -65,9 +64,5 @@ abstract class AbstractControl extends ClickableWidget implements IControl {
     @Override
     public void clearFocus() {
         this.setFocused(false);
-    }
-
-    @Override
-    public void appendNarrations(NarrationMessageBuilder builder) {
     }
 }

@@ -2,6 +2,7 @@ package com.irtimaled.bbor.client.gui;
 
 import com.irtimaled.bbor.client.interop.ClientInterop;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 
 public class SettingsScreenButton extends AbstractButton {
     private final SettingsScreen screen;
@@ -14,5 +15,11 @@ public class SettingsScreenButton extends AbstractButton {
     @Override
     public void onPressed() {
         ClientInterop.displayScreen(screen);
+    }
+
+    @Override
+    public void appendNarrations(NarrationMessageBuilder narrationMessageBuilder) {
+        // TODO
+        this.appendDefaultNarrations(narrationMessageBuilder);
     }
 }

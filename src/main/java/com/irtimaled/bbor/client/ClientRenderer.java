@@ -1,16 +1,62 @@
 package com.irtimaled.bbor.client;
 
 import com.irtimaled.bbor.client.interop.ClientInterop;
-import com.irtimaled.bbor.client.models.*;
-import com.irtimaled.bbor.client.providers.*;
-import com.irtimaled.bbor.client.renderers.*;
+import com.irtimaled.bbor.client.models.BoundingBoxBeacon;
+import com.irtimaled.bbor.client.models.BoundingBoxBedrockCeiling;
+import com.irtimaled.bbor.client.models.BoundingBoxBiomeBorder;
+import com.irtimaled.bbor.client.models.BoundingBoxConduit;
+import com.irtimaled.bbor.client.models.BoundingBoxFlowerForest;
+import com.irtimaled.bbor.client.models.BoundingBoxLine;
+import com.irtimaled.bbor.client.models.BoundingBoxMobSpawner;
+import com.irtimaled.bbor.client.models.BoundingBoxSlimeChunk;
+import com.irtimaled.bbor.client.models.BoundingBoxSpawnableBlocks;
+import com.irtimaled.bbor.client.models.BoundingBoxSpawningSphere;
+import com.irtimaled.bbor.client.models.BoundingBoxSphere;
+import com.irtimaled.bbor.client.models.BoundingBoxWorldSpawn;
+import com.irtimaled.bbor.client.models.Point;
+import com.irtimaled.bbor.client.providers.BeaconProvider;
+import com.irtimaled.bbor.client.providers.BedrockCeilingProvider;
+import com.irtimaled.bbor.client.providers.BiomeBorderProvider;
+import com.irtimaled.bbor.client.providers.ConduitProvider;
+import com.irtimaled.bbor.client.providers.CustomBeaconProvider;
+import com.irtimaled.bbor.client.providers.CustomBoxProvider;
+import com.irtimaled.bbor.client.providers.CustomLineProvider;
+import com.irtimaled.bbor.client.providers.CustomSphereProvider;
+import com.irtimaled.bbor.client.providers.FlowerForestProvider;
+import com.irtimaled.bbor.client.providers.IBoundingBoxProvider;
+import com.irtimaled.bbor.client.providers.ICachingProvider;
+import com.irtimaled.bbor.client.providers.MobSpawnerProvider;
+import com.irtimaled.bbor.client.providers.SlimeChunkProvider;
+import com.irtimaled.bbor.client.providers.SpawnableBlocksProvider;
+import com.irtimaled.bbor.client.providers.SpawningSphereProvider;
+import com.irtimaled.bbor.client.providers.WorldSpawnProvider;
+import com.irtimaled.bbor.client.renderers.AbstractRenderer;
+import com.irtimaled.bbor.client.renderers.BeaconRenderer;
+import com.irtimaled.bbor.client.renderers.BiomeBorderRenderer;
+import com.irtimaled.bbor.client.renderers.ConduitRenderer;
+import com.irtimaled.bbor.client.renderers.CuboidRenderer;
+import com.irtimaled.bbor.client.renderers.FlowerForestRenderer;
+import com.irtimaled.bbor.client.renderers.LineRenderer;
+import com.irtimaled.bbor.client.renderers.MobSpawnerRenderer;
+import com.irtimaled.bbor.client.renderers.RenderHelper;
+import com.irtimaled.bbor.client.renderers.RenderQueue;
+import com.irtimaled.bbor.client.renderers.SlimeChunkRenderer;
+import com.irtimaled.bbor.client.renderers.SpawnableBlocksRenderer;
+import com.irtimaled.bbor.client.renderers.SpawningSphereRenderer;
+import com.irtimaled.bbor.client.renderers.SphereRenderer;
+import com.irtimaled.bbor.client.renderers.WorldSpawnRenderer;
 import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.TypeHelper;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBoxCuboid;
 import com.irtimaled.bbor.common.models.DimensionId;
+import net.minecraft.client.util.math.MatrixStack;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
 
 public class ClientRenderer {
@@ -84,17 +130,19 @@ public class ClientRenderer {
         return boundingBox.intersectsBounds(minX, minZ, maxX, maxZ);
     }
 
-    public static void render(DimensionId dimensionId) {
+    public static void render(MatrixStack matrixStack, DimensionId dimensionId) {
         if (!active) return;
 
+        matrixStack.push();
         RenderHelper.beforeRender();
 
         getBoundingBoxes(dimensionId).forEach(key -> {
             AbstractRenderer renderer = boundingBoxRendererMap.get(key.getClass());
-            if (renderer != null) renderer.render(key);
+            if (renderer != null) renderer.render(matrixStack, key);
         });
 
         RenderHelper.afterRender();
+        matrixStack.pop();
     }
 
     public static void renderDeferred() {
@@ -131,4 +179,6 @@ public class ClientRenderer {
             TypeHelper.doIfType(provider, ICachingProvider.class, ICachingProvider::clearCache);
         }
     }
+
+
 }

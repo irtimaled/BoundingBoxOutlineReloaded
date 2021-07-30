@@ -8,7 +8,6 @@ import com.irtimaled.bbor.common.models.Coords;
 import com.irtimaled.bbor.common.models.DimensionId;
 import net.minecraft.block.entity.BeaconBlockEntity;
 
-
 public class BeaconProvider implements IBoundingBoxProvider<BoundingBoxBeacon> {
     @Override
     public boolean canProvide(DimensionId dimensionId) {

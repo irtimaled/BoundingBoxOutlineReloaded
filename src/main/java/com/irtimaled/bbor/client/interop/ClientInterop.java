@@ -1,8 +1,11 @@
 package com.irtimaled.bbor.client.interop;
 
 import com.irtimaled.bbor.client.ClientRenderer;
-import com.irtimaled.bbor.client.Player;
-import com.irtimaled.bbor.client.commands.*;
+import com.irtimaled.bbor.client.commands.ConfigCommand;
+import com.irtimaled.bbor.client.commands.CustomCommand;
+import com.irtimaled.bbor.client.commands.SeedCommand;
+import com.irtimaled.bbor.client.commands.SpawningSphereCommand;
+import com.irtimaled.bbor.client.commands.StructuresCommand;
 import com.irtimaled.bbor.client.events.DisconnectedFromRemoteServer;
 import com.irtimaled.bbor.client.events.SaveLoaded;
 import com.irtimaled.bbor.client.events.UpdateWorldSpawnReceived;
@@ -16,9 +19,15 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.command.CommandSource;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.*;
+import net.minecraft.text.ClickEvent;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
+import net.minecraft.text.Texts;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 
@@ -28,9 +37,8 @@ public class ClientInterop {
         EventBus.publish(new DisconnectedFromRemoteServer());
     }
 
-    public static void render(float partialTicks, ClientPlayerEntity player) {
-        Player.setPosition(partialTicks, player);
-        ClientRenderer.render(DimensionId.from(player.getEntityWorld().getRegistryKey()));
+    public static void render(MatrixStack matrixStack, ClientPlayerEntity player) {
+        ClientRenderer.render(matrixStack, DimensionId.from(player.getEntityWorld().getRegistryKey()));
     }
 
     public static void renderDeferred() {
@@ -121,7 +129,7 @@ public class ClientInterop {
     }
 
     public static void displayScreen(Screen screen) {
-        MinecraftClient.getInstance().openScreen(screen);
+        MinecraftClient.getInstance().setScreen(screen);
     }
 
     public static long getGameTime() {

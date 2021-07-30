@@ -121,7 +121,7 @@ public class WorldSaveRow extends ControlListEntry implements Comparable<WorldSa
         int y = this.getY();
         this.client.textRenderer.draw(matrixStack, displayName, (float) (x + ICON_SIZE + 3), (float) (y + 1), 16777215);
         this.client.textRenderer.draw(matrixStack, details, (float) (x + ICON_SIZE + 3), (float) (y + 1 + this.client.textRenderer.fontHeight + 1), 8421504);
-        RenderHelper.setTexture(this.icon != null ? this.iconLocation : ICON_MISSING);
+        this.client.getTextureManager().bindTexture(this.icon != null ? this.iconLocation : ICON_MISSING);
         RenderHelper.enableBlend();
         DrawableHelper.drawTexture(matrixStack, x, y, 0.0F, 0.0F, ICON_SIZE, ICON_SIZE, 32, 32);
         RenderHelper.disableBlend();

@@ -3,6 +3,7 @@
   "id": "bbor",
   "name": "BoundingBoxOutlineReloaded",
   "description": "Shows the bounding boxes of structures and features.",
+  "accessWidener": "bbor.accesswidener",
   "authors": [
     "Irtimaled"
   ],

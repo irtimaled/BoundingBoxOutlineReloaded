@@ -1,6 +1,8 @@
 package com.irtimaled.bbor.client.gui;
 
 import com.irtimaled.bbor.client.interop.ClientInterop;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.world.level.storage.LevelStorage;
 import net.minecraft.world.level.storage.LevelStorageException;
@@ -12,7 +14,11 @@ public class LoadSavesScreen extends ListScreen {
     private SelectableControlList controlList;
 
     public static void show() {
-        ClientInterop.displayScreen(new LoadSavesScreen());
+        ClientInterop.displayScreen(new LoadSavesScreen(MinecraftClient.getInstance().currentScreen));
+    }
+
+    public LoadSavesScreen(Screen lastScreen) {
+        super(lastScreen);
     }
 
     @Override

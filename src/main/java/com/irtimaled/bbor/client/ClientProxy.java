@@ -1,7 +1,11 @@
 package com.irtimaled.bbor.client;
 
 import com.irtimaled.bbor.client.config.ConfigManager;
-import com.irtimaled.bbor.client.events.*;
+import com.irtimaled.bbor.client.events.AddBoundingBoxReceived;
+import com.irtimaled.bbor.client.events.DisconnectedFromRemoteServer;
+import com.irtimaled.bbor.client.events.InitializeClientReceived;
+import com.irtimaled.bbor.client.events.SaveLoaded;
+import com.irtimaled.bbor.client.events.UpdateWorldSpawnReceived;
 import com.irtimaled.bbor.client.gui.LoadSavesScreen;
 import com.irtimaled.bbor.client.gui.SettingsScreen;
 import com.irtimaled.bbor.client.interop.FlowerForestHelper;
