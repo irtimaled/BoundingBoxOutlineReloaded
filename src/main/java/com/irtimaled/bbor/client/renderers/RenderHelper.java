@@ -31,6 +31,7 @@ public class RenderHelper {
     }
 
     public static void afterRender() {
+        enableDepthTest();
         RenderSystem.enableCull();
         GL11.glDisable(GL11.GL_LINE_SMOOTH);
         RenderSystem.setShaderColor(1, 1, 1, 1);

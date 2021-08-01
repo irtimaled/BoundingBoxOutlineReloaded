@@ -26,7 +26,7 @@ public class MixinWorldRenderer {
 
     @Shadow private Frustum frustum;
 
-    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/RenderLayer;getWaterMask()Lnet/minecraft/client/render/RenderLayer;", shift = At.Shift.BEFORE))
+    @Inject(method = "render", at = @At(value = "INVOKE_STRING", target = "Lnet/minecraft/util/profiler/Profiler;swap(Ljava/lang/String;)V", args = "ldc=string", shift = At.Shift.BEFORE))
     private void onRender(MatrixStack matrixStack, float partialTicks, long ignored_2, boolean ignored_3, Camera ignored_4, GameRenderer ignored_5, LightmapTextureManager ignored_6, Matrix4f ignored_7, CallbackInfo ci) {
         Preconditions.checkNotNull(this.client.player);
         RenderCulling.setFrustum(frustum);
