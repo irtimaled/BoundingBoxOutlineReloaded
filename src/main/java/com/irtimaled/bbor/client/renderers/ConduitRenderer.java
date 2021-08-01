@@ -22,10 +22,10 @@ public class ConduitRenderer extends AbstractRenderer<BoundingBoxConduit> {
 
         OffsetPoint center = new OffsetPoint(point);
         OffsetBox centerBox = new OffsetBox(center, center).grow(0.5, 0.5, 0.5);
-        renderCuboid(matrixStack, centerBox, color, false);
+        renderCuboid(matrixStack, centerBox, color, false, 30);
         if (level == 6 && ConfigManager.renderConduitMobHarmArea.get()) {
             renderCuboid(matrixStack, centerBox.grow(8, 8, 8),
-                    ColorHelper.getColor(ConfigManager.colorConduitMobHarmArea), false);
+                    ColorHelper.getColor(ConfigManager.colorConduitMobHarmArea), false, 30);
         }
     }
 }

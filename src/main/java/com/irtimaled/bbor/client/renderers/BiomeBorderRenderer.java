@@ -48,7 +48,7 @@ public class BiomeBorderRenderer extends AbstractRenderer<BoundingBoxBiomeBorder
 
         renderLine(matrixStack, topCorner1, topCorner2, color);
         OffsetPoint bottomCorner2 = topCorner2.offset(0, 1, 0);
-        renderCuboid(matrixStack, new OffsetBox(topCorner1, bottomCorner2), color, true);
+        renderCuboid(matrixStack, new OffsetBox(topCorner1, bottomCorner2), color, true, 30);
         OffsetPoint bottomCorner1 = topCorner1.offset(0, 1, 0);
         renderLine(matrixStack, bottomCorner1, bottomCorner2, color);
     }
