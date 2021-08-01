@@ -7,6 +7,7 @@
   "bbor.options.active": "Active",
   "bbor.options.outerBoxOnly": "Outer Box Only",
   "bbor.options.fill": "Fill",
+  "bbor.options.lineWidthModifier": "Line Width Modifier",
 
   "bbor.options.maxY": "Max Y: %s",
   "bbor.options.maxY.activated": "Activated",

@@ -30,7 +30,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
     public static final double PHI_SEGMENT = TAU / 90D;
     private static final double PI = TAU / 2D;
     public static final double THETA_SEGMENT = PHI_SEGMENT / 2D;
-    private static final float LINE_RADIUS = 0.0025f;
+    private static final float DEFAULT_LINE_WIDTH = 0.0025f;
 
     private final VertexBuffer solidBox = new VertexBuffer();
     private final VertexBuffer outlinedBox = new VertexBuffer();
@@ -50,7 +50,9 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
         RenderHelper.polygonModeFill();
         matrixStack.push();
 
+        RenderSystem.depthMask(false);
         renderCuboid0(matrixStack, nudge, color, fillOnly, fillAlpha);
+        RenderSystem.depthMask(true);
 
         matrixStack.pop();
         RenderSystem.setShaderColor(1, 1, 1, 1);
@@ -89,12 +91,12 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
         if (!fillOnly) {
             RenderSystem.setShaderColor(color.getRed() / 255F, color.getGreen() / 255F, color.getBlue() / 255F, 1F);
 //            outlinedBox.setShader(viewMatrix, projMatrix, shader);
-            final double minXL = minX - LINE_RADIUS;
-            final double minYL = minY - LINE_RADIUS;
-            final double minZL = minZ - LINE_RADIUS;
-            final double maxXL = maxX + LINE_RADIUS;
-            final double maxYL = maxY + LINE_RADIUS;
-            final double maxZL = maxZ + LINE_RADIUS;
+            final double minXL = minX - getLineWidth();
+            final double minYL = minY - getLineWidth();
+            final double minZL = minZ - getLineWidth();
+            final double maxXL = maxX + getLineWidth();
+            final double maxYL = maxY + getLineWidth();
+            final double maxZL = maxZ + getLineWidth();
             stack.push();
             stack.peek().getModel().load(lastStack.getModel());
             stack.peek().getNormal().load(lastStack.getNormal());
@@ -122,11 +124,17 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
                 nudge.getMin().getZ() < 0 && nudge.getMax().getZ() > 0;
     }
 
+    private double getLineWidth() {
+        return DEFAULT_LINE_WIDTH * ConfigManager.lineWidthModifier.get();
+    }
+
     void renderLine(MatrixStack matrixStack, OffsetPoint startPoint, OffsetPoint endPoint, Color color) {
         if ((startPoint.getY() == endPoint.getY() && startPoint.getZ() == endPoint.getZ()) ||
                 (startPoint.getX() == endPoint.getX() && startPoint.getZ() == endPoint.getZ()) ||
                 (startPoint.getX() == endPoint.getX() && startPoint.getY() == endPoint.getY())) {
-            renderCuboid(matrixStack, new OffsetBox(startPoint.offset(-LINE_RADIUS, -LINE_RADIUS, -LINE_RADIUS), endPoint.offset(LINE_RADIUS, LINE_RADIUS, LINE_RADIUS)), color, true, 255);
+            RenderSystem.depthMask(true);
+            renderCuboid0(matrixStack, new OffsetBox(startPoint.offset(-getLineWidth(), -getLineWidth(), -getLineWidth()), endPoint.offset(getLineWidth(), getLineWidth(), getLineWidth())), color, true, 255);
+            RenderSystem.depthMask(false);
             return;
         }
 

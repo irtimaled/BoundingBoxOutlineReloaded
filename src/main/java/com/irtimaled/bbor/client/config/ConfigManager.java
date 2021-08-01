@@ -9,6 +9,7 @@ public class ConfigManager {
     private static File configDir;
 
     public static Setting<Boolean> fill;
+    public static Setting<Integer> lineWidthModifier;
     public static Setting<Boolean> drawVillages;
     public static Setting<Boolean> drawDesertTemples;
     public static Setting<Boolean> drawJungleTemples;
@@ -117,6 +118,7 @@ public class ConfigManager {
         invertBoxColorPlayerInside = setup(config, "general", "invertBoxColorPlayerInside", false, "If set to true the color of any bounding box the player is inside will be inverted.");
         renderSphereAsDots = setup(config, "general", "renderSphereAsDots", false, "If set to true spheres will be rendered as dots.");
         buttonOnOverlay = setup(config, "general", "buttonEnabledOverlay", HexColor.from("#3000ff00"), "The color and alpha of the button overlay when a button is on.");
+        lineWidthModifier = setup(config, "general", "lineWidthModifier", 1, "");
 
         drawBeacons = setup(config, "beacons", "drawBeacons", true, "If set to true beacon bounding boxes will be drawn.");
 
