@@ -9,18 +9,10 @@ import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gl.VertexBuffer;
-import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.BufferRenderer;
 import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.render.Shader;
-import net.minecraft.client.render.Tessellator;
-import net.minecraft.client.render.VertexFormat;
-import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Matrix4f;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -32,14 +24,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
     public static final double THETA_SEGMENT = PHI_SEGMENT / 2D;
     private static final float DEFAULT_LINE_WIDTH = 0.0025f;
 
-    private final VertexBuffer solidBox = new VertexBuffer();
-    private final VertexBuffer outlinedBox = new VertexBuffer();
-
-    {
-        final Box box = new Box(BlockPos.ORIGIN);
-        RenderHelper.drawSolidBox(box, solidBox);
-        RenderHelper.drawOutlinedBox(box, outlinedBox);
-    }
+    private static final Box ORIGIN_BOX = new Box(BlockPos.ORIGIN);
 
     public abstract void render(MatrixStack matrixStack, T boundingBox);
 
@@ -50,15 +35,13 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
         RenderHelper.polygonModeFill();
         matrixStack.push();
 
-        RenderSystem.depthMask(false);
-        renderCuboid0(matrixStack, nudge, color, fillOnly, fillAlpha);
-        RenderSystem.depthMask(true);
+        renderCuboid0(matrixStack, nudge, color, fillOnly, fillAlpha, false);
 
         matrixStack.pop();
         RenderSystem.setShaderColor(1, 1, 1, 1);
     }
 
-    private void renderCuboid0(MatrixStack stack, OffsetBox nudge, Color color, boolean fillOnly, int fillAlpha) {
+    private void renderCuboid0(MatrixStack stack, OffsetBox nudge, Color color, boolean fillOnly, int fillAlpha, boolean mask) {
         if (!RenderCulling.isVisibleCulling(nudge.toBox())) return;
         if (ConfigManager.invertBoxColorPlayerInside.get() &&
                 playerInsideBoundingBox(nudge)) {
@@ -81,15 +64,14 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
                 (float) (maxY - minY),
                 (float) (maxZ - minZ));
 
-        Matrix4f viewMatrix = stack.peek().getModel();
-        Matrix4f projMatrix = RenderSystem.getProjectionMatrix();
-        Shader shader = RenderSystem.getShader();
+//        Matrix4f viewMatrix = stack.peek().getModel();
+//        Matrix4f projMatrix = RenderSystem.getProjectionMatrix();
+//        Shader shader = RenderSystem.getShader();
         if (fillOnly || ConfigManager.fill.get()) {
-            RenderSystem.setShaderColor(color.getRed() / 255F, color.getGreen() / 255F, color.getBlue() / 255F, fillAlpha / 255F);
-            solidBox.setShader(viewMatrix, projMatrix, shader);
+//            RenderSystem.setShaderColor(color.getRed() / 255F, color.getGreen() / 255F, color.getBlue() / 255F, fillAlpha / 255F);
+            RenderBatch.drawSolidBox(stack.peek(), ORIGIN_BOX, color, fillAlpha, mask);
         }
         if (!fillOnly) {
-            RenderSystem.setShaderColor(color.getRed() / 255F, color.getGreen() / 255F, color.getBlue() / 255F, 1F);
 //            outlinedBox.setShader(viewMatrix, projMatrix, shader);
             final double minXL = minX - getLineWidth();
             final double minYL = minY - getLineWidth();
@@ -129,42 +111,20 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
     }
 
     void renderLine(MatrixStack matrixStack, OffsetPoint startPoint, OffsetPoint endPoint, Color color) {
-        if ((startPoint.getY() == endPoint.getY() && startPoint.getZ() == endPoint.getZ()) ||
-                (startPoint.getX() == endPoint.getX() && startPoint.getZ() == endPoint.getZ()) ||
-                (startPoint.getX() == endPoint.getX() && startPoint.getY() == endPoint.getY())) {
-            RenderSystem.depthMask(true);
-            renderCuboid0(matrixStack, new OffsetBox(startPoint.offset(-getLineWidth(), -getLineWidth(), -getLineWidth()), endPoint.offset(getLineWidth(), getLineWidth(), getLineWidth())), color, true, 255);
-            RenderSystem.depthMask(false);
-            return;
-        }
+//        if ((startPoint.getY() == endPoint.getY() && startPoint.getZ() == endPoint.getZ()) ||
+//                (startPoint.getX() == endPoint.getX() && startPoint.getZ() == endPoint.getZ()) ||
+//                (startPoint.getX() == endPoint.getX() && startPoint.getY() == endPoint.getY())) {
+//            renderCuboid0(matrixStack, new OffsetBox(startPoint.offset(-getLineWidth(), -getLineWidth(), -getLineWidth()), endPoint.offset(getLineWidth(), getLineWidth(), getLineWidth())), color, true, 255, true);
+//            return;
+//        }
 
         if (!RenderCulling.isVisibleCulling(new OffsetBox(startPoint, endPoint).toBox())) return; // TODO better culling
 
         matrixStack.push();
 
         RenderHelper.applyRegionalRenderOffset(matrixStack);
-        RenderSystem.setShader(GameRenderer::getPositionShader);
-        RenderSystem.setShaderColor(color.getRed() / 255F, color.getGreen() / 255F, color.getBlue() / 255F, 1F);
-        int regionX = (((int) Camera.getX()) >> 9) * 512;
-        int regionZ = (((int) Camera.getZ()) >> 9) * 512;
 
-        BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
-        bufferBuilder.begin(VertexFormat.DrawMode.DEBUG_LINES,
-                VertexFormats.POSITION);
-        bufferBuilder
-                .vertex(matrixStack.peek().getModel(),
-                        (float) startPoint.getX() - regionX,
-                        (float) startPoint.getY(),
-                        (float) startPoint.getZ() - regionZ)
-                .next();
-        bufferBuilder
-                .vertex(matrixStack.peek().getModel(),
-                        (float) endPoint.getX() - regionX,
-                        (float) endPoint.getY(),
-                        (float) endPoint.getZ() - regionZ)
-                .next();
-        bufferBuilder.end();
-        BufferRenderer.draw(bufferBuilder);
+        RenderBatch.drawLine(matrixStack.peek(), startPoint.getPoint(), endPoint.getPoint(), color, 255);
 
         matrixStack.pop();
     }
@@ -207,49 +167,27 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
 
         RenderHelper.applyRegionalRenderOffset(matrixStack);
         RenderSystem.setShader(GameRenderer::getPositionShader);
-        RenderSystem.setShaderColor(color.getRed() / 255F, color.getGreen() / 255F, color.getBlue() / 255F, 0.55f);
-        int regionX = (((int) Camera.getX()) >> 9) * 512;
-        int regionZ = (((int) Camera.getZ()) >> 9) * 512;
-
-        BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
-        bufferBuilder.begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP,
-                VertexFormats.POSITION);
 
         Point firstPoint = null;
+        Point lastPoint = null;
 
         for (double phi = 0.0D; phi < TAU; phi += PHI_SEGMENT) {
             final Point point = center.offset(Math.cos(phi) * radius, dy, Math.sin(phi) * radius);
             if (firstPoint == null) firstPoint = point;
-            bufferBuilder.vertex(matrixStack.peek().getModel(),
-                    (float) point.getX() - regionX,
-                    (float) point.getY(),
-                    (float) point.getZ() - regionZ)
-                    .next();
+            if (lastPoint == null) {
+                lastPoint = point;
+                continue;
+            }
+            RenderBatch.drawLine(matrixStack.peek(), lastPoint, point, color, 255);
         }
+        RenderBatch.drawLine(matrixStack.peek(), lastPoint, firstPoint, color, 255);
 
-        bufferBuilder.vertex(matrixStack.peek().getModel(),
-                (float) firstPoint.getX() - regionX,
-                (float) firstPoint.getY(),
-                (float) firstPoint.getZ() - regionZ)
-                .next();
-
-        bufferBuilder.end();
-        BufferRenderer.draw(bufferBuilder);
         matrixStack.pop();
     }
 
     private void renderDotSphere(MatrixStack matrixStack, Point center, double radius, Color color) {
         if (!RenderCulling.isVisibleCulling(new Box(new BlockPos(center.getX(), center.getY(), center.getZ())).expand(radius))) return;
         matrixStack.push();
-        RenderHelper.applyRegionalRenderOffset(matrixStack);
-        RenderSystem.setShader(GameRenderer::getPositionShader);
-        RenderSystem.setShaderColor(color.getRed() / 255F, color.getGreen() / 255F, color.getBlue() / 255F, 0.55f);
-        int regionX = (((int) Camera.getX()) >> 9) * 512;
-        int regionZ = (((int) Camera.getZ()) >> 9) * 512;
-
-        BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
-        bufferBuilder.begin(VertexFormat.DrawMode.QUADS,
-                VertexFormats.POSITION);
 
         for (double phi = 0.0D; phi < TAU; phi += PHI_SEGMENT) {
             double dy = radius * Math.cos(phi);
@@ -257,18 +195,10 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
             for (double theta = 0.0D; theta < PI; theta += THETA_SEGMENT) {
                 double dx = radiusBySinPhi * Math.cos(theta);
                 double dz = radiusBySinPhi * Math.sin(theta);
-
                 final Point point = center.offset(dx, dy, dz);
-                bufferBuilder
-                        .vertex(matrixStack.peek().getModel(),
-                                (float) point.getX() - regionX,
-                                (float) point.getY(),
-                                (float) point.getZ() - regionZ)
-                        .next();
+                renderCuboid0(matrixStack, new OffsetBox(point.offset(-getLineWidth(), -getLineWidth(), -getLineWidth()), point.offset(getLineWidth(), getLineWidth(), getLineWidth())), color, true, 255, true);
             }
         }
-        bufferBuilder.end();
-        BufferRenderer.draw(bufferBuilder);
         matrixStack.pop();
     }
 }

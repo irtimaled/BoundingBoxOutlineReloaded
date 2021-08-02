@@ -37,4 +37,8 @@ class OffsetPoint {
     double getDistance(OffsetPoint offsetPoint) {
         return this.point.getDistance(offsetPoint.point);
     }
+
+    Point getPoint() {
+        return point;
+    }
 }

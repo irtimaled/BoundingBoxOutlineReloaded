@@ -57,6 +57,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
 
 public class ClientRenderer {
@@ -65,6 +66,8 @@ public class ClientRenderer {
 
     private static boolean active;
     private static final Set<IBoundingBoxProvider> providers = new HashSet<>();
+
+    private static AtomicLong lastDurationNanos = new AtomicLong(0L);
 
     public static boolean getActive() {
         return active;
@@ -133,6 +136,7 @@ public class ClientRenderer {
     public static void render(MatrixStack matrixStack, DimensionId dimensionId) {
         if (!active) return;
 
+        long startTime = System.nanoTime();
         matrixStack.push();
         RenderHelper.beforeRender();
 
@@ -141,19 +145,11 @@ public class ClientRenderer {
             if (renderer != null) renderer.render(matrixStack, key);
         });
 
+        RenderQueue.renderDeferred();
+
         RenderHelper.afterRender();
         matrixStack.pop();
-    }
-
-    public static void renderDeferred() {
-        RenderHelper.beforeRender();
-        RenderHelper.polygonModeFill();
-        RenderHelper.enableBlend();
-        RenderQueue.renderDeferred();
-        RenderHelper.disableBlend();
-        RenderHelper.enablePolygonOffsetLine();
-        RenderHelper.polygonOffsetMinusOne();
-        RenderHelper.afterRender();
+        lastDurationNanos.set(System.nanoTime() - startTime);
     }
 
     public static Stream<AbstractBoundingBox> getBoundingBoxes(DimensionId dimensionId) {
@@ -178,6 +174,10 @@ public class ClientRenderer {
         for(IBoundingBoxProvider<?> provider : providers) {
             TypeHelper.doIfType(provider, ICachingProvider.class, ICachingProvider::clearCache);
         }
+    }
+
+    public static long getLastDurationNanos() {
+        return lastDurationNanos.get();
     }
 
 

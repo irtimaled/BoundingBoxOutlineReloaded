@@ -33,7 +33,6 @@ public class MixinWorldRenderer {
         RenderCulling.flushStats();
         Player.setPosition(partialTicks, this.client.player);
         ClientInterop.render(matrixStack, this.client.player);
-        ClientInterop.renderDeferred();
     }
 
 }
