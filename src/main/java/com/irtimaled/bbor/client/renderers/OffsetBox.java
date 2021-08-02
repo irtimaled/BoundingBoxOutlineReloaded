@@ -1,5 +1,6 @@
 package com.irtimaled.bbor.client.renderers;
 
+import com.irtimaled.bbor.client.models.Point;
 import com.irtimaled.bbor.common.models.Coords;
 import net.minecraft.util.math.Box;
 
@@ -20,6 +21,11 @@ class OffsetBox {
     OffsetBox(OffsetPoint min, OffsetPoint max) {
         this.min = min;
         this.max = max;
+    }
+
+    OffsetBox(Point min, Point max) {
+        this.min = new OffsetPoint(min);
+        this.max = new OffsetPoint(max);
     }
 
     OffsetBox grow(double x, double y, double z) {

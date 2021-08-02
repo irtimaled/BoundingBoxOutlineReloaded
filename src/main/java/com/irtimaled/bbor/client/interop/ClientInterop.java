@@ -41,10 +41,6 @@ public class ClientInterop {
         ClientRenderer.render(matrixStack, DimensionId.from(player.getEntityWorld().getRegistryKey()));
     }
 
-    public static void renderDeferred() {
-        ClientRenderer.renderDeferred();
-    }
-
     public static boolean interceptChatMessage(String message) {
         if (message.startsWith("/bbor:")) {
             ClientPlayNetworkHandler connection = MinecraftClient.getInstance().getNetworkHandler();
