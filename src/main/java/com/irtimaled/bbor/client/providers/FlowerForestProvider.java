@@ -10,7 +10,9 @@ import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.models.Coords;
 import com.irtimaled.bbor.common.models.DimensionId;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.registry.BuiltinRegistries;
+import net.minecraft.world.Heightmap;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -78,9 +80,10 @@ public class FlowerForestProvider implements IBoundingBoxProvider<BoundingBoxFlo
     }
 
     private static int getMaxYForPos(int x, int y, int z) {
-        while (y > 0) {
-            if (FlowerForestHelper.canGrowFlower(x, y, z)) return y;
-            y--;
+        int topY = MinecraftClient.getInstance().world.getTopY(Heightmap.Type.MOTION_BLOCKING, x, z) + 1;
+        while (topY > 0) {
+            if (FlowerForestHelper.canGrowFlower(x, topY, z)) return topY;
+            topY--;
         }
         return 0;
     }

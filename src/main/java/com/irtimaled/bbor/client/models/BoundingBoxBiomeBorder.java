@@ -1,10 +1,15 @@
 package com.irtimaled.bbor.client.models;
 
+import com.irtimaled.bbor.client.ClientRenderer;
+import com.irtimaled.bbor.client.renderers.AbstractRenderer;
+import com.irtimaled.bbor.client.renderers.BiomeBorderRenderer;
 import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.common.models.Coords;
 
 public class BoundingBoxBiomeBorder extends AbstractBoundingBox {
+    private static final AbstractRenderer<BoundingBoxBiomeBorder> RENDERER = ClientRenderer.registerRenderer(BoundingBoxBiomeBorder.class, new BiomeBorderRenderer());
+
     private final Coords coords;
     private final boolean north;
     private final boolean east;
@@ -63,4 +68,8 @@ public class BoundingBoxBiomeBorder extends AbstractBoundingBox {
         return west;
     }
 
+    @Override
+    public AbstractRenderer<?> getRenderer() {
+        return RENDERER;
+    }
 }

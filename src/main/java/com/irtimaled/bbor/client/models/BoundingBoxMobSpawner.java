@@ -1,10 +1,15 @@
 package com.irtimaled.bbor.client.models;
 
+import com.irtimaled.bbor.client.ClientRenderer;
+import com.irtimaled.bbor.client.renderers.AbstractRenderer;
+import com.irtimaled.bbor.client.renderers.MobSpawnerRenderer;
 import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.models.BoundingBoxCuboid;
 import com.irtimaled.bbor.common.models.Coords;
 
 public class BoundingBoxMobSpawner extends BoundingBoxCuboid {
+    private static final AbstractRenderer<BoundingBoxMobSpawner> RENDERER = ClientRenderer.registerRenderer(BoundingBoxMobSpawner.class, new MobSpawnerRenderer());
+
     private final Coords coords;
 
     private BoundingBoxMobSpawner(Coords coords, Coords minCoords, Coords maxCoords) {
@@ -24,5 +29,10 @@ public class BoundingBoxMobSpawner extends BoundingBoxCuboid {
 
     public Coords getCoords() {
         return coords;
+    }
+
+    @Override
+    public AbstractRenderer<?> getRenderer() {
+        return RENDERER;
     }
 }

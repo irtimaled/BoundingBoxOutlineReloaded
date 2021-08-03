@@ -1,5 +1,7 @@
 package com.irtimaled.bbor.common.models;
 
+import com.irtimaled.bbor.client.ClientRenderer;
+import com.irtimaled.bbor.client.renderers.AbstractRenderer;
 import com.irtimaled.bbor.common.BoundingBoxType;
 
 public abstract class AbstractBoundingBox {
@@ -19,7 +21,7 @@ public abstract class AbstractBoundingBox {
         double dX = getDistanceX(x);
         double dY = getDistanceY(y);
         double dZ = getDistanceZ(z);
-        return Math.cbrt(dX * dX + dY * dY + dZ * dZ);
+        return dX * dX + dY * dY + dZ * dZ;
     }
 
     protected abstract double getDistanceX(double x);
@@ -27,4 +29,8 @@ public abstract class AbstractBoundingBox {
     protected abstract double getDistanceY(double y);
 
     protected abstract double getDistanceZ(double z);
+
+    public AbstractRenderer<?> getRenderer() {
+        return ClientRenderer.getRenderer(this.getClass());
+    }
 }

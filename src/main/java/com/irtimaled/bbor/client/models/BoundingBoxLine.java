@@ -1,11 +1,16 @@
 package com.irtimaled.bbor.client.models;
 
+import com.irtimaled.bbor.client.ClientRenderer;
+import com.irtimaled.bbor.client.renderers.AbstractRenderer;
+import com.irtimaled.bbor.client.renderers.LineRenderer;
 import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.TypeHelper;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 
 public class BoundingBoxLine extends AbstractBoundingBox {
+    private static final AbstractRenderer<BoundingBoxLine> RENDERER = ClientRenderer.registerRenderer(BoundingBoxLine.class, new LineRenderer());
+
     private final Point minPoint;
     private final Point maxPoint;
     private final Double width;
@@ -107,5 +112,10 @@ public class BoundingBoxLine extends AbstractBoundingBox {
 
     private boolean isBetween(double val, int min, int max) {
         return val >= min && val <= max;
+    }
+
+    @Override
+    public AbstractRenderer<?> getRenderer() {
+        return RENDERER;
     }
 }
