@@ -1,8 +1,11 @@
 package com.irtimaled.bbor.client.models;
 
+import com.irtimaled.bbor.client.ClientRenderer;
 import com.irtimaled.bbor.client.config.ColorHelper;
 import com.irtimaled.bbor.client.config.HexColor;
 import com.irtimaled.bbor.client.config.Setting;
+import com.irtimaled.bbor.client.renderers.AbstractRenderer;
+import com.irtimaled.bbor.client.renderers.FlowerForestRenderer;
 import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.common.models.Coords;
@@ -10,6 +13,8 @@ import com.irtimaled.bbor.common.models.Coords;
 import java.awt.*;
 
 public class BoundingBoxFlowerForest extends AbstractBoundingBox {
+    private static final AbstractRenderer<BoundingBoxFlowerForest> RENDERER = ClientRenderer.registerRenderer(BoundingBoxFlowerForest.class, new FlowerForestRenderer());
+
     private final Coords coords;
     private final Setting<HexColor> colorSetting;
 
@@ -45,5 +50,10 @@ public class BoundingBoxFlowerForest extends AbstractBoundingBox {
     @Override
     public double getDistanceZ(double z) {
         return z - coords.getZ();
+    }
+
+    @Override
+    public AbstractRenderer<?> getRenderer() {
+        return RENDERER;
     }
 }

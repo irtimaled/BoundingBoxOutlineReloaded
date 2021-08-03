@@ -1,18 +1,6 @@
 package com.irtimaled.bbor.client;
 
 import com.irtimaled.bbor.client.interop.ClientInterop;
-import com.irtimaled.bbor.client.models.BoundingBoxBeacon;
-import com.irtimaled.bbor.client.models.BoundingBoxBedrockCeiling;
-import com.irtimaled.bbor.client.models.BoundingBoxBiomeBorder;
-import com.irtimaled.bbor.client.models.BoundingBoxConduit;
-import com.irtimaled.bbor.client.models.BoundingBoxFlowerForest;
-import com.irtimaled.bbor.client.models.BoundingBoxLine;
-import com.irtimaled.bbor.client.models.BoundingBoxMobSpawner;
-import com.irtimaled.bbor.client.models.BoundingBoxSlimeChunk;
-import com.irtimaled.bbor.client.models.BoundingBoxSpawnableBlocks;
-import com.irtimaled.bbor.client.models.BoundingBoxSpawningSphere;
-import com.irtimaled.bbor.client.models.BoundingBoxSphere;
-import com.irtimaled.bbor.client.models.BoundingBoxWorldSpawn;
 import com.irtimaled.bbor.client.models.Point;
 import com.irtimaled.bbor.client.providers.BeaconProvider;
 import com.irtimaled.bbor.client.providers.BedrockCeilingProvider;
@@ -31,38 +19,27 @@ import com.irtimaled.bbor.client.providers.SpawnableBlocksProvider;
 import com.irtimaled.bbor.client.providers.SpawningSphereProvider;
 import com.irtimaled.bbor.client.providers.WorldSpawnProvider;
 import com.irtimaled.bbor.client.renderers.AbstractRenderer;
-import com.irtimaled.bbor.client.renderers.BeaconRenderer;
-import com.irtimaled.bbor.client.renderers.BiomeBorderRenderer;
-import com.irtimaled.bbor.client.renderers.ConduitRenderer;
-import com.irtimaled.bbor.client.renderers.CuboidRenderer;
-import com.irtimaled.bbor.client.renderers.FlowerForestRenderer;
-import com.irtimaled.bbor.client.renderers.LineRenderer;
-import com.irtimaled.bbor.client.renderers.MobSpawnerRenderer;
 import com.irtimaled.bbor.client.renderers.RenderHelper;
 import com.irtimaled.bbor.client.renderers.RenderQueue;
-import com.irtimaled.bbor.client.renderers.SlimeChunkRenderer;
-import com.irtimaled.bbor.client.renderers.SpawnableBlocksRenderer;
-import com.irtimaled.bbor.client.renderers.SpawningSphereRenderer;
-import com.irtimaled.bbor.client.renderers.SphereRenderer;
-import com.irtimaled.bbor.client.renderers.WorldSpawnRenderer;
 import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.TypeHelper;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
-import com.irtimaled.bbor.common.models.BoundingBoxCuboid;
 import com.irtimaled.bbor.common.models.DimensionId;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.client.util.math.MatrixStack;
 
+import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Stream;
 
 public class ClientRenderer {
     private static final int CHUNK_SIZE = 16;
-    private static final Map<Class<? extends AbstractBoundingBox>, AbstractRenderer> boundingBoxRendererMap = new HashMap<>();
+    private static final Map<Class<? extends AbstractBoundingBox>, AbstractRenderer> boundingBoxRendererMap = new Object2ObjectOpenHashMap<>();
 
     private static boolean active;
     private static final Set<IBoundingBoxProvider> providers = new HashSet<>();
@@ -85,19 +62,14 @@ public class ClientRenderer {
     }
 
     static {
-        registerRenderer(BoundingBoxSlimeChunk.class, new SlimeChunkRenderer());
-        registerRenderer(BoundingBoxWorldSpawn.class, new WorldSpawnRenderer());
-        registerRenderer(BoundingBoxCuboid.class, new CuboidRenderer());
-        registerRenderer(BoundingBoxMobSpawner.class, new MobSpawnerRenderer());
-        registerRenderer(BoundingBoxSpawningSphere.class, new SpawningSphereRenderer());
-        registerRenderer(BoundingBoxBeacon.class, new BeaconRenderer());
-        registerRenderer(BoundingBoxBiomeBorder.class, new BiomeBorderRenderer());
-        registerRenderer(BoundingBoxConduit.class, new ConduitRenderer());
-        registerRenderer(BoundingBoxSpawnableBlocks.class, new SpawnableBlocksRenderer());
-        registerRenderer(BoundingBoxLine.class, new LineRenderer());
-        registerRenderer(BoundingBoxSphere.class, new SphereRenderer());
-        registerRenderer(BoundingBoxFlowerForest.class, new FlowerForestRenderer());
-        registerRenderer(BoundingBoxBedrockCeiling.class, new CuboidRenderer());
+
+
+
+
+
+
+
+
 
         registerProvider(new SlimeChunkProvider());
         registerProvider(new WorldSpawnProvider());
@@ -119,8 +91,13 @@ public class ClientRenderer {
         providers.add(provider);
     }
 
-    public static <T extends AbstractBoundingBox> void registerRenderer(Class<? extends T> type, AbstractRenderer<T> renderer) {
+    public static <T extends AbstractBoundingBox> AbstractRenderer<T> registerRenderer(Class<? extends T> type, AbstractRenderer<T> renderer) {
         boundingBoxRendererMap.put(type, renderer);
+        return renderer;
+    }
+
+    public static AbstractRenderer getRenderer(Class<? extends AbstractBoundingBox> clazz) {
+        return boundingBoxRendererMap.get(clazz);
     }
 
     private static boolean isWithinRenderDistance(AbstractBoundingBox boundingBox) {
@@ -141,7 +118,7 @@ public class ClientRenderer {
         RenderHelper.beforeRender();
 
         getBoundingBoxes(dimensionId).forEach(key -> {
-            AbstractRenderer renderer = boundingBoxRendererMap.get(key.getClass());
+            AbstractRenderer renderer = key.getRenderer();
             if (renderer != null) renderer.render(matrixStack, key);
         });
 
@@ -152,22 +129,23 @@ public class ClientRenderer {
         lastDurationNanos.set(System.nanoTime() - startTime);
     }
 
-    public static Stream<AbstractBoundingBox> getBoundingBoxes(DimensionId dimensionId) {
-        Stream.Builder<AbstractBoundingBox> boundingBoxes = Stream.builder();
+    public static List<AbstractBoundingBox> getBoundingBoxes(DimensionId dimensionId) {
+        List<AbstractBoundingBox> tmp = new LinkedList<>();
         for (IBoundingBoxProvider<?> provider : providers) {
             if (provider.canProvide(dimensionId)) {
                 for (AbstractBoundingBox boundingBox : provider.get(dimensionId)) {
                     if (isWithinRenderDistance(boundingBox)) {
-                        boundingBoxes.accept(boundingBox);
+                        tmp.add(boundingBox);
                     }
                 }
             }
         }
 
         Point point = Player.getPoint();
-        return boundingBoxes.build()
-                .sorted(Comparator
-                        .comparingDouble((AbstractBoundingBox boundingBox) -> boundingBox.getDistance(point.getX(), point.getY(), point.getZ())).reversed());
+        final ArrayList<AbstractBoundingBox> result = new ArrayList<>(tmp);
+        result.sort(Comparator.comparingDouble((AbstractBoundingBox boundingBox) -> boundingBox.getDistance(point.getX(), point.getY(), point.getZ())).reversed());
+
+        return result;
     }
 
     public static void clear() {

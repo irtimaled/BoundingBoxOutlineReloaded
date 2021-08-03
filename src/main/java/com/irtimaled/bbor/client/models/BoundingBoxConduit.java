@@ -1,10 +1,15 @@
 package com.irtimaled.bbor.client.models;
 
+import com.irtimaled.bbor.client.ClientRenderer;
+import com.irtimaled.bbor.client.renderers.AbstractRenderer;
+import com.irtimaled.bbor.client.renderers.ConduitRenderer;
 import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.TypeHelper;
 import com.irtimaled.bbor.common.models.Coords;
 
 public class BoundingBoxConduit extends BoundingBoxSphere {
+    private static final AbstractRenderer<BoundingBoxConduit> RENDERER = ClientRenderer.registerRenderer(BoundingBoxConduit.class, new ConduitRenderer());
+
     private final int level;
 
     private BoundingBoxConduit(Coords coords, int level, int radius) {
@@ -32,5 +37,10 @@ public class BoundingBoxConduit extends BoundingBoxSphere {
 
     public int getLevel() {
         return level;
+    }
+
+    @Override
+    public AbstractRenderer<?> getRenderer() {
+        return RENDERER;
     }
 }

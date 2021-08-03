@@ -1,10 +1,15 @@
 package com.irtimaled.bbor.common.models;
 
+import com.irtimaled.bbor.client.ClientRenderer;
+import com.irtimaled.bbor.client.renderers.AbstractRenderer;
+import com.irtimaled.bbor.client.renderers.CuboidRenderer;
 import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.TypeHelper;
 
 public class BoundingBoxCuboid extends AbstractBoundingBox {
+    private static final AbstractRenderer<BoundingBoxCuboid> RENDERER = ClientRenderer.registerRenderer(BoundingBoxCuboid.class, new CuboidRenderer());
+
     private final Coords minCoords;
     private final Coords maxCoords;
 
@@ -69,5 +74,10 @@ public class BoundingBoxCuboid extends AbstractBoundingBox {
     @Override
     public double getDistanceZ(double z) {
         return z - MathHelper.clamp(z, minCoords.getZ(), maxCoords.getZ());
+    }
+
+    @Override
+    public AbstractRenderer<?> getRenderer() {
+        return RENDERER;
     }
 }

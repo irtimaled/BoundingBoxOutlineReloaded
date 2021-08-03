@@ -1,10 +1,15 @@
 package com.irtimaled.bbor.client.models;
 
+import com.irtimaled.bbor.client.ClientRenderer;
+import com.irtimaled.bbor.client.renderers.AbstractRenderer;
+import com.irtimaled.bbor.client.renderers.SphereRenderer;
 import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.common.models.Coords;
 
 public class BoundingBoxSphere extends AbstractBoundingBox {
+    private static final AbstractRenderer<BoundingBoxSphere> RENDERER = ClientRenderer.registerRenderer(BoundingBoxSphere.class, new SphereRenderer());
+
     private final double radius;
     private final double minX;
     private final double minZ;
