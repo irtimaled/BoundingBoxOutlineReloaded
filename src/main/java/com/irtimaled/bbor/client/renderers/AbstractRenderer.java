@@ -157,6 +157,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
                 continue;
             }
             RenderBatch.drawLine(matrixStack.peek(), lastPoint, point, color, 255);
+            lastPoint = point;
         }
         RenderBatch.drawLine(matrixStack.peek(), lastPoint, firstPoint, color, 255);
 
