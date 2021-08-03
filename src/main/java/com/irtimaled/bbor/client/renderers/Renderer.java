@@ -9,6 +9,7 @@ import net.minecraft.client.util.math.MatrixStack;
 
 import java.awt.*;
 
+@Deprecated
 public class Renderer {
     private final VertexFormat.DrawMode glMode;
 
