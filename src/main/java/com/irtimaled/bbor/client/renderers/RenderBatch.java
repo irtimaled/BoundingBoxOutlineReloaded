@@ -121,11 +121,11 @@ public class RenderBatch {
         }
 
         RenderSystem.depthMask(true);
-        if (quadMaskedCount.get() != 0) BufferRenderer.draw(quadBufferBuilderMasked);
-        if (lineCountLast.get() != 0) BufferRenderer.draw(lineBufferBuilder);
+        BufferRenderer.draw(quadBufferBuilderMasked);
+        BufferRenderer.draw(lineBufferBuilder);
 
         RenderSystem.depthMask(false);
-        if (quadNonMaskedCountLast.get() != 0) BufferRenderer.draw(quadBufferBuilderNonMasked);
+        BufferRenderer.draw(quadBufferBuilderNonMasked);
         lastDurationNanos.set(System.nanoTime() - startTime);
 
         RenderSystem.depthMask(true);
