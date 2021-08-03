@@ -13,7 +13,6 @@ import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
-import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 
@@ -22,7 +21,6 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
     public static final double PHI_SEGMENT = TAU / 90D;
     private static final double PI = TAU / 2D;
     public static final double THETA_SEGMENT = PHI_SEGMENT / 2D;
-    private static final float DEFAULT_LINE_WIDTH = 0.0025f;
 
     private static final Box ORIGIN_BOX = new Box(BlockPos.ORIGIN);
 
@@ -30,15 +28,11 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
 
     void renderCuboid(MatrixStack matrixStack, OffsetBox bb, Color color, boolean fillOnly, int fillAlpha) {
         OffsetBox nudge = bb.nudge();
-
-        GL11.glEnable(GL11.GL_CULL_FACE);
-        RenderHelper.polygonModeFill();
         matrixStack.push();
 
         renderCuboid0(matrixStack, nudge, color, fillOnly, fillAlpha, false);
 
         matrixStack.pop();
-        RenderSystem.setShaderColor(1, 1, 1, 1);
     }
 
     private void renderCuboid0(MatrixStack stack, OffsetBox nudge, Color color, boolean fillOnly, int fillAlpha, boolean mask) {
@@ -52,7 +46,6 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
         int regionX = (((int) Camera.getX()) >> 9) << 9;
         int regionZ = (((int) Camera.getZ()) >> 9) << 9;
         RenderHelper.applyRegionalRenderOffset(stack);
-        RenderSystem.setShader(GameRenderer::getPositionShader);
         final double minX = nudge.getMin().getX();
         final double minY = nudge.getMin().getY();
         final double minZ = nudge.getMin().getZ();
@@ -64,36 +57,25 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
                 (float) (maxY - minY),
                 (float) (maxZ - minZ));
 
-//        Matrix4f viewMatrix = stack.peek().getModel();
-//        Matrix4f projMatrix = RenderSystem.getProjectionMatrix();
-//        Shader shader = RenderSystem.getShader();
         if (fillOnly || ConfigManager.fill.get()) {
-//            RenderSystem.setShaderColor(color.getRed() / 255F, color.getGreen() / 255F, color.getBlue() / 255F, fillAlpha / 255F);
             RenderBatch.drawSolidBox(stack.peek(), ORIGIN_BOX, color, fillAlpha, mask);
         }
         if (!fillOnly) {
-//            outlinedBox.setShader(viewMatrix, projMatrix, shader);
-            final double minXL = minX - getLineWidth();
-            final double minYL = minY - getLineWidth();
-            final double minZL = minZ - getLineWidth();
-            final double maxXL = maxX + getLineWidth();
-            final double maxYL = maxY + getLineWidth();
-            final double maxZL = maxZ + getLineWidth();
             stack.push();
             stack.peek().getModel().load(lastStack.getModel());
             stack.peek().getNormal().load(lastStack.getNormal());
-            renderLine(stack, new OffsetPoint(minXL, minYL, minZL), new OffsetPoint(maxXL, minYL, minZL), color);
-            renderLine(stack, new OffsetPoint(maxXL, minYL, minZL), new OffsetPoint(maxXL, minYL, maxZL), color);
-            renderLine(stack, new OffsetPoint(maxXL, minYL, maxZL), new OffsetPoint(minXL, minYL, maxZL), color);
-            renderLine(stack, new OffsetPoint(minXL, minYL, maxZL), new OffsetPoint(minXL, minYL, minZL), color);
-            renderLine(stack, new OffsetPoint(minXL, minYL, minZL), new OffsetPoint(minXL, maxYL, minZL), color);
-            renderLine(stack, new OffsetPoint(maxXL, minYL, minZL), new OffsetPoint(maxXL, maxYL, minZL), color);
-            renderLine(stack, new OffsetPoint(maxXL, minYL, maxZL), new OffsetPoint(maxXL, maxYL, maxZL), color);
-            renderLine(stack, new OffsetPoint(minXL, minYL, maxZL), new OffsetPoint(minXL, maxYL, maxZL), color);
-            renderLine(stack, new OffsetPoint(minXL, maxYL, minZL), new OffsetPoint(maxXL, maxYL, minZL), color);
-            renderLine(stack, new OffsetPoint(maxXL, maxYL, minZL), new OffsetPoint(maxXL, maxYL, maxZL), color);
-            renderLine(stack, new OffsetPoint(maxXL, maxYL, maxZL), new OffsetPoint(minXL, maxYL, maxZL), color);
-            renderLine(stack, new OffsetPoint(minXL, maxYL, maxZL), new OffsetPoint(minXL, maxYL, minZL), color);
+            renderLine(stack, new OffsetPoint(minX, minY, minZ), new OffsetPoint(maxX, minY, minZ), color);
+            renderLine(stack, new OffsetPoint(maxX, minY, minZ), new OffsetPoint(maxX, minY, maxZ), color);
+            renderLine(stack, new OffsetPoint(maxX, minY, maxZ), new OffsetPoint(minX, minY, maxZ), color);
+            renderLine(stack, new OffsetPoint(minX, minY, maxZ), new OffsetPoint(minX, minY, minZ), color);
+            renderLine(stack, new OffsetPoint(minX, minY, minZ), new OffsetPoint(minX, maxY, minZ), color);
+            renderLine(stack, new OffsetPoint(maxX, minY, minZ), new OffsetPoint(maxX, maxY, minZ), color);
+            renderLine(stack, new OffsetPoint(maxX, minY, maxZ), new OffsetPoint(maxX, maxY, maxZ), color);
+            renderLine(stack, new OffsetPoint(minX, minY, maxZ), new OffsetPoint(minX, maxY, maxZ), color);
+            renderLine(stack, new OffsetPoint(minX, maxY, minZ), new OffsetPoint(maxX, maxY, minZ), color);
+            renderLine(stack, new OffsetPoint(maxX, maxY, minZ), new OffsetPoint(maxX, maxY, maxZ), color);
+            renderLine(stack, new OffsetPoint(maxX, maxY, maxZ), new OffsetPoint(minX, maxY, maxZ), color);
+            renderLine(stack, new OffsetPoint(minX, maxY, maxZ), new OffsetPoint(minX, maxY, minZ), color);
             stack.pop();
         }
 
@@ -106,9 +88,6 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
                 nudge.getMin().getZ() < 0 && nudge.getMax().getZ() > 0;
     }
 
-    private double getLineWidth() {
-        return DEFAULT_LINE_WIDTH * ConfigManager.lineWidthModifier.get();
-    }
 
     void renderLine(MatrixStack matrixStack, OffsetPoint startPoint, OffsetPoint endPoint, Color color) {
 //        if ((startPoint.getY() == endPoint.getY() && startPoint.getZ() == endPoint.getZ()) ||
@@ -151,7 +130,6 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
 
     private void renderLineSphere(MatrixStack matrixStack, Point center, double radius, Color color) {
         if (!RenderCulling.isVisibleCulling(new Box(new BlockPos(center.getX(), center.getY(), center.getZ())).expand(radius))) return;
-        RenderHelper.lineWidth2();
 
         double offset = ((radius - (int) radius) == 0) ? center.getY() - (int) center.getY() : 0;
         int dyStep = radius < 64 ? 1 : MathHelper.floor(radius / 32);
@@ -196,7 +174,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
                 double dx = radiusBySinPhi * Math.cos(theta);
                 double dz = radiusBySinPhi * Math.sin(theta);
                 final Point point = center.offset(dx, dy, dz);
-                renderCuboid0(matrixStack, new OffsetBox(point.offset(-getLineWidth(), -getLineWidth(), -getLineWidth()), point.offset(getLineWidth(), getLineWidth(), getLineWidth())), color, true, 255, true);
+                renderCuboid0(matrixStack, new OffsetBox(point.offset(-0.0025f, -0.0025f, -0.0025f), point.offset(0.0025f, 0.0025f, 0.0025f)), color, true, 255, true);
             }
         }
         matrixStack.pop();
