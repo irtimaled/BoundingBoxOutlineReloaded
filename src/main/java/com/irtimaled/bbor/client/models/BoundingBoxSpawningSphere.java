@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class BoundingBoxSpawningSphere extends BoundingBoxSphere {
-    private static final AbstractRenderer<BoundingBoxSpawningSphere> RENDERER = ClientRenderer.registerRenderer(BoundingBoxSpawningSphere.class, new SpawningSphereRenderer());
+    private static final AbstractRenderer<BoundingBoxSpawningSphere> RENDERER = ClientRenderer.registerRenderer(BoundingBoxSpawningSphere.class, () -> new SpawningSphereRenderer());
 
     public static final int SAFE_RADIUS = 24;
     public static final int SPAWN_RADIUS = 128;

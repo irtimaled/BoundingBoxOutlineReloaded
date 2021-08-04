@@ -1,6 +1,7 @@
 package com.irtimaled.bbor.client.models;
 
 import com.irtimaled.bbor.client.ClientRenderer;
+import com.irtimaled.bbor.client.RenderCulling;
 import com.irtimaled.bbor.client.renderers.AbstractRenderer;
 import com.irtimaled.bbor.client.renderers.LineRenderer;
 import com.irtimaled.bbor.common.BoundingBoxType;
@@ -9,7 +10,7 @@ import com.irtimaled.bbor.common.TypeHelper;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 
 public class BoundingBoxLine extends AbstractBoundingBox {
-    private static final AbstractRenderer<BoundingBoxLine> RENDERER = ClientRenderer.registerRenderer(BoundingBoxLine.class, new LineRenderer());
+    private static final AbstractRenderer<BoundingBoxLine> RENDERER = ClientRenderer.registerRenderer(BoundingBoxLine.class, () -> new LineRenderer());
 
     private final Point minPoint;
     private final Point maxPoint;
@@ -117,5 +118,10 @@ public class BoundingBoxLine extends AbstractBoundingBox {
     @Override
     public AbstractRenderer<?> getRenderer() {
         return RENDERER;
+    }
+
+    @Override
+    public boolean isVisibleCulling() {
+        return RenderCulling.isVisibleCulling(minPoint.getX(), minPoint.getY(), minPoint.getZ(), maxPoint.getX(), maxPoint.getY(), maxPoint.getZ()); // TODO better culling
     }
 }

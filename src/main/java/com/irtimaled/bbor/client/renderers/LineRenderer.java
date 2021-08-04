@@ -16,7 +16,7 @@ public class LineRenderer extends AbstractRenderer<BoundingBoxLine> {
         if (boundingBox.getWidth() == 0) {
             OffsetPoint startPoint = new OffsetPoint(boundingBox.getMinPoint()).offset(0, 0.001f, 0);
             OffsetPoint endPoint = new OffsetPoint(boundingBox.getMaxPoint()).offset(0, 0.001f, 0);
-            renderLine(matrixStack, startPoint, endPoint, color);
+            renderLine(matrixStack, startPoint, endPoint, color, false);
             return;
         }
 

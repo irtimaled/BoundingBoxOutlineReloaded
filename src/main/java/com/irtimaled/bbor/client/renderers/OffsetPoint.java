@@ -3,6 +3,8 @@ package com.irtimaled.bbor.client.renderers;
 import com.irtimaled.bbor.client.models.Point;
 import com.irtimaled.bbor.common.models.Coords;
 
+import java.util.Objects;
+
 class OffsetPoint {
     private final Point point;
 
@@ -40,5 +42,18 @@ class OffsetPoint {
 
     Point getPoint() {
         return point;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OffsetPoint that = (OffsetPoint) o;
+        return point.equals(that.point);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(point);
     }
 }

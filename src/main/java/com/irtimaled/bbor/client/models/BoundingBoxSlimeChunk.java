@@ -11,7 +11,7 @@ import com.irtimaled.bbor.common.models.BoundingBoxCuboid;
 import com.irtimaled.bbor.common.models.Coords;
 
 public class BoundingBoxSlimeChunk extends BoundingBoxCuboid {
-    private static final AbstractRenderer<BoundingBoxSlimeChunk> RENDERER = ClientRenderer.registerRenderer(BoundingBoxSlimeChunk.class, new SlimeChunkRenderer());
+    private static final AbstractRenderer<BoundingBoxSlimeChunk> RENDERER = ClientRenderer.registerRenderer(BoundingBoxSlimeChunk.class, () -> new SlimeChunkRenderer());
 
     public BoundingBoxSlimeChunk(Coords minCoords, Coords maxCoords) {
         super(minCoords, maxCoords, BoundingBoxType.SlimeChunks);

@@ -8,7 +8,7 @@ import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.common.models.Coords;
 
 public class BoundingBoxSphere extends AbstractBoundingBox {
-    private static final AbstractRenderer<BoundingBoxSphere> RENDERER = ClientRenderer.registerRenderer(BoundingBoxSphere.class, new SphereRenderer());
+    private static final AbstractRenderer<BoundingBoxSphere> RENDERER = ClientRenderer.registerRenderer(BoundingBoxSphere.class, () -> new SphereRenderer());
 
     private final double radius;
     private final double minX;
@@ -58,5 +58,10 @@ public class BoundingBoxSphere extends AbstractBoundingBox {
 
     public Point getPoint() {
         return point;
+    }
+
+    @Override
+    public AbstractRenderer<?> getRenderer() {
+        return RENDERER;
     }
 }

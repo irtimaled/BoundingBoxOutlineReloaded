@@ -1,7 +1,5 @@
 package com.irtimaled.bbor.client.gui;
 
-import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
 import com.irtimaled.bbor.client.config.Setting;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.resource.language.I18n;
@@ -9,7 +7,6 @@ import net.minecraft.text.LiteralText;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.IntStream;
 
 class IntSettingSlider extends AbstractSlider {
     private final String format;
@@ -36,17 +33,6 @@ class IntSettingSlider extends AbstractSlider {
         if (setting.get() == value) {
             this.updateText();
         }
-        return this;
-    }
-
-    IntSettingSlider addDisplayValueRange(int start, int end) {
-        return addDisplayValueRange(start, end, String::valueOf);
-    }
-
-    IntSettingSlider addDisplayValueRange(int start, int end, Function<Integer, String> formatter) {
-        Preconditions.checkArgument(start <= end);
-        Preconditions.checkNotNull(formatter);
-        IntStream.range(start, end).forEach(value -> addDisplayValue(value, formatter.apply(value)));
         return this;
     }
 

@@ -8,7 +8,7 @@ import com.irtimaled.bbor.common.models.BoundingBoxCuboid;
 import com.irtimaled.bbor.common.models.Coords;
 
 public class BoundingBoxMobSpawner extends BoundingBoxCuboid {
-    private static final AbstractRenderer<BoundingBoxMobSpawner> RENDERER = ClientRenderer.registerRenderer(BoundingBoxMobSpawner.class, new MobSpawnerRenderer());
+    private static final AbstractRenderer<BoundingBoxMobSpawner> RENDERER = ClientRenderer.registerRenderer(BoundingBoxMobSpawner.class, () -> new MobSpawnerRenderer());
 
     private final Coords coords;
 

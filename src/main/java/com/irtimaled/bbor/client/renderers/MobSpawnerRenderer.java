@@ -34,7 +34,7 @@ public class MobSpawnerRenderer extends AbstractRenderer<BoundingBoxMobSpawner> 
         if (distance <= 20) {
 
             OffsetPoint playerPoint = playerPos.offset(0, 0.1, 0);
-            renderLine(matrixStack, centerPoint, playerPoint, getColor(distance));
+            renderLine(matrixStack, centerPoint, playerPoint, getColor(distance), false);
         }
     }
 

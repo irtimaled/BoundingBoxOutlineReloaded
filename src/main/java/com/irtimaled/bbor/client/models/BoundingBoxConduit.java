@@ -8,7 +8,7 @@ import com.irtimaled.bbor.common.TypeHelper;
 import com.irtimaled.bbor.common.models.Coords;
 
 public class BoundingBoxConduit extends BoundingBoxSphere {
-    private static final AbstractRenderer<BoundingBoxConduit> RENDERER = ClientRenderer.registerRenderer(BoundingBoxConduit.class, new ConduitRenderer());
+    private static final AbstractRenderer<BoundingBoxConduit> RENDERER = ClientRenderer.registerRenderer(BoundingBoxConduit.class, () -> new ConduitRenderer());
 
     private final int level;
 
