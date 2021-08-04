@@ -50,8 +50,8 @@ public class RenderCulling {
         }
     }
 
-    public static boolean cullRayTrace(Box box) {
-        return true;
+    public static boolean isVisibleCulling(double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
+        return isVisibleCulling(new Box(minX, minY, minZ, maxX, maxY, maxZ));
     }
 
     public static boolean isVisibleCulling(Box box) {

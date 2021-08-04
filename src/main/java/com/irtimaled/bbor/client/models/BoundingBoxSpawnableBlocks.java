@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class BoundingBoxSpawnableBlocks extends AbstractBoundingBox {
-    private static final AbstractRenderer<BoundingBoxSpawnableBlocks> RENDERER = ClientRenderer.registerRenderer(BoundingBoxSpawnableBlocks.class, new SpawnableBlocksRenderer());
+    private static final AbstractRenderer<BoundingBoxSpawnableBlocks> RENDERER = ClientRenderer.registerRenderer(BoundingBoxSpawnableBlocks.class, () -> new SpawnableBlocksRenderer());
 
     private final Set<BlockPos> blocks = new HashSet<>();
 

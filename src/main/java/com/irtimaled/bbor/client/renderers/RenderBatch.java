@@ -36,7 +36,7 @@ public class RenderBatch {
         lineBufferBuilder.begin(VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION_COLOR);
     }
 
-    public static void drawSolidBox(MatrixStack.Entry matrixEntry, Box box, Color color, int alpha, boolean mask) {
+    public static void drawSolidBox(MatrixStack.Entry matrixEntry, Box box, Color color, int alpha, boolean mask, boolean sameX, boolean sameY, boolean sameZ) {
         final float minX = (float) box.minX;
         final float minY = (float) box.minY;
         final float minZ = (float) box.minZ;
@@ -49,58 +49,55 @@ public class RenderBatch {
 
         final BufferBuilder bufferBuilder = mask ? RenderBatch.quadBufferBuilderMasked : RenderBatch.quadBufferBuilderNonMasked;
 
-        if (minX != maxX && minZ != maxZ) {
+        if (!sameX && !sameZ) {
             if (mask) quadMaskedCount.getAndIncrement();
             else quadNonMaskedCount.getAndIncrement();
             bufferBuilder.vertex(matrixEntry.getModel(), minX, minY, minZ).color(red, green, blue, alpha).next();
             bufferBuilder.vertex(matrixEntry.getModel(), maxX, minY, minZ).color(red, green, blue, alpha).next();
             bufferBuilder.vertex(matrixEntry.getModel(), maxX, minY, maxZ).color(red, green, blue, alpha).next();
             bufferBuilder.vertex(matrixEntry.getModel(), minX, minY, maxZ).color(red, green, blue, alpha).next();
+            if (!sameY) {
+                if (mask) quadMaskedCount.getAndIncrement();
+                else quadNonMaskedCount.getAndIncrement();
+                bufferBuilder.vertex(matrixEntry.getModel(), minX, maxY, minZ).color(red, green, blue, alpha).next();
+                bufferBuilder.vertex(matrixEntry.getModel(), minX, maxY, maxZ).color(red, green, blue, alpha).next();
+                bufferBuilder.vertex(matrixEntry.getModel(), maxX, maxY, maxZ).color(red, green, blue, alpha).next();
+                bufferBuilder.vertex(matrixEntry.getModel(), maxX, maxY, minZ).color(red, green, blue, alpha).next();
+            }
         }
 
-        if (minX != maxX && minZ != maxZ) {
-            if (mask) quadMaskedCount.getAndIncrement();
-            else quadNonMaskedCount.getAndIncrement();
-            bufferBuilder.vertex(matrixEntry.getModel(), minX, maxY, minZ).color(red, green, blue, alpha).next();
-            bufferBuilder.vertex(matrixEntry.getModel(), minX, maxY, maxZ).color(red, green, blue, alpha).next();
-            bufferBuilder.vertex(matrixEntry.getModel(), maxX, maxY, maxZ).color(red, green, blue, alpha).next();
-            bufferBuilder.vertex(matrixEntry.getModel(), maxX, maxY, minZ).color(red, green, blue, alpha).next();
-        }
-
-        if (minX != maxX && minY != maxY) {
+        if (!sameX && !sameY) {
             if (mask) quadMaskedCount.getAndIncrement();
             else quadNonMaskedCount.getAndIncrement();
             bufferBuilder.vertex(matrixEntry.getModel(), minX, minY, minZ).color(red, green, blue, alpha).next();
             bufferBuilder.vertex(matrixEntry.getModel(), minX, maxY, minZ).color(red, green, blue, alpha).next();
             bufferBuilder.vertex(matrixEntry.getModel(), maxX, maxY, minZ).color(red, green, blue, alpha).next();
             bufferBuilder.vertex(matrixEntry.getModel(), maxX, minY, minZ).color(red, green, blue, alpha).next();
+            if (!sameZ) {
+                if (mask) quadMaskedCount.getAndIncrement();
+                else quadNonMaskedCount.getAndIncrement();
+                bufferBuilder.vertex(matrixEntry.getModel(), minX, minY, maxZ).color(red, green, blue, alpha).next();
+                bufferBuilder.vertex(matrixEntry.getModel(), maxX, minY, maxZ).color(red, green, blue, alpha).next();
+                bufferBuilder.vertex(matrixEntry.getModel(), maxX, maxY, maxZ).color(red, green, blue, alpha).next();
+                bufferBuilder.vertex(matrixEntry.getModel(), minX, maxY, maxZ).color(red, green, blue, alpha).next();
+            }
         }
 
-        if (minY != maxY && minZ != maxZ) {
-            if (mask) quadMaskedCount.getAndIncrement();
-            else quadNonMaskedCount.getAndIncrement();
-            bufferBuilder.vertex(matrixEntry.getModel(), maxX, minY, minZ).color(red, green, blue, alpha).next();
-            bufferBuilder.vertex(matrixEntry.getModel(), maxX, maxY, minZ).color(red, green, blue, alpha).next();
-            bufferBuilder.vertex(matrixEntry.getModel(), maxX, maxY, maxZ).color(red, green, blue, alpha).next();
-            bufferBuilder.vertex(matrixEntry.getModel(), maxX, minY, maxZ).color(red, green, blue, alpha).next();
-        }
-
-        if (minX != maxX && minY != maxY) {
-            if (mask) quadMaskedCount.getAndIncrement();
-            else quadNonMaskedCount.getAndIncrement();
-            bufferBuilder.vertex(matrixEntry.getModel(), minX, minY, maxZ).color(red, green, blue, alpha).next();
-            bufferBuilder.vertex(matrixEntry.getModel(), maxX, minY, maxZ).color(red, green, blue, alpha).next();
-            bufferBuilder.vertex(matrixEntry.getModel(), maxX, maxY, maxZ).color(red, green, blue, alpha).next();
-            bufferBuilder.vertex(matrixEntry.getModel(), minX, maxY, maxZ).color(red, green, blue, alpha).next();
-        }
-
-        if (minY != maxY && minZ != maxZ) {
+        if (!sameY && !sameZ) {
             if (mask) quadMaskedCount.getAndIncrement();
             else quadNonMaskedCount.getAndIncrement();
             bufferBuilder.vertex(matrixEntry.getModel(), minX, minY, minZ).color(red, green, blue, alpha).next();
             bufferBuilder.vertex(matrixEntry.getModel(), minX, minY, maxZ).color(red, green, blue, alpha).next();
             bufferBuilder.vertex(matrixEntry.getModel(), minX, maxY, maxZ).color(red, green, blue, alpha).next();
             bufferBuilder.vertex(matrixEntry.getModel(), minX, maxY, minZ).color(red, green, blue, alpha).next();
+            if (!sameX) {
+                if (mask) quadMaskedCount.getAndIncrement();
+                else quadNonMaskedCount.getAndIncrement();
+                bufferBuilder.vertex(matrixEntry.getModel(), maxX, minY, minZ).color(red, green, blue, alpha).next();
+                bufferBuilder.vertex(matrixEntry.getModel(), maxX, maxY, minZ).color(red, green, blue, alpha).next();
+                bufferBuilder.vertex(matrixEntry.getModel(), maxX, maxY, maxZ).color(red, green, blue, alpha).next();
+                bufferBuilder.vertex(matrixEntry.getModel(), maxX, minY, maxZ).color(red, green, blue, alpha).next();
+            }
         }
     }
 

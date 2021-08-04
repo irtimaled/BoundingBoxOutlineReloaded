@@ -8,7 +8,7 @@ import com.irtimaled.bbor.common.models.BoundingBoxCuboid;
 import com.irtimaled.bbor.common.models.Coords;
 
 public class BoundingBoxWorldSpawn extends BoundingBoxCuboid {
-    private static final AbstractRenderer<BoundingBoxWorldSpawn> RENDERER = ClientRenderer.registerRenderer(BoundingBoxWorldSpawn.class, new WorldSpawnRenderer());
+    private static final AbstractRenderer<BoundingBoxWorldSpawn> RENDERER = ClientRenderer.registerRenderer(BoundingBoxWorldSpawn.class, () -> new WorldSpawnRenderer());
 
     public BoundingBoxWorldSpawn(Coords minCoords, Coords maxCoords, BoundingBoxType type) {
         super(minCoords, maxCoords, type);

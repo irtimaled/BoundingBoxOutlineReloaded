@@ -25,7 +25,10 @@ import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.TypeHelper;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.common.models.DimensionId;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMaps;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.util.math.MatrixStack;
 
 import java.util.ArrayList;
@@ -36,10 +39,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Supplier;
 
 public class ClientRenderer {
     private static final int CHUNK_SIZE = 16;
-    private static final Map<Class<? extends AbstractBoundingBox>, AbstractRenderer> boundingBoxRendererMap = new Object2ObjectOpenHashMap<>();
+    private static final Map<Class<? extends AbstractBoundingBox>, AbstractRenderer> boundingBoxRendererMap = Object2ObjectMaps.synchronize(new Object2ObjectOpenHashMap<>());
 
     private static boolean active;
     private static final Set<IBoundingBoxProvider> providers = new HashSet<>();
@@ -62,38 +66,33 @@ public class ClientRenderer {
     }
 
     static {
-
-
-
-
-
-
-
-
-
-        registerProvider(new SlimeChunkProvider());
-        registerProvider(new WorldSpawnProvider());
-        registerProvider(new SpawningSphereProvider());
-        registerProvider(new BeaconProvider());
-        registerProvider(new CustomBoxProvider());
-        registerProvider(new CustomBeaconProvider());
-        registerProvider(new BiomeBorderProvider());
-        registerProvider(new MobSpawnerProvider());
-        registerProvider(new ConduitProvider());
-        registerProvider(new SpawnableBlocksProvider());
-        registerProvider(new CustomLineProvider());
-        registerProvider(new CustomSphereProvider());
-        registerProvider(new FlowerForestProvider());
-        registerProvider(new BedrockCeilingProvider());
+        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+            registerProvider(new SlimeChunkProvider());
+            registerProvider(new WorldSpawnProvider());
+            registerProvider(new SpawningSphereProvider());
+            registerProvider(new BeaconProvider());
+            registerProvider(new CustomBoxProvider());
+            registerProvider(new CustomBeaconProvider());
+            registerProvider(new BiomeBorderProvider());
+            registerProvider(new MobSpawnerProvider());
+            registerProvider(new ConduitProvider());
+            registerProvider(new SpawnableBlocksProvider());
+            registerProvider(new CustomLineProvider());
+            registerProvider(new CustomSphereProvider());
+            registerProvider(new FlowerForestProvider());
+            registerProvider(new BedrockCeilingProvider());
+        }
     }
 
     public static <T extends AbstractBoundingBox> void registerProvider(IBoundingBoxProvider<T> provider) {
         providers.add(provider);
     }
 
-    public static <T extends AbstractBoundingBox> AbstractRenderer<T> registerRenderer(Class<? extends T> type, AbstractRenderer<T> renderer) {
-        boundingBoxRendererMap.put(type, renderer);
-        return renderer;
+    public static <T extends AbstractBoundingBox> AbstractRenderer<T> registerRenderer(Class<? extends T> type, Supplier<AbstractRenderer<T>> renderer) {
+        if (FabricLoader.getInstance().getEnvironmentType() != EnvType.CLIENT) return null;
+        final AbstractRenderer<T> renderer1 = renderer.get();
+        boundingBoxRendererMap.put(type, renderer1);
+        return renderer1;
     }
 
     public static AbstractRenderer getRenderer(Class<? extends AbstractBoundingBox> clazz) {
@@ -117,10 +116,10 @@ public class ClientRenderer {
         matrixStack.push();
         RenderHelper.beforeRender();
 
-        getBoundingBoxes(dimensionId).forEach(key -> {
+        for (AbstractBoundingBox key : getBoundingBoxes(dimensionId)) {
             AbstractRenderer renderer = key.getRenderer();
             if (renderer != null) renderer.render(matrixStack, key);
-        });
+        }
 
         RenderQueue.renderDeferred();
 
@@ -134,7 +133,7 @@ public class ClientRenderer {
         for (IBoundingBoxProvider<?> provider : providers) {
             if (provider.canProvide(dimensionId)) {
                 for (AbstractBoundingBox boundingBox : provider.get(dimensionId)) {
-                    if (isWithinRenderDistance(boundingBox)) {
+                    if (boundingBox.isVisibleCulling() && isWithinRenderDistance(boundingBox)) {
                         tmp.add(boundingBox);
                     }
                 }

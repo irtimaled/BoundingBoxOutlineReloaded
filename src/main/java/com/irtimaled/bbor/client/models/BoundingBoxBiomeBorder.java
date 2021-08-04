@@ -1,6 +1,7 @@
 package com.irtimaled.bbor.client.models;
 
 import com.irtimaled.bbor.client.ClientRenderer;
+import com.irtimaled.bbor.client.RenderCulling;
 import com.irtimaled.bbor.client.renderers.AbstractRenderer;
 import com.irtimaled.bbor.client.renderers.BiomeBorderRenderer;
 import com.irtimaled.bbor.common.BoundingBoxType;
@@ -8,7 +9,7 @@ import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.common.models.Coords;
 
 public class BoundingBoxBiomeBorder extends AbstractBoundingBox {
-    private static final AbstractRenderer<BoundingBoxBiomeBorder> RENDERER = ClientRenderer.registerRenderer(BoundingBoxBiomeBorder.class, new BiomeBorderRenderer());
+    private static final AbstractRenderer<BoundingBoxBiomeBorder> RENDERER = ClientRenderer.registerRenderer(BoundingBoxBiomeBorder.class, () -> new BiomeBorderRenderer());
 
     private final Coords coords;
     private final boolean north;
@@ -71,5 +72,10 @@ public class BoundingBoxBiomeBorder extends AbstractBoundingBox {
     @Override
     public AbstractRenderer<?> getRenderer() {
         return RENDERER;
+    }
+
+    @Override
+    public boolean isVisibleCulling() {
+        return RenderCulling.isVisibleCulling(coords.getX(), coords.getY(), coords.getZ(), coords.getX() + 1, coords.getY() + 1, coords.getZ() + 1);
     }
 }

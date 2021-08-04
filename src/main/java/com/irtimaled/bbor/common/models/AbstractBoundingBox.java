@@ -33,4 +33,8 @@ public abstract class AbstractBoundingBox {
     public AbstractRenderer<?> getRenderer() {
         return ClientRenderer.getRenderer(this.getClass());
     }
+
+    public boolean isVisibleCulling() {
+        return true;
+    }
 }

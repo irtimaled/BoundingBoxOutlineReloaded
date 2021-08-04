@@ -57,24 +57,24 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
                 (float) (maxZ - minZ));
 
         if (fillOnly || ConfigManager.fill.get()) {
-            RenderBatch.drawSolidBox(stack.peek(), ORIGIN_BOX, color, fillAlpha, mask);
+            RenderBatch.drawSolidBox(stack.peek(), ORIGIN_BOX, color, fillAlpha, mask, minX == maxX, minY == maxY, minZ == maxZ);
         }
         if (!fillOnly) {
             stack.push();
             stack.peek().getModel().load(lastStack.getModel());
             stack.peek().getNormal().load(lastStack.getNormal());
-            renderLine(stack, new OffsetPoint(minX, minY, minZ), new OffsetPoint(maxX, minY, minZ), color);
-            renderLine(stack, new OffsetPoint(maxX, minY, minZ), new OffsetPoint(maxX, minY, maxZ), color);
-            renderLine(stack, new OffsetPoint(maxX, minY, maxZ), new OffsetPoint(minX, minY, maxZ), color);
-            renderLine(stack, new OffsetPoint(minX, minY, maxZ), new OffsetPoint(minX, minY, minZ), color);
-            renderLine(stack, new OffsetPoint(minX, minY, minZ), new OffsetPoint(minX, maxY, minZ), color);
-            renderLine(stack, new OffsetPoint(maxX, minY, minZ), new OffsetPoint(maxX, maxY, minZ), color);
-            renderLine(stack, new OffsetPoint(maxX, minY, maxZ), new OffsetPoint(maxX, maxY, maxZ), color);
-            renderLine(stack, new OffsetPoint(minX, minY, maxZ), new OffsetPoint(minX, maxY, maxZ), color);
-            renderLine(stack, new OffsetPoint(minX, maxY, minZ), new OffsetPoint(maxX, maxY, minZ), color);
-            renderLine(stack, new OffsetPoint(maxX, maxY, minZ), new OffsetPoint(maxX, maxY, maxZ), color);
-            renderLine(stack, new OffsetPoint(maxX, maxY, maxZ), new OffsetPoint(minX, maxY, maxZ), color);
-            renderLine(stack, new OffsetPoint(minX, maxY, maxZ), new OffsetPoint(minX, maxY, minZ), color);
+            renderLine(stack, new OffsetPoint(minX, minY, minZ), new OffsetPoint(maxX, minY, minZ), color, true);
+            renderLine(stack, new OffsetPoint(maxX, minY, minZ), new OffsetPoint(maxX, minY, maxZ), color, true);
+            renderLine(stack, new OffsetPoint(maxX, minY, maxZ), new OffsetPoint(minX, minY, maxZ), color, true);
+            renderLine(stack, new OffsetPoint(minX, minY, maxZ), new OffsetPoint(minX, minY, minZ), color, true);
+            renderLine(stack, new OffsetPoint(minX, minY, minZ), new OffsetPoint(minX, maxY, minZ), color, true);
+            renderLine(stack, new OffsetPoint(maxX, minY, minZ), new OffsetPoint(maxX, maxY, minZ), color, true);
+            renderLine(stack, new OffsetPoint(maxX, minY, maxZ), new OffsetPoint(maxX, maxY, maxZ), color, true);
+            renderLine(stack, new OffsetPoint(minX, minY, maxZ), new OffsetPoint(minX, maxY, maxZ), color, true);
+            renderLine(stack, new OffsetPoint(minX, maxY, minZ), new OffsetPoint(maxX, maxY, minZ), color, true);
+            renderLine(stack, new OffsetPoint(maxX, maxY, minZ), new OffsetPoint(maxX, maxY, maxZ), color, true);
+            renderLine(stack, new OffsetPoint(maxX, maxY, maxZ), new OffsetPoint(minX, maxY, maxZ), color, true);
+            renderLine(stack, new OffsetPoint(minX, maxY, maxZ), new OffsetPoint(minX, maxY, minZ), color, true);
             stack.pop();
         }
 
@@ -88,7 +88,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
     }
 
 
-    void renderLine(MatrixStack matrixStack, OffsetPoint startPoint, OffsetPoint endPoint, Color color) {
+    void renderLine(MatrixStack matrixStack, OffsetPoint startPoint, OffsetPoint endPoint, Color color, boolean cullIfEmpty) {
 //        if ((startPoint.getY() == endPoint.getY() && startPoint.getZ() == endPoint.getZ()) ||
 //                (startPoint.getX() == endPoint.getX() && startPoint.getZ() == endPoint.getZ()) ||
 //                (startPoint.getX() == endPoint.getX() && startPoint.getY() == endPoint.getY())) {
@@ -96,6 +96,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
 //            return;
 //        }
 
+        if (cullIfEmpty && startPoint.equals(endPoint)) return;
         if (!RenderCulling.isVisibleCulling(new OffsetBox(startPoint, endPoint).toBox())) return; // TODO better culling
 
         matrixStack.push();

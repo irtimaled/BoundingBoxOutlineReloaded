@@ -107,6 +107,11 @@ public class ClientInterop {
 
     public static void receivedChunk(int chunkX, int chunkZ) {
         SaveGameStructureLoader.loadStructures(chunkX, chunkZ);
+        BiomeBorderHelper.onChunkLoaded(chunkX, chunkZ);
+    }
+
+    public static void unloadChunk(int chunkX, int chunkZ) {
+        BiomeBorderHelper.onChunkUnload(chunkX, chunkZ);
     }
 
     public static void saveLoaded(String fileName, long seed) {

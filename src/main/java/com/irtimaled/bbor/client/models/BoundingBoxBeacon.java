@@ -8,7 +8,7 @@ import com.irtimaled.bbor.common.models.BoundingBoxCuboid;
 import com.irtimaled.bbor.common.models.Coords;
 
 public class BoundingBoxBeacon extends BoundingBoxCuboid {
-    private static final AbstractRenderer<BoundingBoxBeacon> RENDERER = ClientRenderer.registerRenderer(BoundingBoxBeacon.class, new BeaconRenderer());
+    private static final AbstractRenderer<BoundingBoxBeacon> RENDERER = ClientRenderer.registerRenderer(BoundingBoxBeacon.class, () -> new BeaconRenderer());
 
     private final Coords coords;
     private final int level;
