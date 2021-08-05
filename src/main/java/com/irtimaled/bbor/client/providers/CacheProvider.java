@@ -10,7 +10,8 @@ import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.common.models.DimensionId;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -37,7 +38,7 @@ public class CacheProvider implements IBoundingBoxProvider<AbstractBoundingBox> 
     public Iterable<AbstractBoundingBox> get(DimensionId dimensionId) {
         Boolean outerBoxesOnly = ConfigManager.outerBoxesOnly.get();
 
-        Set<AbstractBoundingBox> boundingBoxes = new HashSet<>();
+        List<AbstractBoundingBox> boundingBoxes = new ArrayList<>();
         BoundingBoxCache cache = getCache.apply(dimensionId);
         if (cache != null) {
             for (Map.Entry<AbstractBoundingBox, Set<AbstractBoundingBox>> entry : cache.getBoundingBoxes().entrySet()) {

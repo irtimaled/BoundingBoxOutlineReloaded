@@ -59,7 +59,7 @@ public class FlowerForestProvider implements IBoundingBoxProvider<BoundingBoxFlo
         int minZ = blockZ - width;
         int maxZ = blockZ + width;
 
-        Map<Coords, BoundingBoxFlowerForest> boundingBoxes = new HashMap<>();
+        Map<Coords, BoundingBoxFlowerForest> boundingBoxes = new HashMap<>((maxX - minX) * (maxZ - minZ));
         for (int x = minX; x <= maxX; x++) {
             for (int z = minZ; z <= maxZ; z++) {
                 int biomeId = BiomeBorderHelper.getBiomeId(x, 255, z);
@@ -80,7 +80,8 @@ public class FlowerForestProvider implements IBoundingBoxProvider<BoundingBoxFlo
     }
 
     private static int getMaxYForPos(int x, int y, int z) {
-        int topY = MinecraftClient.getInstance().world.getTopY(Heightmap.Type.MOTION_BLOCKING, x, z) + 1;
+        int topY = MinecraftClient.getInstance().world.getTopY(Heightmap.Type.MOTION_BLOCKING, x, z);
+        if (topY == 0) topY = y; // heightmap appears to be broken
         while (topY > 0) {
             if (FlowerForestHelper.canGrowFlower(x, topY, z)) return topY;
             topY--;

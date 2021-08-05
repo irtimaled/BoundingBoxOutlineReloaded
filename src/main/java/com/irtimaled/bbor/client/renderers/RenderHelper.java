@@ -6,7 +6,6 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.Quaternion;
-import net.minecraft.util.math.Vec3d;
 import org.lwjgl.opengl.GL11;
 
 public class RenderHelper {
@@ -164,22 +163,4 @@ public class RenderHelper {
                 regionZ - Camera.getZ());
     }
 
-    /**
-     * Compute hash code for vec3d
-     * @see Vec3d#hashCode()
-     *
-     * @param x x value
-     * @param y y value
-     * @param z z value
-     * @return hash code
-     */
-    public static long hashVec3d(double x, double y, double z) {
-        long l = Double.doubleToLongBits(x);
-        int i = (int)(l ^ l >>> 32);
-        l = Double.doubleToLongBits(y);
-        i = 31 * i + (int)(l ^ l >>> 32);
-        l = Double.doubleToLongBits(z);
-        i = 31 * i + (int)(l ^ l >>> 32);
-        return i;
-    }
 }

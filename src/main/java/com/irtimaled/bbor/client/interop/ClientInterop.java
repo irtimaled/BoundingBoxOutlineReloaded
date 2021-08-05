@@ -34,6 +34,7 @@ import net.minecraft.util.math.BlockPos;
 public class ClientInterop {
     public static void disconnectedFromRemoteServer() {
         SaveGameStructureLoader.clear();
+        BiomeBorderHelper.onDisconnect();
         EventBus.publish(new DisconnectedFromRemoteServer());
     }
 

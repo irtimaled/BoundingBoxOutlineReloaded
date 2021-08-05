@@ -1,14 +1,14 @@
 package com.irtimaled.bbor.client.models;
 
-import com.irtimaled.bbor.client.ClientRenderer;
 import com.irtimaled.bbor.client.renderers.AbstractRenderer;
 import com.irtimaled.bbor.client.renderers.BeaconRenderer;
 import com.irtimaled.bbor.common.BoundingBoxType;
+import com.irtimaled.bbor.common.interop.CommonInterop;
 import com.irtimaled.bbor.common.models.BoundingBoxCuboid;
 import com.irtimaled.bbor.common.models.Coords;
 
 public class BoundingBoxBeacon extends BoundingBoxCuboid {
-    private static final AbstractRenderer<BoundingBoxBeacon> RENDERER = ClientRenderer.registerRenderer(BoundingBoxBeacon.class, () -> new BeaconRenderer());
+    private static final AbstractRenderer<BoundingBoxBeacon> RENDERER = CommonInterop.registerRenderer(BoundingBoxBeacon.class, () -> new BeaconRenderer());
 
     private final Coords coords;
     private final int level;

@@ -10,7 +10,7 @@ import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.models.DimensionId;
 import net.minecraft.client.MinecraftClient;
 
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Set;
 
 public class SpawnableBlocksProvider implements IBoundingBoxProvider<BoundingBoxSpawnableBlocks>, ICachingProvider {
@@ -54,8 +54,6 @@ public class SpawnableBlocksProvider implements IBoundingBoxProvider<BoundingBox
 
         SpawnableBlocksHelper.findSpawnableBlocks(Player.getCoords(), width, height, boundingBox.getBlocks()::add);
 
-        Set<BoundingBoxSpawnableBlocks> boundingBoxes = new HashSet<>();
-        boundingBoxes.add(boundingBox);
-        return boundingBoxes;
+        return Collections.singleton(boundingBox);
     }
 }
