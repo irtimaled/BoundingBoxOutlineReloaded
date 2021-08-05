@@ -1,14 +1,14 @@
 package com.irtimaled.bbor.client.models;
 
-import com.irtimaled.bbor.client.ClientRenderer;
 import com.irtimaled.bbor.client.renderers.AbstractRenderer;
 import com.irtimaled.bbor.client.renderers.ConduitRenderer;
 import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.TypeHelper;
+import com.irtimaled.bbor.common.interop.CommonInterop;
 import com.irtimaled.bbor.common.models.Coords;
 
 public class BoundingBoxConduit extends BoundingBoxSphere {
-    private static final AbstractRenderer<BoundingBoxConduit> RENDERER = ClientRenderer.registerRenderer(BoundingBoxConduit.class, () -> new ConduitRenderer());
+    private static final AbstractRenderer<BoundingBoxConduit> RENDERER = CommonInterop.registerRenderer(BoundingBoxConduit.class, () -> new ConduitRenderer());
 
     private final int level;
 

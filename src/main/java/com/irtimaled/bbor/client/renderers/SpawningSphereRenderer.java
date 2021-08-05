@@ -9,6 +9,7 @@ import com.irtimaled.bbor.client.models.Point;
 import com.irtimaled.bbor.common.BoundingBoxType;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.math.BlockPos;
 
 import java.awt.*;
 
@@ -47,12 +48,12 @@ public class SpawningSphereRenderer extends AbstractRenderer<BoundingBoxSpawning
 
     private void renderSpawnableSpaces(MatrixStack matrixStack, BoundingBoxSpawningSphere boundingBox) {
         Color color = BoundingBoxTypeHelper.getColor(BoundingBoxType.SpawnableBlocks);
-        boundingBox.getBlocks().forEach(c -> {
+        for (BlockPos c : boundingBox.getBlocks()) {
             int x = c.getX();
             int y = c.getY();
             int z = c.getZ();
             OffsetBox offsetBox = new OffsetBox(x, y, z, x + 1, y, z + 1);
             renderCuboid(matrixStack, offsetBox, color, false, 30);
-        });
+        }
     }
 }

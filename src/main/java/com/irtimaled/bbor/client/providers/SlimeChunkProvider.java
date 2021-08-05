@@ -16,7 +16,7 @@ import java.util.Set;
 public class SlimeChunkProvider implements IBoundingBoxProvider<BoundingBoxSlimeChunk>, ICachingProvider {
     private static final double CHUNK_SIZE = 16d;
 
-    private static Long seed;
+    private static volatile Long seed;
 
     public static void setSeed(long seed) {
         SlimeChunkProvider.seed = seed;

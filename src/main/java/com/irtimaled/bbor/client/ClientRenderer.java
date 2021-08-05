@@ -1,6 +1,7 @@
 package com.irtimaled.bbor.client;
 
 import com.irtimaled.bbor.client.interop.ClientInterop;
+import com.irtimaled.bbor.client.interop.TileEntitiesHelper;
 import com.irtimaled.bbor.client.models.Point;
 import com.irtimaled.bbor.client.providers.BeaconProvider;
 import com.irtimaled.bbor.client.providers.BedrockCeilingProvider;
@@ -66,22 +67,20 @@ public class ClientRenderer {
     }
 
     static {
-        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
-            registerProvider(new SlimeChunkProvider());
-            registerProvider(new WorldSpawnProvider());
-            registerProvider(new SpawningSphereProvider());
-            registerProvider(new BeaconProvider());
-            registerProvider(new CustomBoxProvider());
-            registerProvider(new CustomBeaconProvider());
-            registerProvider(new BiomeBorderProvider());
-            registerProvider(new MobSpawnerProvider());
-            registerProvider(new ConduitProvider());
-            registerProvider(new SpawnableBlocksProvider());
-            registerProvider(new CustomLineProvider());
-            registerProvider(new CustomSphereProvider());
-            registerProvider(new FlowerForestProvider());
-            registerProvider(new BedrockCeilingProvider());
-        }
+        registerProvider(new SlimeChunkProvider());
+        registerProvider(new WorldSpawnProvider());
+        registerProvider(new SpawningSphereProvider());
+        registerProvider(new BeaconProvider());
+        registerProvider(new CustomBoxProvider());
+        registerProvider(new CustomBeaconProvider());
+        registerProvider(new BiomeBorderProvider());
+        registerProvider(new MobSpawnerProvider());
+        registerProvider(new ConduitProvider());
+        registerProvider(new SpawnableBlocksProvider());
+        registerProvider(new CustomLineProvider());
+        registerProvider(new CustomSphereProvider());
+        registerProvider(new FlowerForestProvider());
+        registerProvider(new BedrockCeilingProvider());
     }
 
     public static <T extends AbstractBoundingBox> void registerProvider(IBoundingBoxProvider<T> provider) {
@@ -115,6 +114,7 @@ public class ClientRenderer {
         long startTime = System.nanoTime();
         matrixStack.push();
         RenderHelper.beforeRender();
+        TileEntitiesHelper.clearCache();
 
         for (AbstractBoundingBox key : getBoundingBoxes(dimensionId)) {
             AbstractRenderer renderer = key.getRenderer();
