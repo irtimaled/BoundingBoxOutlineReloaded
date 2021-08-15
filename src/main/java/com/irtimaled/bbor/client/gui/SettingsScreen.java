@@ -53,7 +53,11 @@ public class SettingsScreen extends ListScreen {
                             }
                         },
                         width -> new BoolSettingButton(width, I18n.translate("bbor.options.outerBoxOnly"), ConfigManager.outerBoxesOnly),
-                        width -> new BoolSettingButton(width, I18n.translate("bbor.options.fill"), ConfigManager.fill))
+                        width -> new BoolSettingButton(width, I18n.translate("bbor.options.fill"), ConfigManager.fill),
+                        width -> new IntSettingSlider(width, 0, 2, "bbor.options.fastRender", ConfigManager.fastRender)
+                                .addDisplayValue(0, I18n.translate("bbor.options.fastRender.0"))
+                                .addDisplayValue(1, I18n.translate("bbor.options.fastRender.1"))
+                                .addDisplayValue(2, I18n.translate("bbor.options.fastRender.2")))
                 .section(I18n.translate("bbor.features.spawnChunks"),
                         width -> new BoundingBoxTypeButton(width, I18n.translate("bbor.features.spawnChunks"), BoundingBoxType.WorldSpawn),
                         width -> new BoundingBoxTypeButton(width, I18n.translate("bbor.features.lazyChunks"), BoundingBoxType.LazySpawnChunks),

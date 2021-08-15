@@ -1,5 +1,6 @@
 package com.irtimaled.bbor.client;
 
+import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.interop.ClientInterop;
 import com.irtimaled.bbor.client.interop.TileEntitiesHelper;
 import com.irtimaled.bbor.client.models.Point;
@@ -116,7 +117,9 @@ public class ClientRenderer {
         RenderHelper.beforeRender();
         TileEntitiesHelper.clearCache();
 
-        for (AbstractBoundingBox key : getBoundingBoxes(dimensionId)) {
+        final List<AbstractBoundingBox> boundingBoxes = getBoundingBoxes(dimensionId);
+        RenderCulling.flushPreRendering();
+        for (AbstractBoundingBox key : boundingBoxes) {
             AbstractRenderer renderer = key.getRenderer();
             if (renderer != null) renderer.render(matrixStack, key);
         }
@@ -124,16 +127,19 @@ public class ClientRenderer {
         RenderQueue.renderDeferred();
 
         RenderHelper.afterRender();
+        RenderCulling.flushRendering();
         matrixStack.pop();
         lastDurationNanos.set(System.nanoTime() - startTime);
     }
 
     public static List<AbstractBoundingBox> getBoundingBoxes(DimensionId dimensionId) {
         List<AbstractBoundingBox> tmp = new LinkedList<>();
+        final boolean doPreCulling = ConfigManager.fastRender.get() >= 2;
         for (IBoundingBoxProvider<?> provider : providers) {
             if (provider.canProvide(dimensionId)) {
                 for (AbstractBoundingBox boundingBox : provider.get(dimensionId)) {
-                    if (boundingBox.isVisibleCulling() && isWithinRenderDistance(boundingBox)) {
+                    if (isWithinRenderDistance(boundingBox)) {
+                        if (doPreCulling && !boundingBox.isVisibleCulling()) continue;
                         tmp.add(boundingBox);
                     }
                 }

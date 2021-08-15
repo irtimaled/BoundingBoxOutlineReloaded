@@ -1,6 +1,7 @@
 package com.irtimaled.bbor.common.models;
 
 import com.irtimaled.bbor.client.ClientRenderer;
+import com.irtimaled.bbor.client.RenderCulling;
 import com.irtimaled.bbor.client.renderers.AbstractRenderer;
 import com.irtimaled.bbor.common.BoundingBoxType;
 
@@ -35,6 +36,7 @@ public abstract class AbstractBoundingBox {
     }
 
     public boolean isVisibleCulling() {
+        RenderCulling.incrementCulling();
         return true;
     }
 }

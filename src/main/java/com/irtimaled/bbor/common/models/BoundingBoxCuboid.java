@@ -1,6 +1,5 @@
 package com.irtimaled.bbor.common.models;
 
-import com.irtimaled.bbor.client.RenderCulling;
 import com.irtimaled.bbor.client.renderers.AbstractRenderer;
 import com.irtimaled.bbor.client.renderers.CuboidRenderer;
 import com.irtimaled.bbor.common.BoundingBoxType;
@@ -82,8 +81,9 @@ public class BoundingBoxCuboid extends AbstractBoundingBox {
         return RENDERER;
     }
 
-    @Override
-    public boolean isVisibleCulling() {
-        return RenderCulling.isVisibleCulling(minCoords.getX(), minCoords.getY(), minCoords.getZ(), maxCoords.getX(), maxCoords.getY(), maxCoords.getZ());
-    }
+    // TODO
+//    @Override
+//    public boolean isVisibleCulling() {
+//        return RenderCulling.isVisibleCulling(minCoords.getX(), minCoords.getY(), minCoords.getZ(), maxCoords.getX() + 1, maxCoords.getY() + 1, maxCoords.getZ() + 1);
+//    }
 }
