@@ -105,6 +105,8 @@ public class ConfigManager {
 
     public static Setting<HexColor> buttonOnOverlay;
 
+    public static Setting<Integer> fastRender;
+
     public static void loadConfig() {
         configDir = new File(".", "config");
         configDir.mkdirs();
@@ -117,6 +119,7 @@ public class ConfigManager {
         invertBoxColorPlayerInside = setup(config, "general", "invertBoxColorPlayerInside", false, "If set to true the color of any bounding box the player is inside will be inverted.");
         renderSphereAsDots = setup(config, "general", "renderSphereAsDots", false, "If set to true spheres will be rendered as dots.");
         buttonOnOverlay = setup(config, "general", "buttonEnabledOverlay", HexColor.from("#3000ff00"), "The color and alpha of the button overlay when a button is on.");
+        fastRender = setup(config, "general", "fastRender", 2, "Fast render settings. Higher value for faster rendering. ");
 
         drawBeacons = setup(config, "beacons", "drawBeacons", true, "If set to true beacon bounding boxes will be drawn.");
 

@@ -7,7 +7,11 @@
   "bbor.options.active": "Active",
   "bbor.options.outerBoxOnly": "Outer Box Only",
   "bbor.options.fill": "Fill",
-  "bbor.options.lineWidthModifier": "Line Width Modifier",
+
+  "bbor.options.fastRender": "Fast Render: %s",
+  "bbor.options.fastRender.0": "Off",
+  "bbor.options.fastRender.1": "Medium",
+  "bbor.options.fastRender.2": "High",
 
   "bbor.options.maxY": "Max Y: %s",
   "bbor.options.maxY.activated": "Activated",

@@ -35,7 +35,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
     }
 
     private void renderCuboid0(MatrixStack stack, OffsetBox nudge, Color color, boolean fillOnly, int fillAlpha, boolean mask) {
-        if (!RenderCulling.isVisibleCulling(nudge.toBox())) return;
+        if (ConfigManager.fastRender.get() >= 1 && !RenderCulling.isVisibleCulling(nudge.toBox())) return;
         if (ConfigManager.invertBoxColorPlayerInside.get() &&
                 playerInsideBoundingBox(nudge)) {
             color = new Color(255 - color.getRed(), 255 - color.getGreen(), 255 - color.getBlue());
@@ -97,7 +97,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
 //        }
 
         if (cullIfEmpty && startPoint.equals(endPoint)) return;
-        if (!RenderCulling.isVisibleCulling(new OffsetBox(startPoint, endPoint).toBox())) return; // TODO better culling
+        if (ConfigManager.fastRender.get() >= 1 && !RenderCulling.isVisibleCulling(new OffsetBox(startPoint, endPoint).toBox())) return; // TODO better culling
 
         matrixStack.push();
 
@@ -129,7 +129,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
     }
 
     private void renderLineSphere(MatrixStack matrixStack, Point center, double radius, Color color) {
-        if (!RenderCulling.isVisibleCulling(new Box(new BlockPos(center.getX(), center.getY(), center.getZ())).expand(radius))) return;
+        if (ConfigManager.fastRender.get() >= 1 && !RenderCulling.isVisibleCulling(new Box(new BlockPos(center.getX(), center.getY(), center.getZ())).expand(radius))) return;
 
         double offset = ((radius - (int) radius) == 0) ? center.getY() - (int) center.getY() : 0;
         int dyStep = radius < 64 ? 1 : MathHelper.floor(radius / 32);
@@ -165,7 +165,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
     }
 
     private void renderDotSphere(MatrixStack matrixStack, Point center, double radius, Color color) {
-        if (!RenderCulling.isVisibleCulling(new Box(new BlockPos(center.getX(), center.getY(), center.getZ())).expand(radius))) return;
+        if (ConfigManager.fastRender.get() >= 1 && !RenderCulling.isVisibleCulling(new Box(new BlockPos(center.getX(), center.getY(), center.getZ())).expand(radius))) return;
         matrixStack.push();
 
         for (double phi = 0.0D; phi < TAU; phi += PHI_SEGMENT) {

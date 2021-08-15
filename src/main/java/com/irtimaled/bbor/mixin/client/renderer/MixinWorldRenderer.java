@@ -30,7 +30,6 @@ public class MixinWorldRenderer {
     private void onRender(MatrixStack matrixStack, float partialTicks, long ignored_2, boolean ignored_3, Camera ignored_4, GameRenderer ignored_5, LightmapTextureManager ignored_6, Matrix4f ignored_7, CallbackInfo ci) {
         Preconditions.checkNotNull(this.client.player);
         RenderCulling.setFrustum(frustum);
-        RenderCulling.flushStats();
         Player.setPosition(partialTicks, this.client.player);
         ClientInterop.render(matrixStack, this.client.player);
     }
