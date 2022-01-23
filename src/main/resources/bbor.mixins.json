@@ -20,6 +20,7 @@
     "access.IKeyBinding",
     "client.MixinGameSettings",
     "client.MixinMinecraft",
+    "client.MixinKeyboard",
     "client.access.IClientChunkManager",
     "client.access.IClientChunkManagerClientChunkMap",
     "client.entity.player.MixinClientPlayerEntity",
