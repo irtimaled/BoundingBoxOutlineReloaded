@@ -1,7 +1,7 @@
 .DS_Store
 .gradle
 build
-run
+run*/
 .idea
 classes
 *.iml
@@ -9,3 +9,4 @@ classes
 *.ipr
 out
 logs/
+*.hprof

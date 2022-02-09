@@ -7,20 +7,17 @@ import com.irtimaled.bbor.common.models.DimensionId;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.structure.StructureManager;
+import net.minecraft.structure.StructureContext;
 import net.minecraft.structure.StructurePiece;
+import net.minecraft.structure.StructurePiecesList;
 import net.minecraft.structure.StructureStart;
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.world.FeatureUpdater;
-import net.minecraft.world.HeightLimitView;
 import net.minecraft.world.PersistentStateManager;
 import net.minecraft.world.StructureWorldAccess;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.gen.StructureAccessor;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
@@ -28,10 +25,12 @@ import net.minecraft.world.gen.feature.FeatureConfig;
 import net.minecraft.world.level.storage.LevelStorage;
 import net.minecraft.world.storage.RegionBasedStorage;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -43,10 +42,10 @@ class NBTStructureLoader {
 
     private FeatureUpdater legacyStructureDataUtil = null;
     private LevelStorage.Session saveHandler = null;
-    private File chunkSaveLocation = null;
+    private Path chunkSaveLocation = null;
     private ChunkLoader chunkLoader;
 
-    NBTStructureLoader(DimensionId dimensionId, LevelStorage.Session saveHandler, File worldDirectory) {
+    NBTStructureLoader(DimensionId dimensionId, LevelStorage.Session saveHandler, Path worldDirectory) {
         this.dimensionId = dimensionId;
         this.configure(saveHandler, worldDirectory);
     }
@@ -70,19 +69,19 @@ class NBTStructureLoader {
         }
     }
 
-    void configure(LevelStorage.Session saveHandler, File worldDirectory) {
+    void configure(LevelStorage.Session saveHandler, Path worldDirectory) {
         this.saveHandler = saveHandler;
         if (worldDirectory != null) {
-            this.chunkSaveLocation = new File(DimensionType.getSaveDirectory(this.dimensionId.getDimensionType(), worldDirectory), "region");
+            this.chunkSaveLocation = DimensionType.getSaveDirectory(this.dimensionId.getDimensionType(), worldDirectory).resolve("region");
             this.chunkLoader = new ChunkLoader(this.chunkSaveLocation);
         }
     }
 
     private FeatureUpdater getLegacyStructureDataUtil() {
         if (this.legacyStructureDataUtil == null) {
-            File dataFolder = new File(this.saveHandler.getWorldDirectory(World.OVERWORLD), "data");
+            Path dataFolder = this.saveHandler.getWorldDirectory(World.OVERWORLD).resolve("data");
             this.legacyStructureDataUtil = FeatureUpdater.create(dimensionId.getDimensionType(),
-                    new PersistentStateManager(dataFolder, MinecraftClient.getInstance().getDataFixer()));
+                    new PersistentStateManager(dataFolder.toFile(), MinecraftClient.getInstance().getDataFixer()));
         }
         return this.legacyStructureDataUtil;
     }
@@ -129,15 +128,19 @@ class NBTStructureLoader {
             super(null,
                     new ChunkPos(0, 0),
                     0,
-                    0);
+                    new StructurePiecesList(createList(compound)));
 
             this.parsedBoundingBox = create(compound.getIntArray("BB"));
+        }
 
+        private static List<StructurePiece> createList(NbtCompound compound) {
+            final ArrayList<StructurePiece> pieces = new ArrayList<>();
             NbtList children = compound.getList("Children", 10);
             for (int index = 0; index < children.size(); ++index) {
                 NbtCompound child = children.getCompound(index);
-                if (child.contains("BB")) this.children.add(new SimpleStructurePiece(child));
+                if (child.contains("BB")) pieces.add(new SimpleStructurePiece(child));
             }
+            return pieces;
         }
 
         private static BlockBox create(int[] compound) {
@@ -148,11 +151,11 @@ class NBTStructureLoader {
         }
 
         @Override
-        public void init(DynamicRegistryManager dynamicRegistryManager, ChunkGenerator chunkGenerator, StructureManager structureManager, ChunkPos chunkPos, Biome biome, FeatureConfig featureConfig, HeightLimitView heightLimitView) {
+        public void place(StructureWorldAccess world, StructureAccessor structureAccessor, ChunkGenerator chunkGenerator, Random random, BlockBox chunkBox, ChunkPos chunkPos) {
         }
 
         @Override
-        protected BlockBox calculateBoundingBox() {
+        public BlockBox getBoundingBox() {
             return this.parsedBoundingBox;
         }
     }
@@ -163,22 +166,21 @@ class NBTStructureLoader {
         }
 
         @Override
-        protected void writeNbt(ServerWorld serverWorld, NbtCompound nbtCompound) {
+        protected void writeNbt(StructureContext context, NbtCompound nbt) {
         }
 
         @Override
-        public boolean generate(StructureWorldAccess structureWorldAccess, StructureAccessor structureAccessor, ChunkGenerator chunkGenerator, Random random, BlockBox blockBox, ChunkPos chunkPos, BlockPos blockPos) {
-            return false;
+        public void generate(StructureWorldAccess structureWorldAccess, StructureAccessor structureAccessor, ChunkGenerator chunkGenerator, Random random, BlockBox blockBox, ChunkPos chunkPos, BlockPos blockPos) {
         }
     }
 
     private static class ChunkLoader implements AutoCloseable {
-        private static final BiFunction<File, Boolean, RegionBasedStorage> creator =
-                ReflectionHelper.getPrivateInstanceBuilder(RegionBasedStorage.class, File.class, boolean.class);
+        private static final BiFunction<Path, Boolean, RegionBasedStorage> creator =
+                ReflectionHelper.getPrivateInstanceBuilder(RegionBasedStorage.class, Path.class, boolean.class);
 
         private final RegionBasedStorage regionFileCache;
 
-        public ChunkLoader(File file) {
+        public ChunkLoader(Path file) {
             this.regionFileCache = creator.apply(file, false);
         }
 

@@ -5,15 +5,15 @@ import com.irtimaled.bbor.common.models.DimensionId;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.world.level.storage.LevelStorage;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
 public class SaveGameStructureLoader {
     private static final Map<DimensionId, NBTStructureLoader> nbtStructureLoaders = new HashMap<>();
     private static LevelStorage.Session saveHandler = null;
-    private static File worldDirectory = null;
+    private static Path worldDirectory = null;
 
     static void loadSaveGame(String fileName) {
         MinecraftClient minecraft = MinecraftClient.getInstance();
@@ -23,7 +23,7 @@ public class SaveGameStructureLoader {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        worldDirectory = saveLoader.getSavesDirectory().resolve(fileName).toFile();
+        worldDirectory = saveLoader.getSavesDirectory().resolve(fileName);
 
         for (DimensionId dimensionId : nbtStructureLoaders.keySet()) {
             NBTStructureLoader dimensionProcessor = getNBTStructureLoader(dimensionId);

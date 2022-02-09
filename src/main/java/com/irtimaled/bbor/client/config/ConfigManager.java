@@ -53,9 +53,9 @@ public class ConfigManager {
     public static Setting<Integer> spawnableBlocksRenderHeight;
     public static Setting<Boolean> invertBoxColorPlayerInside;
     public static Setting<Boolean> renderSphereAsDots;
-    public static Setting<Boolean> drawFlowerForests;
-    public static Setting<Integer> flowerForestsRenderDistance;
-    public static Setting<Boolean> drawBedrockCeilingBlocks;
+//    public static Setting<Boolean> drawFlowerForests;
+//    public static Setting<Integer> flowerForestsRenderDistance;
+//    public static Setting<Boolean> drawBedrockCeilingBlocks;
 
     public static Setting<HexColor> colorWorldSpawn;
     public static Setting<HexColor> colorLazySpawnChunks;
@@ -131,10 +131,10 @@ public class ConfigManager {
         biomeBordersRenderDistance = setup(config, "biomeBorders", "biomeBordersRenderDistance", 3, "The distance from the player where biome borders will be drawn.");
         biomeBordersMaxY = setup(config, "biomeBorders", "biomeBordersMaxY", -1, "The maximum top of the biome borders. If set to -1 it will use the value when activated, if set to 0 it will always track the players feet.");
 
-        drawFlowerForests = setup(config, "flowerForests", "drawFlowerForests", true, "If set to true flower forest flower overlays will be drawn.");
-        flowerForestsRenderDistance = setup(config, "flowerForests", "flowerForestsRenderDistance", 3, "The distance from the player where flower forests will be drawn.");
+//        drawFlowerForests = setup(config, "flowerForests", "drawFlowerForests", true, "If set to true flower forest flower overlays will be drawn.");
+//        flowerForestsRenderDistance = setup(config, "flowerForests", "flowerForestsRenderDistance", 3, "The distance from the player where flower forests will be drawn.");
 
-        drawBedrockCeilingBlocks = setup(config, "bedrockCeiling", "drawBedrockCeilingBlocks", true, "If set to true position with only one layer of bedrock will be drawn.");
+//        drawBedrockCeilingBlocks = setup(config, "bedrockCeiling", "drawBedrockCeilingBlocks", true, "If set to true position with only one layer of bedrock will be drawn.");
 
         drawVillages = setup(config, "structures", "drawVillages", false, "If set to true village bounding boxes will be drawn.");
         drawDesertTemples = setup(config, "structures", "drawDesertTemples", true, "If set to true desert temple bounding boxes are drawn.");

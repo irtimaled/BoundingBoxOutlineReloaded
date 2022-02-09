@@ -61,8 +61,8 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
         }
         if (!fillOnly) {
             stack.push();
-            stack.peek().getModel().load(lastStack.getModel());
-            stack.peek().getNormal().load(lastStack.getNormal());
+            stack.peek().getPositionMatrix().load(lastStack.getPositionMatrix());
+            stack.peek().getNormalMatrix().load(lastStack.getNormalMatrix());
             renderLine(stack, new OffsetPoint(minX, minY, minZ), new OffsetPoint(maxX, minY, minZ), color, true);
             renderLine(stack, new OffsetPoint(maxX, minY, minZ), new OffsetPoint(maxX, minY, maxZ), color, true);
             renderLine(stack, new OffsetPoint(maxX, minY, maxZ), new OffsetPoint(minX, minY, maxZ), color, true);

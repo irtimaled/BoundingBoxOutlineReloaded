@@ -29,11 +29,11 @@ class StructureProcessor {
         if (structureStart == null) return;
 
         try {
-            structureStart.setBoundingBoxFromChildren();
+            structureStart.getBoundingBox();
         } catch (Throwable ignored) {
         }
 
-        BlockBox bb = ((IStructureStart) structureStart).getBoundingBox();
+        BlockBox bb = ((IStructureStart) structureStart).getBoundingBox1();
         if (bb == null) return;
 
         AbstractBoundingBox boundingBox = buildStructure(bb, type);

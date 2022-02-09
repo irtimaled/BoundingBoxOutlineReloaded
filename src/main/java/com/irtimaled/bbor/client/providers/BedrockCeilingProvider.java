@@ -1,3 +1,4 @@
+/*
 package com.irtimaled.bbor.client.providers;
 
 import com.irtimaled.bbor.client.Player;
@@ -140,3 +141,4 @@ public class BedrockCeilingProvider implements IBoundingBoxProvider<BoundingBoxB
         return dimensionId == DimensionId.NETHER && BoundingBoxTypeHelper.shouldRender(BoundingBoxType.BedrockCeiling) && Player.getY() > 110;
     }
 }
+ */

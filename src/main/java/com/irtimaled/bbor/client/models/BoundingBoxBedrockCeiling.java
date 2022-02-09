@@ -1,3 +1,4 @@
+/*
 package com.irtimaled.bbor.client.models;
 
 import com.irtimaled.bbor.client.renderers.AbstractRenderer;
@@ -19,3 +20,4 @@ public class BoundingBoxBedrockCeiling extends BoundingBoxCuboid {
         return RENDERER;
     }
 }
+ */

@@ -1,3 +1,4 @@
+/*
 package com.irtimaled.bbor.client.interop;
 
 import com.irtimaled.bbor.client.config.ConfigManager;
@@ -60,3 +61,5 @@ public class FlowerForestHelper {
         return MinecraftClient.getInstance().world.getBlockState(new BlockPos(x, y, z)).getBlock() == Blocks.GRASS_BLOCK;
     }
 }
+
+ */

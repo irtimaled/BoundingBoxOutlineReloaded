@@ -5,14 +5,12 @@ import com.irtimaled.bbor.client.interop.ClientInterop;
 import com.irtimaled.bbor.client.interop.TileEntitiesHelper;
 import com.irtimaled.bbor.client.models.Point;
 import com.irtimaled.bbor.client.providers.BeaconProvider;
-import com.irtimaled.bbor.client.providers.BedrockCeilingProvider;
 import com.irtimaled.bbor.client.providers.BiomeBorderProvider;
 import com.irtimaled.bbor.client.providers.ConduitProvider;
 import com.irtimaled.bbor.client.providers.CustomBeaconProvider;
 import com.irtimaled.bbor.client.providers.CustomBoxProvider;
 import com.irtimaled.bbor.client.providers.CustomLineProvider;
 import com.irtimaled.bbor.client.providers.CustomSphereProvider;
-import com.irtimaled.bbor.client.providers.FlowerForestProvider;
 import com.irtimaled.bbor.client.providers.IBoundingBoxProvider;
 import com.irtimaled.bbor.client.providers.ICachingProvider;
 import com.irtimaled.bbor.client.providers.MobSpawnerProvider;
@@ -80,8 +78,8 @@ public class ClientRenderer {
         registerProvider(new SpawnableBlocksProvider());
         registerProvider(new CustomLineProvider());
         registerProvider(new CustomSphereProvider());
-        registerProvider(new FlowerForestProvider());
-        registerProvider(new BedrockCeilingProvider());
+//        registerProvider(new FlowerForestProvider());
+//        registerProvider(new BedrockCeilingProvider());
     }
 
     public static <T extends AbstractBoundingBox> void registerProvider(IBoundingBoxProvider<T> provider) {

@@ -34,7 +34,7 @@ public class RenderHelper {
     }
 
     public static void beforeRenderFont(MatrixStack matrixStack, OffsetPoint offsetPoint) {
-        RenderSystem.assertThread(RenderSystem::isOnRenderThread);
+        RenderSystem.assertOnRenderThread();
         matrixStack.push();
         polygonModeFill();
         matrixStack.translate(offsetPoint.getX(), offsetPoint.getY() + 0.002D, offsetPoint.getZ());
@@ -52,7 +52,7 @@ public class RenderHelper {
     public static void afterRenderFont(MatrixStack matrixStack) {
         disableTexture();
         disableBlend();
-        RenderSystem.assertThread(RenderSystem::isOnRenderThread);
+        RenderSystem.assertOnRenderThread();
         matrixStack.pop();
         enableDepthTest();
     }
@@ -116,7 +116,7 @@ public class RenderHelper {
 //    }
 
     public static void lineWidth2() {
-        RenderSystem.assertThread(RenderSystem::isOnRenderThread);
+        RenderSystem.assertOnRenderThread();
         RenderSystem.lineWidth(2f);
     }
 
@@ -133,7 +133,7 @@ public class RenderHelper {
     }
 
     public static void enablePolygonOffsetLine() {
-        RenderSystem.assertThread(RenderSystem::isOnRenderThread);
+        RenderSystem.assertOnRenderThread();
         GL11.glEnable(GL11.GL_POLYGON_OFFSET_LINE);
     }
 

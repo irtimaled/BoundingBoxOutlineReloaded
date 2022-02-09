@@ -104,7 +104,7 @@ public class Renderer {
     }
 
     private void pos(double x, double y, double z) {
-        bufferBuilder.vertex(matrixStack.peek().getModel(), (float) x, (float) y, (float) z);
+        bufferBuilder.vertex(matrixStack.peek().getPositionMatrix(), (float) x, (float) y, (float) z);
     }
 
     private void tex(double u, double v) {
