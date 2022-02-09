@@ -9,8 +9,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(WorldChunk.class)
 public class MixinChunk {
-    @Inject(method = "loadToWorld", at = @At("RETURN"))
-    private void onLoad(CallbackInfo ci) {
-        CommonInterop.chunkLoaded((WorldChunk) (Object) this);
+    @Inject(method = "setLoadedToWorld", at = @At("RETURN"))
+    private void onLoad(boolean loaded, CallbackInfo ci) {
+        if (loaded) CommonInterop.chunkLoaded((WorldChunk) (Object) this);
     }
 }

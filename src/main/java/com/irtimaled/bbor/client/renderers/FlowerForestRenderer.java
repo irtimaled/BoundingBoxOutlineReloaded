@@ -1,3 +1,4 @@
+/*
 package com.irtimaled.bbor.client.renderers;
 
 import com.irtimaled.bbor.client.models.BoundingBoxFlowerForest;
@@ -16,3 +17,4 @@ public class FlowerForestRenderer extends AbstractRenderer<BoundingBoxFlowerFore
                 boundingBox.getColor(), true, 127);
     }
 }
+ */

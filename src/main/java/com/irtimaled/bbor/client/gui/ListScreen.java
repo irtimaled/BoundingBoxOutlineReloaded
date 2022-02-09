@@ -52,7 +52,7 @@ public abstract class ListScreen extends Screen {
     }
 
     protected void render(MatrixStack matrixStack, int mouseX, int mouseY) {
-        RenderSystem.assertThread(RenderSystem::isOnRenderThread);
+        RenderSystem.assertOnRenderThread();
         this.renderBackground(matrixStack);
         this.controlList.render(matrixStack, mouseX, mouseY);
 
