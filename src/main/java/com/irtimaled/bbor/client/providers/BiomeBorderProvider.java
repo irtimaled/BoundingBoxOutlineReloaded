@@ -9,6 +9,7 @@ import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.models.Coords;
 import com.irtimaled.bbor.common.models.DimensionId;
+import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +19,7 @@ public class BiomeBorderProvider implements IBoundingBoxProvider<BoundingBoxBiom
     private static Boolean lastRenderAllTransitions = null;
     private static Integer lastRenderDistance = null;
     private static Integer lastMaxY = null;
-    private static Map<Coords, BoundingBoxBiomeBorder> lastBorders = new HashMap<>();
+    private static Map<Coords, BoundingBoxBiomeBorder> lastBorders = new Object2ObjectLinkedOpenHashMap<>();
 
     @Override
     public boolean canProvide(DimensionId dimensionId) {

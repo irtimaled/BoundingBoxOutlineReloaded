@@ -5,6 +5,7 @@ import com.irtimaled.bbor.client.interop.ClientInterop;
 import com.irtimaled.bbor.client.interop.TileEntitiesHelper;
 import com.irtimaled.bbor.client.models.Point;
 import com.irtimaled.bbor.client.providers.BeaconProvider;
+import com.irtimaled.bbor.client.providers.BedrockCeilingProvider;
 import com.irtimaled.bbor.client.providers.BiomeBorderProvider;
 import com.irtimaled.bbor.client.providers.ConduitProvider;
 import com.irtimaled.bbor.client.providers.CustomBeaconProvider;
@@ -27,14 +28,13 @@ import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.common.models.DimensionId;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMaps;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.util.math.MatrixStack;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -79,7 +79,7 @@ public class ClientRenderer {
         registerProvider(new CustomLineProvider());
         registerProvider(new CustomSphereProvider());
 //        registerProvider(new FlowerForestProvider());
-//        registerProvider(new BedrockCeilingProvider());
+        registerProvider(new BedrockCeilingProvider());
     }
 
     public static <T extends AbstractBoundingBox> void registerProvider(IBoundingBoxProvider<T> provider) {
@@ -130,25 +130,26 @@ public class ClientRenderer {
         lastDurationNanos.set(System.nanoTime() - startTime);
     }
 
+    private static final ObjectArrayList<AbstractBoundingBox> listForRendering = new ObjectArrayList<>();
+
     public static List<AbstractBoundingBox> getBoundingBoxes(DimensionId dimensionId) {
-        List<AbstractBoundingBox> tmp = new LinkedList<>();
+        listForRendering.clear();
         final boolean doPreCulling = ConfigManager.fastRender.get() >= 2;
         for (IBoundingBoxProvider<?> provider : providers) {
             if (provider.canProvide(dimensionId)) {
                 for (AbstractBoundingBox boundingBox : provider.get(dimensionId)) {
                     if (isWithinRenderDistance(boundingBox)) {
                         if (doPreCulling && !boundingBox.isVisibleCulling()) continue;
-                        tmp.add(boundingBox);
+                        listForRendering.add(boundingBox);
                     }
                 }
             }
         }
 
         Point point = Player.getPoint();
-        final ArrayList<AbstractBoundingBox> result = new ArrayList<>(tmp);
-        result.sort(Comparator.comparingDouble((AbstractBoundingBox boundingBox) -> boundingBox.getDistance(point.getX(), point.getY(), point.getZ())).reversed());
+        listForRendering.sort(Comparator.comparingDouble((AbstractBoundingBox boundingBox) -> boundingBox.getDistance(point.getX(), point.getY(), point.getZ())).reversed());
 
-        return result;
+        return listForRendering;
     }
 
     public static void clear() {
