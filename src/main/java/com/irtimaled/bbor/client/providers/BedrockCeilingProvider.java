@@ -1,4 +1,3 @@
-/*
 package com.irtimaled.bbor.client.providers;
 
 import com.irtimaled.bbor.client.Player;
@@ -10,13 +9,13 @@ import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.models.Coords;
 import com.irtimaled.bbor.common.models.DimensionId;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Random;
-import java.util.Set;
 
 public class BedrockCeilingProvider implements IBoundingBoxProvider<BoundingBoxBedrockCeiling>, ICachingProvider {
     private static final double CHUNK_SIZE = 16d;
@@ -24,14 +23,14 @@ public class BedrockCeilingProvider implements IBoundingBoxProvider<BoundingBoxB
     private static final Map<String, BedrockChunk> chunks = new HashMap<>();
 
     private static class BedrockChunk {
-        private final Set<BoundingBoxBedrockCeiling> boxes = new HashSet<>();
+        private final List<BoundingBoxBedrockCeiling> boxes = new ObjectArrayList<>();
 
         public BedrockChunk(int chunkX, int chunkZ) {
             int chunkStartX = chunkX << 4;
             int chunkStartZ = chunkZ << 4;
 
             if (BedrockCeilingHelper.chunkLoaded(chunkX, chunkZ)) findBoxesFromBlockState(chunkStartX, chunkStartZ);
-            else findBoxesFromRNG(chunkX, chunkZ, chunkStartX, chunkStartZ);
+//            else findBoxesFromRNG(chunkX, chunkZ, chunkStartX, chunkStartZ);
         }
 
         private void findBoxesFromBlockState(int chunkStartX, int chunkStartZ) {
@@ -59,36 +58,36 @@ public class BedrockCeilingProvider implements IBoundingBoxProvider<BoundingBoxB
             return coords;
         }
 
-        private void findBoxesFromRNG(int chunkX, int chunkZ, int chunkStartX, int chunkStartZ) {
-            Random random = BedrockCeilingHelper.getRandomForChunk(chunkX, chunkZ);
-
-            // preseed 16x16x3 calls to nextDouble
-            for (int dummy = 0; dummy < 768; dummy++) {
-                random.nextDouble();
-            }
-            for (int z = 0; z < 16; z++) {
-                for (int x = 0; x < 16; x++) {
-                    Coords coords = getBlocksFromRNG(random, chunkStartX + x, chunkStartZ + z);
-
-                    if (coords != null) {
-                        boxes.add(new BoundingBoxBedrockCeiling(coords));
-                    }
-                }
-            }
-        }
-
-        private Coords getBlocksFromRNG(Random random, int x, int z) {
-            int count = 0;
-            for (int y = 127; y >= 123; y--) {
-                if (y >= 127 - random.nextInt(5)) {
-                    count++;
-                }
-            }
-            for (int y = 4; y >= 0; y--) {
-                random.nextInt(5);
-            }
-            return count == 1 ? new Coords(x, 127, z) : null;
-        }
+//        private void findBoxesFromRNG(int chunkX, int chunkZ, int chunkStartX, int chunkStartZ) {
+//            Random random = BedrockCeilingHelper.getRandomForChunk(chunkX, chunkZ);
+//
+//            // preseed 16x16x3 calls to nextDouble
+//            for (int dummy = 0; dummy < 768; dummy++) {
+//                random.nextDouble();
+//            }
+//            for (int z = 0; z < 16; z++) {
+//                for (int x = 0; x < 16; x++) {
+//                    Coords coords = getBlocksFromRNG(random, chunkStartX + x, chunkStartZ + z);
+//
+//                    if (coords != null) {
+//                        boxes.add(new BoundingBoxBedrockCeiling(coords));
+//                    }
+//                }
+//            }
+//        }
+//
+//        private Coords getBlocksFromRNG(Random random, int x, int z) {
+//            int count = 0;
+//            for (int y = 127; y >= 123; y--) {
+//                if (y >= 127 - random.nextInt(5)) {
+//                    count++;
+//                }
+//            }
+//            for (int y = 4; y >= 0; y--) {
+//                random.nextInt(5);
+//            }
+//            return count == 1 ? new Coords(x, 127, z) : null;
+//        }
 
         public Collection<? extends BoundingBoxBedrockCeiling> getBlocks() {
             return boxes;
@@ -112,7 +111,7 @@ public class BedrockCeilingProvider implements IBoundingBoxProvider<BoundingBoxB
         int playerChunkX = MathHelper.floor(Player.getX() / CHUNK_SIZE);
         int playerChunkZ = MathHelper.floor(Player.getZ() / CHUNK_SIZE);
 
-        Set<BoundingBoxBedrockCeiling> boxes = new HashSet<>();
+        ArrayList<BoundingBoxBedrockCeiling> boxes = new ArrayList<>();
 
         for (int chunkX = playerChunkX - renderDistanceChunks; chunkX <= playerChunkX + renderDistanceChunks; chunkX++) {
             for (int chunkZ = playerChunkZ - renderDistanceChunks; chunkZ <= playerChunkZ + renderDistanceChunks; chunkZ++) {
@@ -129,7 +128,7 @@ public class BedrockCeilingProvider implements IBoundingBoxProvider<BoundingBoxB
 
     public boolean shouldRecalculate() {
         long gameTime = ClientInterop.getGameTime();
-        if (!((Long) gameTime).equals(lastGameTime) && gameTime % 2L == 0L) {
+        if (!((Long) gameTime).equals(lastGameTime) && (gameTime & 0b1111) == 0) {
             lastGameTime = gameTime;
             return true;
         }
@@ -141,4 +140,3 @@ public class BedrockCeilingProvider implements IBoundingBoxProvider<BoundingBoxB
         return dimensionId == DimensionId.NETHER && BoundingBoxTypeHelper.shouldRender(BoundingBoxType.BedrockCeiling) && Player.getY() > 110;
     }
 }
- */
