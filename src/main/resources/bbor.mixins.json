@@ -4,7 +4,6 @@
   "compatibilityLevel": "JAVA_16",
   "target": "@env(DEFAULT)",
   "package": "com.irtimaled.bbor.mixin",
-  "refmap": "mixins.bbor.refmap.json",
   "mixins": [
     "access.IBeaconBlockEntity",
     "access.IStructureStart",
