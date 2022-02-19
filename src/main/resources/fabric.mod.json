@@ -9,7 +9,7 @@
   ],
   "version": "$version",
   "mixins": [
-    "mixins.bbor.json"
+    "bbor.mixins.json"
   ],
   "depends": {
     "minecraft": ">=1.18.1"
