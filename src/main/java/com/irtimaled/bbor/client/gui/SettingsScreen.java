@@ -72,12 +72,15 @@ public class SettingsScreen extends ListScreen {
                                 .addDisplayValue(1, I18n.translate("bbor.options.distance.nearest"))
                                 .addDisplayValue(2, I18n.translate("bbor.options.distance.nearer"))
                                 .addDisplayValue(3, I18n.translate("bbor.options.distance.normal")))
-//                .section(I18n.translate("bbor.features.flowerForests"),
-//                        width -> new BoundingBoxTypeButton(width, I18n.translate("bbor.features.flowerForests"), BoundingBoxType.FlowerForest),
-//                        width -> new IntSettingSlider(width, 1, 3, "bbor.options.distance", ConfigManager.flowerForestsRenderDistance)
-//                                .addDisplayValue(1, I18n.translate("bbor.options.distance.nearest"))
-//                                .addDisplayValue(2, I18n.translate("bbor.options.distance.nearer"))
-//                                .addDisplayValue(3, I18n.translate("bbor.options.distance.normal")))
+                .section(I18n.translate("bbor.features.flowerForests"),
+                        width -> new BoundingBoxTypeButton(width, I18n.translate("bbor.features.flowerForests"), BoundingBoxType.FlowerForest),
+                        width -> new IntSettingSlider(width, 1, 6, "bbor.options.distance", ConfigManager.flowerForestsRenderDistance)
+                                .addDisplayValue(1, I18n.translate("bbor.options.distance.nearest"))
+                                .addDisplayValue(2, I18n.translate("bbor.options.distance.nearer"))
+                                .addDisplayValue(3, I18n.translate("bbor.options.distance.normal"))
+                                .addDisplayValue(4, I18n.translate("bbor.options.distance.farther"))
+                                .addDisplayValue(5, I18n.translate("bbor.options.distance.far"))
+                                .addDisplayValue(6, I18n.translate("bbor.options.distance.veryFar")))
                 .section(I18n.translate("bbor.features.bedrockCeilingBlocks"),
                         width -> new BoundingBoxTypeButton(width, I18n.translate("bbor.features.bedrockCeilingBlocks"), BoundingBoxType.BedrockCeiling))
                 .section(I18n.translate("bbor.features.mobSpawners"),

@@ -1,10 +1,10 @@
-/*
 package com.irtimaled.bbor.client.interop;
 
 import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.config.HexColor;
 import com.irtimaled.bbor.client.config.Setting;
 import com.irtimaled.bbor.common.models.Coords;
+import com.irtimaled.bbor.mixin.access.IPlacedFeature;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
@@ -13,8 +13,11 @@ import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeKeys;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
-import net.minecraft.world.gen.feature.FeatureConfig;
-import net.minecraft.world.gen.feature.FlowerFeature;
+import net.minecraft.world.gen.feature.PlacedFeature;
+import net.minecraft.world.gen.feature.SimpleBlockFeature;
+import net.minecraft.world.gen.feature.SimpleBlockFeatureConfig;
+import net.minecraft.world.gen.feature.VegetationConfiguredFeatures;
+import net.minecraft.world.gen.stateprovider.BlockStateProvider;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,10 +27,10 @@ public class FlowerForestHelper {
     private static final Random random = new Random();
 
     private static final Map<BlockState, Setting<HexColor>> flowerColorMap = new HashMap<>();
-    private static final FlowerFeature flowersFeature;
-    private static final FeatureConfig flowersConfig;
 
     public static final Biome BIOME = BuiltinRegistries.BIOME.get(BiomeKeys.FLOWER_FOREST);
+
+    private static BlockStateProvider blockStateProvider;
 
     static {
         flowerColorMap.put(Blocks.DANDELION.getDefaultState(), ConfigManager.colorFlowerForestDandelion);
@@ -41,15 +44,15 @@ public class FlowerForestHelper {
         flowerColorMap.put(Blocks.OXEYE_DAISY.getDefaultState(), ConfigManager.colorFlowerForestOxeyeDaisy);
         flowerColorMap.put(Blocks.CORNFLOWER.getDefaultState(), ConfigManager.colorFlowerForestCornflower);
         flowerColorMap.put(Blocks.LILY_OF_THE_VALLEY.getDefaultState(), ConfigManager.colorFlowerForestLilyOfTheValley);
-        ConfiguredFeature<?, ?> config = BIOME.getGenerationSettings().getFlowerFeatures().get(0);
-        flowersFeature = (FlowerFeature) config.feature;
-        flowersConfig = config.config;
+        final PlacedFeature placedFeature = VegetationConfiguredFeatures.FLOWER_FLOWER_FOREST.config.feature().get();
+        final ConfiguredFeature<SimpleBlockFeatureConfig, SimpleBlockFeature> configuredFeature = (ConfiguredFeature<SimpleBlockFeatureConfig, SimpleBlockFeature>) ((IPlacedFeature) placedFeature).getFeature().get();
+        blockStateProvider = configuredFeature.getConfig().toPlace();
     }
 
     public static Setting<HexColor> getFlowerColorAtPos(Coords coords) {
         int x = coords.getX();
         int z = coords.getZ();
-        BlockState blockState = flowersFeature.getFlowerState(random, new BlockPos(x, coords.getY(), z), flowersConfig);
+        BlockState blockState = blockStateProvider.getBlockState(random, new BlockPos(x, coords.getY(), z));
         return flowerColorMap.get(blockState);
     }
 
@@ -61,5 +64,3 @@ public class FlowerForestHelper {
         return MinecraftClient.getInstance().world.getBlockState(new BlockPos(x, y, z)).getBlock() == Blocks.GRASS_BLOCK;
     }
 }
-
- */

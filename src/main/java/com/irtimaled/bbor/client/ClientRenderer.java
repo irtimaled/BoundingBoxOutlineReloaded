@@ -12,6 +12,7 @@ import com.irtimaled.bbor.client.providers.CustomBeaconProvider;
 import com.irtimaled.bbor.client.providers.CustomBoxProvider;
 import com.irtimaled.bbor.client.providers.CustomLineProvider;
 import com.irtimaled.bbor.client.providers.CustomSphereProvider;
+import com.irtimaled.bbor.client.providers.FlowerForestProvider;
 import com.irtimaled.bbor.client.providers.IBoundingBoxProvider;
 import com.irtimaled.bbor.client.providers.ICachingProvider;
 import com.irtimaled.bbor.client.providers.MobSpawnerProvider;
@@ -78,7 +79,7 @@ public class ClientRenderer {
         registerProvider(new SpawnableBlocksProvider());
         registerProvider(new CustomLineProvider());
         registerProvider(new CustomSphereProvider());
-//        registerProvider(new FlowerForestProvider());
+        registerProvider(new FlowerForestProvider());
         registerProvider(new BedrockCeilingProvider());
     }
 

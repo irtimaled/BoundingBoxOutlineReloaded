@@ -17,7 +17,7 @@ public class BoundingBoxType {
     public static final BoundingBoxType Beacon = register("Beacon");
     public static final BoundingBoxType Conduit = register("Conduit");
     public static final BoundingBoxType SpawnableBlocks = register("Spawnable Blocks");
-//    public static final BoundingBoxType FlowerForest = register("Flower Forest");
+    public static final BoundingBoxType FlowerForest = register("Flower Forest");
     public static final BoundingBoxType BedrockCeiling = register("Bedrock Ceiling");
 
     public static final BoundingBoxType JungleTemple = register("jungle_pyramid");
