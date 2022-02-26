@@ -7,6 +7,7 @@ import com.irtimaled.bbor.client.models.Point;
 import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.mojang.blaze3d.systems.RenderSystem;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.render.GameRenderer;
@@ -124,48 +125,136 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
         if (ConfigManager.renderSphereAsDots.get()) {
             renderDotSphere(matrixStack, center, radius, color);
         } else {
-            renderLineSphere(matrixStack, center, radius, color);
+            renderFilledSphere(matrixStack, center, radius, color);
         }
     }
 
-    private void renderLineSphere(MatrixStack matrixStack, Point center, double radius, Color color) {
-        if (ConfigManager.fastRender.get() >= 1 && !RenderCulling.isVisibleCulling(new Box(new BlockPos(center.getX(), center.getY(), center.getZ())).expand(radius))) return;
+    private void renderFilledSphere(MatrixStack matrixStack, Point center, double radius, Color color) {
+        if (ConfigManager.fastRender.get() >= 1 && !RenderCulling.isVisibleCulling(new Box(new BlockPos(center.getX(), center.getY(), center.getZ())).expand(radius)))
+            return;
 
-        double offset = ((radius - (int) radius) == 0) ? center.getY() - (int) center.getY() : 0;
-        int dyStep = radius < 64 ? 1 : MathHelper.floor(radius / 32);
-        for (double dy = offset - radius; dy <= radius + 1; dy += dyStep) {
-            double circleRadius = Math.sqrt((radius * radius) - (dy * dy));
+//        double offset = ((radius - (int) radius) == 0) ? center.getY() - (int) center.getY() : 0;
+
+        final ObjectArrayList<Point> top = new ObjectArrayList<>();
+        final ObjectArrayList<Point> bottom = new ObjectArrayList<>();
+        final Point topPoint = new Point(center.getX(), center.getY() + radius, center.getZ());
+        final Point bottomPoint = new Point(center.getX(), center.getY() - radius, center.getZ());
+        for (int i = 0; i < 360; i += 4) {
+            top.add(topPoint);
+            bottom.add(bottomPoint);
+        }
+
+//        double stepModifier = Math.min(32.0 / radius, 3.5D);
+
+//        int dyStep = radius < 64 ? 1 : MathHelper.floor(radius / 32);
+
+        final ObjectArrayList<ObjectArrayList<Point>> points = new ObjectArrayList<>();
+//        renderCircle(matrixStack, center, 0.1D, color, offset + radius, top);
+        points.add(bottom);
+        for (int i = -90; i <= 90; i += 4) {
+            double phi = Math.PI / 180 * i;
+            double dy = Math.sin(phi) * radius;
+            double circleRadius = Math.cos(phi) * radius;
             if (circleRadius == 0) circleRadius = Math.sqrt(2) / 2;
-            renderCircle(matrixStack, center, circleRadius, color, dy + 0.001F);
+            final ObjectArrayList<Point> pointsCache = new ObjectArrayList<>();
+            renderCircle(matrixStack, center, circleRadius, color, dy + 0.001F, pointsCache);
+            points.add(pointsCache);
         }
-    }
+//        for (double dy = offset + radius + 1; dy >= -radius; dy -= dyStep) {
+//            double circleRadius = Math.sqrt((radius * radius) - (dy * dy));
+//            if (circleRadius == 0) circleRadius = Math.sqrt(2) / 2;
+//            final ObjectArrayList<Point> pointsCache = new ObjectArrayList<>();
+//            renderCircle(matrixStack, center, circleRadius, color, dy + 0.001F, pointsCache);
+//            points.add(pointsCache);
+//        }
+//        renderCircle(matrixStack, center, 0.1D, color, offset - radius, bottom);
+        points.add(top);
 
-    private void renderCircle(MatrixStack matrixStack, Point center, double radius, Color color, double dy) {
         matrixStack.push();
 
         RenderHelper.applyRegionalRenderOffset(matrixStack);
         RenderSystem.setShader(GameRenderer::getPositionShader);
 
-        Point firstPoint = null;
-        Point lastPoint = null;
+        final Boolean doFill = ConfigManager.fill.get();
 
-        for (double phi = 0.0D; phi < TAU; phi += PHI_SEGMENT) {
-            final Point point = center.offset(Math.cos(phi) * radius, dy, Math.sin(phi) * radius);
-            if (firstPoint == null) firstPoint = point;
-            if (lastPoint == null) {
-                lastPoint = point;
-                continue;
+        for (int i = 0; i < points.size() - 1; i++) {
+            final ObjectArrayList<Point> pointsCache1 = points.get(i);
+            final ObjectArrayList<Point> pointsCache2 = points.get(i + 1);
+            assert pointsCache1.size() == pointsCache2.size();
+            Point lastPoint1 = null;
+            Point lastPoint2 = null;
+            for (int j = 0, pointsCacheSize = pointsCache1.size(); j < pointsCacheSize; j++) {
+                Point point1 = pointsCache1.get(j);
+                Point point2 = pointsCache2.get(j);
+                if (ConfigManager.fastRender.get() >= 1 && RenderCulling.isVisibleCulling(new OffsetBox(point1, point2).toBox()))
+                    RenderBatch.drawLine(matrixStack.peek(), point1, point2, color, 255);
+                if (doFill && lastPoint1 != null) {
+                    if (ConfigManager.fastRender.get() >= 1 && RenderCulling.isVisibleCulling(new OffsetBox(lastPoint1, point2).toBox()))
+                        RenderBatch.drawFilledFace(matrixStack.peek(), lastPoint1, lastPoint2, point2, point1, color, 127, false);
+                }
+                lastPoint1 = point1;
+                lastPoint2 = point2;
             }
-            RenderBatch.drawLine(matrixStack.peek(), lastPoint, point, color, 255);
-            lastPoint = point;
+            if (doFill && lastPoint1 != null) {
+                if (ConfigManager.fastRender.get() >= 1 && RenderCulling.isVisibleCulling(new OffsetBox(pointsCache1.get(0), lastPoint2).toBox()))
+                    RenderBatch.drawFilledFace(matrixStack.peek(), pointsCache1.get(0), pointsCache2.get(0), lastPoint2, lastPoint1, color, 127, false);
+            }
         }
-        RenderBatch.drawLine(matrixStack.peek(), lastPoint, firstPoint, color, 255);
 
         matrixStack.pop();
     }
 
+    private void renderLineSphere(MatrixStack matrixStack, Point center, double radius, Color color) {
+        if (ConfigManager.fastRender.get() >= 1 && !RenderCulling.isVisibleCulling(new Box(new BlockPos(center.getX(), center.getY(), center.getZ())).expand(radius)))
+            return;
+
+        double offset = ((radius - (int) radius) == 0) ? center.getY() - (int) center.getY() : 0;
+        int dyStep = radius < 64 ? 1 : MathHelper.floor(radius / 32);
+        final ObjectArrayList<Point> pointsCache = new ObjectArrayList<>();
+        for (double dy = offset - radius; dy <= radius + 1; dy += dyStep) {
+            double circleRadius = Math.sqrt((radius * radius) - (dy * dy));
+            if (circleRadius == 0) circleRadius = Math.sqrt(2) / 2;
+            renderCircle(matrixStack, center, circleRadius, color, dy + 0.001F, pointsCache);
+            pointsCache.clear();
+        }
+    }
+
+    private void renderCircle(MatrixStack matrixStack, Point center, double radius, Color color, double dy, ObjectArrayList<Point> cache) {
+        matrixStack.push();
+
+        RenderHelper.applyRegionalRenderOffset(matrixStack);
+        RenderSystem.setShader(GameRenderer::getPositionShader);
+
+        generateCircle(center, radius, dy, cache);
+        Point last = null;
+        //noinspection RedundantCast
+        for (Object _point : (Object[]) cache.elements()) {
+            if (_point != null) {
+                Point point = (Point) _point;
+                if (last != null) {
+                    RenderBatch.drawLine(matrixStack.peek(), last, point, color, 255);
+                }
+                last = point;
+            }
+        }
+        if (last != null) {
+            RenderBatch.drawLine(matrixStack.peek(), last, cache.get(0), color, 255);
+        }
+
+        matrixStack.pop();
+    }
+
+    private void generateCircle(Point center, double radius, double dy, ObjectArrayList<Point> cache) {
+        for (int i = 0; i < 360; i += 4) {
+            double phi = Math.PI / 180 * i;
+            final Point point = center.offset(Math.cos(phi) * radius, dy, Math.sin(phi) * radius);
+            cache.add(point);
+        }
+    }
+
     private void renderDotSphere(MatrixStack matrixStack, Point center, double radius, Color color) {
-        if (ConfigManager.fastRender.get() >= 1 && !RenderCulling.isVisibleCulling(new Box(new BlockPos(center.getX(), center.getY(), center.getZ())).expand(radius))) return;
+        if (ConfigManager.fastRender.get() >= 1 && !RenderCulling.isVisibleCulling(new Box(new BlockPos(center.getX(), center.getY(), center.getZ())).expand(radius)))
+            return;
         matrixStack.push();
 
         for (double phi = 0.0D; phi < TAU; phi += PHI_SEGMENT) {
