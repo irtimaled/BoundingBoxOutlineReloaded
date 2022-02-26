@@ -68,10 +68,13 @@ public class SettingsScreen extends ListScreen {
                 .section(I18n.translate("bbor.features.biomeBorders"),
                         width -> new BoundingBoxTypeButton(width, I18n.translate("bbor.features.biomeBorders"), BoundingBoxType.BiomeBorder),
                         width -> new MaxYSettingSlider(width, 1, ConfigManager.biomeBordersMaxY),
-                        width -> new IntSettingSlider(width, 1, 3, "bbor.options.distance", ConfigManager.biomeBordersRenderDistance)
+                        width -> new IntSettingSlider(width, 1, 6, "bbor.options.distance", ConfigManager.biomeBordersRenderDistance)
                                 .addDisplayValue(1, I18n.translate("bbor.options.distance.nearest"))
                                 .addDisplayValue(2, I18n.translate("bbor.options.distance.nearer"))
-                                .addDisplayValue(3, I18n.translate("bbor.options.distance.normal")))
+                                .addDisplayValue(3, I18n.translate("bbor.options.distance.normal"))
+                                .addDisplayValue(4, I18n.translate("bbor.options.distance.farther"))
+                                .addDisplayValue(5, I18n.translate("bbor.options.distance.far"))
+                                .addDisplayValue(6, I18n.translate("bbor.options.distance.veryFar")))
                 .section(I18n.translate("bbor.features.flowerForests"),
                         width -> new BoundingBoxTypeButton(width, I18n.translate("bbor.features.flowerForests"), BoundingBoxType.FlowerForest),
                         width -> new IntSettingSlider(width, 1, 6, "bbor.options.distance", ConfigManager.flowerForestsRenderDistance)
