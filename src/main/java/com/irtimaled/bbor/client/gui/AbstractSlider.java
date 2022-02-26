@@ -30,7 +30,7 @@ abstract class AbstractSlider extends AbstractControl {
 
     private void changeProgress(double mouseX) {
         double progress = (mouseX - (double) (this.x + 4)) / (double) total;
-        setPosition((int) (progress * optionCount));
+        setPosition((int) Math.round(progress * optionCount));
     }
 
     protected int getPosition() {
