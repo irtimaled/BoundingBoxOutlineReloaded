@@ -101,7 +101,37 @@ public class RenderBatch {
         }
     }
 
-    static void drawLine(MatrixStack.Entry matrixEntry, Point startPoint, Point endPoint, Color color, int alpha) {
+    public static void drawFilledFace(MatrixStack.Entry matrixEntry, Point point1, Point point2, Point point3, Point point4, Color color, int alpha, boolean mask) {
+        int regionX = (((int) Camera.getX()) >> 9) * 512;
+        int regionZ = (((int) Camera.getZ()) >> 9) * 512;
+
+        if (mask) quadMaskedCount.getAndIncrement();
+        else quadNonMaskedCount.getAndIncrement();
+
+        final BufferBuilder bufferBuilder = mask ? RenderBatch.quadBufferBuilderMasked : RenderBatch.quadBufferBuilderNonMasked;
+
+        final float x1 = (float) point1.getX() - regionX;
+        final float y1 = (float) point1.getY();
+        final float z1 = (float) point1.getZ() - regionZ;
+        bufferBuilder.vertex(matrixEntry.getPositionMatrix(), x1, y1, z1).color(color.getRed(), color.getGreen(), color.getBlue(), alpha).next();
+
+        final float x2 = (float) point2.getX() - regionX;
+        final float y2 = (float) point2.getY();
+        final float z2 = (float) point2.getZ() - regionZ;
+        bufferBuilder.vertex(matrixEntry.getPositionMatrix(), x2, y2, z2).color(color.getRed(), color.getGreen(), color.getBlue(), alpha).next();
+
+        final float x3 = (float) point3.getX() - regionX;
+        final float y3 = (float) point3.getY();
+        final float z3 = (float) point3.getZ() - regionZ;
+        bufferBuilder.vertex(matrixEntry.getPositionMatrix(), x3, y3, z3).color(color.getRed(), color.getGreen(), color.getBlue(), alpha).next();
+
+        final float x4 = (float) point4.getX() - regionX;
+        final float y4 = (float) point4.getY();
+        final float z4 = (float) point4.getZ() - regionZ;
+        bufferBuilder.vertex(matrixEntry.getPositionMatrix(), x4, y4, z4).color(color.getRed(), color.getGreen(), color.getBlue(), alpha).next();
+    }
+
+    public static void drawLine(MatrixStack.Entry matrixEntry, Point startPoint, Point endPoint, Color color, int alpha) {
         int regionX = (((int) Camera.getX()) >> 9) * 512;
         int regionZ = (((int) Camera.getZ()) >> 9) * 512;
 
