@@ -151,7 +151,7 @@ public class RenderBatch {
     }
 
     public static String debugString() {
-        return String.format("[BBOR] Statistics: Filled faces: %d,%d Lines: %d @ %.2fms", quadMaskedCountLast.get(), quadNonMaskedCountLast.get(), lineCountLast.get(), lastDurationNanos.get() / 1_000_000.0);
+        return String.format("[BBOR] Statistics: Filled faces: %d+%d Lines: %d @ %.2fms", quadMaskedCountLast.get(), quadNonMaskedCountLast.get(), lineCountLast.get(), lastDurationNanos.get() / 1_000_000.0);
     }
 
 }

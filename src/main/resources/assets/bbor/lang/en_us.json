@@ -22,6 +22,9 @@
   "bbor.options.distance.nearest": "Nearest",
   "bbor.options.distance.nearer": "Nearer",
   "bbor.options.distance.normal": "Normal",
+  "bbor.options.distance.farther": "Farther",
+  "bbor.options.distance.far": "Far",
+  "bbor.options.distance.veryFar": "Very Far",
   "bbor.options.distance.y": "Distance (Y): %s",
   "bbor.options.distance.xz": "Distance (X/Z): %s",
 

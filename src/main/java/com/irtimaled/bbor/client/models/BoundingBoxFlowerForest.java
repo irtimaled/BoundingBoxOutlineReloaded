@@ -1,4 +1,3 @@
-/*
 package com.irtimaled.bbor.client.models;
 
 import com.irtimaled.bbor.client.RenderCulling;
@@ -64,4 +63,3 @@ public class BoundingBoxFlowerForest extends AbstractBoundingBox {
         return RenderCulling.isVisibleCulling(coords.getX(), coords.getY() + 0.01d, coords.getZ(), coords.getX() + 1, coords.getY(), coords.getZ() + 1);
     }
 }
- */

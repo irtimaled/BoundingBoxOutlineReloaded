@@ -8,6 +8,8 @@ import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.models.Coords;
 import com.irtimaled.bbor.common.models.DimensionId;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.world.gen.random.ChunkRandom;
 
 import java.util.HashSet;
@@ -39,6 +41,13 @@ public class SlimeChunkProvider implements IBoundingBoxProvider<BoundingBoxSlime
     public Iterable<BoundingBoxSlimeChunk> get(DimensionId dimensionId) {
         Set<BoundingBoxSlimeChunk> slimeChunks = new HashSet<>();
         int renderDistanceChunks = ClientInterop.getRenderDistanceChunks();
+        final ClientWorld world = MinecraftClient.getInstance().world;
+        final int minimumY;
+        if (world != null) {
+            minimumY = world.getDimension().getMinimumY();
+        } else {
+            minimumY = 0;
+        }
         int playerChunkX = MathHelper.floor(Player.getX() / CHUNK_SIZE);
         int playerChunkZ = MathHelper.floor(Player.getZ() / CHUNK_SIZE);
         for (int chunkX = playerChunkX - renderDistanceChunks; chunkX <= playerChunkX + renderDistanceChunks; ++chunkX) {
@@ -46,7 +55,7 @@ public class SlimeChunkProvider implements IBoundingBoxProvider<BoundingBoxSlime
                 if (isSlimeChunk(chunkX, chunkZ)) {
                     int chunkXStart = chunkX << 4;
                     int chunkZStart = chunkZ << 4;
-                    Coords minCoords = new Coords(chunkXStart, 1, chunkZStart);
+                    Coords minCoords = new Coords(chunkXStart, minimumY + 1, chunkZStart);
                     Coords maxCoords = new Coords(chunkXStart + 15, 38, chunkZStart + 15);
                     slimeChunks.add(new BoundingBoxSlimeChunk(minCoords, maxCoords));
                 }

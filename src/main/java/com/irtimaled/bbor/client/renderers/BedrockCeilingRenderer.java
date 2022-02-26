@@ -14,6 +14,6 @@ public class BedrockCeilingRenderer extends AbstractRenderer<BoundingBoxBedrockC
         int z = coords.getZ();
         renderCuboid(matrixStack, new OffsetBox(new OffsetPoint(x, y + 1.01d, z),
                         new OffsetPoint(x + 1, y + 1.01d, z + 1)),
-                BoundingBoxTypeHelper.getColor(boundingBox.getType()), true, 127);
+                BoundingBoxTypeHelper.getColor(boundingBox.getType()), false, 127);
     }
 }

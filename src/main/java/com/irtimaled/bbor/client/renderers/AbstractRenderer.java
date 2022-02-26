@@ -29,7 +29,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
     void renderCuboid(MatrixStack matrixStack, OffsetBox bb, Color color, boolean fillOnly, int fillAlpha) {
         matrixStack.push();
 
-        renderCuboid0(matrixStack, bb, color, fillOnly, fillAlpha, false);
+        renderCuboid0(matrixStack, bb.nudge(), color, fillOnly, fillAlpha, false);
 
         matrixStack.pop();
     }
