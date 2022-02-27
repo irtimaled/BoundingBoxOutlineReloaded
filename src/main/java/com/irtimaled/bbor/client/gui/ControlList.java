@@ -311,7 +311,12 @@ public class ControlList extends DrawableHelper implements IControlSet {
     }
 
     ControlList section(String title, CreateControl... createControls) {
-        this.add(new ControlListSection(title, createControls));
+        this.add(new ControlListSection(title, -1, createControls));
+        return this;
+    }
+
+    ControlList section(String title, int columnCount, CreateControl... createControls) {
+        this.add(new ControlListSection(title, columnCount, createControls));
         return this;
     }
 

@@ -15,18 +15,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(GameOptions.class)
 public abstract class MixinGameSettings {
-    @Mutable
-    @Final
-    @Shadow
-    public KeyBinding[] keysAll;
 
     @Shadow
     public abstract void load();
 
+    @Mutable
+    @Shadow @Final public KeyBinding[] allKeys;
+
     @Inject(method = "<init>", at = @At("RETURN"))
     private void init(CallbackInfo ci) {
         ClientProxy.registerKeyBindings();
-        keysAll = ArrayUtils.addAll(keysAll, KeyListener.keyBindings());
+        allKeys = ArrayUtils.addAll(allKeys, KeyListener.keyBindings());
         this.load();
     }
 }

@@ -21,7 +21,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.gen.StructureAccessor;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
-import net.minecraft.world.gen.feature.FeatureConfig;
 import net.minecraft.world.level.storage.LevelStorage;
 import net.minecraft.world.storage.RegionBasedStorage;
 
@@ -110,7 +109,7 @@ class NBTStructureLoader {
         NbtCompound structureStarts = loadStructureStarts(chunkX, chunkZ);
         if (structureStarts == null || structureStarts.getSize() == 0) return;
 
-        Map<String, StructureStart<?>> structureStartMap = new HashMap<>();
+        Map<String, StructureStart> structureStartMap = new HashMap<>();
         for (String key : structureStarts.getKeys()) {
             NbtCompound compound = structureStarts.getCompound(key);
             if (compound.contains("BB")) {
@@ -121,7 +120,7 @@ class NBTStructureLoader {
         EventBus.publish(new StructuresLoaded(structureStartMap, dimensionId));
     }
 
-    private static class SimpleStructureStart extends StructureStart<FeatureConfig> {
+    private static class SimpleStructureStart extends StructureStart {
         private final BlockBox parsedBoundingBox;
 
         SimpleStructureStart(NbtCompound compound) {

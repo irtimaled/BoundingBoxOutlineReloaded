@@ -4,6 +4,7 @@ import com.irtimaled.bbor.client.ClientRenderer;
 import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.interop.ClientInterop;
 import com.irtimaled.bbor.common.BoundingBoxType;
+import com.irtimaled.bbor.common.StructureProcessor;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
@@ -107,25 +108,17 @@ public class SettingsScreen extends ListScreen {
                 .section(I18n.translate("bbor.features.spawningSpheres"),
                         width -> new BoundingBoxTypeButton(width, I18n.translate("bbor.features.spawningSpheres"), BoundingBoxType.AFKSphere),
                         width -> new BoolSettingButton(width, I18n.translate("bbor.features.spawnableBlocks"), ConfigManager.renderAFKSpawnableBlocks))
-                .section(I18n.translate("bbor.tabs.structures"),
-                        width -> new BoundingBoxTypeButton(width, I18n.translate("bbor.structures.desertTemples"), BoundingBoxType.DesertTemple),
-                        width -> new BoundingBoxTypeButton(width, I18n.translate("bbor.structures.jungleTemples"), BoundingBoxType.JungleTemple),
-                        width -> new BoundingBoxTypeButton(width, I18n.translate("bbor.structures.witchHuts"), BoundingBoxType.WitchHut),
-                        width -> new BoundingBoxTypeButton(width, I18n.translate("bbor.structures.mansions"), BoundingBoxType.Mansion),
-                        width -> new BoundingBoxTypeButton(width, I18n.translate("bbor.structures.monuments"), BoundingBoxType.OceanMonument),
-                        width -> new BoundingBoxTypeButton(width, I18n.translate("bbor.structures.igloos"), BoundingBoxType.Igloo),
-                        width -> new BoundingBoxTypeButton(width, I18n.translate("bbor.structures.oceanRuins"), BoundingBoxType.OceanRuin),
-                        width -> new BoundingBoxTypeButton(width, I18n.translate("bbor.structures.buriedTreasure"), BoundingBoxType.BuriedTreasure),
-                        width -> new BoundingBoxTypeButton(width, I18n.translate("bbor.structures.shipwrecks"), BoundingBoxType.Shipwreck),
-                        width -> new BoundingBoxTypeButton(width, I18n.translate("bbor.structures.strongholds"), BoundingBoxType.Stronghold),
-                        width -> new BoundingBoxTypeButton(width, I18n.translate("bbor.structures.mineshafts"), BoundingBoxType.MineShaft),
-                        width -> new BoundingBoxTypeButton(width, I18n.translate("bbor.structures.villages"), BoundingBoxType.Village),
-                        width -> version.matches(pillagerOutpostVersionPattern) ? new BoundingBoxTypeButton(width, I18n.translate("bbor.structures.pillagerOutposts"), BoundingBoxType.PillagerOutpost) : null,
-                        width -> version.matches(bastionRemnantVersionPattern) ? new BoundingBoxTypeButton(width, I18n.translate("bbor.structures.ruinedPortal"), BoundingBoxType.RuinedPortal) : null,
-                        width -> new BoundingBoxTypeButton(width, I18n.translate("bbor.structures.fortresses"), BoundingBoxType.NetherFortress),
-                        width -> version.matches(netherFossilVersionPattern) ? new BoundingBoxTypeButton(width, I18n.translate("bbor.structures.netherFossils"), BoundingBoxType.NetherFossil) : null,
-                        width -> version.matches(bastionRemnantVersionPattern) ? new BoundingBoxTypeButton(width, I18n.translate("bbor.structures.bastionRemnants"), BoundingBoxType.BastionRemnant) : null,
-                        width -> new BoundingBoxTypeButton(width, I18n.translate("bbor.structures.endCities"), BoundingBoxType.EndCity));
+                .section(I18n.translate("bbor.tabs.structures"), 2,
+                        generateStructureControls());
         return controlList;
     }
+
+    private CreateControl[] generateStructureControls() {
+        return StructureProcessor.supportedStructureIds
+                .stream()
+                .map(key -> (CreateControl) (width -> new BoundingBoxTypeButton(width, key, BoundingBoxType.getByNameHash(("structure:" + key).hashCode()))))
+                .distinct()
+                .toArray(CreateControl[]::new);
+    }
+
 }

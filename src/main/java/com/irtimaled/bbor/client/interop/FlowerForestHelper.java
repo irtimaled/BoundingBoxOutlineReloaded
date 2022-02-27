@@ -4,7 +4,6 @@ import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.config.HexColor;
 import com.irtimaled.bbor.client.config.Setting;
 import com.irtimaled.bbor.common.models.Coords;
-import com.irtimaled.bbor.mixin.access.IPlacedFeature;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
@@ -44,9 +43,9 @@ public class FlowerForestHelper {
         flowerColorMap.put(Blocks.OXEYE_DAISY.getDefaultState(), ConfigManager.colorFlowerForestOxeyeDaisy);
         flowerColorMap.put(Blocks.CORNFLOWER.getDefaultState(), ConfigManager.colorFlowerForestCornflower);
         flowerColorMap.put(Blocks.LILY_OF_THE_VALLEY.getDefaultState(), ConfigManager.colorFlowerForestLilyOfTheValley);
-        final PlacedFeature placedFeature = VegetationConfiguredFeatures.FLOWER_FLOWER_FOREST.config.feature().get();
-        final ConfiguredFeature<SimpleBlockFeatureConfig, SimpleBlockFeature> configuredFeature = (ConfiguredFeature<SimpleBlockFeatureConfig, SimpleBlockFeature>) ((IPlacedFeature) placedFeature).getFeature().get();
-        blockStateProvider = configuredFeature.getConfig().toPlace();
+        final PlacedFeature placedFeature = VegetationConfiguredFeatures.FLOWER_FLOWER_FOREST.value().config().feature().value();
+        final var configuredFeature = (ConfiguredFeature<SimpleBlockFeatureConfig, SimpleBlockFeature>) placedFeature.feature().value();
+        blockStateProvider = configuredFeature.config().toPlace();
     }
 
     public static Setting<HexColor> getFlowerColorAtPos(Coords coords) {

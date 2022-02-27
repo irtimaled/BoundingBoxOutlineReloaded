@@ -97,7 +97,7 @@ public class Renderer {
 
     public void render() {
         if (glMode == VertexFormat.DrawMode.QUADS) {
-            bufferBuilder.setCameraPosition((float) Camera.getX(), (float) Camera.getY(), (float) Camera.getZ());
+            bufferBuilder.sortFrom((float) Camera.getX(), (float) Camera.getY(), (float) Camera.getZ());
         }
         tessellator.draw();
         matrixStack.pop();

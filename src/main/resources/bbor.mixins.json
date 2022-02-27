@@ -6,7 +6,7 @@
   "package": "com.irtimaled.bbor.mixin",
   "mixins": [
     "access.IBeaconBlockEntity",
-    "access.IPlacedFeature",
+    "access.IBiome",
     "access.IStructureStart",
     "client.renderer.MixinDebugHud",
     "client.renderer.MixinWorldRenderer",

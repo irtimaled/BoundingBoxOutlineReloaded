@@ -16,12 +16,12 @@ public class ControlListSection extends ControlListEntry implements IControlSet 
     private IControl focused;
     private boolean dragging;
 
-    ControlListSection(String title, CreateControl... createControls) {
+    ControlListSection(String title, int columnCount, CreateControl... createControls) {
         this.title = title;
         this.titleHeight = title != null ? TITLE_HEIGHT : 0;
         this.height = titleHeight;
 
-        int columnCount = columnCount();
+        if (columnCount == -1) columnCount = defaultColumnCount();
         int controlWidth = (ControlList.CONTROLS_WIDTH - ((columnCount - 1) * 4)) / columnCount;
 
         int column = 0;
@@ -37,7 +37,7 @@ public class ControlListSection extends ControlListEntry implements IControlSet 
         }
     }
 
-    private int columnCount() {
+    private int defaultColumnCount() {
         switch (minecraft.getLanguageManager().getLanguage().getCode()) {
             case "en_au":
             case "en_us":

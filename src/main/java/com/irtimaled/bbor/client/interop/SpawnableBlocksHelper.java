@@ -1,6 +1,7 @@
 package com.irtimaled.bbor.client.interop;
 
 import com.irtimaled.bbor.common.models.Coords;
+import com.irtimaled.bbor.mixin.access.IBiome;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
@@ -49,9 +50,9 @@ public class SpawnableBlocksHelper {
 
     static boolean isSpawnable(World world, BlockPos pos, BlockState spawnBlockState, BlockState upperBlockState) {
         VoxelShape collisionShape = upperBlockState.getCollisionShape(world, pos);
-        Biome biome = world.getBiome(pos);
-        boolean isNether = biome.getCategory() == Biome.Category.NETHER;
-        return biome.getCategory() != Biome.Category.MUSHROOM &&
+        Biome biome = world.getBiome(pos).value();
+        boolean isNether = ((IBiome) biome).bbor$getCategory() == Biome.Category.NETHER;
+        return ((IBiome) biome).bbor$getCategory() != Biome.Category.MUSHROOM &&
                 spawnBlockState.allowsSpawning(world, pos.down(), isNether ? EntityType.ZOMBIFIED_PIGLIN : entityType) &&
                 !Block.isFaceFullSquare(collisionShape, Direction.UP) &&
                 !upperBlockState.emitsRedstonePower() &&

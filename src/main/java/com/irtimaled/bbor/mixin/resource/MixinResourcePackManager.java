@@ -35,7 +35,7 @@ public class MixinResourcePackManager {
                 ResourcePackSource.PACK_SOURCE_BUILTIN);
     }
 
-    @Redirect(method = "providePackProfiles", at = @At(value = "INVOKE", target = "Lcom/google/common/collect/ImmutableMap;copyOf(Ljava/util/Map;)Lcom/google/common/collect/ImmutableMap;"))
+    @Redirect(method = "providePackProfiles", at = @At(value = "INVOKE", target = "Lcom/google/common/collect/ImmutableMap;copyOf(Ljava/util/Map;)Lcom/google/common/collect/ImmutableMap;", remap = false))
     private ImmutableMap<String, ResourcePackProfile> beforeReturn(Map<String, ResourcePackProfile> map) {
         map.put(BBOR, resourcePackProfile);
         return ImmutableMap.copyOf(map);

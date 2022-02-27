@@ -1,8 +1,12 @@
 package com.irtimaled.bbor.common.interop;
 
 import com.irtimaled.bbor.client.ClientRenderer;
+import com.irtimaled.bbor.client.config.BoundingBoxTypeHelper;
+import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.renderers.AbstractRenderer;
+import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.EventBus;
+import com.irtimaled.bbor.common.StructureProcessor;
 import com.irtimaled.bbor.common.events.PlayerLoggedIn;
 import com.irtimaled.bbor.common.events.PlayerLoggedOut;
 import com.irtimaled.bbor.common.events.PlayerSubscribed;
@@ -19,24 +23,48 @@ import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.structure.StructureStart;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.world.World;
 import net.minecraft.world.chunk.WorldChunk;
+import net.minecraft.world.gen.feature.ConfiguredStructureFeature;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 public class CommonInterop {
     public static void chunkLoaded(WorldChunk chunk) {
         DimensionId dimensionId = DimensionId.from(chunk.getWorld().getRegistryKey());
-        Map<String, StructureStart<?>> structures = new HashMap<>();
-        chunk.getStructureStarts().entrySet().forEach(es -> structures.put(es.getKey().getName(), es.getValue()));
+        Map<String, StructureStart> structures = new HashMap<>();
+        final Registry<ConfiguredStructureFeature<?, ?>> structureFeatureRegistry = chunk.getWorld().getRegistryManager().get(Registry.CONFIGURED_STRUCTURE_FEATURE_KEY);
+        for (Map.Entry<ConfiguredStructureFeature<?, ?>, StructureStart> es : chunk.getStructureStarts().entrySet()) {
+            final Optional<RegistryKey<ConfiguredStructureFeature<?, ?>>> optional = structureFeatureRegistry.getKey(es.getKey());
+            optional.ifPresent(key -> structures.put(key.getValue().toString(), es.getValue()));
+        }
         if (structures.size() > 0) EventBus.publish(new StructuresLoaded(structures, dimensionId));
     }
 
     public static void loadWorlds(Collection<ServerWorld> worlds) {
         for (ServerWorld world : worlds) {
             loadWorld(world);
+            loadWorldStructures(world);
+        }
+    }
+
+    public static void loadWorldStructures(World world) {
+        final Registry<ConfiguredStructureFeature<?, ?>> structureFeatureRegistry = world.getRegistryManager().get(Registry.CONFIGURED_STRUCTURE_FEATURE_KEY);
+        System.out.println("Registring structures: " + Arrays.toString(structureFeatureRegistry.getEntrySet().stream().map(entry -> entry.getKey().getValue().toString()).distinct().toArray(String[]::new)));
+        for (var entry : structureFeatureRegistry.getEntrySet()) {
+            final Identifier value = entry.getKey().getValue();
+            final BoundingBoxType boundingBoxType = BoundingBoxType.register("structure:" + value);
+            StructureProcessor.registerSupportedStructure(boundingBoxType);
+            StructureProcessor.supportedStructureIds.add(value.toString());
+            BoundingBoxTypeHelper.registerType(boundingBoxType, ConfigManager.structureShouldRender(value.toString()), ConfigManager.structureColor(value.toString()));
         }
     }
 

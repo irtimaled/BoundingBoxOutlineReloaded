@@ -35,7 +35,7 @@ public class BiomeBorderHelper {
         final ClientWorld world = MinecraftClient.getInstance().world;
         return biomeArray.computeIfAbsent(pos.asLong(), key -> {
             assert world != null;
-            return world.getRegistryManager().get(Registry.BIOME_KEY).getRawId(world.getBiome(pos));
+            return world.getRegistryManager().get(Registry.BIOME_KEY).getRawId(world.getBiome(pos).value());
         });
     }
 
