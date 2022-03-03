@@ -1,6 +1,7 @@
 package com.irtimaled.bbor.common;
 
 import com.irtimaled.bbor.Logger;
+import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.common.events.PlayerLoggedIn;
 import com.irtimaled.bbor.common.events.PlayerLoggedOut;
 import com.irtimaled.bbor.common.events.PlayerSubscribed;
@@ -28,6 +29,10 @@ public class CommonProxy {
     private Long seed = null;
     private Integer spawnX = null;
     private Integer spawnZ = null;
+
+    public CommonProxy(){
+        ConfigManager.loadConfig();
+    }
 
     public void init() {
         BoundingBoxType.registerTypes();
