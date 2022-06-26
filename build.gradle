@@ -12,7 +12,7 @@ buildscript {
     }
     dependencies {
         classpath "net.fabricmc:fabric-loom:0.11-SNAPSHOT"
-        classpath "io.github.juuxel:loom-quiltflower:1.6.0"
+        classpath "io.github.juuxel:loom-quiltflower:1.+"
     }
 }
 
@@ -22,7 +22,7 @@ apply plugin: 'java'
 apply plugin: 'idea'
 
 group 'com.irtimaled'
-version project.buildVersion + '-' + project.mcVersion
+version project.buildVersion + '-' + project.minecraft_version
 archivesBaseName = 'BBOutlineReloaded'
 
 sourceCompatibility = JavaVersion.VERSION_17
@@ -39,9 +39,10 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 dependencies {
-    minecraft 'com.mojang:minecraft:' + project.mcVersion
-    mappings 'net.fabricmc:yarn:' + project.mcVersion + '+build.1:v2'
-    modImplementation 'net.fabricmc:fabric-loader:0.13.3'
+    //to change the versions see the gradle.properties file
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 }
 
 loom {

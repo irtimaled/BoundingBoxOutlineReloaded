@@ -8,6 +8,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.random.LocalRandom;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeKeys;
@@ -20,16 +21,16 @@ import net.minecraft.world.gen.stateprovider.BlockStateProvider;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 public class FlowerForestHelper {
-    private static final Random random = new Random();
 
     private static final Map<BlockState, Setting<HexColor>> flowerColorMap = new HashMap<>();
 
     public static final Biome BIOME = BuiltinRegistries.BIOME.get(BiomeKeys.FLOWER_FOREST);
 
     private static BlockStateProvider blockStateProvider;
+
+    private static volatile long seed = 0;
 
     static {
         flowerColorMap.put(Blocks.DANDELION.getDefaultState(), ConfigManager.colorFlowerForestDandelion);
@@ -51,12 +52,12 @@ public class FlowerForestHelper {
     public static Setting<HexColor> getFlowerColorAtPos(Coords coords) {
         int x = coords.getX();
         int z = coords.getZ();
-        BlockState blockState = blockStateProvider.getBlockState(random, new BlockPos(x, coords.getY(), z));
+        BlockState blockState = blockStateProvider.getBlockState(new LocalRandom(seed), new BlockPos(x, coords.getY(), z));
         return flowerColorMap.get(blockState);
     }
 
     public static void setSeed(long seed) {
-        random.setSeed(seed);
+        FlowerForestHelper.seed = seed;
     }
 
     public static boolean canGrowFlower(int x, int y, int z) {

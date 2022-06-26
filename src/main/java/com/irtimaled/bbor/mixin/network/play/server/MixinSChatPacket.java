@@ -12,10 +12,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(GameMessageS2CPacket.class)
 public class MixinSChatPacket {
     @Shadow
-    private Text message;
+    private Text content;
 
     @Inject(method = "apply", at = @At("RETURN"))
     private void processPacket(CallbackInfo ci) {
-        ClientInterop.handleSeedMessage(this.message);
+        ClientInterop.handleSeedMessage(this.content);
     }
 }

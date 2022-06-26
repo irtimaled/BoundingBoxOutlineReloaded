@@ -280,13 +280,15 @@ public class ConfigManager {
     }
 
     public static Setting<Boolean> structureShouldRender(String key) {
-        final Setting<Boolean> setting = structureRenderSettings.put(key, setup(config, "structures", "drawStructure_" + key.replace(':', '_'), true, "If set to true structure %s bounding boxes will be drawn.".formatted(key)));
+        final Setting<Boolean> setting = setup(config, "structures", "drawStructure_" + key.replace(':', '_'), true, "If set to true structure %s bounding boxes will be drawn.".formatted(key));
+        structureRenderSettings.put(key, setting);
         saveConfig();
         return setting;
     }
 
     public static Setting<HexColor> structureColor(String key) {
-        final Setting<HexColor> setting = structureColorSettings.put(key, setup(config, "colors", "colorStructure_" + key.replace(':', '_'), defaultStructureColors.getOrDefault(key, HexColor.from("#ffffff")), "Color if structure %s bounding boxes.".formatted(key)));
+        final Setting<HexColor> setting = setup(config, "colors", "colorStructure_" + key.replace(':', '_'), defaultStructureColors.getOrDefault(key, HexColor.from("#ffffff")), "Color if structure %s bounding boxes.".formatted(key));
+        structureColorSettings.put(key, setting);
         saveConfig();
         return setting;
     }

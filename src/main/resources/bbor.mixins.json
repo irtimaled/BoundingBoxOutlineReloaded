@@ -11,11 +11,13 @@
     "client.renderer.MixinDebugHud",
     "client.renderer.MixinWorldRenderer",
     "network.play.client.MixinCCustomPayloadPacket",
+    "server.MixinDynamicRegistryManager",
     "server.MixinMinecraftServer",
     "server.management.MixinPlayerList",
     "world.chunk.MixinChunk"
   ],
   "client": [
+    "access.IKeyBinding",
     "client.MixinGameSettings",
     "client.MixinMinecraft",
     "client.access.IClientChunkManager",

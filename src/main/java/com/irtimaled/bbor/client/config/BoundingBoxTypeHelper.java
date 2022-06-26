@@ -1,5 +1,6 @@
 package com.irtimaled.bbor.client.config;
 
+import com.google.common.base.Preconditions;
 import com.irtimaled.bbor.common.BoundingBoxType;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMaps;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -11,6 +12,8 @@ public class BoundingBoxTypeHelper {
     private static final Map<String, BoundingBoxTypeSettings> structureTypeMap = Object2ObjectMaps.synchronize(new Object2ObjectOpenHashMap<>());
 
     public static void registerType(BoundingBoxType type, Setting<Boolean> shouldRender, Setting<HexColor> color) {
+        Preconditions.checkNotNull(type);
+        Preconditions.checkNotNull(shouldRender);
         structureTypeMap.put(type.getName(), new BoundingBoxTypeSettings(shouldRender, color));
     }
 
