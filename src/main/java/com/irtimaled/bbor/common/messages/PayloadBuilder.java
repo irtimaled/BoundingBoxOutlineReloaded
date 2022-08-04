@@ -3,10 +3,10 @@ package com.irtimaled.bbor.common.messages;
 import com.irtimaled.bbor.common.models.Coords;
 import com.irtimaled.bbor.common.models.DimensionId;
 import io.netty.buffer.Unpooled;
-import net.minecraft.server.v1_16_R3.MinecraftKey;
-import net.minecraft.server.v1_16_R3.Packet;
-import net.minecraft.server.v1_16_R3.PacketDataSerializer;
-import net.minecraft.server.v1_16_R3.PacketPlayOutCustomPayload;
+import net.minecraft.network.PacketDataSerializer;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.PacketPlayOutCustomPayload;
+import net.minecraft.resources.MinecraftKey;
 
 import java.util.HashMap;
 import java.util.Map;

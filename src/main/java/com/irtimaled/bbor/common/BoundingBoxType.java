@@ -1,5 +1,23 @@
 package com.irtimaled.bbor.common;
 
+import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraft.world.level.levelgen.structure.structures.BuriedTreasureStructure;
+import net.minecraft.world.level.levelgen.structure.structures.DesertPyramidStructure;
+import net.minecraft.world.level.levelgen.structure.structures.EndCityStructure;
+import net.minecraft.world.level.levelgen.structure.structures.IglooStructure;
+import net.minecraft.world.level.levelgen.structure.structures.JigsawStructure;
+import net.minecraft.world.level.levelgen.structure.structures.JungleTempleStructure;
+import net.minecraft.world.level.levelgen.structure.structures.MineshaftStructure;
+import net.minecraft.world.level.levelgen.structure.structures.NetherFortressStructure;
+import net.minecraft.world.level.levelgen.structure.structures.NetherFossilStructure;
+import net.minecraft.world.level.levelgen.structure.structures.OceanMonumentStructure;
+import net.minecraft.world.level.levelgen.structure.structures.OceanRuinStructure;
+import net.minecraft.world.level.levelgen.structure.structures.RuinedPortalStructure;
+import net.minecraft.world.level.levelgen.structure.structures.ShipwreckStructure;
+import net.minecraft.world.level.levelgen.structure.structures.StrongholdStructure;
+import net.minecraft.world.level.levelgen.structure.structures.SwampHutStructure;
+import net.minecraft.world.level.levelgen.structure.structures.WoodlandMansionStructure;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,7 +38,7 @@ public class BoundingBoxType {
     public static final BoundingBoxType FlowerForest = register("Flower Forest");
     public static final BoundingBoxType BedrockCeiling = register("Bedrock Ceiling");
 
-    public static final BoundingBoxType JungleTemple = register("jungle_pyramid");
+    public static final BoundingBoxType JungleTemple = register("jungle_temple");
     public static final BoundingBoxType DesertTemple = register("desert_pyramid");
     public static final BoundingBoxType WitchHut = register("swamp_hut");
     public static final BoundingBoxType OceanMonument = register("monument");
@@ -72,5 +90,43 @@ public class BoundingBoxType {
         if (obj == null || getClass() != obj.getClass()) return false;
         BoundingBoxType other = (BoundingBoxType) obj;
         return this.name.equals(other.name);
+    }
+
+    // TODO change it
+    public static BoundingBoxType getByStructure(Structure structure) {
+        if (structure instanceof BuriedTreasureStructure) {
+            return BuriedTreasure;
+        } else if (structure instanceof JungleTempleStructure) {
+            return JungleTemple;
+        } else if (structure instanceof DesertPyramidStructure) {
+            return DesertTemple;
+        } else if (structure instanceof EndCityStructure) {
+            return EndCity;
+        } else if (structure instanceof NetherFortressStructure) {
+            return NetherFortress;
+        } else if (structure instanceof IglooStructure) {
+            return Igloo;
+        } else if (structure instanceof MineshaftStructure) {
+            return MineShaft;
+        } else if (structure instanceof NetherFossilStructure) {
+            return NetherFossil;
+        } else if (structure instanceof OceanMonumentStructure) {
+            return OceanMonument;
+        } else if (structure instanceof OceanRuinStructure) {
+            return OceanRuin;
+        } else if (structure instanceof RuinedPortalStructure) {
+            return RuinedPortal;
+        } else if (structure instanceof ShipwreckStructure) {
+            return Shipwreck;
+        } else if (structure instanceof StrongholdStructure) {
+            return  Stronghold;
+        } else if (structure instanceof SwampHutStructure) {
+            return WitchHut;
+        } else if (structure instanceof WoodlandMansionStructure) {
+            return Mansion;
+        } else if (structure instanceof JigsawStructure) {
+            // TODO
+        }
+        return WorldSpawn; // not it
     }
 }

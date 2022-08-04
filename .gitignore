@@ -9,3 +9,4 @@ classes
 *.ipr
 out
 logs/
+lib
