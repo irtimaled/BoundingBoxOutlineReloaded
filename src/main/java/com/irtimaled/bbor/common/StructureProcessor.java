@@ -11,10 +11,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-class StructureProcessor {
-    private static final Set<BoundingBoxType> supportedStructures = new HashSet<>();
+public class StructureProcessor {
+    public static final Set<BoundingBoxType> supportedStructures = new HashSet<>();
 
-    static void registerSupportedStructure(BoundingBoxType type) {
+    public static void registerSupportedStructure(BoundingBoxType type) {
         supportedStructures.add(type);
     }
 
@@ -30,6 +30,7 @@ class StructureProcessor {
 
         StructureBoundingBox bb = structureStart.a();
         if (bb == null) return;
+
 
         AbstractBoundingBox boundingBox = buildStructure(bb, type);
         if (boundingBoxCache.isCached(boundingBox)) return;

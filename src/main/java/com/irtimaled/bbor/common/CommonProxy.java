@@ -94,7 +94,6 @@ public class CommonProxy {
             DimensionId dimensionId = entry.getKey();
             BoundingBoxCache boundingBoxCache = entry.getValue();
             if (boundingBoxCache == null) return;
-
             Set<AbstractBoundingBox> playerBoundingBoxes = playerBoundingBoxesCache.computeIfAbsent(playerId, k -> new HashSet<>());
 
             Map<AbstractBoundingBox, Set<AbstractBoundingBox>> boundingBoxMap = boundingBoxCache.getBoundingBoxes();

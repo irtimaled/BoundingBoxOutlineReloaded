@@ -36,6 +36,8 @@ public class Events implements Listener, PluginMessageListener {
         World world = event.getWorld();
         if (world instanceof CraftWorld) {
             CommonInterop.loadWorld(((CraftWorld) world).getHandle());
+            CommonInterop.loadWorldStructures(((CraftWorld) world).getHandle());
+
 
             for (Chunk chunk : world.getLoadedChunks()) {
                 if (chunk instanceof CraftChunk) {
