@@ -30,9 +30,9 @@ import com.irtimaled.bbor.common.models.DimensionId;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMaps;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 
 import java.util.Comparator;
 import java.util.HashSet;
@@ -88,10 +88,11 @@ public class ClientRenderer {
     }
 
     public static <T extends AbstractBoundingBox> AbstractRenderer<T> registerRenderer(Class<? extends T> type, Supplier<AbstractRenderer<T>> renderer) {
-        if (FabricLoader.getInstance().getEnvironmentType() != EnvType.CLIENT) return null;
-        final AbstractRenderer<T> renderer1 = renderer.get();
-        boundingBoxRendererMap.put(type, renderer1);
-        return renderer1;
+        return DistExecutor.unsafeCallWhenOn(Dist.CLIENT, () -> () -> {
+            final AbstractRenderer<T> renderer1 = renderer.get();
+            boundingBoxRendererMap.put(type, renderer1);
+            return renderer1;
+        });
     }
 
     public static AbstractRenderer getRenderer(Class<? extends AbstractBoundingBox> clazz) {

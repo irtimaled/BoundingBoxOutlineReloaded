@@ -9,14 +9,16 @@ buildscript {
             name = 'Cotton'
             url = 'https://server.bbkr.space/artifactory/libs-release/'
         }
+        maven { url "https://maven.architectury.dev/" }
+        maven { url "https://files.minecraftforge.net/maven/" }
     }
     dependencies {
-        classpath "net.fabricmc:fabric-loom:0.12-SNAPSHOT"
+        classpath "dev.architectury:architectury-loom:0.12.0-SNAPSHOT"
         classpath "io.github.juuxel:loom-quiltflower:1.+"
     }
 }
 
-apply plugin: 'fabric-loom'
+apply plugin: 'dev.architectury.loom'
 apply plugin: 'io.github.juuxel.loom-quiltflower'
 apply plugin: 'java'
 apply plugin: 'idea'
@@ -38,20 +40,61 @@ tasks.withType(JavaCompile).configureEach {
     it.options.release = 17
 }
 
+loom {
+    // since loom 0.10, you are **required** to use the
+    // "forge" block to configure forge-specific features,
+    // such as the mixinConfigs array or datagen
+    forge {
+        // specify the mixin configs used in this mod
+        // this will be added to the jar manifest as well!
+        mixinConfigs = [
+                "bbor.mixins.json"
+        ]
+
+        // missing access transformers?
+        // don't worry, you can still use them!
+        // note that your AT *MUST* be located at
+        // src/main/resources/META-INF/accesstransformer.cfg
+        // to work as there is currently no config option to change this.
+        // also, any names used in your access transformer will need to be
+        // in SRG mapped ("func_" / "field_" with MCP class names) to work!
+        // (both of these things may be subject to change in the future)
+
+        // this will create a data generator configuration
+        // that you can use to automatically generate assets and data
+        // using architectury loom. Note that this currently *only* works
+        // for forge projects made with architectury loom!
+        dataGen {
+            mod project.name
+        }
+    }
+
+    // This allows you to modify your launch configurations,
+    // for example to add custom arguments. In this case, we want
+    // the data generator to check our resources directory for
+    // existing files. (see Forge's ExistingFileHelper for more info)
+    launches {
+        data {
+            arg "--existing", file("src/main/resources").absolutePath
+        }
+    }
+}
+
 dependencies {
     //to change the versions see the gradle.properties file
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-}
-
-loom {
-    accessWidenerPath = file("src/main/resources/bbor.accesswidener")
+    forge "net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}"
 }
 
 processResources {
-    filesMatching('fabric.mod.json') {
-        expand version: project.version
+    // define properties that can be used during resource processing
+    inputs.property "version", project.version
+
+    // this will replace the property "${version}" in your mods.toml
+    // with the version you've defined in your gradle.properties
+    filesMatching("META-INF/mods.toml") {
+        expand "version": project.version
     }
 }
 
@@ -78,7 +121,7 @@ jar {
 }
 
 afterEvaluate {
-    remapJar.classifier = 'fabric'
+    remapJar.classifier = 'forge'
 }
 
 afterEvaluate {

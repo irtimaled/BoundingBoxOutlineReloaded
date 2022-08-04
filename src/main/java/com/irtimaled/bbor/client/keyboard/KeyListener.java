@@ -14,11 +14,10 @@ public class KeyListener {
     public static final String Category = "Bounding Box Outline Reloaded";
 
     public static Key register(String description, String keyName) {
-        InputUtil.Key input = InputUtil.fromTranslationKey(keyName);
-        CustomKeyBinding keyBinding = new CustomKeyBinding(description, input.getCode());
+        CustomKeyBinding keyBinding = new CustomKeyBinding(description, keyName);
         keyBindings.add(keyBinding);
 
-        Key key = keyBinding.getKey();
+        Key key = keyBinding.getBBORKey();
         keys.add(key);
         return key;
     }

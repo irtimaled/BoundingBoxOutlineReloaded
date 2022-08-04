@@ -1,6 +1,0 @@
-accessWidener v1 named
-
-accessible    class    net/minecraft/client/world/ClientChunkManager$ClientChunkMap
-
-extendable    class    net/minecraft/structure/StructureStart
-extendable    class    net/minecraft/world/biome/Biome

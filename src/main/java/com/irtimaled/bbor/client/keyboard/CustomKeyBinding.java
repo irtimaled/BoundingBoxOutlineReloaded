@@ -5,10 +5,12 @@ import net.minecraft.client.util.InputUtil;
 
 class CustomKeyBinding extends KeyBinding {
     private final Key key;
+    private final InputUtil.Key forgeKey;
 
-    CustomKeyBinding(String description, int keyCode) {
-        super(description, keyCode, KeyListener.Category);
-        this.key = new Key(keyCode);
+    CustomKeyBinding(String description, String translationKey) {
+        super(description, InputUtil.fromTranslationKey(translationKey).getCode(), KeyListener.Category);
+        this.forgeKey = InputUtil.fromTranslationKey(translationKey);
+        this.key = new Key(this.forgeKey.getCode());
     }
 
     @Override
@@ -18,7 +20,11 @@ class CustomKeyBinding extends KeyBinding {
         key.updateKeyCode(keyCode);
     }
 
-    public Key getKey() {
+    public InputUtil.Key getKey() {
+        return this.forgeKey;
+    }
+
+    public Key getBBORKey() {
         return key;
     }
 }

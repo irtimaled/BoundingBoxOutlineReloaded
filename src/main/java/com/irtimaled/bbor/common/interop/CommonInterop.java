@@ -16,8 +16,6 @@ import com.irtimaled.bbor.common.events.WorldLoaded;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.common.models.DimensionId;
 import com.irtimaled.bbor.common.models.ServerPlayer;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -29,6 +27,8 @@ import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.WorldChunk;
 import net.minecraft.world.gen.structure.Structure;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -103,9 +103,6 @@ public class CommonInterop {
     }
 
     public static <T extends AbstractBoundingBox> AbstractRenderer<T> registerRenderer(Class<? extends T> type, Supplier<AbstractRenderer<T>> renderer) {
-        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
-            return ClientRenderer.registerRenderer(type, renderer);
-        }
-        return null;
+        return DistExecutor.unsafeCallWhenOn(Dist.CLIENT, () -> () -> ClientRenderer.registerRenderer(type, renderer));
     }
 }
