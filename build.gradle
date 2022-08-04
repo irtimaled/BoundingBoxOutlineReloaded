@@ -4,7 +4,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'de.undercouch:gradle-download-task:3.4.3'
+        classpath 'de.undercouch:gradle-download-task:5.1.0'
     }
 }
 
@@ -15,19 +15,26 @@ group 'com.irtimaled'
 version project.buildVersion + '-' + project.mcVersion
 archivesBaseName = 'BBOutlineReloaded'
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 1.17
+targetCompatibility = 1.17
 
 compileJava {
-    dependsOn 'downloadServer'
+    // dependsOn 'downloadServer'
 }
 
 repositories {
     mavenCentral()
+    maven {
+        url = 'https://papermc.io/repo/repository/maven-releases/'
+    }
+    maven {
+        url "https://libraries.minecraft.net"
+    }
 }
 
 dependencies {
-    compile files("run/craftbukkit-${mcVersion}.jar")
+    // compileOnly files("run/craftbukkit-${mcVersion}-R0.1-SNAPSHOT.jar")
+    compileOnly fileTree(dir: 'lib', includes: ['*.jar'])
 }
 
 sourceSets {
@@ -65,17 +72,20 @@ artifacts {
     archives jar
 }
 
+/*
 task downloadServer(type: Download) {
-    src "https://cdn.getbukkit.org/craftbukkit/craftbukkit-${mcVersion}.jar"
+    src "https://download.getbukkit.org/craftbukkit/craftbukkit-${mcVersion}.jar"
     dest new File("run/craftbukkit-${mcVersion}.jar")
     overwrite false
 }
+ */
 
 task runServer(dependsOn: jar, type: JavaExec) {
     workingDir = new File('run');
 
     main = "-jar";
     args = [
-            "craftbukkit-${mcVersion}.jar"
+            "craftbukkit-${mcVersion}.jar",
+            "--nogui"
     ]
 }

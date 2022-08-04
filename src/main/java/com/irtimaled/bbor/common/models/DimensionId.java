@@ -1,15 +1,13 @@
 package com.irtimaled.bbor.common.models;
 
-import net.minecraft.server.v1_16_R3.DimensionManager;
-import net.minecraft.server.v1_16_R3.MinecraftKey;
-import net.minecraft.server.v1_16_R3.Registry;
-import net.minecraft.server.v1_16_R3.ResourceKey;
+import net.minecraft.resources.MinecraftKey;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.World;
 
-import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DimensionId {
+public record DimensionId(MinecraftKey value) {
     private static final Map<MinecraftKey, DimensionId> dimensionIdMap = new HashMap<>();
 
     public static DimensionId from(ResourceKey<?> dimensionType) {
@@ -20,17 +18,7 @@ public class DimensionId {
         return dimensionIdMap.computeIfAbsent(value, DimensionId::new);
     }
 
-    public static DimensionId OVERWORLD = DimensionId.from(DimensionManager.OVERWORLD);
-
-    private final MinecraftKey value;
-
-    public DimensionId(MinecraftKey value) {
-        this.value = value;
-    }
-
-    public MinecraftKey getValue() {
-        return value;
-    }
+    public static DimensionId OVERWORLD = DimensionId.from(World.e);
 
     @Override
     public String toString() {

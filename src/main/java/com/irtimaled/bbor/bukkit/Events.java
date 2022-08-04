@@ -4,9 +4,9 @@ import com.irtimaled.bbor.common.interop.CommonInterop;
 import com.irtimaled.bbor.common.messages.SubscribeToServer;
 import org.bukkit.Chunk;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_16_R3.CraftChunk;
-import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_19_R1.CraftChunk;
+import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -36,6 +36,8 @@ public class Events implements Listener, PluginMessageListener {
         World world = event.getWorld();
         if (world instanceof CraftWorld) {
             CommonInterop.loadWorld(((CraftWorld) world).getHandle());
+            CommonInterop.loadWorldStructures(((CraftWorld) world).getHandle());
+
 
             for (Chunk chunk : world.getLoadedChunks()) {
                 if (chunk instanceof CraftChunk) {

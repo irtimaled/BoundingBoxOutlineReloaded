@@ -20,26 +20,7 @@ public class BoundingBoxType {
     public static final BoundingBoxType FlowerForest = register("Flower Forest");
     public static final BoundingBoxType BedrockCeiling = register("Bedrock Ceiling");
 
-    public static final BoundingBoxType JungleTemple = register("jungle_pyramid");
-    public static final BoundingBoxType DesertTemple = register("desert_pyramid");
-    public static final BoundingBoxType WitchHut = register("swamp_hut");
-    public static final BoundingBoxType OceanMonument = register("monument");
-    public static final BoundingBoxType Shipwreck = register("shipwreck");
-    public static final BoundingBoxType OceanRuin = register("ocean_ruin");
-    public static final BoundingBoxType BuriedTreasure = register("buried_treasure");
-    public static final BoundingBoxType Stronghold = register("stronghold");
-    public static final BoundingBoxType MineShaft = register("mineshaft");
-    public static final BoundingBoxType NetherFortress = register("fortress");
-    public static final BoundingBoxType EndCity = register("endcity");
-    public static final BoundingBoxType Mansion = register("mansion");
-    public static final BoundingBoxType Igloo = register("igloo");
-    public static final BoundingBoxType PillagerOutpost = register("pillager_outpost");
-    public static final BoundingBoxType Village = register("village");
-    public static final BoundingBoxType NetherFossil = register("nether_fossil");
-    public static final BoundingBoxType BastionRemnant = register("bastion_remnant");
-    public static final BoundingBoxType RuinedPortal = register("ruined_portal");
-
-    private static BoundingBoxType register(String name) {
+    public static BoundingBoxType register(String name) {
         return structureTypeMap.computeIfAbsent(name.hashCode(), k -> new BoundingBoxType(name));
     }
 
