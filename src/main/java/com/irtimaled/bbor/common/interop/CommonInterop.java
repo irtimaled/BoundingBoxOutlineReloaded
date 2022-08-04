@@ -57,8 +57,16 @@ public class CommonInterop {
     }
 
     public static void loadWorldStructures(World world) {
-        final Registry<ConfiguredStructureFeature<?, ?>> structureFeatureRegistry = world.getRegistryManager().get(Registry.CONFIGURED_STRUCTURE_FEATURE_KEY);
-        System.out.println("Registring structures: " + Arrays.toString(structureFeatureRegistry.getEntrySet().stream().map(entry -> entry.getKey().getValue().toString()).distinct().toArray(String[]::new)));
+        try {
+            final Registry<ConfiguredStructureFeature<?, ?>> structureFeatureRegistry = world.getRegistryManager().get(Registry.CONFIGURED_STRUCTURE_FEATURE_KEY);
+            loadStructuresFromRegistry(structureFeatureRegistry);
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+
+    public static void loadStructuresFromRegistry(Registry<ConfiguredStructureFeature<?, ?>> structureFeatureRegistry) {
+        System.out.println("Registering structures: " + Arrays.toString(structureFeatureRegistry.getEntrySet().stream().map(entry -> entry.getKey().getValue().toString()).distinct().toArray(String[]::new)));
         for (var entry : structureFeatureRegistry.getEntrySet()) {
             final Identifier value = entry.getKey().getValue();
             final BoundingBoxType boundingBoxType = BoundingBoxType.register("structure:" + value);

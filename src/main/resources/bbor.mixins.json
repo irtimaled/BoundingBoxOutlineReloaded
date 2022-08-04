@@ -16,6 +16,7 @@
     "world.chunk.MixinChunk"
   ],
   "client": [
+    "access.IKeyBinding",
     "client.MixinGameSettings",
     "client.MixinMinecraft",
     "client.access.IClientChunkManager",

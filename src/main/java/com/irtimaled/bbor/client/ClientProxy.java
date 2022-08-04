@@ -16,9 +16,13 @@ import com.irtimaled.bbor.client.providers.WorldSpawnProvider;
 import com.irtimaled.bbor.common.BoundingBoxCache;
 import com.irtimaled.bbor.common.CommonProxy;
 import com.irtimaled.bbor.common.EventBus;
+import com.irtimaled.bbor.common.interop.CommonInterop;
+import com.irtimaled.bbor.mixin.access.IKeyBinding;
+import net.minecraft.util.registry.BuiltinRegistries;
 
 public class ClientProxy extends CommonProxy {
     public static void registerKeyBindings() {
+        IKeyBinding.getCATEGORY_ORDER_MAP().put(KeyListener.Category, 1000);
         Key mainKey = KeyListener.register("bbor.key.toggleActive", "key.keyboard.b")
                 .onKeyPressHandler(ClientRenderer::toggleActive);
         mainKey.register("key.keyboard.g")
@@ -31,6 +35,7 @@ public class ClientProxy extends CommonProxy {
 
     public ClientProxy() {
         ConfigManager.loadConfig();
+        CommonInterop.loadStructuresFromRegistry(BuiltinRegistries.CONFIGURED_STRUCTURE_FEATURE);
     }
 
     @Override
