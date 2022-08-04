@@ -21,7 +21,7 @@ import java.util.Map;
 
 public class CommonInterop {
     public static void chunkLoaded(Chunk chunk) {
-        DimensionId dimensionId = DimensionId.from(chunk.q.getTypeKey());
+        DimensionId dimensionId = DimensionId.from(chunk.q.ab());
         Map<String, StructureStart> structures = new HashMap<>();
         chunk.g().forEach((key, value) -> structures.put(BoundingBoxType.getByStructure(key).getName(), value));
         if (structures.size() > 0) EventBus.publish(new StructuresLoaded(structures, dimensionId));

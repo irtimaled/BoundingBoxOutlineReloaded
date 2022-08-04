@@ -85,6 +85,7 @@ task runServer(dependsOn: jar, type: JavaExec) {
 
     main = "-jar";
     args = [
-            "craftbukkit-${mcVersion}.jar"
+            "craftbukkit-${mcVersion}.jar",
+            "--nogui"
     ]
 }

@@ -68,7 +68,7 @@ public class PayloadBuilder {
     }
 
     public PayloadBuilder writeDimensionId(DimensionId dimensionId) {
-        buffer.a(dimensionId.getValue());
+        buffer.a(dimensionId.value());
         packet = null;
         return this;
     }

@@ -18,7 +18,7 @@ public final class BukkitMod extends JavaPlugin {
     @Override
     public void onEnable() {
         Logger.info("This plugin is in dev, and is not official");
-        Logger.info("please issues to https://github.com/s-yh-china/");
+        Logger.info("please issues to https://github.com/s-yh-china/BoundingBoxOutlineReloaded");
         events.enable();
         getServer().getScheduler().scheduleSyncRepeatingTask(this, events::onTick, 11, 11);
         getServer().getPluginManager().registerEvents(events, this);

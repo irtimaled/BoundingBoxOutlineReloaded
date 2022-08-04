@@ -7,11 +7,11 @@ import net.minecraft.world.level.World;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DimensionId {
+public record DimensionId(MinecraftKey value) {
     private static final Map<MinecraftKey, DimensionId> dimensionIdMap = new HashMap<>();
 
     public static DimensionId from(ResourceKey<?> dimensionType) {
-        return from(dimensionType.b());
+        return from(dimensionType.a());
     }
 
     public static DimensionId from(MinecraftKey value) {
@@ -19,16 +19,6 @@ public class DimensionId {
     }
 
     public static DimensionId OVERWORLD = DimensionId.from(World.e);
-
-    private final MinecraftKey value;
-
-    public DimensionId(MinecraftKey value) {
-        this.value = value;
-    }
-
-    public MinecraftKey getValue() {
-        return value;
-    }
 
     @Override
     public String toString() {

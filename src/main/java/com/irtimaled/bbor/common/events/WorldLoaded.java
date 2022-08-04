@@ -13,7 +13,7 @@ public class WorldLoaded {
 
     public WorldLoaded(WorldServer world) {
         WorldData info = world.N;
-        this.dimensionId = DimensionId.from(world.getTypeKey());
+        this.dimensionId = DimensionId.from(world.ab());
         this.seed = world.B();
         this.spawnX = info.a();
         this.spawnZ = info.c();
