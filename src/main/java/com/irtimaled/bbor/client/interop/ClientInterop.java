@@ -41,14 +41,14 @@ public class ClientInterop {
         ClientRenderer.render(matrixStack, DimensionId.from(player.getEntityWorld().getRegistryKey()));
     }
 
-    public static boolean interceptChatMessage(String message) {
-        if (message.startsWith("/bbor:")) {
+    public static boolean interceptCommandUsage(String message) {
+        if (message.startsWith("bbor:")) {
             ClientPlayNetworkHandler connection = MinecraftClient.getInstance().getNetworkHandler();
             if (connection != null) {
                 CommandDispatcher<CommandSource> commandDispatcher = connection.getCommandDispatcher();
                 ServerCommandSource commandSource = MinecraftClient.getInstance().player.getCommandSource();
                 try {
-                    commandDispatcher.execute(message.substring(1), commandSource);
+                    commandDispatcher.execute(message, commandSource);
                 } catch (CommandSyntaxException exception) {
                     commandSource.sendError(Texts.toText(exception.getRawMessage()));
                     if (exception.getInput() != null && exception.getCursor() >= 0) {
