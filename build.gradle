@@ -11,7 +11,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath "net.fabricmc:fabric-loom:0.11-SNAPSHOT"
+        classpath "net.fabricmc:fabric-loom:0.12-SNAPSHOT"
         classpath "io.github.juuxel:loom-quiltflower:1.+"
     }
 }
