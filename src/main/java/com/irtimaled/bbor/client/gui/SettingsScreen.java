@@ -116,7 +116,7 @@ public class SettingsScreen extends ListScreen {
     private CreateControl[] generateStructureControls() {
         return StructureProcessor.supportedStructureIds
                 .stream()
-                .map(key -> (CreateControl) (width -> new BoundingBoxTypeButton(width, key, BoundingBoxType.getByNameHash(("structure:" + key).hashCode()))))
+                .map(key -> (CreateControl) (width -> new BoundingBoxTypeButton(width, I18n.translate("bbor.structures." + key.replaceAll(":", ".")), BoundingBoxType.getByNameHash(("structure:" + key).hashCode()))))
                 .distinct()
                 .toArray(CreateControl[]::new);
     }

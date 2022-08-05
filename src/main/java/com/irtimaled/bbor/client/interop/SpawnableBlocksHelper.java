@@ -75,6 +75,6 @@ public class SpawnableBlocksHelper {
                 !upperBlockState.isIn(BlockTags.RAILS) &&
                 collisionShape.getMax(Direction.Axis.Y) <= 0 &&
                 upperBlockState.getFluidState().isEmpty() &&
-                (isNether || world.getLightLevel(LightType.BLOCK, pos) <= 7);
+                (isNether || world.getLightLevel(LightType.BLOCK, pos) <= 0);
     }
 }
