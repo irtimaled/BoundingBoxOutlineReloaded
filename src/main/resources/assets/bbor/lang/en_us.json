@@ -27,6 +27,8 @@
   "bbor.options.distance.y": "Distance (Y): %s",
   "bbor.options.distance.xz": "Distance (X/Z): %s",
 
+  "bbor.options.safe_light": "Safe Light: %s",
+
   "bbor.features.spawnChunks": "Spawn Chunks",
   "bbor.features.lazyChunks": "Lazy Chunks",
 

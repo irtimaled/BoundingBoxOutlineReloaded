@@ -27,6 +27,8 @@
   "bbor.options.distance.y": "距离(Y): %s",
   "bbor.options.distance.xz": "距离 (X/Z): %s",
 
+  "bbor.options.safe_light": "安全亮度: %s",
+
   "bbor.features.spawnChunks": "出生点区块",
   "bbor.features.lazyChunks": "弱加载区块",
 
