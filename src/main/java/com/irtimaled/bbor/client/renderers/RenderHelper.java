@@ -27,7 +27,9 @@ public class RenderHelper {
 
     public static void afterRender() {
         RenderBatch.endBatch();
-        enableDepthTest();
+        disableBlend();
+        GlStateManager._blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+        disableDepthTest();
         RenderSystem.enableCull();
         GL11.glDisable(GL11.GL_LINE_SMOOTH);
         RenderSystem.setShaderColor(1, 1, 1, 1);
