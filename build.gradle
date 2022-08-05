@@ -43,6 +43,8 @@ dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+    include modImplementation(fabricApi.module("fabric-resource-loader-v0", "0.58.5+1.19.1"))
 }
 
 loom {
