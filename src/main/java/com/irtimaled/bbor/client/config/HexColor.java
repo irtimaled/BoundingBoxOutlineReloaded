@@ -19,6 +19,10 @@ public class HexColor {
         return null;
     }
 
+    public static HexColor random() {
+        return from(String.format("#%06x", (int) (Math.random() * 0x1000000)));
+    }
+
     public String getValue() {
         return value;
     }
