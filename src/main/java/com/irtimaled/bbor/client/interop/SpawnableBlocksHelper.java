@@ -1,5 +1,6 @@
 package com.irtimaled.bbor.client.interop;
 
+import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.common.models.Coords;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -68,13 +69,14 @@ public class SpawnableBlocksHelper {
             return false;
         });
         final Identifier id = BuiltinRegistries.BIOME.getId(biome);
-        return (id == null || !id.equals(new Identifier("minecraft", "mushroom_fields"))) &&
+        return (id == null || !id.equals(new Identifier("minecraft", "mushroom_fields")) &&
+                !id.equals(new Identifier("minecraft", "deep_dark"))) &&
                 spawnBlockState.allowsSpawning(world, pos.down(), isNether ? EntityType.ZOMBIFIED_PIGLIN : EntityType.ZOMBIE) &&
                 !Block.isFaceFullSquare(collisionShape, Direction.UP) &&
                 !upperBlockState.emitsRedstonePower() &&
                 !upperBlockState.isIn(BlockTags.RAILS) &&
                 collisionShape.getMax(Direction.Axis.Y) <= 0 &&
                 upperBlockState.getFluidState().isEmpty() &&
-                (isNether || world.getLightLevel(LightType.BLOCK, pos) <= 7);
+                (world.getLightLevel(LightType.BLOCK, pos) <= ConfigManager.spawnableBlocksSafeLight.get());
     }
 }

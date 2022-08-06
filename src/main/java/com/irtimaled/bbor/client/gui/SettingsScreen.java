@@ -104,7 +104,8 @@ public class SettingsScreen extends ListScreen {
                         width -> new IntSettingSlider(width, 1, 3, "bbor.options.distance.xz", ConfigManager.spawnableBlocksRenderWidth)
                                 .addDisplayValue(1, "8")
                                 .addDisplayValue(2, "16")
-                                .addDisplayValue(3, "32"))
+                                .addDisplayValue(3, "32"),
+                        width -> new SafeLightSettingsSlider(width, ConfigManager.spawnableBlocksSafeLight))
                 .section(I18n.translate("bbor.features.spawningSpheres"),
                         width -> new BoundingBoxTypeButton(width, I18n.translate("bbor.features.spawningSpheres"), BoundingBoxType.AFKSphere),
                         width -> new BoolSettingButton(width, I18n.translate("bbor.features.spawnableBlocks"), ConfigManager.renderAFKSpawnableBlocks))
@@ -116,7 +117,7 @@ public class SettingsScreen extends ListScreen {
     private CreateControl[] generateStructureControls() {
         return StructureProcessor.supportedStructureIds
                 .stream()
-                .map(key -> (CreateControl) (width -> new BoundingBoxTypeButton(width, key, BoundingBoxType.getByNameHash(("structure:" + key).hashCode()))))
+                .map(key -> (CreateControl) (width -> new BoundingBoxTypeButton(width, I18n.translate("bbor.structures." + key.replaceAll(":", ".")), BoundingBoxType.getByNameHash(("structure:" + key).hashCode()))))
                 .distinct()
                 .toArray(CreateControl[]::new);
     }
