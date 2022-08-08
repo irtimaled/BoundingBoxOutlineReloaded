@@ -4,43 +4,51 @@ import com.irtimaled.bbor.client.Player;
 import com.irtimaled.bbor.client.config.BoundingBoxTypeHelper;
 import com.irtimaled.bbor.client.interop.BedrockCeilingHelper;
 import com.irtimaled.bbor.client.interop.ClientInterop;
+import com.irtimaled.bbor.client.interop.ClientWorldUpdateTracker;
 import com.irtimaled.bbor.client.models.BoundingBoxBedrockCeiling;
 import com.irtimaled.bbor.common.BoundingBoxType;
-import com.irtimaled.bbor.common.MathHelper;
+import com.irtimaled.bbor.common.EventBus;
 import com.irtimaled.bbor.common.models.Coords;
 import com.irtimaled.bbor.common.models.DimensionId;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMaps;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.ChunkSectionPos;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class BedrockCeilingProvider implements IBoundingBoxProvider<BoundingBoxBedrockCeiling>, ICachingProvider {
-    private static final double CHUNK_SIZE = 16d;
-    private static Long lastGameTime = null;
-    private static final Map<String, BedrockChunk> chunks = new HashMap<>();
+
+    private final Long2ObjectMap<BedrockChunk> chunks = Long2ObjectMaps.synchronize(new Long2ObjectLinkedOpenHashMap<>());
 
     private static class BedrockChunk {
-        private final List<BoundingBoxBedrockCeiling> boxes = new ObjectArrayList<>();
+
+        private static int getIndex(int x, int z) {
+            return (z & 0b1111) << 4 | (x & 0b1111);
+        }
+
+        private final BoundingBoxBedrockCeiling[] boxes = new BoundingBoxBedrockCeiling[16 * 16];
 
         public BedrockChunk(int chunkX, int chunkZ) {
             int chunkStartX = chunkX << 4;
             int chunkStartZ = chunkZ << 4;
 
-            if (BedrockCeilingHelper.chunkLoaded(chunkX, chunkZ)) findBoxesFromBlockState(chunkStartX, chunkStartZ);
-//            else findBoxesFromRNG(chunkX, chunkZ, chunkStartX, chunkStartZ);
+            findBoxesFromBlockState(chunkStartX, chunkStartZ);
         }
 
         private void findBoxesFromBlockState(int chunkStartX, int chunkStartZ) {
             for (int x = 0; x < 16; x++) {
                 for (int z = 0; z < 16; z++) {
-                    Coords coords = getCoordsFromBlockState(chunkStartX + x, chunkStartZ + z);
-                    if (coords != null) {
-                        boxes.add(new BoundingBoxBedrockCeiling(coords));
-                    }
+                    findBoxFromBlockState(chunkStartX + x, chunkStartZ + z);
                 }
+            }
+        }
+
+        private void findBoxFromBlockState(int x, int z) {
+            Coords coords = getCoordsFromBlockState(x, z);
+            if (coords != null) {
+                boxes[getIndex(x, z)] = new BoundingBoxBedrockCeiling(coords);
             }
         }
 
@@ -58,81 +66,51 @@ public class BedrockCeilingProvider implements IBoundingBoxProvider<BoundingBoxB
             return coords;
         }
 
-//        private void findBoxesFromRNG(int chunkX, int chunkZ, int chunkStartX, int chunkStartZ) {
-//            Random random = BedrockCeilingHelper.getRandomForChunk(chunkX, chunkZ);
-//
-//            // preseed 16x16x3 calls to nextDouble
-//            for (int dummy = 0; dummy < 768; dummy++) {
-//                random.nextDouble();
-//            }
-//            for (int z = 0; z < 16; z++) {
-//                for (int x = 0; x < 16; x++) {
-//                    Coords coords = getBlocksFromRNG(random, chunkStartX + x, chunkStartZ + z);
-//
-//                    if (coords != null) {
-//                        boxes.add(new BoundingBoxBedrockCeiling(coords));
-//                    }
-//                }
-//            }
-//        }
-//
-//        private Coords getBlocksFromRNG(Random random, int x, int z) {
-//            int count = 0;
-//            for (int y = 127; y >= 123; y--) {
-//                if (y >= 127 - random.nextInt(5)) {
-//                    count++;
-//                }
-//            }
-//            for (int y = 4; y >= 0; y--) {
-//                random.nextInt(5);
-//            }
-//            return count == 1 ? new Coords(x, 127, z) : null;
-//        }
-
-        public Collection<? extends BoundingBoxBedrockCeiling> getBlocks() {
+        public BoundingBoxBedrockCeiling[] getBlocks() {
             return boxes;
-        }
-
-        public void clear() {
-            boxes.clear();
         }
     }
 
+    {
+        EventBus.subscribe(ClientWorldUpdateTracker.ChunkLoadEvent.class, event -> {
+            this.chunks.put(ChunkPos.toLong(event.x(), event.z()), new BedrockChunk(event.x(), event.z()));
+        });
+        EventBus.subscribe(ClientWorldUpdateTracker.ChunkUnloadEvent.class, event -> {
+            this.chunks.remove(ChunkPos.toLong(event.x(), event.z()));
+        });
+        EventBus.subscribe(ClientWorldUpdateTracker.BlockChangeEvent.class, event -> {
+            BedrockChunk chunk = this.chunks.get(ChunkPos.toLong(ChunkSectionPos.getSectionCoord(event.x()), ChunkSectionPos.getSectionCoord(event.z())));
+            if (chunk != null) {
+                chunk.findBoxFromBlockState(event.x(), event.z());
+            }
+        });
+    }
+
     public void clearCache() {
-        chunks.values().forEach(BedrockChunk::clear);
         chunks.clear();
     }
 
     @Override
     public Iterable<BoundingBoxBedrockCeiling> get(DimensionId dimensionId) {
-        boolean shouldRecalculate = shouldRecalculate();
-
         int renderDistanceChunks = ClientInterop.getRenderDistanceChunks() / 2;
-        int playerChunkX = MathHelper.floor(Player.getX() / CHUNK_SIZE);
-        int playerChunkZ = MathHelper.floor(Player.getZ() / CHUNK_SIZE);
+        int playerChunkX = ChunkSectionPos.getSectionCoord(Player.getX());
+        int playerChunkZ = ChunkSectionPos.getSectionCoord(Player.getZ());
 
         ArrayList<BoundingBoxBedrockCeiling> boxes = new ArrayList<>();
 
         for (int chunkX = playerChunkX - renderDistanceChunks; chunkX <= playerChunkX + renderDistanceChunks; chunkX++) {
             for (int chunkZ = playerChunkZ - renderDistanceChunks; chunkZ <= playerChunkZ + renderDistanceChunks; chunkZ++) {
-                String key = String.format("%d,%d", chunkX, chunkZ);
-                if (shouldRecalculate || !chunks.containsKey(key)) {
-                    chunks.put(key, new BedrockChunk(chunkX, chunkZ));
-                }
+                long key = ChunkPos.toLong(chunkX, chunkZ);
                 BedrockChunk chunk = chunks.get(key);
-                boxes.addAll(chunk.getBlocks());
+                if (chunk == null) continue;
+                for (BoundingBoxBedrockCeiling box : chunk.getBlocks()) {
+                    if (box != null) {
+                        boxes.add(box);
+                    }
+                }
             }
         }
         return boxes;
-    }
-
-    public boolean shouldRecalculate() {
-        long gameTime = ClientInterop.getGameTime();
-        if (!((Long) gameTime).equals(lastGameTime) && (gameTime & 0b1111) == 0) {
-            lastGameTime = gameTime;
-            return true;
-        }
-        return false;
     }
 
     @Override

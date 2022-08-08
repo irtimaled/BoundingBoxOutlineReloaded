@@ -113,6 +113,7 @@ public class ClientInterop {
 
     public static void unloadChunk(int chunkX, int chunkZ) {
         BiomeBorderHelper.onChunkUnload(chunkX, chunkZ);
+        ClientWorldUpdateTracker.onChunkUnload(chunkX, chunkZ);
     }
 
     public static void saveLoaded(String fileName, long seed) {
