@@ -49,6 +49,8 @@ public class BedrockCeilingProvider implements IBoundingBoxProvider<BoundingBoxB
             Coords coords = getCoordsFromBlockState(x, z);
             if (coords != null) {
                 boxes[getIndex(x, z)] = new BoundingBoxBedrockCeiling(coords);
+            } else {
+                boxes[getIndex(x, z)] = null;
             }
         }
 
@@ -79,9 +81,11 @@ public class BedrockCeilingProvider implements IBoundingBoxProvider<BoundingBoxB
             this.chunks.remove(ChunkPos.toLong(event.x(), event.z()));
         });
         EventBus.subscribe(ClientWorldUpdateTracker.BlockChangeEvent.class, event -> {
-            BedrockChunk chunk = this.chunks.get(ChunkPos.toLong(ChunkSectionPos.getSectionCoord(event.x()), ChunkSectionPos.getSectionCoord(event.z())));
-            if (chunk != null) {
-                chunk.findBoxFromBlockState(event.x(), event.z());
+            if (event.y() >= 123) {
+                BedrockChunk chunk = this.chunks.get(ChunkPos.toLong(ChunkSectionPos.getSectionCoord(event.x()), ChunkSectionPos.getSectionCoord(event.z())));
+                if (chunk != null) {
+                    chunk.findBoxFromBlockState(event.x(), event.z());
+                }
             }
         });
     }
