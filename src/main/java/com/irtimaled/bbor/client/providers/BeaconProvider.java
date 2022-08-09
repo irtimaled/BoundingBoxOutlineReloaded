@@ -15,8 +15,8 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import net.minecraft.block.entity.BeaconBlockEntity;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.ChunkSectionPos;
 
 public class BeaconProvider implements IBoundingBoxProvider<BoundingBoxBeacon> {
 
@@ -31,7 +31,7 @@ public class BeaconProvider implements IBoundingBoxProvider<BoundingBoxBeacon> {
             updateOrCreateBeacon(event.blockEntity());
         });
         EventBus.subscribe(ClientWorldUpdateTracker.BlockEntityRemoveEvent.class, event -> {
-            boxes.remove(new ChunkPos(new BlockPos(event.x(), event.y(), event.z())).toLong());
+            boxes.remove(ChunkPos.toLong(ChunkSectionPos.getSectionCoord(event.x()), ChunkSectionPos.getSectionCoord(event.z())));
             updateCopy();
         });
     }
@@ -60,6 +60,6 @@ public class BeaconProvider implements IBoundingBoxProvider<BoundingBoxBeacon> {
 
     @Override
     public Iterable<BoundingBoxBeacon> get(DimensionId dimensionId) {
-        return this.boxesCopy;
+        return boxesCopy;
     }
 }
