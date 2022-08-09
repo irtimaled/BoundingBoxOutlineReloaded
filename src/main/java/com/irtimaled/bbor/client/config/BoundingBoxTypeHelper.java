@@ -22,7 +22,7 @@ public class BoundingBoxTypeHelper {
         registerType(BoundingBoxType.MobSpawner, ConfigManager.drawMobSpawners, ConfigManager.colorMobSpawners);
         registerType(BoundingBoxType.SlimeChunks, ConfigManager.drawSlimeChunks, ConfigManager.colorSlimeChunks);
         registerType(BoundingBoxType.AFKSphere, ConfigManager.drawAFKSpheres, ConfigManager.colorAFKSpheres);
-        registerType(BoundingBoxType.BiomeBorder, ConfigManager.drawBiomeBorders, ConfigManager.colorBiomeBorders);
+//        registerType(BoundingBoxType.BiomeBorder, ConfigManager.drawBiomeBorders, ConfigManager.colorBiomeBorders);
         registerType(BoundingBoxType.Beacon, ConfigManager.drawBeacons, ConfigManager.colorBeacons);
         registerType(BoundingBoxType.Custom, ConfigManager.drawConduits, ConfigManager.colorCustom);
         registerType(BoundingBoxType.Conduit, ConfigManager.drawConduits, ConfigManager.colorConduits);
