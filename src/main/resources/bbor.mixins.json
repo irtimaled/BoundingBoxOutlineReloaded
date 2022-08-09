@@ -10,6 +10,7 @@
     "access.IStructureStart",
     "client.world.MixinClientPlayNetworkHandler",
     "client.world.MixinWorldChunk",
+    "client.world.extras.MixinBeaconBlockEntity",
     "network.play.client.MixinCCustomPayloadPacket",
     "server.MixinMinecraftServer",
     "server.management.MixinPlayerList",
