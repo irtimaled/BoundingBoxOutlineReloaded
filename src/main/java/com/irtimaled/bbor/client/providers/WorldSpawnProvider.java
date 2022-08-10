@@ -12,9 +12,9 @@ import java.util.Set;
 
 public class WorldSpawnProvider implements IBoundingBoxProvider<BoundingBoxWorldSpawn>, ICachingProvider {
     private static final double CHUNK_SIZE = 16d;
-    private static BoundingBoxWorldSpawn spawnChunks;
-    private static BoundingBoxWorldSpawn lazyChunks;
-    private static BoundingBoxWorldSpawn worldSpawn;
+    private static volatile BoundingBoxWorldSpawn spawnChunks;
+    private static volatile BoundingBoxWorldSpawn lazyChunks;
+    private static volatile BoundingBoxWorldSpawn worldSpawn;
 
     public static void setWorldSpawn(int spawnX, int spawnZ) {
         worldSpawn = getWorldSpawnBoundingBox(spawnX, spawnZ);
