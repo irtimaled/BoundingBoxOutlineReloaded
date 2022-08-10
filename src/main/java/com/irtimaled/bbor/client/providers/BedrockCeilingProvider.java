@@ -96,7 +96,7 @@ public class BedrockCeilingProvider implements IBoundingBoxProvider<BoundingBoxB
 
     @Override
     public Iterable<BoundingBoxBedrockCeiling> get(DimensionId dimensionId) {
-        int renderDistanceChunks = ClientInterop.getRenderDistanceChunks() / 2;
+        int renderDistanceChunks = ClientInterop.getRenderDistanceChunks();
         int playerChunkX = ChunkSectionPos.getSectionCoord(Player.getX());
         int playerChunkZ = ChunkSectionPos.getSectionCoord(Player.getZ());
 

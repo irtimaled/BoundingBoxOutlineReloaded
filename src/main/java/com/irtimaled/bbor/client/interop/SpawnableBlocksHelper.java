@@ -57,7 +57,7 @@ public class SpawnableBlocksHelper {
 
     private static final ConcurrentHashMap<Biome, Boolean> isNether = new ConcurrentHashMap<>();
 
-    static boolean isSpawnable(World world, BlockPos pos, BlockState spawnBlockState, BlockState upperBlockState) {
+    public static boolean isSpawnable(World world, BlockPos pos, BlockState spawnBlockState, BlockState upperBlockState) {
         VoxelShape collisionShape = upperBlockState.getCollisionShape(world, pos);
         Biome biome = world.getBiome(pos).value();
         final boolean isNether = SpawnableBlocksHelper.isNether.computeIfAbsent(biome, biome1 -> {

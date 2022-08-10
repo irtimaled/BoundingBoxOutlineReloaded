@@ -35,6 +35,7 @@
     "client.settings.MixinKeyBinding",
     "client.world.MixinClientWorld",
     "client.world.MixinMinecraftClient",
+    "client.world.extras.MixinWorldRenderer",
     "network.play.server.MixinSChatPacket",
     "network.play.server.MixinSChunkDataPacket",
     "network.play.server.MixinSCommandListPacket",
