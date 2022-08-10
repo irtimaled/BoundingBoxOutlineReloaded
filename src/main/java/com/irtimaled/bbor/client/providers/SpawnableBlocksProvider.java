@@ -2,7 +2,6 @@ package com.irtimaled.bbor.client.providers;
 
 import com.irtimaled.bbor.client.Player;
 import com.irtimaled.bbor.client.config.BoundingBoxTypeHelper;
-import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.interop.ClientInterop;
 import com.irtimaled.bbor.client.interop.ClientWorldUpdateTracker;
 import com.irtimaled.bbor.client.interop.SpawnableBlocksHelper;
@@ -124,16 +123,9 @@ public class SpawnableBlocksProvider implements IBoundingBoxProvider<BoundingBox
         chunks.clear();
     }
 
-    private boolean isWithinActiveSpawningSphere() {
-        return BoundingBoxTypeHelper.shouldRender(BoundingBoxType.AFKSphere) &&
-                ConfigManager.renderAFKSpawnableBlocks.get() &&
-                SpawningSphereProvider.playerInsideSphere();
-    }
-
     @Override
     public boolean canProvide(DimensionId dimensionId) {
-        return BoundingBoxTypeHelper.shouldRender(BoundingBoxType.SpawnableBlocks) &&
-                !isWithinActiveSpawningSphere();
+        return BoundingBoxTypeHelper.shouldRender(BoundingBoxType.SpawnableBlocks);
     }
 
     @Override

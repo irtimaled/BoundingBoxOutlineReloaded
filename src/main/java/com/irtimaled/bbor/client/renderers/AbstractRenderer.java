@@ -109,6 +109,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
         matrixStack.pop();
     }
 
+    @Deprecated
     void renderText(MatrixStack matrixStack, OffsetPoint offsetPoint, String... texts) {
         TextRenderer fontRenderer = MinecraftClient.getInstance().textRenderer;
         RenderHelper.beforeRenderFont(matrixStack, offsetPoint);
@@ -175,7 +176,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
         RenderHelper.applyRegionalRenderOffset(matrixStack);
         RenderSystem.setShader(GameRenderer::getPositionShader);
 
-        final Boolean doFill = ConfigManager.fill.get();
+//        final Boolean doFill = ConfigManager.fill.get();
 
         for (int i = 0; i < points.size() - 1; i++) {
             final ObjectArrayList<Point> pointsCache1 = points.get(i);
@@ -188,17 +189,17 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
                 Point point2 = pointsCache2.get(j);
                 if (ConfigManager.fastRender.get() >= 1 && RenderCulling.isVisibleCulling(new OffsetBox(point1, point2).toBox()))
                     RenderBatch.drawLine(matrixStack.peek(), point1, point2, color, 255);
-                if (doFill && lastPoint1 != null) {
-                    if (ConfigManager.fastRender.get() >= 1 && RenderCulling.isVisibleCulling(new OffsetBox(lastPoint1, point2).toBox()))
-                        RenderBatch.drawFilledFace(matrixStack.peek(), lastPoint1, lastPoint2, point2, point1, color, 127, false);
-                }
+//                if (doFill && lastPoint1 != null) {
+//                    if (ConfigManager.fastRender.get() >= 1 && RenderCulling.isVisibleCulling(new OffsetBox(lastPoint1, point2).toBox()))
+//                        RenderBatch.drawFilledFace(matrixStack.peek(), lastPoint1, lastPoint2, point2, point1, color, 30, false);
+//                }
                 lastPoint1 = point1;
                 lastPoint2 = point2;
             }
-            if (doFill && lastPoint1 != null) {
-                if (ConfigManager.fastRender.get() >= 1 && RenderCulling.isVisibleCulling(new OffsetBox(pointsCache1.get(0), lastPoint2).toBox()))
-                    RenderBatch.drawFilledFace(matrixStack.peek(), pointsCache1.get(0), pointsCache2.get(0), lastPoint2, lastPoint1, color, 127, false);
-            }
+//            if (doFill && lastPoint1 != null) {
+//                if (ConfigManager.fastRender.get() >= 1 && RenderCulling.isVisibleCulling(new OffsetBox(pointsCache1.get(0), lastPoint2).toBox()))
+//                    RenderBatch.drawFilledFace(matrixStack.peek(), pointsCache1.get(0), pointsCache2.get(0), lastPoint2, lastPoint1, color, 30, false);
+//            }
         }
 
         matrixStack.pop();

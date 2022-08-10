@@ -7,7 +7,6 @@ import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.models.BoundingBoxSpawningSphere;
 import com.irtimaled.bbor.client.models.Point;
 import com.irtimaled.bbor.common.BoundingBoxType;
-import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.BlockPos;
 
@@ -28,12 +27,12 @@ public class SpawningSphereRenderer extends AbstractRenderer<BoundingBoxSpawning
         renderCuboid(matrixStack, offsetBox, safeAreaColor, false, 30);
 
         Integer spawnableSpacesCount = boundingBox.getSpawnableSpacesCount();
-        if (spawnableSpacesCount != null) {
-            renderText(matrixStack, sphereCenter, I18n.translate("bbor.renderer.spawningSphere.spawnable"),
-                    spawnableSpacesCount == 0 ?
-                            I18n.translate("bbor.renderer.spawningSphere.none") :
-                            String.format("%,d", spawnableSpacesCount));
-        }
+//        if (spawnableSpacesCount != null) {
+//            renderText(matrixStack, sphereCenter, I18n.translate("bbor.renderer.spawningSphere.spawnable"),
+//                    spawnableSpacesCount == 0 ?
+//                            I18n.translate("bbor.renderer.spawningSphere.none") :
+//                            String.format("%,d", spawnableSpacesCount));
+//        }
         renderSphere(matrixStack, point, BoundingBoxSpawningSphere.SAFE_RADIUS, safeAreaColor);
 
         if (ConfigManager.renderAFKSpawnableBlocks.get() && boundingBox.isWithinSphere(Player.getPoint())) {
