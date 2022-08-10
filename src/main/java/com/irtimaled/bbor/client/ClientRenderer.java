@@ -22,6 +22,7 @@ import com.irtimaled.bbor.client.providers.WorldSpawnProvider;
 import com.irtimaled.bbor.client.renderers.AbstractRenderer;
 import com.irtimaled.bbor.client.renderers.RenderHelper;
 import com.irtimaled.bbor.client.renderers.RenderQueue;
+import com.irtimaled.bbor.client.renderers.RenderingContext;
 import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.TypeHelper;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
@@ -49,6 +50,8 @@ public class ClientRenderer {
     private static final Set<IBoundingBoxProvider> providers = new HashSet<>();
 
     private static AtomicLong lastDurationNanos = new AtomicLong(0L);
+
+    private static final RenderingContext DEFAULT = new RenderingContext();
 
     public static boolean getActive() {
         return active;
@@ -113,16 +116,29 @@ public class ClientRenderer {
         long startTime = System.nanoTime();
         matrixStack.push();
         RenderHelper.beforeRender();
+        DEFAULT.reset();
+        DEFAULT.beginBatch();
         TileEntitiesHelper.clearCache();
 
         final List<AbstractBoundingBox> boundingBoxes = getBoundingBoxes(dimensionId);
         RenderCulling.flushPreRendering();
         for (AbstractBoundingBox key : boundingBoxes) {
             AbstractRenderer renderer = key.getRenderer();
-            if (renderer != null) renderer.render(matrixStack, key);
+            if (renderer != null) renderer.render(DEFAULT, key);
         }
 
         RenderQueue.renderDeferred();
+
+        DEFAULT.endBatch();
+
+        matrixStack.push();
+        matrixStack.translate(
+                Camera.getX() - DEFAULT.getBaseX(),
+                Camera.getY() - DEFAULT.getBaseY(),
+                Camera.getZ() - DEFAULT.getBaseZ()
+        );
+        DEFAULT.doDrawing(matrixStack);
+        matrixStack.pop();
 
         RenderHelper.afterRender();
         RenderCulling.flushRendering();
@@ -153,13 +169,17 @@ public class ClientRenderer {
     }
 
     public static void clear() {
-        for(IBoundingBoxProvider<?> provider : providers) {
+        for (IBoundingBoxProvider<?> provider : providers) {
             TypeHelper.doIfType(provider, ICachingProvider.class, ICachingProvider::clearCache);
         }
     }
 
     public static long getLastDurationNanos() {
         return lastDurationNanos.get();
+    }
+
+    public static RenderingContext currentContext() {
+        return DEFAULT;
     }
 
 

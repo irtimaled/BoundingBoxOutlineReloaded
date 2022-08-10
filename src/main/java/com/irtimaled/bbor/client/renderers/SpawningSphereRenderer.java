@@ -7,52 +7,51 @@ import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.models.BoundingBoxSpawningSphere;
 import com.irtimaled.bbor.client.models.Point;
 import com.irtimaled.bbor.common.BoundingBoxType;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.BlockPos;
 
 import java.awt.*;
 
 public class SpawningSphereRenderer extends AbstractRenderer<BoundingBoxSpawningSphere> {
     @Override
-    public void render(MatrixStack matrixStack, BoundingBoxSpawningSphere boundingBox) {
+    public void render(RenderingContext ctx, BoundingBoxSpawningSphere boundingBox) {
         Point point = boundingBox.getPoint();
         OffsetPoint sphereCenter = new OffsetPoint(point);
 
         Color safeAreaColor = ColorHelper.getColor(ConfigManager.colorAFKSpheresSafeArea);
-        renderSphere(matrixStack, point, BoundingBoxSpawningSphere.SAFE_RADIUS, safeAreaColor);
+        renderSphere(ctx, point, BoundingBoxSpawningSphere.SAFE_RADIUS, safeAreaColor);
 
-        renderOuterSphere(matrixStack, boundingBox, point);
+        renderOuterSphere(ctx, boundingBox, point);
 
         OffsetBox offsetBox = new OffsetBox(sphereCenter, sphereCenter).grow(0.5, 0, 0.5);
-        renderCuboid(matrixStack, offsetBox, safeAreaColor, false, 30);
+        renderCuboid(ctx, offsetBox, safeAreaColor, false, 30);
 
         Integer spawnableSpacesCount = boundingBox.getSpawnableSpacesCount();
 //        if (spawnableSpacesCount != null) {
-//            renderText(matrixStack, sphereCenter, I18n.translate("bbor.renderer.spawningSphere.spawnable"),
+//            renderText(ctx, sphereCenter, I18n.translate("bbor.renderer.spawningSphere.spawnable"),
 //                    spawnableSpacesCount == 0 ?
 //                            I18n.translate("bbor.renderer.spawningSphere.none") :
 //                            String.format("%,d", spawnableSpacesCount));
 //        }
-        renderSphere(matrixStack, point, BoundingBoxSpawningSphere.SAFE_RADIUS, safeAreaColor);
+        renderSphere(ctx, point, BoundingBoxSpawningSphere.SAFE_RADIUS, safeAreaColor);
 
         if (ConfigManager.renderAFKSpawnableBlocks.get() && boundingBox.isWithinSphere(Player.getPoint())) {
-            renderSpawnableSpaces(matrixStack, boundingBox);
+            renderSpawnableSpaces(ctx, boundingBox);
         }
     }
 
-    private void renderOuterSphere(MatrixStack matrixStack, BoundingBoxSpawningSphere boundingBox, Point point) {
+    private void renderOuterSphere(RenderingContext ctx, BoundingBoxSpawningSphere boundingBox, Point point) {
         Color color = BoundingBoxTypeHelper.getColor(boundingBox.getType());
-        renderSphere(matrixStack, point, BoundingBoxSpawningSphere.SPAWN_RADIUS, color);
+        renderSphere(ctx, point, BoundingBoxSpawningSphere.SPAWN_RADIUS, color);
     }
 
-    private void renderSpawnableSpaces(MatrixStack matrixStack, BoundingBoxSpawningSphere boundingBox) {
+    private void renderSpawnableSpaces(RenderingContext ctx, BoundingBoxSpawningSphere boundingBox) {
         Color color = BoundingBoxTypeHelper.getColor(BoundingBoxType.SpawnableBlocks);
         for (BlockPos c : boundingBox.getBlocks()) {
             int x = c.getX();
             int y = c.getY();
             int z = c.getZ();
             OffsetBox offsetBox = new OffsetBox(x, y, z, x + 1, y, z + 1);
-            renderCuboid(matrixStack, offsetBox, color, false, 30);
+            renderCuboid(ctx, offsetBox, color, false, 30);
         }
     }
 }

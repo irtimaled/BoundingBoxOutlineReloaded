@@ -20,10 +20,10 @@ public class CustomLineProvider implements IBoundingBoxProvider<BoundingBoxLine>
         return dimensionCache.computeIfAbsent(dimensionId, i -> new ConcurrentHashMap<>());
     }
 
-    public static void add(Point minPoint, Point maxPoint, Double width) {
+    public static void add(Point minPoint, Point maxPoint) {
         DimensionId dimensionId = Player.getDimensionId();
         int cacheKey = getHashKey(minPoint, maxPoint);
-        BoundingBoxLine line = BoundingBoxLine.from(minPoint, maxPoint, width, BoundingBoxType.Custom);
+        BoundingBoxLine line = BoundingBoxLine.from(minPoint, maxPoint, BoundingBoxType.Custom);
         getCache(dimensionId).put(cacheKey, line);
     }
 

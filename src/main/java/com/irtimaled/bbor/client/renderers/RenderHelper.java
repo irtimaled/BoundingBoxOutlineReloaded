@@ -1,6 +1,5 @@
 package com.irtimaled.bbor.client.renderers;
 
-import com.irtimaled.bbor.client.Camera;
 import com.irtimaled.bbor.client.config.ConfigManager;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -22,11 +21,9 @@ public class RenderHelper {
         if (ConfigManager.alwaysVisible.get()) {
             RenderSystem.disableDepthTest();
         }
-        RenderBatch.beginBatch();
     }
 
     public static void afterRender() {
-        RenderBatch.endBatch();
         disableBlend();
         GlStateManager._blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
         disableDepthTest();
@@ -153,16 +150,6 @@ public class RenderHelper {
 
     public static void depthFuncLessEqual() {
         GlStateManager._depthFunc(GL11.GL_LEQUAL);
-    }
-
-    public static void applyRegionalRenderOffset(MatrixStack matrixStack)
-    {
-
-        int regionX = (((int) Camera.getX()) >> 9) << 9;
-        int regionZ = (((int) Camera.getZ()) >> 9) << 9;
-
-        matrixStack.translate(regionX - Camera.getX(), -Camera.getY(),
-                regionZ - Camera.getZ());
     }
 
 }
