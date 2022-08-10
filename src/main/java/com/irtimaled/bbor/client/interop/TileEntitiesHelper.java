@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 import java.util.function.Function;
 
+@Deprecated
 public class TileEntitiesHelper {
 
     private static Collection<BlockEntity> tileEntities = null;

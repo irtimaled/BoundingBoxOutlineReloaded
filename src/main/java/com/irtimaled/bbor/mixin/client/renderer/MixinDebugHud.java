@@ -1,5 +1,6 @@
 package com.irtimaled.bbor.mixin.client.renderer;
 
+import com.irtimaled.bbor.client.AsyncRenderer;
 import com.irtimaled.bbor.client.ClientRenderer;
 import com.irtimaled.bbor.client.RenderCulling;
 import net.minecraft.client.gui.hud.DebugHud;
@@ -21,8 +22,8 @@ public class MixinDebugHud {
         }
 
         cir.getReturnValue().addAll(RenderCulling.debugStrings());
-        cir.getReturnValue().add(ClientRenderer.currentContext().debugString());
-        cir.getReturnValue().add(String.format("[BBOR] Rendering took %.2fms", ClientRenderer.getLastDurationNanos() / 1_000_000.0));
+        cir.getReturnValue().add(AsyncRenderer.contextDebugString());
+        cir.getReturnValue().add(String.format("[BBOR] Rendering took %.2fms", AsyncRenderer.getLastDurationNanos() / 1_000_000.0));
     }
 
 }

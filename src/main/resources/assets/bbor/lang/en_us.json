@@ -12,6 +12,8 @@
   "bbor.options.fastRender.1": "Medium",
   "bbor.options.fastRender.2": "High",
 
+  "bbor.options.asyncBuilding": "Use Async",
+
   "bbor.options.maxY": "Max Y: %s",
   "bbor.options.maxY.activated": "Activated",
   "bbor.options.maxY.player": "Player",

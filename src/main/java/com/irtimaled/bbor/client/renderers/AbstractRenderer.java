@@ -26,7 +26,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
     }
 
     private void renderCuboid0(RenderingContext ctx, OffsetBox nudge, Color color, boolean fillOnly, int fillAlpha, boolean mask) {
-        if (ConfigManager.fastRender.get() >= 1 && !RenderCulling.isVisibleCulling(nudge.toBox())) return;
+        if (!ConfigManager.asyncBuilding.get() && ((ConfigManager.fastRender.get() >= 1) && !RenderCulling.isVisibleCulling(nudge.toBox()))) return;
         if (ConfigManager.invertBoxColorPlayerInside.get() &&
                 playerInsideBoundingBox(nudge)) {
             color = new Color(255 - color.getRed(), 255 - color.getGreen(), 255 - color.getBlue());
@@ -73,7 +73,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
 //        }
 
         if (cullIfEmpty && startPoint.equals(endPoint)) return;
-        if (ConfigManager.fastRender.get() >= 1 && !RenderCulling.isVisibleCulling(new OffsetBox(startPoint, endPoint).toBox())) return; // TODO better culling
+        if (!ConfigManager.asyncBuilding.get() && ((ConfigManager.fastRender.get() >= 1) && !RenderCulling.isVisibleCulling(new OffsetBox(startPoint, endPoint).toBox()))) return; // TODO better culling
 
         ctx.drawLine(startPoint.getPoint(), endPoint.getPoint(), color, 255);
     }
@@ -100,7 +100,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
     }
 
     private void renderFilledSphere(RenderingContext ctx, Point center, double radius, Color color) {
-        if (ConfigManager.fastRender.get() >= 1 && !RenderCulling.isVisibleCulling(new Box(new BlockPos(center.getX(), center.getY(), center.getZ())).expand(radius)))
+        if (!ConfigManager.asyncBuilding.get() && ((ConfigManager.fastRender.get() >= 1) && !RenderCulling.isVisibleCulling(new Box(new BlockPos(center.getX(), center.getY(), center.getZ())).expand(radius))))
             return;
 
 //        double offset = ((radius - (int) radius) == 0) ? center.getY() - (int) center.getY() : 0;
@@ -150,7 +150,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
             for (int j = 0, pointsCacheSize = pointsCache1.size(); j < pointsCacheSize; j++) {
                 Point point1 = pointsCache1.get(j);
                 Point point2 = pointsCache2.get(j);
-                if (ConfigManager.fastRender.get() >= 1 && RenderCulling.isVisibleCulling(new OffsetBox(point1, point2).toBox()))
+                if (ConfigManager.asyncBuilding.get() || ((ConfigManager.fastRender.get() >= 1) && RenderCulling.isVisibleCulling(new OffsetBox(point1, point2).toBox())))
                     ctx.drawLine(point1, point2, color, 255);
 //                if (doFill && lastPoint1 != null) {
 //                    if (ConfigManager.fastRender.get() >= 1 && RenderCulling.isVisibleCulling(new OffsetBox(lastPoint1, point2).toBox()))
@@ -167,7 +167,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
     }
 
     private void renderLineSphere(RenderingContext ctx, Point center, double radius, Color color) {
-        if (ConfigManager.fastRender.get() >= 1 && !RenderCulling.isVisibleCulling(new Box(new BlockPos(center.getX(), center.getY(), center.getZ())).expand(radius)))
+        if (!ConfigManager.asyncBuilding.get() && ((ConfigManager.fastRender.get() >= 1) && !RenderCulling.isVisibleCulling(new Box(new BlockPos(center.getX(), center.getY(), center.getZ())).expand(radius))))
             return;
 
         double offset = ((radius - (int) radius) == 0) ? center.getY() - (int) center.getY() : 0;
@@ -208,7 +208,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
     }
 
     private void renderDotSphere(RenderingContext ctx, Point center, double radius, Color color) {
-        if (ConfigManager.fastRender.get() >= 1 && !RenderCulling.isVisibleCulling(new Box(new BlockPos(center.getX(), center.getY(), center.getZ())).expand(radius)))
+        if (!ConfigManager.asyncBuilding.get() && ((ConfigManager.fastRender.get() >= 1) && !RenderCulling.isVisibleCulling(new Box(new BlockPos(center.getX(), center.getY(), center.getZ())).expand(radius))))
             return;
 
         for (double phi = 0.0D; phi < TAU; phi += PHI_SEGMENT) {

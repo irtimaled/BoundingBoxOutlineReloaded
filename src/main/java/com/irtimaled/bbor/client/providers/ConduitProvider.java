@@ -2,7 +2,6 @@ package com.irtimaled.bbor.client.providers;
 
 import com.irtimaled.bbor.client.config.BoundingBoxTypeHelper;
 import com.irtimaled.bbor.client.interop.ClientWorldUpdateTracker;
-import com.irtimaled.bbor.client.interop.TileEntitiesHelper;
 import com.irtimaled.bbor.client.models.BoundingBoxConduit;
 import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.EventBus;
@@ -16,11 +15,8 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.ConduitBlockEntity;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.ChunkSectionPos;
-
-import java.util.List;
 
 public class ConduitProvider implements IBoundingBoxProvider<BoundingBoxConduit> {
 
@@ -64,13 +60,6 @@ public class ConduitProvider implements IBoundingBoxProvider<BoundingBoxConduit>
 
     @Override
     public Iterable<BoundingBoxConduit> get(DimensionId dimensionId) {
-        return TileEntitiesHelper.map(ConduitBlockEntity.class, conduit -> {
-            List<BlockPos> blocks = ((IConduitBlockEntity) conduit).getActivatingBlocks();
-            if (blocks == null) return null;
-
-            Coords coords = new Coords(conduit.getPos());
-            int level = conduit.isActive() ? blocks.size() / 7 : 0;
-            return new BoundingBoxConduit(coords, level);
-        });
+        return boxesCopy;
     }
 }
