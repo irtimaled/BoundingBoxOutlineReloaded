@@ -34,6 +34,10 @@ public class BeaconProvider implements IBoundingBoxProvider<BoundingBoxBeacon> {
             boxes.remove(ChunkPos.toLong(ChunkSectionPos.getSectionCoord(event.x()), ChunkSectionPos.getSectionCoord(event.z())));
             updateCopy();
         });
+        EventBus.subscribe(ClientWorldUpdateTracker.WorldResetEvent.class, event -> {
+            boxes.clear();
+            updateCopy();
+        });
     }
 
     public static void updateOrCreateBeacon(BlockEntity blockEntity) {

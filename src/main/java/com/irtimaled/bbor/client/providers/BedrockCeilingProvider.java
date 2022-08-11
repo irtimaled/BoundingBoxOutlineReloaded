@@ -88,6 +88,9 @@ public class BedrockCeilingProvider implements IBoundingBoxProvider<BoundingBoxB
                 }
             }
         });
+        EventBus.subscribe(ClientWorldUpdateTracker.WorldResetEvent.class, event -> {
+            chunks.clear();
+        });
     }
 
     public void clearCache() {

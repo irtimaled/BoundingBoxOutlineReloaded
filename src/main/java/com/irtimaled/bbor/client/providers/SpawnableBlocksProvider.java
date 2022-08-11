@@ -1,5 +1,6 @@
 package com.irtimaled.bbor.client.providers;
 
+import com.irtimaled.bbor.client.Camera;
 import com.irtimaled.bbor.client.Player;
 import com.irtimaled.bbor.client.config.BoundingBoxTypeHelper;
 import com.irtimaled.bbor.client.config.ConfigManager;
@@ -96,10 +97,12 @@ public class SpawnableBlocksProvider implements IBoundingBoxProvider<BoundingBox
 
     {
         EventBus.subscribe(ClientWorldUpdateTracker.ChunkLoadEvent.class, event -> {
-            queuedUpdateChunks.add(new ChunkPos(event.x(), event.z()));
+            final ChunkPos pos = new ChunkPos(event.x(), event.z());
+            enqueueUpdate(pos);
         });
         EventBus.subscribe(ClientWorldUpdateTracker.LightingUpdateEvent.class, event -> {
-            queuedUpdateChunks.add(new ChunkPos(event.x(), event.z()));
+            final ChunkPos pos = new ChunkPos(event.x(), event.z());
+            enqueueUpdate(pos);
         });
         EventBus.subscribe(ClientWorldUpdateTracker.ChunkUnloadEvent.class, event -> {
             queuedUpdateChunks.remove(new ChunkPos(event.x(), event.z()));
@@ -108,11 +111,25 @@ public class SpawnableBlocksProvider implements IBoundingBoxProvider<BoundingBox
         EventBus.subscribe(ClientWorldUpdateTracker.BlockChangeEvent.class, event -> {
             for (int x = -1; x <= 1; x ++) {
                 for (int z = -1; z <= 1; z++) {
-                    queuedUpdateChunks.add(new ChunkPos(ChunkSectionPos.getSectionCoord(event.x()) + x, ChunkSectionPos.getSectionCoord(event.z()) + z));
+                    enqueueUpdate(new ChunkPos(ChunkSectionPos.getSectionCoord(event.x()) + x, ChunkSectionPos.getSectionCoord(event.z()) + z));
                 }
             }
         });
+        EventBus.subscribe(ClientWorldUpdateTracker.WorldResetEvent.class, event -> {
+            queuedUpdateChunks.clear();
+            chunks.clear();
+        });
     }
+
+    private static void enqueueUpdate(ChunkPos pos) {
+        final ChunkPos cameraPos = new ChunkPos(new BlockPos(Camera.getX(), Camera.getY(), Camera.getZ()));
+        if (cameraPos.getChebyshevDistance(pos) <= 1) {
+            queuedUpdateChunks.addAndMoveToFirst(pos);
+        } else {
+            queuedUpdateChunks.add(pos);
+        }
+    }
+
     public void clearCache() {
         chunks.clear();
         queuedUpdateChunks.clear();

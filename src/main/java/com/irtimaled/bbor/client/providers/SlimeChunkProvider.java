@@ -42,6 +42,10 @@ public class SlimeChunkProvider implements IBoundingBoxProvider<BoundingBoxSlime
             chunks.remove(ChunkPos.toLong(event.x(), event.z()));
             updateCopy();
         });
+        EventBus.subscribe(ClientWorldUpdateTracker.WorldResetEvent.class, event -> {
+            chunks.clear();
+            updateCopy();
+        });
     }
 
     private static boolean isSlimeChunk(int chunkX, int chunkZ) {

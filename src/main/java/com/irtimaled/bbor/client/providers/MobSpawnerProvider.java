@@ -33,6 +33,10 @@ public class MobSpawnerProvider implements IBoundingBoxProvider<BoundingBoxMobSp
             boxes.remove(ChunkPos.toLong(ChunkSectionPos.getSectionCoord(event.x()), ChunkSectionPos.getSectionCoord(event.z())));
             updateCopy();
         });
+        EventBus.subscribe(ClientWorldUpdateTracker.WorldResetEvent.class, event -> {
+            boxes.clear();
+            updateCopy();
+        });
     }
 
     public static void updateOrCreateMobSpawner(BlockEntity blockEntity) {

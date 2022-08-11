@@ -86,6 +86,9 @@ public class FlowerForestProvider implements IBoundingBoxProvider<BoundingBoxFlo
                 }
             }
         });
+        EventBus.subscribe(ClientWorldUpdateTracker.WorldResetEvent.class, event -> {
+            chunks.clear();
+        });
     }
 
     @Override
