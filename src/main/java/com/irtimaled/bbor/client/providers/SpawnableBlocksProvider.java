@@ -2,7 +2,7 @@ package com.irtimaled.bbor.client.providers;
 
 import com.irtimaled.bbor.client.Player;
 import com.irtimaled.bbor.client.config.BoundingBoxTypeHelper;
-import com.irtimaled.bbor.client.interop.ClientInterop;
+import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.interop.ClientWorldUpdateTracker;
 import com.irtimaled.bbor.client.interop.SpawnableBlocksHelper;
 import com.irtimaled.bbor.client.models.BoundingBoxSpawnableBlocks;
@@ -125,7 +125,7 @@ public class SpawnableBlocksProvider implements IBoundingBoxProvider<BoundingBox
 
     @Override
     public Iterable<BoundingBoxSpawnableBlocks> get(DimensionId dimensionId) {
-        int renderDistanceChunks = ClientInterop.getRenderDistanceChunks();
+        int renderDistanceChunks = ConfigManager.spawnableBlocksRenderDistance.get();
         int playerChunkX = ChunkSectionPos.getSectionCoord(Player.getX());
         int playerChunkZ = ChunkSectionPos.getSectionCoord(Player.getZ());
 

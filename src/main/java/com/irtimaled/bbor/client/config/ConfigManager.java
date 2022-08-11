@@ -54,8 +54,7 @@ public class ConfigManager {
     public static Setting<Boolean> drawConduits;
     public static Setting<Boolean> renderConduitMobHarmArea;
     public static Setting<Boolean> drawSpawnableBlocks;
-    public static Setting<Integer> spawnableBlocksRenderWidth;
-    public static Setting<Integer> spawnableBlocksRenderHeight;
+    public static Setting<Integer> spawnableBlocksRenderDistance;
     public static Setting<Integer> spawnableBlocksSafeLight;
     public static Setting<Boolean> invertBoxColorPlayerInside;
     public static Setting<Boolean> renderSphereAsDots;
@@ -217,8 +216,7 @@ public class ConfigManager {
         afkSpawnableBlocksRenderDistance = setup(config, "afkSpot", "afkSpawnableBlocksRenderDistance", 3, "The distance from the player where spawnable blocks within the AFK sphere will be drawn.");
 
         drawSpawnableBlocks = setup(config, "spawnableBlocks", "drawSpawnableBlocks", false, "If set to true boxes to show spawnable blocks will be drawn.");
-        spawnableBlocksRenderWidth = setup(config, "spawnableBlocks", "spawnableBlocksRenderWidth", 2, "The distance from the player where spawnable blocks will be drawn in X and Z axis.");
-        spawnableBlocksRenderHeight = setup(config, "spawnableBlocks", "spawnableBlocksRenderHeight", 1, "The distance from the player where spawnable blocks will be drawn in Y axis.");
+        spawnableBlocksRenderDistance = setup(config, "spawnableBlocks", "spawnableBlocksRenderDistance", 2, "The distance from the player where spawnable blocks will be drawn in X and Z axis.");
         spawnableBlocksSafeLight = setup(config, "spawnableBlocks", "spawnableBlocksSafeLight", 0, "The light level to check which block is safe.");
 
         colorWorldSpawn = setup(config, "colors", "colorWorldSpawn", HexColor.from("#ff0000"), "Color of world spawn and spawn chunks bounding boxes.");

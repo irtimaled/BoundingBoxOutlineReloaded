@@ -98,14 +98,7 @@ public class SettingsScreen extends ListScreen {
                         width -> new BoolSettingButton(width, I18n.translate("bbor.features.conduits.mobHarmArea"), ConfigManager.renderConduitMobHarmArea))
                 .section(I18n.translate("bbor.features.spawnableBlocks"),
                         width -> new BoundingBoxTypeButton(width, I18n.translate("bbor.features.spawnableBlocks"), BoundingBoxType.SpawnableBlocks),
-                        width -> new IntSettingSlider(width, 1, 3, "bbor.options.distance.y", ConfigManager.spawnableBlocksRenderHeight)
-                                .addDisplayValue(1, "2")
-                                .addDisplayValue(2, "4")
-                                .addDisplayValue(3, "8"),
-                        width -> new IntSettingSlider(width, 1, 3, "bbor.options.distance.xz", ConfigManager.spawnableBlocksRenderWidth)
-                                .addDisplayValue(1, "8")
-                                .addDisplayValue(2, "16")
-                                .addDisplayValue(3, "32"),
+                        width -> new IntSettingSlider(width, 1, ClientInterop.getRenderDistanceChunks(), "bbor.options.distance.xz", ConfigManager.spawnableBlocksRenderDistance),
                         width -> new SafeLightSettingsSlider(width, ConfigManager.spawnableBlocksSafeLight))
                 .section(I18n.translate("bbor.features.spawningSpheres"),
                         width -> new BoundingBoxTypeButton(width, I18n.translate("bbor.features.spawningSpheres"), BoundingBoxType.AFKSphere),
