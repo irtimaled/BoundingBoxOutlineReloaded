@@ -45,7 +45,7 @@ public class SlimeChunkProvider implements IBoundingBoxProvider<BoundingBoxSlime
     }
 
     private static boolean isSlimeChunk(int chunkX, int chunkZ) {
-        return ChunkRandom.getSlimeRandom(chunkX, chunkZ, seed, 987234911L).nextInt(10) == 0;
+        return seed != null && ChunkRandom.getSlimeRandom(chunkX, chunkZ, seed, 987234911L).nextInt(10) == 0;
     }
 
     private static void recalculateSlimeChunks() {

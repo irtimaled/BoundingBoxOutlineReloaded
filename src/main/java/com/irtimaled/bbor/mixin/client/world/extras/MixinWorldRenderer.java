@@ -12,7 +12,7 @@ public class MixinWorldRenderer {
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/chunk/light/LightingProvider;doLightUpdates(IZZ)I", shift = At.Shift.AFTER))
     private void afterLightingUpdate(CallbackInfo ci) {
-        SpawnableBlocksProvider.runQueuedLightingTasks();
+        SpawnableBlocksProvider.runQueuedTasks();
     }
 
 }

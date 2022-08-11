@@ -12,6 +12,7 @@ import com.irtimaled.bbor.common.models.DimensionId;
 import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMaps;
+import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
@@ -22,21 +23,23 @@ import net.minecraft.world.Heightmap;
 import net.minecraft.world.chunk.WorldChunk;
 
 import java.util.ArrayList;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class SpawnableBlocksProvider implements IBoundingBoxProvider<BoundingBoxSpawnableBlocks>, ICachingProvider {
 
-    private static final Queue<Runnable> queuedTasksForLighting = new ConcurrentLinkedQueue<>();
+    private static final ObjectLinkedOpenHashSet<ChunkPos> queuedUpdateChunks = new ObjectLinkedOpenHashSet<>();
 
-    public static void runQueuedLightingTasks() {
-        Runnable runnable;
-        while ((runnable = queuedTasksForLighting.poll()) != null) {
-            runnable.run();
+    public static void runQueuedTasks() {
+        if (queuedUpdateChunks.isEmpty()) return;
+        ChunkPos pos = queuedUpdateChunks.removeFirst();
+        final SpawnableBlocksChunk chunk = chunks.get(pos.toLong());
+        if (chunk != null) {
+            chunk.findBoxesFromBlockState(pos.getStartX(), pos.getStartZ());
+        } else {
+            chunks.put(pos.toLong(), new SpawnableBlocksChunk(pos.x, pos.z));
         }
     }
 
-    private final Long2ObjectMap<SpawnableBlocksChunk> chunks = Long2ObjectMaps.synchronize(new Long2ObjectLinkedOpenHashMap<>());
+    private static final Long2ObjectMap<SpawnableBlocksChunk> chunks = Long2ObjectMaps.synchronize(new Long2ObjectLinkedOpenHashMap<>());
 
     private static class SpawnableBlocksChunk {
 
@@ -93,34 +96,26 @@ public class SpawnableBlocksProvider implements IBoundingBoxProvider<BoundingBox
 
     {
         EventBus.subscribe(ClientWorldUpdateTracker.ChunkLoadEvent.class, event -> {
-            queuedTasksForLighting.add(() -> {
-                this.chunks.put(ChunkPos.toLong(event.x(), event.z()), new SpawnableBlocksChunk(event.x(), event.z()));
-            });
+            queuedUpdateChunks.add(new ChunkPos(event.x(), event.z()));
         });
         EventBus.subscribe(ClientWorldUpdateTracker.LightingUpdateEvent.class, event -> {
-           queuedTasksForLighting.add(() -> {
-               final SpawnableBlocksChunk chunk = this.chunks.get(ChunkPos.toLong(event.x(), event.z()));
-               if (chunk != null) {
-                   chunk.findBoxesFromBlockState(event.x() << 4, event.z() << 4);
-               }
-            });
+            queuedUpdateChunks.add(new ChunkPos(event.x(), event.z()));
         });
         EventBus.subscribe(ClientWorldUpdateTracker.ChunkUnloadEvent.class, event -> {
-            queuedTasksForLighting.add(() -> {
-                this.chunks.remove(ChunkPos.toLong(event.x(), event.z()));
-            });
+            queuedUpdateChunks.remove(new ChunkPos(event.x(), event.z()));
+            chunks.remove(ChunkPos.toLong(event.x(), event.z()));
         });
         EventBus.subscribe(ClientWorldUpdateTracker.BlockChangeEvent.class, event -> {
-            queuedTasksForLighting.add(() -> {
-                SpawnableBlocksChunk chunk = this.chunks.get(ChunkPos.toLong(ChunkSectionPos.getSectionCoord(event.x()), ChunkSectionPos.getSectionCoord(event.z())));
-                if (chunk != null) {
-                    chunk.findBoxesFromBlockState((event.x() >> 4) << 4, (event.z() >> 4) << 4);
+            for (int x = -1; x <= 1; x ++) {
+                for (int z = -1; z <= 1; z++) {
+                    queuedUpdateChunks.add(new ChunkPos(ChunkSectionPos.getSectionCoord(event.x()) + x, ChunkSectionPos.getSectionCoord(event.z()) + z));
                 }
-            });
+            }
         });
     }
     public void clearCache() {
         chunks.clear();
+        queuedUpdateChunks.clear();
     }
 
     @Override
