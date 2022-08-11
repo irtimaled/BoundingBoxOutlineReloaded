@@ -2,8 +2,8 @@ package com.irtimaled.bbor.client.providers;
 
 import com.irtimaled.bbor.client.Player;
 import com.irtimaled.bbor.client.config.BoundingBoxTypeHelper;
+import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.interop.BiomeBorderHelper;
-import com.irtimaled.bbor.client.interop.ClientInterop;
 import com.irtimaled.bbor.client.interop.ClientWorldUpdateTracker;
 import com.irtimaled.bbor.client.interop.FlowerForestHelper;
 import com.irtimaled.bbor.client.models.BoundingBoxFlowerForest;
@@ -95,7 +95,7 @@ public class FlowerForestProvider implements IBoundingBoxProvider<BoundingBoxFlo
 
     @Override
     public Iterable<BoundingBoxFlowerForest> get(DimensionId dimensionId) {
-        int renderDistanceChunks = Math.max(ClientInterop.getRenderDistanceChunks() - 2, 1);
+        int renderDistanceChunks = ConfigManager.flowerForestsRenderDistance.get();
         int playerChunkX = ChunkSectionPos.getSectionCoord(Player.getX());
         int playerChunkZ = ChunkSectionPos.getSectionCoord(Player.getZ());
 
