@@ -12,7 +12,7 @@
   "bbor.options.fastRender.1": "Medium",
   "bbor.options.fastRender.2": "High",
 
-  "bbor.options.asyncBuilding": "Use Async",
+  "bbor.options.asyncBuilding": "Use Async Renderer",
 
   "bbor.options.maxY": "Max Y: %s",
   "bbor.options.maxY.activated": "Activated",

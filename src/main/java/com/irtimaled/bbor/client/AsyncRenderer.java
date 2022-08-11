@@ -43,14 +43,7 @@ public class AsyncRenderer {
             final int i = getNextAsyncContext(dimensionId);
             if (i != -1) {
                 final RenderingContext ctx = asyncContexts[i];
-                matrixStack.push();
-                matrixStack.translate(
-                        Camera.getX() - ctx.getBaseX(),
-                        Camera.getY() - ctx.getBaseY(),
-                        Camera.getZ() - ctx.getBaseZ()
-                );
-                ctx.doDrawing(matrixStack);
-                matrixStack.pop();
+                draw(matrixStack, ctx);
                 lastCtx = ctx;
             } else {
                 lastCtx = null;
@@ -64,16 +57,7 @@ public class AsyncRenderer {
 
             build0(dimensionId, ctx);
 
-            RenderHelper.beforeRender();
-            matrixStack.push();
-            matrixStack.translate(
-                    Camera.getX() - ctx.getBaseX(),
-                    Camera.getY() - ctx.getBaseY(),
-                    Camera.getZ() - ctx.getBaseZ()
-            );
-            ctx.doDrawing(matrixStack);
-            matrixStack.pop();
-            RenderHelper.afterRender();
+            draw(matrixStack, ctx);
 
             RenderCulling.flushRendering();
 
@@ -82,6 +66,17 @@ public class AsyncRenderer {
         RenderHelper.afterRender();
 
         lastDurationNanos.set(System.nanoTime() - startTime);
+    }
+
+    private static void draw(MatrixStack matrixStack, RenderingContext ctx) {
+        matrixStack.push();
+        matrixStack.translate(
+                ctx.getBaseX() - Camera.getX(),
+                ctx.getBaseY() - Camera.getY(),
+                ctx.getBaseZ() - Camera.getZ()
+        );
+        ctx.doDrawing(matrixStack);
+        matrixStack.pop();
     }
 
     private static int getNextAsyncContext(DimensionId dimensionId) {

@@ -59,7 +59,7 @@ public class SettingsScreen extends ListScreen {
                                 .addDisplayValue(0, I18n.translate("bbor.options.fastRender.0"))
                                 .addDisplayValue(1, I18n.translate("bbor.options.fastRender.1"))
                                 .addDisplayValue(2, I18n.translate("bbor.options.fastRender.2")),
-                        width -> new BoolSettingButton(width, "bbor.options.asyncBuilding", ConfigManager.asyncBuilding))
+                        width -> new BoolSettingButton(width, I18n.translate("bbor.options.asyncBuilding"), ConfigManager.asyncBuilding))
                 .section(I18n.translate("bbor.features.spawnChunks"),
                         width -> new BoundingBoxTypeButton(width, I18n.translate("bbor.features.spawnChunks"), BoundingBoxType.WorldSpawn),
                         width -> new BoundingBoxTypeButton(width, I18n.translate("bbor.features.lazyChunks"), BoundingBoxType.LazySpawnChunks),
