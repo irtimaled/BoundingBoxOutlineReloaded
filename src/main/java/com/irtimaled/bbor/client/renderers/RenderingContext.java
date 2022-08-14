@@ -201,14 +201,13 @@ public class RenderingContext {
         long startTime = System.nanoTime();
 
         final MatrixStack.Entry top = stack.peek();
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
         RenderSystem.depthMask(true);
-        lineBufferUploaded.setShader(top.getPositionMatrix(), RenderSystem.getProjectionMatrix(), RenderSystem.getShader());
-        quadBufferMaskedUploaded.setShader(top.getPositionMatrix(), RenderSystem.getProjectionMatrix(), RenderSystem.getShader());
+        lineBufferUploaded.setShader(top.getPositionMatrix(), RenderSystem.getProjectionMatrix(), GameRenderer.getPositionColorShader());
+        quadBufferMaskedUploaded.setShader(top.getPositionMatrix(), RenderSystem.getProjectionMatrix(), GameRenderer.getPositionColorShader());
 
         RenderSystem.depthMask(false);
-        quadBufferNonMaskedUploaded.setShader(top.getPositionMatrix(), RenderSystem.getProjectionMatrix(), RenderSystem.getShader());
+        quadBufferNonMaskedUploaded.setShader(top.getPositionMatrix(), RenderSystem.getProjectionMatrix(), GameRenderer.getPositionColorShader());
 
         RenderSystem.depthMask(true);
 

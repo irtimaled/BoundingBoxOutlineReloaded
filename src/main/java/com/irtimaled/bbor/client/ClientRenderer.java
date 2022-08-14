@@ -102,10 +102,7 @@ public class ClientRenderer {
     }
 
     public static void render(MatrixStack matrixStack, DimensionId dimensionId) {
-        if (!active) return;
-
         AsyncRenderer.render(matrixStack, dimensionId);
-
     }
 
     private static final ObjectArrayList<AbstractBoundingBox> listForRendering = new ObjectArrayList<>();

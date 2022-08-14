@@ -35,6 +35,13 @@ public class AsyncRenderer {
     private static RenderingContext lastCtx;
 
     static void render(MatrixStack matrixStack, DimensionId dimensionId) {
+        if (!ClientRenderer.getActive()) {
+            // invalidate async things
+            currentAsyncContext = -1;
+            buildingFuture = null;
+            return;
+        }
+
         long startTime = System.nanoTime();
         RenderHelper.beforeRender();
 
