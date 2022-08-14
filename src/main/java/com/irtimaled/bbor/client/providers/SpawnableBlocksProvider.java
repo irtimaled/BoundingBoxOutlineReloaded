@@ -13,6 +13,7 @@ import com.irtimaled.bbor.common.models.DimensionId;
 import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMaps;
+import it.unimi.dsi.fastutil.longs.LongIterator;
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
@@ -40,7 +41,7 @@ public class SpawnableBlocksProvider implements IBoundingBoxProvider<BoundingBox
         }
     }
 
-    private static final Long2ObjectMap<SpawnableBlocksChunk> chunks = Long2ObjectMaps.synchronize(new Long2ObjectLinkedOpenHashMap<>());
+    private static final Long2ObjectMap<SpawnableBlocksChunk> chunks = Long2ObjectMaps.synchronize(new Long2ObjectLinkedOpenHashMap<>(), SpawnableBlocksProvider.class);
 
     private static class SpawnableBlocksChunk {
 
@@ -128,6 +129,21 @@ public class SpawnableBlocksProvider implements IBoundingBoxProvider<BoundingBox
         } else {
             queuedUpdateChunks.add(pos);
         }
+    }
+
+    public static void scheduleRecalculation() {
+        synchronized (SpawnableBlocksProvider.class) {
+            final LongIterator iterator = chunks.keySet().iterator();
+            while (iterator.hasNext()) {
+                final long key = iterator.nextLong();
+                final ChunkPos pos = new ChunkPos(key);
+                enqueueUpdate(pos);
+            }
+        }
+    }
+
+    public static String debugString() {
+        return "[BBOR] Pending spawnable blocks update: %d".formatted(queuedUpdateChunks.size());
     }
 
     public void clearCache() {

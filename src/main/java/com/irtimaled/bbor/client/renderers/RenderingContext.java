@@ -23,9 +23,10 @@ public class RenderingContext {
     private final BufferBuilder quadBufferBuilderMasked = new BufferBuilder(2097152);
     private final BufferBuilder lineBufferBuilder = new BufferBuilder(2097152);
 
-    private final VertexBuffer quadBufferNonMaskedUploaded = new VertexBuffer();
-    private final VertexBuffer quadBufferMaskedUploaded = new VertexBuffer();
-    private final VertexBuffer lineBufferUploaded = new VertexBuffer();
+    private boolean isFreshBuffers = true;
+    private VertexBuffer quadBufferNonMaskedUploaded = new VertexBuffer();
+    private VertexBuffer quadBufferMaskedUploaded = new VertexBuffer();
+    private VertexBuffer lineBufferUploaded = new VertexBuffer();
 
     private long quadNonMaskedCount;
     private long quadMaskedCount;
@@ -35,9 +36,9 @@ public class RenderingContext {
     private long lastBuildDurationNanos;
     private long lastRenderDurationNanos;
 
-    private double baseX;
-    private double baseY;
-    private double baseZ;
+    private volatile double baseX;
+    private volatile double baseY;
+    private volatile double baseZ;
 
     {
         reset();
@@ -51,6 +52,18 @@ public class RenderingContext {
         this.quadNonMaskedCount = 0;
         this.quadMaskedCount = 0;
         this.lineCount = 0;
+    }
+
+    public void hardReset() {
+        reset();
+        if (!isFreshBuffers) {
+            this.lineBufferUploaded.close();
+            this.quadBufferMaskedUploaded.close();
+            this.quadBufferNonMaskedUploaded.close();
+            this.lineBufferUploaded = new VertexBuffer();
+            this.quadBufferMaskedUploaded = new VertexBuffer();
+            this.quadBufferNonMaskedUploaded = new VertexBuffer();
+        }
     }
 
     public double getBaseX() {
@@ -86,15 +99,15 @@ public class RenderingContext {
         final BufferBuilder bufferBuilder = mask ? quadBufferBuilderMasked : quadBufferBuilderNonMasked;
 
         if (!sameX && !sameZ) {
-            if (mask) quadMaskedCount ++;
-            else quadNonMaskedCount ++;
+            if (mask) quadMaskedCount++;
+            else quadNonMaskedCount++;
             bufferBuilder.vertex(minX, minY, minZ).color(red, green, blue, alpha).next();
             bufferBuilder.vertex(maxX, minY, minZ).color(red, green, blue, alpha).next();
             bufferBuilder.vertex(maxX, minY, maxZ).color(red, green, blue, alpha).next();
             bufferBuilder.vertex(minX, minY, maxZ).color(red, green, blue, alpha).next();
             if (!sameY) {
-                if (mask) quadMaskedCount ++;
-                else quadNonMaskedCount ++;
+                if (mask) quadMaskedCount++;
+                else quadNonMaskedCount++;
                 bufferBuilder.vertex(minX, maxY, minZ).color(red, green, blue, alpha).next();
                 bufferBuilder.vertex(minX, maxY, maxZ).color(red, green, blue, alpha).next();
                 bufferBuilder.vertex(maxX, maxY, maxZ).color(red, green, blue, alpha).next();
@@ -103,15 +116,15 @@ public class RenderingContext {
         }
 
         if (!sameX && !sameY) {
-            if (mask) quadMaskedCount ++;
-            else quadNonMaskedCount ++;
+            if (mask) quadMaskedCount++;
+            else quadNonMaskedCount++;
             bufferBuilder.vertex(minX, minY, minZ).color(red, green, blue, alpha).next();
             bufferBuilder.vertex(minX, maxY, minZ).color(red, green, blue, alpha).next();
             bufferBuilder.vertex(maxX, maxY, minZ).color(red, green, blue, alpha).next();
             bufferBuilder.vertex(maxX, minY, minZ).color(red, green, blue, alpha).next();
             if (!sameZ) {
-                if (mask) quadMaskedCount ++;
-                else quadNonMaskedCount ++;
+                if (mask) quadMaskedCount++;
+                else quadNonMaskedCount++;
                 bufferBuilder.vertex(minX, minY, maxZ).color(red, green, blue, alpha).next();
                 bufferBuilder.vertex(maxX, minY, maxZ).color(red, green, blue, alpha).next();
                 bufferBuilder.vertex(maxX, maxY, maxZ).color(red, green, blue, alpha).next();
@@ -120,15 +133,15 @@ public class RenderingContext {
         }
 
         if (!sameY && !sameZ) {
-            if (mask) quadMaskedCount ++;
-            else quadNonMaskedCount ++;
+            if (mask) quadMaskedCount++;
+            else quadNonMaskedCount++;
             bufferBuilder.vertex(minX, minY, minZ).color(red, green, blue, alpha).next();
             bufferBuilder.vertex(minX, minY, maxZ).color(red, green, blue, alpha).next();
             bufferBuilder.vertex(minX, maxY, maxZ).color(red, green, blue, alpha).next();
             bufferBuilder.vertex(minX, maxY, minZ).color(red, green, blue, alpha).next();
             if (!sameX) {
-                if (mask) quadMaskedCount ++;
-                else quadNonMaskedCount ++;
+                if (mask) quadMaskedCount++;
+                else quadNonMaskedCount++;
                 bufferBuilder.vertex(maxX, minY, minZ).color(red, green, blue, alpha).next();
                 bufferBuilder.vertex(maxX, maxY, minZ).color(red, green, blue, alpha).next();
                 bufferBuilder.vertex(maxX, maxY, maxZ).color(red, green, blue, alpha).next();
@@ -138,8 +151,8 @@ public class RenderingContext {
     }
 
     public void drawFilledFace(Point point1, Point point2, Point point3, Point point4, Color color, int alpha, boolean mask) {
-        if (mask) quadMaskedCount ++;
-        else quadNonMaskedCount ++;
+        if (mask) quadMaskedCount++;
+        else quadNonMaskedCount++;
 
         final BufferBuilder bufferBuilder = mask ? quadBufferBuilderMasked : quadBufferBuilderNonMasked;
 
@@ -165,7 +178,7 @@ public class RenderingContext {
     }
 
     public void drawLine(Point startPoint, Point endPoint, Color color, int alpha) {
-        lineCount ++;
+        lineCount++;
 
         lineBufferBuilder
                 .vertex((float) (startPoint.getX() - baseX),
@@ -182,6 +195,8 @@ public class RenderingContext {
     }
 
     public void endBatch() {
+        isFreshBuffers = false;
+
         CompletableFuture<?>[] futures = new CompletableFuture[3];
 
         quadBufferBuilderMasked.end();
