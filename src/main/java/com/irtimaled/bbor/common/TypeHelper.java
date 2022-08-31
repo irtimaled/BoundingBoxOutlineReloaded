@@ -1,6 +1,7 @@
 package com.irtimaled.bbor.common;
 
 public class TypeHelper {
+
     public static int combineHashCodes(int... hashCodes) {
         final int prime = 31;
         int result = 0;

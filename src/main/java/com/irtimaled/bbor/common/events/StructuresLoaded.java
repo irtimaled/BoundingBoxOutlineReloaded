@@ -6,6 +6,7 @@ import net.minecraft.world.level.levelgen.structure.StructureStart;
 import java.util.Map;
 
 public class StructuresLoaded {
+
     private final Map<String, StructureStart> structures;
     private final DimensionId dimensionId;
 

@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class StructureProcessor {
+
     public static final Set<BoundingBoxType> supportedStructures = new HashSet<>();
 
     public static void registerSupportedStructure(BoundingBoxType type) {

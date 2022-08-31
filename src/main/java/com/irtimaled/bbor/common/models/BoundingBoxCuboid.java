@@ -5,6 +5,7 @@ import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.TypeHelper;
 
 public class BoundingBoxCuboid extends AbstractBoundingBox {
+
     private final Coords minCoords;
     private final Coords maxCoords;
 

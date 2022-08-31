@@ -6,6 +6,7 @@ import net.minecraft.world.level.storage.WorldData;
 
 
 public class WorldLoaded {
+
     private final DimensionId dimensionId;
     private final long seed;
     private final int spawnX;

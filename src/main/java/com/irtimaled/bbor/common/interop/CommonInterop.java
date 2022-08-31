@@ -1,5 +1,6 @@
 package com.irtimaled.bbor.common.interop;
 
+import com.irtimaled.bbor.Logger;
 import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.EventBus;
 import com.irtimaled.bbor.common.StructureProcessor;
@@ -19,14 +20,17 @@ import net.minecraft.server.level.WorldServer;
 import net.minecraft.world.level.chunk.Chunk;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 public class CommonInterop {
-    public static void chunkLoaded(Chunk chunk) {
+
+    public static void chunkLoaded(@NotNull Chunk chunk) {
         DimensionId dimensionId = DimensionId.from(chunk.q.ab());
         Map<String, StructureStart> structures = new HashMap<>();
         final IRegistry<Structure> structureFeatureRegistry = chunk.q.s().b(IRegistry.aN);
@@ -39,7 +43,7 @@ public class CommonInterop {
         }
     }
 
-    public static void loadWorlds(Collection<WorldServer> worlds) {
+    public static void loadWorlds(@NotNull Collection<WorldServer> worlds) {
         for (WorldServer world : worlds) {
             loadWorld(world);
             loadWorldStructures(world);
@@ -55,13 +59,12 @@ public class CommonInterop {
         }
     }
 
-    public static void loadStructuresFromRegistry(IRegistry<Structure> structureFeatureRegistry) {
-        // System.out.println("Registring structures: " + Arrays.toString(structureFeatureRegistry.getEntrySet().stream().map(entry -> entry.getKey().getValue().toString()).distinct().toArray(String[]::new)));
+    public static void loadStructuresFromRegistry(@NotNull IRegistry<Structure> structureFeatureRegistry) {
+        Logger.info("Registering structures: " + Arrays.toString(structureFeatureRegistry.f().stream().map(entry -> entry.getKey().a().toString()).distinct().toArray(String[]::new)));
         for (var entry : structureFeatureRegistry.f()) {
             final MinecraftKey value = entry.getKey().a();
             final BoundingBoxType boundingBoxType = BoundingBoxType.register("structure:" + value);
             StructureProcessor.registerSupportedStructure(boundingBoxType);
-            //  BoundingBoxTypeHelper.registerType(boundingBoxType, ConfigManager.structureShouldRender(value.toString()), ConfigManager.structureColor(value.toString()));
         }
     }
 
@@ -78,11 +81,11 @@ public class CommonInterop {
         EventBus.publish(new PlayerLoggedIn(new ServerPlayer(player)));
     }
 
-    public static void playerLoggedOut(EntityPlayer player) {
+    public static void playerLoggedOut(@NotNull EntityPlayer player) {
         EventBus.publish(new PlayerLoggedOut(player.ae()));
     }
 
-    public static void playerSubscribed(EntityPlayer player) {
+    public static void playerSubscribed(@NotNull EntityPlayer player) {
         EventBus.publish(new PlayerSubscribed(player.ae(), new ServerPlayer(player)));
     }
 }

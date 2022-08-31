@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public record DimensionId(MinecraftKey value) {
+
     private static final Map<MinecraftKey, DimensionId> dimensionIdMap = new HashMap<>();
 
     public static DimensionId from(ResourceKey<?> dimensionType) {

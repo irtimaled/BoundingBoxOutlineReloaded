@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public class EventBus {
+
     private static final Map<Class<?>, Consumer<?>> handlers = new HashMap<>();
 
     public static <evt> void publish(evt event) {

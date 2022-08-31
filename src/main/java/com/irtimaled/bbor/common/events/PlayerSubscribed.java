@@ -3,6 +3,7 @@ package com.irtimaled.bbor.common.events;
 import com.irtimaled.bbor.common.models.ServerPlayer;
 
 public class PlayerSubscribed {
+
     private final int playerId;
     private final ServerPlayer player;
 

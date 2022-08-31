@@ -7,6 +7,7 @@ import net.minecraft.server.level.EntityPlayer;
 import java.util.function.Consumer;
 
 public class ServerPlayer {
+
     private final DimensionId dimensionId;
     private final Consumer<Packet<?>> packetConsumer;
 

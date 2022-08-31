@@ -6,6 +6,7 @@ import com.irtimaled.bbor.common.models.DimensionId;
 import java.util.Set;
 
 public class AddBoundingBox {
+
     public static final String NAME = "bbor:add_bounding_box_v2";
 
     public static PayloadBuilder getPayload(DimensionId dimensionId, AbstractBoundingBox key, Set<AbstractBoundingBox> boundingBoxes) {

@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.function.BiFunction;
 
 public class PayloadBuilder {
+
     private static final Map<String, MinecraftKey> packetNames = new HashMap<>();
 
     static PayloadBuilder clientBound(String name) {
