@@ -22,23 +22,44 @@ public class VersionHelper {
     private static final Map<Class<?>, Class<?>> craftClassCache = new HashMap<>();
     private static final Map<Class<?>, Method> craftMethodCache = new HashMap<>();
 
+    private static boolean isInit = false;
+
     public static boolean init(@NotNull JavaPlugin plugin) {
-        try {
-            String packVersion = getPackVersion();
+        if (!isInit) {
+            try {
+                String packVersion = getPackVersion();
+                addCraftGetCache(Chunk.class, "CraftChunk", packVersion);
+                addCraftGetCache(World.class, "CraftWorld", packVersion);
+                addCraftGetCache(Player.class, "entity.CraftPlayer", packVersion);
+            } catch (ReflectiveOperationException e) {
+                e.printStackTrace();
+                return false;
+            }
 
-            craftClassCache.put(Chunk.class, Class.forName("org.bukkit.craftbukkit." + packVersion + ".CraftChunk"));
-            craftClassCache.put(World.class, Class.forName("org.bukkit.craftbukkit." + packVersion + ".CraftWorld"));
-            craftClassCache.put(Player.class, Class.forName("org.bukkit.craftbukkit." + packVersion + ".entity.CraftPlayer"));
-
-            craftMethodCache.put(Chunk.class, craftClassCache.get(Chunk.class).getDeclaredMethod("getHandle"));
-            craftMethodCache.put(World.class, craftClassCache.get(World.class).getDeclaredMethod("getHandle"));
-            craftMethodCache.put(Player.class, craftClassCache.get(Player.class).getDeclaredMethod("getHandle"));
-        } catch (ReflectiveOperationException e) {
-            e.printStackTrace();
+            isInit = true;
+            return true;
+        } else {
             return false;
         }
+    }
 
-        return true;
+    public static void addCraftGetCache(@NotNull Class<?> bukkitClass, @NotNull String classPath, @Nullable String packVersion) throws ReflectiveOperationException {
+        addCraftClass(bukkitClass, classPath, packVersion);
+        addCraftMethod(bukkitClass, "getHandle");
+    }
+
+    private static void addCraftClass(@NotNull Class<?> bukkitClass, @NotNull String classPath, @Nullable String packVersion) throws ClassNotFoundException {
+        if (!isInit && !craftClassCache.containsKey(bukkitClass)) {
+            craftClassCache.put(bukkitClass, Class.forName("org.bukkit.craftbukkit." + (packVersion == null ? getPackVersion() : packVersion) + "." + classPath));
+        }
+    }
+
+    private static void addCraftMethod(@NotNull Class<?> bukkitClass, @NotNull String methodName, @Nullable Class<?>... parameterTypes) throws NoSuchMethodException {
+        if (!isInit && !craftMethodCache.containsKey(bukkitClass)) {
+            Method method = craftClassCache.get(bukkitClass).getDeclaredMethod(methodName, parameterTypes);
+            method.setAccessible(true);
+            craftMethodCache.put(bukkitClass, method);
+        }
     }
 
     public static int getVersion() {
@@ -60,31 +81,26 @@ public class VersionHelper {
 
     @Nullable
     public static net.minecraft.world.level.chunk.Chunk getNMSChunk(@NotNull Chunk chunk) {
-        try {
-            return (net.minecraft.world.level.chunk.Chunk) craftMethodCache.get(Chunk.class).invoke(craftClassCache.get(Chunk.class).cast(chunk));
-        } catch (ReflectiveOperationException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return getNMSObject(Chunk.class, net.minecraft.world.level.chunk.Chunk.class, chunk);
     }
 
     @Nullable
     public static WorldServer getNMSWorld(@NotNull World world) {
-        try {
-            return (WorldServer) craftMethodCache.get(World.class).invoke(craftClassCache.get(World.class).cast(world));
-        } catch (ReflectiveOperationException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return getNMSObject(World.class, WorldServer.class, world);
     }
 
     @Nullable
     public static EntityPlayer getNMSPlayer(@NotNull Player player) {
+        return getNMSObject(Player.class, EntityPlayer.class, player);
+    }
+
+    @Nullable
+    public static <T, E> E getNMSObject(@NotNull Class<T> bukkitClass, @NotNull Class<E> nmsClass, T bukkitObject) {
         try {
-            return (EntityPlayer) craftMethodCache.get(Player.class).invoke(craftClassCache.get(Player.class).cast(player));
+            return nmsClass.cast(craftMethodCache.get(bukkitClass).invoke(craftClassCache.get(bukkitClass).cast(bukkitObject)));
         } catch (ReflectiveOperationException e) {
             e.printStackTrace();
+            return null;
         }
-        return null;
     }
 }
