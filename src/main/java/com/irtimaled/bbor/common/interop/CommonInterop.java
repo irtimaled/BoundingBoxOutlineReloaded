@@ -18,7 +18,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.EntityPlayer;
 import net.minecraft.server.level.WorldServer;
 import net.minecraft.world.level.chunk.Chunk;
-import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraft.world.level.levelgen.feature.StructureFeature;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,11 +31,11 @@ import java.util.Optional;
 public class CommonInterop {
 
     public static void chunkLoaded(@NotNull Chunk chunk) {
-        DimensionId dimensionId = DimensionId.from(chunk.q.ab());
+        DimensionId dimensionId = DimensionId.from(chunk.q.aa());
         Map<String, StructureStart> structures = new HashMap<>();
-        final IRegistry<Structure> structureFeatureRegistry = chunk.q.s().b(IRegistry.aN);
+        final IRegistry<StructureFeature<?, ?>> structureFeatureRegistry = chunk.q.s().b(IRegistry.aL);
         for (var es : chunk.g().entrySet()) {
-            final Optional<ResourceKey<Structure>> optional = structureFeatureRegistry.c(es.getKey());
+            final Optional<ResourceKey<StructureFeature<?, ?>>> optional = structureFeatureRegistry.c(es.getKey());
             optional.ifPresent(key -> structures.put("structure:" + key.a().toString(), es.getValue()));
         }
         if (structures.size() > 0) {
@@ -52,16 +52,16 @@ public class CommonInterop {
 
     public static void loadWorldStructures(WorldServer world) {
         try {
-            final IRegistry<Structure> structureFeatureRegistry = world.s().b(IRegistry.aN);
+            final IRegistry<StructureFeature<?, ?>> structureFeatureRegistry = world.s().b(IRegistry.aL);
             loadStructuresFromRegistry(structureFeatureRegistry);
         } catch (Throwable t) {
             t.printStackTrace();
         }
     }
 
-    public static void loadStructuresFromRegistry(@NotNull IRegistry<Structure> structureFeatureRegistry) {
-        Logger.info("Registering structures: " + Arrays.toString(structureFeatureRegistry.f().stream().map(entry -> entry.getKey().a().toString()).distinct().toArray(String[]::new)));
-        for (var entry : structureFeatureRegistry.f()) {
+    public static void loadStructuresFromRegistry(@NotNull IRegistry<StructureFeature<?, ?>> structureFeatureRegistry) {
+        Logger.info("Registering structures: " + Arrays.toString(structureFeatureRegistry.e().stream().map(entry -> entry.getKey().a().toString()).distinct().toArray(String[]::new)));
+        for (var entry : structureFeatureRegistry.e()) {
             final MinecraftKey value = entry.getKey().a();
             final BoundingBoxType boundingBoxType = BoundingBoxType.register("structure:" + value);
             StructureProcessor.registerSupportedStructure(boundingBoxType);

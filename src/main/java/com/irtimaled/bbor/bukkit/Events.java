@@ -19,7 +19,7 @@ public class Events implements Listener, PluginMessageListener {
     private boolean active;
 
     @EventHandler
-    public void onChunkLoad(ChunkLoadEvent event) {
+    public void onChunkLoad(@NotNull ChunkLoadEvent event) {
         if (!active) return;
 
         net.minecraft.world.level.chunk.Chunk chunk = VersionHelper.getNMSChunk(event.getChunk());
@@ -29,7 +29,7 @@ public class Events implements Listener, PluginMessageListener {
     }
 
     @EventHandler
-    public void onWorldLoad(WorldLoadEvent event) {
+    public void onWorldLoad(@NotNull WorldLoadEvent event) {
         if (!active) return;
 
         WorldServer world = VersionHelper.getNMSWorld(event.getWorld());
@@ -47,7 +47,7 @@ public class Events implements Listener, PluginMessageListener {
     }
 
     @EventHandler
-    public void onPlayerLoggedIn(PlayerJoinEvent event) {
+    public void onPlayerLoggedIn(@NotNull PlayerJoinEvent event) {
         if (!active) return;
 
         EntityPlayer player = VersionHelper.getNMSPlayer(event.getPlayer());
@@ -57,7 +57,7 @@ public class Events implements Listener, PluginMessageListener {
     }
 
     @EventHandler
-    public void onPlayerLoggedOut(PlayerQuitEvent event) {
+    public void onPlayerLoggedOut(@NotNull PlayerQuitEvent event) {
         if (!active) return;
 
         EntityPlayer player = VersionHelper.getNMSPlayer(event.getPlayer());
