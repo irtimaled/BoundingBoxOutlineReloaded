@@ -17,7 +17,7 @@ import java.util.*;
 
 public class NMSHelper {
 
-    public static final int lowestSupportVersion = 11802;
+    public static final int lowestSupportVersion = 11800;
     public static final int lowestUnSupportVersion = 11902;
 
     private static final Map<Class<?>, Class<?>> craftClassCache = new HashMap<>();
