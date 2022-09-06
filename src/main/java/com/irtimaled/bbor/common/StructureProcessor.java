@@ -1,11 +1,10 @@
 package com.irtimaled.bbor.common;
 
+import com.irtimaled.bbor.bukkit.NMS.NMSHelper;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBoxCuboid;
 import com.irtimaled.bbor.common.models.Coords;
-import net.minecraft.world.level.levelgen.structure.StructureBoundingBox;
-import net.minecraft.world.level.levelgen.structure.StructurePiece;
-import net.minecraft.world.level.levelgen.structure.StructureStart;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -25,11 +24,11 @@ public class StructureProcessor {
 
     private final BoundingBoxCache boundingBoxCache;
 
-    private void addStructures(BoundingBoxType type, Map<String, StructureStart> structureMap) {
-        StructureStart structureStart = structureMap.get(type.getName());
+    private void addStructures(BoundingBoxType type, Map<String, Object> structureMap) {
+        Object structureStart = structureMap.get(type.getName());
         if (structureStart == null) return;
 
-        StructureBoundingBox bb = structureStart.a();
+        Object bb = NMSHelper.structureStartGetBox(structureStart);
         if (bb == null) return;
 
 
@@ -37,19 +36,20 @@ public class StructureProcessor {
         if (boundingBoxCache.isCached(boundingBox)) return;
 
         Set<AbstractBoundingBox> structureBoundingBoxes = new HashSet<>();
-        for (StructurePiece structureComponent : structureStart.i()) {
-            structureBoundingBoxes.add(buildStructure(structureComponent.f(), type));
+        for (Object structureComponent : NMSHelper.structureStartGetPiece(structureStart)) {
+            structureBoundingBoxes.add(buildStructure(NMSHelper.structurePieceGetBox(structureComponent), type));
         }
         boundingBoxCache.addBoundingBoxes(boundingBox, structureBoundingBoxes);
     }
 
-    private AbstractBoundingBox buildStructure(StructureBoundingBox bb, BoundingBoxType type) {
-        Coords min = new Coords(bb.g(), bb.h(), bb.i());
-        Coords max = new Coords(bb.j(), bb.k(), bb.l());
+    @NotNull
+    private AbstractBoundingBox buildStructure(Object bb, BoundingBoxType type) {
+        Coords min = new Coords(NMSHelper.structureBoundingBoxGetMinX(bb), NMSHelper.structureBoundingBoxGetMinY(bb), NMSHelper.structureBoundingBoxGetMinZ(bb));
+        Coords max = new Coords(NMSHelper.structureBoundingBoxGetMaxX(bb), NMSHelper.structureBoundingBoxGetMaxY(bb), NMSHelper.structureBoundingBoxGetMaxZ(bb));
         return BoundingBoxCuboid.from(min, max, type);
     }
 
-    void process(Map<String, StructureStart> structures) {
+    void process(@NotNull Map<String, Object> structures) {
         if (structures.size() > 0) {
             supportedStructures.forEach(type -> addStructures(type, structures));
         }

@@ -1,75 +1,60 @@
 package com.irtimaled.bbor.common.interop;
 
 import com.irtimaled.bbor.Logger;
+import com.irtimaled.bbor.bukkit.NMS.NMSHelper;
 import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.EventBus;
 import com.irtimaled.bbor.common.StructureProcessor;
-import com.irtimaled.bbor.common.events.PlayerLoggedIn;
-import com.irtimaled.bbor.common.events.PlayerLoggedOut;
-import com.irtimaled.bbor.common.events.PlayerSubscribed;
-import com.irtimaled.bbor.common.events.ServerTick;
-import com.irtimaled.bbor.common.events.StructuresLoaded;
-import com.irtimaled.bbor.common.events.WorldLoaded;
+import com.irtimaled.bbor.common.events.*;
 import com.irtimaled.bbor.common.models.DimensionId;
 import com.irtimaled.bbor.common.models.ServerPlayer;
-import net.minecraft.core.IRegistry;
-import net.minecraft.resources.MinecraftKey;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.level.EntityPlayer;
-import net.minecraft.server.level.WorldServer;
-import net.minecraft.world.level.chunk.Chunk;
-import net.minecraft.world.level.levelgen.structure.Structure;
-import net.minecraft.world.level.levelgen.structure.StructureStart;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class CommonInterop {
 
-    public static void chunkLoaded(@NotNull Chunk chunk) {
-        DimensionId dimensionId = DimensionId.from(chunk.q.ab());
-        Map<String, StructureStart> structures = new HashMap<>();
-        final IRegistry<Structure> structureFeatureRegistry = chunk.q.s().b(IRegistry.aN);
-        for (var es : chunk.g().entrySet()) {
-            final Optional<ResourceKey<Structure>> optional = structureFeatureRegistry.c(es.getKey());
-            optional.ifPresent(key -> structures.put("structure:" + key.a().toString(), es.getValue()));
+    public static void chunkLoaded(@NotNull Object chunk) {
+        Object world = NMSHelper.chunkGetWorld(chunk);
+        DimensionId dimensionId = DimensionId.from(NMSHelper.worldGetResourceKey(world));
+        Map<String, Object> structures = new HashMap<>();
+        final Object structureFeatureRegistry = NMSHelper.worldGetStructureFeatureRegistry(world);
+        for (var es : NMSHelper.chunkGetStructureMap(chunk).entrySet()) {
+            final Optional<?> optional = NMSHelper.registryGetOptionalResourceKey(structureFeatureRegistry, es.getKey());
+            optional.ifPresent(key -> structures.put("structure:" + NMSHelper.resourceKeyGetValue(key).toString(), es.getValue()));
         }
         if (structures.size() > 0) {
             EventBus.publish(new StructuresLoaded(structures, dimensionId));
         }
     }
 
-    public static void loadWorlds(@NotNull Collection<WorldServer> worlds) {
-        for (WorldServer world : worlds) {
+    public static void loadWorlds(@NotNull Collection<Object> worlds) {
+        for (Object world : worlds) {
             loadWorld(world);
             loadWorldStructures(world);
         }
     }
 
-    public static void loadWorldStructures(WorldServer world) {
+    public static void loadWorldStructures(Object world) {
         try {
-            final IRegistry<Structure> structureFeatureRegistry = world.s().b(IRegistry.aN);
+            final Object structureFeatureRegistry = NMSHelper.worldGetStructureFeatureRegistry(world);
             loadStructuresFromRegistry(structureFeatureRegistry);
         } catch (Throwable t) {
             t.printStackTrace();
         }
     }
 
-    public static void loadStructuresFromRegistry(@NotNull IRegistry<Structure> structureFeatureRegistry) {
-        Logger.info("Registering structures: " + Arrays.toString(structureFeatureRegistry.f().stream().map(entry -> entry.getKey().a().toString()).distinct().toArray(String[]::new)));
-        for (var entry : structureFeatureRegistry.f()) {
-            final MinecraftKey value = entry.getKey().a();
+    public static void loadStructuresFromRegistry(@NotNull Object structureFeatureRegistry) {
+        Logger.info("Registering structures: " + Arrays.toString(NMSHelper.registryGetAllResourceKeySet(structureFeatureRegistry).stream().map(entry -> NMSHelper.resourceKeyGetValue(entry.getKey()).toString()).distinct().toArray(String[]::new)));
+        for (var entry : NMSHelper.registryGetAllResourceKeySet(structureFeatureRegistry)) {
+            final Object value = NMSHelper.resourceKeyGetValue(entry.getKey());
             final BoundingBoxType boundingBoxType = BoundingBoxType.register("structure:" + value);
             StructureProcessor.registerSupportedStructure(boundingBoxType);
         }
     }
 
 
-    public static void loadWorld(WorldServer world) {
+    public static void loadWorld(Object world) {
         EventBus.publish(new WorldLoaded(world));
     }
 
@@ -77,15 +62,15 @@ public class CommonInterop {
         EventBus.publish(new ServerTick());
     }
 
-    public static void playerLoggedIn(EntityPlayer player) {
+    public static void playerLoggedIn(Object player) {
         EventBus.publish(new PlayerLoggedIn(new ServerPlayer(player)));
     }
 
-    public static void playerLoggedOut(@NotNull EntityPlayer player) {
-        EventBus.publish(new PlayerLoggedOut(player.ae()));
+    public static void playerLoggedOut(@NotNull Object player) {
+        EventBus.publish(new PlayerLoggedOut(NMSHelper.playerGetEntityID(player)));
     }
 
-    public static void playerSubscribed(@NotNull EntityPlayer player) {
-        EventBus.publish(new PlayerSubscribed(player.ae(), new ServerPlayer(player)));
+    public static void playerSubscribed(@NotNull Object player) {
+        EventBus.publish(new PlayerSubscribed(NMSHelper.playerGetEntityID(player), new ServerPlayer(player)));
     }
 }

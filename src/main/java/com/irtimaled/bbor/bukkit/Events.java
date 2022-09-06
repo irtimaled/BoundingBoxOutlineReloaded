@@ -1,9 +1,8 @@
 package com.irtimaled.bbor.bukkit;
 
+import com.irtimaled.bbor.bukkit.NMS.NMSHelper;
 import com.irtimaled.bbor.common.interop.CommonInterop;
 import com.irtimaled.bbor.common.messages.SubscribeToServer;
-import net.minecraft.server.level.EntityPlayer;
-import net.minecraft.server.level.WorldServer;
 import org.bukkit.Chunk;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -22,7 +21,7 @@ public class Events implements Listener, PluginMessageListener {
     public void onChunkLoad(ChunkLoadEvent event) {
         if (!active) return;
 
-        net.minecraft.world.level.chunk.Chunk chunk = VersionHelper.getNMSChunk(event.getChunk());
+        Object chunk = NMSHelper.getNMSChunk(event.getChunk());
         if (chunk != null) {
             CommonInterop.chunkLoaded(chunk);
         }
@@ -32,13 +31,13 @@ public class Events implements Listener, PluginMessageListener {
     public void onWorldLoad(WorldLoadEvent event) {
         if (!active) return;
 
-        WorldServer world = VersionHelper.getNMSWorld(event.getWorld());
+        Object world = NMSHelper.getNMSWorld(event.getWorld());
         if (world != null) {
             CommonInterop.loadWorld(world);
             CommonInterop.loadWorldStructures(world);
 
             for (Chunk chunk : event.getWorld().getLoadedChunks()) {
-                net.minecraft.world.level.chunk.Chunk nmsChunk = VersionHelper.getNMSChunk(chunk);
+                Object nmsChunk = NMSHelper.getNMSChunk(chunk);
                 if (nmsChunk != null) {
                     CommonInterop.chunkLoaded(nmsChunk);
                 }
@@ -50,7 +49,7 @@ public class Events implements Listener, PluginMessageListener {
     public void onPlayerLoggedIn(PlayerJoinEvent event) {
         if (!active) return;
 
-        EntityPlayer player = VersionHelper.getNMSPlayer(event.getPlayer());
+        Object player = NMSHelper.getNMSPlayer(event.getPlayer());
         if (player != null) {
             CommonInterop.playerLoggedIn(player);
         }
@@ -60,7 +59,7 @@ public class Events implements Listener, PluginMessageListener {
     public void onPlayerLoggedOut(PlayerQuitEvent event) {
         if (!active) return;
 
-        EntityPlayer player = VersionHelper.getNMSPlayer(event.getPlayer());
+        Object player = NMSHelper.getNMSPlayer(event.getPlayer());
         if (player != null) {
             CommonInterop.playerLoggedOut(player);
         }
@@ -85,7 +84,7 @@ public class Events implements Listener, PluginMessageListener {
         if (!active) return;
 
         if (string.equals(SubscribeToServer.NAME)) {
-            EntityPlayer entityPlayer = VersionHelper.getNMSPlayer(player);
+            Object entityPlayer = NMSHelper.getNMSPlayer(player);
             if (entityPlayer != null) {
                 CommonInterop.playerSubscribed(entityPlayer);
             }

@@ -1,21 +1,20 @@
 package com.irtimaled.bbor.common.events;
 
 import com.irtimaled.bbor.common.models.DimensionId;
-import net.minecraft.world.level.levelgen.structure.StructureStart;
 
 import java.util.Map;
 
 public class StructuresLoaded {
 
-    private final Map<String, StructureStart> structures;
+    private final Map<String, Object> structures;
     private final DimensionId dimensionId;
 
-    public StructuresLoaded(Map<String, StructureStart> structures, DimensionId dimensionId) {
+    public StructuresLoaded(Map<String, Object> structures, DimensionId dimensionId) {
         this.structures = structures;
         this.dimensionId = dimensionId;
     }
 
-    public Map<String, StructureStart> getStructures() {
+    public Map<String, Object> getStructures() {
         return structures;
     }
 

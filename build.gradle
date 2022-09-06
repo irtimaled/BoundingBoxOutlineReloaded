@@ -1,18 +1,7 @@
-buildscript {
-    repositories {
-        jcenter()
-    }
-
-    dependencies {
-        classpath 'de.undercouch:gradle-download-task:5.1.0'
-    }
-}
-
-apply plugin: 'de.undercouch.download'
 apply plugin: 'java'
 
 group 'com.irtimaled'
-version project.buildVersion + '-' + project.mcVersion
+version project.buildVersion + '-' + project.supportMCVersion
 archivesBaseName = 'BBOutlineReloaded'
 
 sourceCompatibility = 1.17
@@ -26,11 +15,16 @@ repositories {
     maven {
         url "https://libraries.minecraft.net"
     }
+    maven {
+        name = 'spigotmc-repo'
+        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+    }
 }
 
 dependencies {
     compileOnly fileTree(dir: 'lib', includes: ['*.jar'])
     compileOnly 'org.jetbrains:annotations:23.0.0'
+    // compileOnly "org.spigotmc:spigot-api:${project.bukkitApiVersion}-R0.1-SNAPSHOT" spigot?
 }
 
 sourceSets {
@@ -38,8 +32,6 @@ sourceSets {
 }
 
 jar {
-    // destinationDir = new File('run/plugins')
-
     manifest {
         attributes([
                 // "Main-Class": "com.irtimaled.bbor.Main",

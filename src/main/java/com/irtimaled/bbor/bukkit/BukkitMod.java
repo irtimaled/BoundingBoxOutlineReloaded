@@ -1,6 +1,7 @@
 package com.irtimaled.bbor.bukkit;
 
 import com.irtimaled.bbor.Logger;
+import com.irtimaled.bbor.bukkit.NMS.NMSHelper;
 import com.irtimaled.bbor.common.CommonProxy;
 import com.irtimaled.bbor.common.messages.SubscribeToServer;
 import org.bukkit.Bukkit;
@@ -24,14 +25,14 @@ public final class BukkitMod extends JavaPlugin {
         Logger.info("This plugin is in dev, and is not official");
         Logger.info("please issues to https://github.com/s-yh-china/BoundingBoxOutlineReloaded");
 
-        int version = VersionHelper.getVersion();
-        if (version < VersionHelper.lowestSupportVersion || version >= VersionHelper.lowestUnSupportVersion) {
-            Logger.error("MC version " + VersionHelper.getPackVersion() + " is not support");
+        int version = NMSHelper.getVersion();
+        if (version < NMSHelper.lowestSupportVersion || version >= NMSHelper.lowestUnSupportVersion) {
+            Logger.error("MC version " + NMSHelper.getPackVersion() + " is not support");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
 
-        if (!VersionHelper.init(this)) {
+        if (!NMSHelper.init(this)) {
             Logger.error("Version Helper init error");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
