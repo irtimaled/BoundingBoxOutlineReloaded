@@ -1,15 +1,16 @@
 package com.irtimaled.bbor.bukkit.NMS.api;
 
 import com.irtimaled.bbor.bukkit.NMS.NMSHelper;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
 
-public class NMSClassFunction {
+public class NMSClassFunction implements Cloneable {
 
     private final Constructor<?> constructor;
 
-    public NMSClassFunction(NMSClassName className, Class<?>... parameterTypes) throws NoSuchMethodException {
-        this.constructor = NMSHelper.getNMSClass(className).getConstructor(parameterTypes);
+    public NMSClassFunction(@NotNull NMSFunctionDescribe describe) throws NoSuchMethodException {
+        this.constructor = NMSHelper.getNMSClass(describe.className()).getConstructor(describe.parameterTypes());
         this.constructor.setAccessible(true);
     }
 
@@ -20,5 +21,14 @@ public class NMSClassFunction {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public NMSClassFunction clone()  {
+        try {
+            return (NMSClassFunction) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new Error(e);
+        }
     }
 }

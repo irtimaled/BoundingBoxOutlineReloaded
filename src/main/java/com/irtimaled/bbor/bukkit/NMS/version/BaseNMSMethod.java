@@ -1,12 +1,21 @@
 package com.irtimaled.bbor.bukkit.NMS.version;
 
-import com.irtimaled.bbor.bukkit.NMS.NMSHelper;
-import com.irtimaled.bbor.bukkit.NMS.api.*;
+import com.irtimaled.bbor.bukkit.NMS.api.INMSMethod;
+import com.irtimaled.bbor.bukkit.NMS.api.NMSClassFunction;
+import com.irtimaled.bbor.bukkit.NMS.api.NMSFieldDescribe;
+import com.irtimaled.bbor.bukkit.NMS.api.NMSFieldGetter;
+import com.irtimaled.bbor.bukkit.NMS.api.NMSFunctionDescribe;
+import com.irtimaled.bbor.bukkit.NMS.api.NMSMethodConsumer;
+import com.irtimaled.bbor.bukkit.NMS.api.NMSMethodDescribe;
+import com.irtimaled.bbor.bukkit.NMS.api.NMSMethodInvoker;
 import io.netty.buffer.ByteBuf;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Field;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 public abstract class BaseNMSMethod implements INMSMethod {
 
@@ -16,46 +25,28 @@ public abstract class BaseNMSMethod implements INMSMethod {
 
     protected final Map<String, NMSMethodInvoker> methodInvokerCache = new HashMap<>();
     protected final Map<String, NMSClassFunction> classFunctionCache = new HashMap<>();
-    protected final Map<String, Field> fieldCache = new HashMap<>();
+    protected final Map<String, NMSMethodConsumer> methodConsumerCache = new HashMap<>();
+    protected final Map<String, NMSFieldGetter> fieldCache = new HashMap<>();
 
-    protected void addFieldCache(String name, NMSClassName className, String fieldName) throws NoSuchFieldException {
-        Class<?> clazz = NMSHelper.getNMSClass(className);
-        Field field = null;
-
-        do {
-            try {
-                field = clazz.getDeclaredField(fieldName);
-                break;
-            } catch (NoSuchFieldException e) {
-                clazz = clazz.getSuperclass();
-            }
-        } while (clazz.getSuperclass() != null);
-
-        if (field != null) {
-            field.setAccessible(true);
-            fieldCache.put(name, field);
-        } else {
-            throw new NoSuchFieldException(fieldName);
-        }
-
+    protected void addFieldCache(String name, NMSFieldDescribe describe) throws NoSuchFieldException {
+        fieldCache.put(name, new NMSFieldGetter(describe));
     }
 
     protected void addMethodCache(String name, NMSMethodDescribe describe) throws ReflectiveOperationException {
         methodInvokerCache.put(name, new NMSMethodInvoker(describe));
     }
 
-    protected void addClassFunctionCache(String name, NMSClassName className, Class<?>... parameterTypes) throws NoSuchMethodException {
-        classFunctionCache.put(name, new NMSClassFunction(className, parameterTypes));
+    protected void addClassFunctionCache(String name, NMSFunctionDescribe describe) throws NoSuchMethodException {
+        classFunctionCache.put(name, new NMSClassFunction(describe));
+    }
+
+    protected void addConsumerCache(String name, NMSMethodDescribe describe) throws NoSuchMethodException {
+        methodConsumerCache.put(name, new NMSMethodConsumer(describe, null));
     }
 
     @Nullable
-    protected Object getField(String name, NMSClassName className, Object obj) {
-        try {
-            return fieldCache.get(name).get(NMSHelper.getNMSClass(className).cast(obj));
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        return null;
+    protected Object getField(String name, Object obj) {
+        return fieldCache.get(name).get(obj);
     }
 
     @Nullable
@@ -68,9 +59,19 @@ public abstract class BaseNMSMethod implements INMSMethod {
         return classFunctionCache.get(name).apply(parameters);
     }
 
+    @Nullable
+    protected NMSClassFunction getNewFunction(String name) {
+        return classFunctionCache.get(name).clone();
+    }
+
+    @Nullable
+    protected NMSMethodConsumer getNewConsumer(String name, Object obj) {
+        return methodConsumerCache.get(name).toNew(obj);
+    }
+
     @Override
     public Object chunkGetWorld(Object chunk) {
-        return getField("chunkGetWorld", NMSClassName.Chunk, chunk);
+        return getField("chunkGetWorld", chunk);
     }
 
     @Override
@@ -80,7 +81,7 @@ public abstract class BaseNMSMethod implements INMSMethod {
 
     @Override
     public Object worldGetStructureFeatureRegistry(Object world) {
-        return invokeMethod("worldGetStructureFeatureRegistry2", invokeMethod("worldGetStructureFeatureRegistry1", world), getField("worldGetStructureFeatureRegistry3", NMSClassName.IRegistry, null));
+        return invokeMethod("worldGetStructureFeatureRegistry2", invokeMethod("worldGetStructureFeatureRegistry1", world), getField("worldGetStructureFeatureRegistry3", null));
     }
 
     @Override
@@ -90,12 +91,12 @@ public abstract class BaseNMSMethod implements INMSMethod {
 
     @Override
     public Object worldGetWorldData(Object world) {
-        return getField("worldGetWorldData", NMSClassName.WorldServer, world);
+        return getField("worldGetWorldData", world);
     }
 
     @Override
     public Object worldGetOverloadWorldKey() {
-        return getField("worldGetOverloadWorldKey", NMSClassName.World, null);
+        return getField("worldGetOverloadWorldKey", null);
     }
 
     @Override
@@ -135,27 +136,17 @@ public abstract class BaseNMSMethod implements INMSMethod {
 
     @Override
     public Object playerGetWorld(Object player) {
-        return getField("playerGetWorld", NMSClassName.EntityPlayer, player);
+        return getField("playerGetWorld", player);
     }
 
     @Override
     public NMSMethodConsumer playerGetPacketConsumer(Object player) {
-        try {
-            return new NMSMethodConsumer(NMSMethodDescribe.of(NMSClassName.PlayerConnection, "a", NMSHelper.getNMSClass(NMSClassName.Packet)), getField("playerGetPacketConsumer", NMSClassName.EntityPlayer, player));
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return getNewConsumer("playerGetPacketConsumer2", getField("playerGetPacketConsumer1", player));
     }
 
     @Override
     public NMSClassFunction packetPlayOutCustomPayloadNewFunction() {
-        try {
-            return new NMSClassFunction(NMSClassName.PacketPlayOutCustomPayload, NMSHelper.getNMSClass(NMSClassName.MinecraftKey), NMSHelper.getNMSClass(NMSClassName.PacketPlayOutCustomPayload));
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return getNewFunction("packetPlayOutCustomPayloadNewFunction");
     }
 
     @Override
