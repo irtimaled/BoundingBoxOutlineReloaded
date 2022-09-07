@@ -33,7 +33,7 @@ public final class BukkitMod extends JavaPlugin {
         }
 
         if (!NMSHelper.init(this)) {
-            Logger.error("Version Helper init error");
+            Logger.error("NMSHelper Helper init error");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }

@@ -10,12 +10,6 @@ targetCompatibility = 1.17
 repositories {
     mavenCentral()
     maven {
-        url = 'https://papermc.io/repo/repository/maven-releases/'
-    }
-    maven {
-        url "https://libraries.minecraft.net"
-    }
-    maven {
         name = 'spigotmc-repo'
         url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
     }
