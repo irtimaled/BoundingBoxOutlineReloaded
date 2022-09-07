@@ -15,6 +15,7 @@ import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.jetbrains.annotations.NotNull;
 
 public class Events implements Listener, PluginMessageListener {
+
     private boolean active;
 
     @EventHandler

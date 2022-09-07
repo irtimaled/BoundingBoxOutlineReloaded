@@ -12,23 +12,8 @@ public class NMSMethodInvoker {
 
     public NMSMethodInvoker(@NotNull NMSMethodDescribe describe) throws NoSuchMethodException {
         this.nmsClass = NMSHelper.getNMSClass(describe.className());
-        this.method = getMethod(describe);
+        this.method = describe.getMethod();
         this.method.setAccessible(true);
-    }
-
-    @NotNull
-    private static Method getMethod(@NotNull NMSMethodDescribe describe) throws NoSuchMethodException {
-        Class<?> clazz = NMSHelper.getNMSClass(describe.className());
-
-        do {
-            try {
-                return clazz.getDeclaredMethod(describe.methodName(), describe.parameterTypes());
-            } catch (NoSuchMethodException e) {
-                clazz = clazz.getSuperclass();
-            }
-        } while (clazz.getSuperclass() != null);
-
-        throw new NoSuchMethodException(describe.methodName());
     }
 
     public Object invoke(Object obj, Object... parameters) {

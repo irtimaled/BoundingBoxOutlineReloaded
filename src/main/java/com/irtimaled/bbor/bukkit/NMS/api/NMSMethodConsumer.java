@@ -15,7 +15,7 @@ public class NMSMethodConsumer {
     public NMSMethodConsumer(@NotNull NMSMethodDescribe describe, @Nullable Object object) throws NoSuchMethodException {
         this.object = object;
         this.nmsClass = NMSHelper.getNMSClass(describe.className());
-        this.method = nmsClass.getDeclaredMethod(describe.methodName(), describe.parameterTypes());
+        this.method = describe.getMethod();
         this.method.setAccessible(true);
     }
 
