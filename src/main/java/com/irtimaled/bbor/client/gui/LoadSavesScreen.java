@@ -27,8 +27,9 @@ public class LoadSavesScreen extends ListScreen {
         try {
             final LevelStorage saveLoader = this.client.getLevelStorage();
             final List<LevelSummary> saveList = saveLoader.loadSummaries(saveLoader.getLevelList()).join();
-            saveList.sort(null);
-            saveList.forEach(world -> controlList.add(new WorldSaveRow(world, saveLoader, controlList::setSelectedEntry)));
+            saveList.stream()
+                    .sorted()
+                    .forEach(world -> controlList.add(new WorldSaveRow(world, saveLoader, controlList::setSelectedEntry)));
         } catch (LevelStorageException e) {
             e.printStackTrace();
         }
