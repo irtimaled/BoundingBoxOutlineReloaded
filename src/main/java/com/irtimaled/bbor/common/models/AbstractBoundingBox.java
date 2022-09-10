@@ -3,6 +3,7 @@ package com.irtimaled.bbor.common.models;
 import com.irtimaled.bbor.common.BoundingBoxType;
 
 public abstract class AbstractBoundingBox {
+
     private final BoundingBoxType type;
 
     protected AbstractBoundingBox(BoundingBoxType type) {

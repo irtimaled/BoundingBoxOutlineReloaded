@@ -1,74 +1,77 @@
 package com.irtimaled.bbor.common.messages;
 
+import com.irtimaled.bbor.bukkit.NMS.NMSHelper;
+import com.irtimaled.bbor.bukkit.NMS.api.NMSClassFunction;
+import com.irtimaled.bbor.bukkit.NMS.api.NMSClassName;
 import com.irtimaled.bbor.common.models.Coords;
 import com.irtimaled.bbor.common.models.DimensionId;
 import io.netty.buffer.Unpooled;
-import net.minecraft.network.PacketDataSerializer;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.PacketPlayOutCustomPayload;
-import net.minecraft.resources.MinecraftKey;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiFunction;
 
 public class PayloadBuilder {
-    private static final Map<String, MinecraftKey> packetNames = new HashMap<>();
 
+    private static final Map<String, Object> packetNames = new HashMap<>();
+
+    @NotNull
+    @Contract("_ -> new")
     static PayloadBuilder clientBound(String name) {
-        return new PayloadBuilder(packetNames.computeIfAbsent(name, MinecraftKey::new), PacketPlayOutCustomPayload::new);
+        return new PayloadBuilder(packetNames.computeIfAbsent(name, NMSHelper::minecraftKeyNew), NMSHelper.packetPlayOutCustomPayloadNewFunction());
     }
 
-    private final MinecraftKey name;
-    private final BiFunction<MinecraftKey, PacketDataSerializer, Packet<?>> packetBuilder;
-    private final PacketDataSerializer buffer;
+    private final Object name;
+    private final NMSClassFunction packetBuilder;
+    private final Object buffer;
 
-    private PayloadBuilder(MinecraftKey name, BiFunction<MinecraftKey, PacketDataSerializer, Packet<?>> packetBuilder) {
+    private PayloadBuilder(Object name, NMSClassFunction packetBuilder) {
         this.name = name;
-        this.buffer = new PacketDataSerializer(Unpooled.buffer());
+        this.buffer = NMSHelper.packetDataSerializerNew(Unpooled.buffer());
         this.packetBuilder = packetBuilder;
     }
 
-    private Packet<?> packet;
+    private Object packet;
 
-    public Packet<?> build() {
+    public Object build() {
         if (packet == null)
             packet = packetBuilder.apply(name, buffer);
         return packet;
     }
 
     PayloadBuilder writeLong(long value) {
-        buffer.writeLong(value);
+        NMSHelper.packetDataSerializerWriteLong(buffer, value);
         packet = null;
         return this;
     }
 
     PayloadBuilder writeInt(int value) {
-        buffer.writeInt(value);
+        NMSHelper.packetDataSerializerWriteInt(buffer, value);
         packet = null;
         return this;
     }
 
     PayloadBuilder writeVarInt(int value) {
-        buffer.d(value);
+        NMSHelper.packetDataSerializerWriteVarInt(buffer, value);
         packet = null;
         return this;
     }
 
     PayloadBuilder writeChar(char value) {
-        buffer.writeChar(value);
+        NMSHelper.packetDataSerializerWriteChar(buffer, value);
         packet = null;
         return this;
     }
 
-    PayloadBuilder writeCoords(Coords coords) {
+    PayloadBuilder writeCoords(@NotNull Coords coords) {
         return writeVarInt(coords.getX())
                 .writeVarInt(coords.getY())
                 .writeVarInt(coords.getZ());
     }
 
-    public PayloadBuilder writeDimensionId(DimensionId dimensionId) {
-        buffer.a(dimensionId.value());
+    public PayloadBuilder writeDimensionId(@NotNull DimensionId dimensionId) {
+        NMSHelper.packetDataSerializerWriteMinecraftKey(buffer, NMSHelper.cast(NMSClassName.MinecraftKey, dimensionId.value()));
         packet = null;
         return this;
     }

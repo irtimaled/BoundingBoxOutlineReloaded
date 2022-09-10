@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class BoundingBoxType {
+
     private static final Map<Integer, BoundingBoxType> structureTypeMap = new HashMap<>();
 
     public static final BoundingBoxType WorldSpawn = register("World_Spawn");

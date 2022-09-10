@@ -4,6 +4,7 @@ import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.TypeHelper;
 
 public class Coords {
+
     private final int x;
     private final int y;
     private final int z;
