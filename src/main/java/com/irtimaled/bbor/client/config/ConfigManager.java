@@ -46,6 +46,7 @@ public class ConfigManager {
     public static Setting<Boolean> drawBeacons;
     public static Setting<Boolean> drawBiomeBorders;
     public static Setting<Boolean> renderOnlyCurrentBiome;
+    public static Setting<Boolean> drawBiomeBorderOutline;
     public static Setting<Integer> biomeBordersRenderDistance;
 //    public static Setting<Integer> biomeBordersMaxY;
     //    public static Setting<Boolean> drawNetherFossils;
@@ -164,7 +165,7 @@ public class ConfigManager {
         renderSphereAsDots = setup(config, "general", "renderSphereAsDots", false, "If set to true spheres will be rendered as dots.");
         buttonOnOverlay = setup(config, "general", "buttonEnabledOverlay", HexColor.from("#3000ff00"), "The color and alpha of the button overlay when a button is on.");
         fastRender = setup(config, "general", "fastRender", 2, "Fast render settings. Higher value for faster rendering. ");
-        asyncBuilding = setup(config, "general", "asyncBuilding", false, "Whether to use async building for non-gpu-bottlenecked cases ");
+        asyncBuilding = setup(config, "general", "asyncBuilding", true, "Whether to use async building for non-gpu-bottlenecked cases ");
 
         drawBeacons = setup(config, "beacons", "drawBeacons", true, "If set to true beacon bounding boxes will be drawn.");
 
@@ -173,6 +174,7 @@ public class ConfigManager {
 
         drawBiomeBorders = setup(config, "biomeBorders", "drawBiomeBorders", true, "If set to true biome borders will be drawn.");
         renderOnlyCurrentBiome = setup(config, "biomeBorders", "renderOnlyCurrentBiome", true, "If set to true only the biome border for the current biome will be drawn.");
+        drawBiomeBorderOutline = setup(config, "biomeBorders", "drawBiomeBorderOutline", false, "If set to true biome borders will be drawn with outline.");
         biomeBordersRenderDistance = setup(config, "biomeBorders", "biomeBordersRenderDistance", 3, "The distance from the player where biome borders will be drawn.");
 //        biomeBordersMaxY = setup(config, "biomeBorders", "biomeBordersMaxY", -1, "The maximum top of the biome borders. If set to -1 it will use the value when activated, if set to 0 it will always track the players feet.");
 

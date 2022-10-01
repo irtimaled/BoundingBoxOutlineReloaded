@@ -14,24 +14,26 @@ public class BiomeBorderRenderer extends AbstractRenderer<BoundingBoxBiomeBorder
         final OffsetPoint offsetPoint = new OffsetPoint(coords);
 
         Color color = BoundingBoxTypeHelper.getColor(boundingBox.getType());
+        boolean fillOnly = !ConfigManager.drawBiomeBorderOutline.get();
+
         if (boundingBox.renderNorth()) { // z - 1
-            renderCuboid(ctx, new OffsetBox(offsetPoint.offset(0, 0, 0), offsetPoint.offset(1, -1, 0)), color, false, 30);
+            renderCuboid(ctx, new OffsetBox(offsetPoint.offset(0, 0, 0), offsetPoint.offset(1, -1, 0)), color, fillOnly, 30);
         }
         if (boundingBox.renderWest()) { // x - 1
-            renderCuboid(ctx, new OffsetBox(offsetPoint.offset(0, 0, 0), offsetPoint.offset(0, -1, 1)), color, false, 30);
+            renderCuboid(ctx, new OffsetBox(offsetPoint.offset(0, 0, 0), offsetPoint.offset(0, -1, 1)), color, fillOnly, 30);
         }
         if (boundingBox.renderDown()) { // y - 1
-            renderCuboid(ctx, new OffsetBox(offsetPoint.offset(0, -1, 0), offsetPoint.offset(1, -1, 1)), color, false, 30);
+            renderCuboid(ctx, new OffsetBox(offsetPoint.offset(0, -1, 0), offsetPoint.offset(1, -1, 1)), color, fillOnly, 30);
         }
         if (ConfigManager.renderOnlyCurrentBiome.get()) {
             if (boundingBox.renderSouth()) {
-                renderCuboid(ctx, new OffsetBox(offsetPoint.offset(0, 0, 1), offsetPoint.offset(1, -1, 1)), color, false, 30);
+                renderCuboid(ctx, new OffsetBox(offsetPoint.offset(0, 0, 1), offsetPoint.offset(1, -1, 1)), color, fillOnly, 30);
             }
             if (boundingBox.renderEast()) {
-                renderCuboid(ctx, new OffsetBox(offsetPoint.offset(1, 0, 0), offsetPoint.offset(1, -1, 1)), color, false, 30);
+                renderCuboid(ctx, new OffsetBox(offsetPoint.offset(1, 0, 0), offsetPoint.offset(1, -1, 1)), color, fillOnly, 30);
             }
             if (boundingBox.renderUp()) {
-                renderCuboid(ctx, new OffsetBox(offsetPoint.offset(0, 0, 0), offsetPoint.offset(1, 0, 1)), color, false, 30);
+                renderCuboid(ctx, new OffsetBox(offsetPoint.offset(0, 0, 0), offsetPoint.offset(1, 0, 1)), color, fillOnly, 30);
             }
         }
     }

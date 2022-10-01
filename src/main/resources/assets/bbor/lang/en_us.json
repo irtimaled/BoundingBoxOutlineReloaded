@@ -45,6 +45,7 @@
 
   "bbor.features.biomeBorders": "Biome Borders",
   "bbor.features.renderOnlyCurrentBiome": "Only Current Biome",
+  "bbor.features.drawBiomeBorderOutline": "Draw Outline",
 
   "bbor.features.flowerForests": "Flower Forests",
 
