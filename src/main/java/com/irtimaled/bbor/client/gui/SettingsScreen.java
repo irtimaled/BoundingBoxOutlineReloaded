@@ -69,6 +69,7 @@ public class SettingsScreen extends ListScreen {
                         width -> new MaxYSettingSlider(width, 39, ConfigManager.slimeChunkMaxY))
                 .section(I18n.translate("bbor.features.biomeBorders"),
                         width -> new BoundingBoxTypeButton(width, I18n.translate("bbor.features.biomeBorders"), BoundingBoxType.BiomeBorder),
+                        width -> new BoolSettingButton(width, I18n.translate("bbor.features.renderOnlyCurrentBiome"), ConfigManager.renderOnlyCurrentBiome),
                         width -> new IntSettingSlider(width, 1, ClientInterop.getRenderDistanceChunks(), "bbor.options.distance", ConfigManager.biomeBordersRenderDistance))
                 .section(I18n.translate("bbor.features.flowerForests"),
                         width -> new BoundingBoxTypeButton(width, I18n.translate("bbor.features.flowerForests"), BoundingBoxType.FlowerForest),

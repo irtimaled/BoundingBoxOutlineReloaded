@@ -123,7 +123,8 @@ public class ClientRenderer {
         }
 
         Point point = Player.getPoint();
-        listForRendering.sort(Comparator.comparingDouble((AbstractBoundingBox boundingBox) -> boundingBox.getDistance(point.getX(), point.getY(), point.getZ())).reversed());
+        final Comparator<AbstractBoundingBox> comp = Comparator.comparingDouble((AbstractBoundingBox boundingBox) -> -boundingBox.getDistance(point.getX(), point.getY(), point.getZ()));
+//        listForRendering.unstableSort(comp);
 
         return listForRendering;
     }
@@ -131,6 +132,12 @@ public class ClientRenderer {
     public static void clear() {
         for (IBoundingBoxProvider<?> provider : providers) {
             TypeHelper.doIfType(provider, ICachingProvider.class, ICachingProvider::clearCache);
+        }
+    }
+
+    public static void doCleanup() {
+        for (IBoundingBoxProvider<?> provider : providers) {
+            provider.cleanup();
         }
     }
 

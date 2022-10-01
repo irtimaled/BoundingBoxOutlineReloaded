@@ -40,6 +40,7 @@ public class AsyncRenderer {
     };
     private static int currentAsyncContext = -1;
     private static CompletableFuture<Void> buildingFuture = null;
+    private static boolean lastActive = false;
     private static boolean toDiscardBuild = false;
     private static long lastBuildTime = System.currentTimeMillis();
     private static AtomicLong lastDurationNanos = new AtomicLong(0L);
@@ -50,19 +51,25 @@ public class AsyncRenderer {
         runCleanup();
 
         if (!ClientRenderer.getActive()) {
-            // invalidate async things
-            if (currentAsyncContext != -1) {
-                currentAsyncContext = -1;
-                toDiscardBuild = true;
-            }
-            DEFAULT.hardReset();
-            if (buildingFuture == null) {
-                for (RenderingContext context : asyncContexts) {
-                    context.hardReset();
+            if (lastActive) {
+                lastActive = false;
+                // invalidate async things
+                if (currentAsyncContext != -1) {
+                    currentAsyncContext = -1;
+                    toDiscardBuild = true;
                 }
+                DEFAULT.hardReset();
+                if (buildingFuture == null) {
+                    for (RenderingContext context : asyncContexts) {
+                        context.hardReset();
+                    }
+                }
+                ClientRenderer.doCleanup();
             }
             return;
         }
+
+        lastActive = true;
 
         long startTime = System.nanoTime();
         RenderHelper.beforeRender();
@@ -147,13 +154,16 @@ public class AsyncRenderer {
         ctx.reset();
         ctx.beginBatch();
 
-        final List<AbstractBoundingBox> boundingBoxes = ClientRenderer.getBoundingBoxes(dimensionId);
-        RenderCulling.flushPreRendering();
-        for (AbstractBoundingBox key : boundingBoxes) {
-            AbstractRenderer renderer = key.getRenderer();
-            if (renderer != null) renderer.render(ctx, key);
+        try {
+            final List<AbstractBoundingBox> boundingBoxes = ClientRenderer.getBoundingBoxes(dimensionId);
+            RenderCulling.flushPreRendering();
+            for (AbstractBoundingBox key : boundingBoxes) {
+                AbstractRenderer renderer = key.getRenderer();
+                if (renderer != null) renderer.render(ctx, key);
+            }
+        } finally {
+            ctx.endBatch();
         }
-        ctx.endBatch();
     }
 
     public static long getLastDurationNanos() {

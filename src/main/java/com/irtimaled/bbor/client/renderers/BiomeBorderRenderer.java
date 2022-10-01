@@ -1,6 +1,7 @@
 package com.irtimaled.bbor.client.renderers;
 
 import com.irtimaled.bbor.client.config.BoundingBoxTypeHelper;
+import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.models.BoundingBoxBiomeBorder;
 import com.irtimaled.bbor.common.models.Coords;
 
@@ -19,18 +20,20 @@ public class BiomeBorderRenderer extends AbstractRenderer<BoundingBoxBiomeBorder
         if (boundingBox.renderWest()) { // x - 1
             renderCuboid(ctx, new OffsetBox(offsetPoint.offset(0, 0, 0), offsetPoint.offset(0, -1, 1)), color, false, 30);
         }
-        if (boundingBox.renderDown()) {
+        if (boundingBox.renderDown()) { // y - 1
             renderCuboid(ctx, new OffsetBox(offsetPoint.offset(0, -1, 0), offsetPoint.offset(1, -1, 1)), color, false, 30);
         }
-//        if (ConfigManager.renderOnlyCurrentBiome.get()) {
-//            OffsetPoint southEast = southWest.offset(1, 0, 0);
-//            if (boundingBox.renderSouth()) {
-//                render(ctx, southWest, southEast, color);
-//            }
-//            if (boundingBox.renderEast()) {
-//                render(ctx, northEast, southEast, color);
-//            }
-//        }
+        if (ConfigManager.renderOnlyCurrentBiome.get()) {
+            if (boundingBox.renderSouth()) {
+                renderCuboid(ctx, new OffsetBox(offsetPoint.offset(0, 0, 1), offsetPoint.offset(1, -1, 1)), color, false, 30);
+            }
+            if (boundingBox.renderEast()) {
+                renderCuboid(ctx, new OffsetBox(offsetPoint.offset(1, 0, 0), offsetPoint.offset(1, -1, 1)), color, false, 30);
+            }
+            if (boundingBox.renderUp()) {
+                renderCuboid(ctx, new OffsetBox(offsetPoint.offset(0, 0, 0), offsetPoint.offset(1, 0, 1)), color, false, 30);
+            }
+        }
     }
 
     private double getOffset(double value) {

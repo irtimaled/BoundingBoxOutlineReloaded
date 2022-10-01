@@ -1,5 +1,6 @@
 package com.irtimaled.bbor.client.interop;
 
+import com.irtimaled.bbor.common.EventBus;
 import com.irtimaled.bbor.common.models.Coords;
 import it.unimi.dsi.fastutil.longs.Long2IntMap;
 import it.unimi.dsi.fastutil.longs.Long2IntMaps;
@@ -14,6 +15,10 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.registry.Registry;
 
 public class BiomeBorderHelper {
+
+    static {
+        EventBus.subscribe(ClientWorldUpdateTracker.WorldResetEvent.class, worldResetEvent -> onDisconnect());
+    }
 
     private static final Long2ObjectMap<Long2IntMap> biomeCache = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<>());
 
@@ -37,6 +42,9 @@ public class BiomeBorderHelper {
         BlockPos pos = new BlockPos(x, y, z);
         final Long2IntMap biomeArray = biomeCache.computeIfAbsent(ChunkPos.toLong(pos), key -> createNewMap());
         final ClientWorld world = MinecraftClient.getInstance().world;
+//        if (true) {
+//            return world.getRegistryManager().get(Registry.BIOME_KEY).getRawId(world.getBiome(pos).value());
+//        }
         return biomeArray.computeIfAbsent(pos.asLong(), key -> {
             assert world != null;
             return world.getRegistryManager().get(Registry.BIOME_KEY).getRawId(world.getBiome(pos).value());
@@ -44,7 +52,7 @@ public class BiomeBorderHelper {
     }
 
     private static Long2IntMap createNewMap() {
-        final Long2IntOpenHashMap long2IntOpenHashMap = new Long2IntOpenHashMap();
+        final Long2IntOpenHashMap long2IntOpenHashMap = new Long2IntOpenHashMap(256);
         long2IntOpenHashMap.defaultReturnValue(-1);
         return Long2IntMaps.synchronize(long2IntOpenHashMap);
     }

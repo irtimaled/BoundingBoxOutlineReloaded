@@ -9,4 +9,7 @@ public interface IBoundingBoxProvider<T extends AbstractBoundingBox> {
     default boolean canProvide(DimensionId dimensionId) {
         return true;
     }
+
+    default void cleanup() {
+    }
 }

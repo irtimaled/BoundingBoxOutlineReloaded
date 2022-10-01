@@ -44,6 +44,7 @@
   "bbor.features.spawnableBlocks": "Spawnable Blocks",
 
   "bbor.features.biomeBorders": "Biome Borders",
+  "bbor.features.renderOnlyCurrentBiome": "Only Current Biome",
 
   "bbor.features.flowerForests": "Flower Forests",
 
