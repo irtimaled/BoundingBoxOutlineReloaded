@@ -5,6 +5,7 @@ import com.irtimaled.bbor.client.interop.ClientInterop;
 import com.irtimaled.bbor.client.models.Point;
 import com.irtimaled.bbor.client.providers.BeaconProvider;
 import com.irtimaled.bbor.client.providers.BedrockCeilingProvider;
+import com.irtimaled.bbor.client.providers.BiomeBorderProvider;
 import com.irtimaled.bbor.client.providers.ConduitProvider;
 import com.irtimaled.bbor.client.providers.CustomBeaconProvider;
 import com.irtimaled.bbor.client.providers.CustomBoxProvider;
@@ -66,7 +67,7 @@ public class ClientRenderer {
         registerProvider(new BeaconProvider());
         registerProvider(new CustomBoxProvider());
         registerProvider(new CustomBeaconProvider());
-//        registerProvider(new BiomeBorderProvider());
+        registerProvider(new BiomeBorderProvider());
         registerProvider(new MobSpawnerProvider());
         registerProvider(new ConduitProvider());
         registerProvider(new SpawnableBlocksProvider());

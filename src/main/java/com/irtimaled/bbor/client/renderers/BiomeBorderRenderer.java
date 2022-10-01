@@ -1,7 +1,6 @@
 package com.irtimaled.bbor.client.renderers;
 
 import com.irtimaled.bbor.client.config.BoundingBoxTypeHelper;
-import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.models.BoundingBoxBiomeBorder;
 import com.irtimaled.bbor.common.models.Coords;
 
@@ -11,45 +10,27 @@ public class BiomeBorderRenderer extends AbstractRenderer<BoundingBoxBiomeBorder
     @Override
     public void render(RenderingContext ctx, BoundingBoxBiomeBorder boundingBox) {
         Coords coords = boundingBox.getCoords();
-        OffsetPoint northWest = new OffsetPoint(coords).offset(0, 0.001F, 0);
-        OffsetPoint northEast = northWest.offset(1, 0, 0);
-        OffsetPoint southWest = northWest.offset(0, 0, 1);
+        final OffsetPoint offsetPoint = new OffsetPoint(coords);
 
         Color color = BoundingBoxTypeHelper.getColor(boundingBox.getType());
-        if (boundingBox.renderNorth()) {
-            render(ctx, northWest, northEast, color);
+        if (boundingBox.renderNorth()) { // z - 1
+            renderCuboid(ctx, new OffsetBox(offsetPoint.offset(0, 0, 0), offsetPoint.offset(1, -1, 0)), color, false, 30);
         }
-        if (boundingBox.renderWest()) {
-            render(ctx, northWest, southWest, color);
+        if (boundingBox.renderWest()) { // x - 1
+            renderCuboid(ctx, new OffsetBox(offsetPoint.offset(0, 0, 0), offsetPoint.offset(0, -1, 1)), color, false, 30);
         }
-        if (ConfigManager.renderOnlyCurrentBiome.get()) {
-            OffsetPoint southEast = southWest.offset(1, 0, 0);
-            if (boundingBox.renderSouth()) {
-                render(ctx, southWest, southEast, color);
-            }
-            if (boundingBox.renderEast()) {
-                render(ctx, northEast, southEast, color);
-            }
+        if (boundingBox.renderDown()) {
+            renderCuboid(ctx, new OffsetBox(offsetPoint.offset(0, -1, 0), offsetPoint.offset(1, -1, 1)), color, false, 30);
         }
-    }
-
-    private void render(RenderingContext ctx, OffsetPoint topCorner1, OffsetPoint topCorner2, Color color) {
-        double xOffset = 0d;
-        double zOffset = 0d;
-        if (topCorner1.getX() == topCorner2.getX()) {
-            xOffset = getOffset(topCorner1.getX());
-        } else {
-            zOffset = getOffset(topCorner1.getZ());
-        }
-
-        topCorner1 = topCorner1.offset(xOffset, 0, zOffset);
-        topCorner2 = topCorner2.offset(xOffset, 0, zOffset);
-
-        renderLine(ctx, topCorner1, topCorner2, color, false);
-        OffsetPoint bottomCorner2 = topCorner2.offset(0, 1, 0);
-        renderCuboid(ctx, new OffsetBox(topCorner1, bottomCorner2), color, true, 30);
-        OffsetPoint bottomCorner1 = topCorner1.offset(0, 1, 0);
-        renderLine(ctx, bottomCorner1, bottomCorner2, color, false);
+//        if (ConfigManager.renderOnlyCurrentBiome.get()) {
+//            OffsetPoint southEast = southWest.offset(1, 0, 0);
+//            if (boundingBox.renderSouth()) {
+//                render(ctx, southWest, southEast, color);
+//            }
+//            if (boundingBox.renderEast()) {
+//                render(ctx, northEast, southEast, color);
+//            }
+//        }
     }
 
     private double getOffset(double value) {

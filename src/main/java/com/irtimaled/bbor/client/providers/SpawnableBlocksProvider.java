@@ -142,8 +142,8 @@ public class SpawnableBlocksProvider implements IBoundingBoxProvider<BoundingBox
         }
     }
 
-    public static String debugString() {
-        return "[BBOR] Pending spawnable blocks update: %d".formatted(queuedUpdateChunks.size());
+    public static int pendingUpdates() {
+        return queuedUpdateChunks.size();
     }
 
     public void clearCache() {

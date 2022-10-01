@@ -16,14 +16,18 @@ public class BoundingBoxBiomeBorder extends AbstractBoundingBox {
     private final boolean east;
     private final boolean south;
     private final boolean west;
+    private final boolean up;
+    private final boolean down;
 
-    public BoundingBoxBiomeBorder(Coords coords, boolean north, boolean east, boolean south, boolean west) {
+    public BoundingBoxBiomeBorder(Coords coords, boolean north, boolean east, boolean south, boolean west, boolean up, boolean down) {
         super(BoundingBoxType.BiomeBorder);
         this.coords = coords;
         this.north = north;
         this.east = east;
         this.south = south;
         this.west = west;
+        this.up = up;
+        this.down = down;
     }
 
     @Override
@@ -67,6 +71,14 @@ public class BoundingBoxBiomeBorder extends AbstractBoundingBox {
 
     public boolean renderWest() {
         return west;
+    }
+
+    public boolean renderUp() {
+        return up;
+    }
+
+    public boolean renderDown() {
+        return down;
     }
 
     @Override

@@ -4,22 +4,116 @@ import com.irtimaled.bbor.client.Player;
 import com.irtimaled.bbor.client.config.BoundingBoxTypeHelper;
 import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.interop.BiomeBorderHelper;
+import com.irtimaled.bbor.client.interop.ClientWorldUpdateTracker;
 import com.irtimaled.bbor.client.models.BoundingBoxBiomeBorder;
 import com.irtimaled.bbor.common.BoundingBoxType;
-import com.irtimaled.bbor.common.MathHelper;
+import com.irtimaled.bbor.common.EventBus;
 import com.irtimaled.bbor.common.models.Coords;
 import com.irtimaled.bbor.common.models.DimensionId;
-import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMaps;
+import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.ChunkSectionPos;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
 
 public class BiomeBorderProvider implements IBoundingBoxProvider<BoundingBoxBiomeBorder>, ICachingProvider {
-    private static Coords lastPlayerCoords = null;
-    private static Boolean lastRenderAllTransitions = null;
-    private static Integer lastRenderDistance = null;
-    private static Integer lastMaxY = null;
-    private static Map<Coords, BoundingBoxBiomeBorder> lastBorders = new Object2ObjectLinkedOpenHashMap<>();
+
+    private static final ObjectLinkedOpenHashSet<ChunkPos> queuedUpdateChunks = new ObjectLinkedOpenHashSet<>();
+
+    public static void runQueuedTasks() {
+        if (queuedUpdateChunks.isEmpty()) return;
+        ChunkPos pos = queuedUpdateChunks.removeFirst();
+        final ClientWorld world = MinecraftClient.getInstance().world;
+        for (int y = world.getBottomSectionCoord(); y < world.getTopSectionCoord(); y ++) {
+            final long key = ChunkSectionPos.asLong(pos.x, y, pos.z);
+            final BiomeBorderChunkSection chunk = chunks.get(key);
+            if (chunk != null) {
+                chunk.findBoxesFromBlockState(pos.getStartX(), y, pos.getStartZ());
+            } else {
+                chunks.put(key, new BiomeBorderChunkSection(pos.x, y, pos.z));
+            }
+        }
+    }
+
+    private static final Long2ObjectMap<BiomeBorderChunkSection> chunks = Long2ObjectMaps.synchronize(new Long2ObjectLinkedOpenHashMap<>());
+
+    private static class BiomeBorderChunkSection {
+
+        private static int getIndex(int x, int y, int z) {
+            return (y & 0b1111) << 8 | (z & 0b1111) << 4 | (x & 0b1111);
+        }
+
+        private final BoundingBoxBiomeBorder[] boxes = new BoundingBoxBiomeBorder[16 * 16 * 16];
+
+        public BiomeBorderChunkSection(int chunkX, int sectionY, int chunkZ) {
+            int chunkStartX = ChunkSectionPos.getBlockCoord(chunkX);
+            int chunkStartY = ChunkSectionPos.getBlockCoord(sectionY);
+            int chunkStartZ = ChunkSectionPos.getBlockCoord(chunkZ);
+
+            findBoxesFromBlockState(chunkStartX, chunkStartY, chunkStartZ);
+        }
+
+        private void findBoxesFromBlockState(int chunkStartX, int chunkStartY, int chunkStartZ) {
+            for (int x = 0; x < 16; x++) {
+                for (int y = 0; y < 16; y ++) {
+                    for (int z = 0; z < 16; z++) {
+                        findBoxFromBlockState(chunkStartX + x, chunkStartY + y, chunkStartZ + z);
+                    }
+                }
+            }
+        }
+
+        private void findBoxFromBlockState(int x, int y, int z) {
+            boxes[getIndex(x, y, z)] = getBox(x, y, z);
+        }
+
+        private BoundingBoxBiomeBorder getBox(int x, int y, int z) {
+            int currentBiomeId = BiomeBorderHelper.getBiomeId(x, y, z);
+            // fetch neighbor ids
+            int northBiomeId = BiomeBorderHelper.getBiomeId(x, y, z - 1);
+            int southBiomeId = BiomeBorderHelper.getBiomeId(x, y, z + 1);
+            int westBiomeId = BiomeBorderHelper.getBiomeId(x - 1, y, z);
+            int eastBiomeId = BiomeBorderHelper.getBiomeId(x + 1, y, z);
+            int upBiomeId = BiomeBorderHelper.getBiomeId(x, y + 1, z);
+            int downBiomeId = BiomeBorderHelper.getBiomeId(x, y - 1, z);
+
+            return new BoundingBoxBiomeBorder(
+                    new Coords(x, y, z),
+                    northBiomeId != currentBiomeId,
+                    eastBiomeId != currentBiomeId,
+                    southBiomeId != currentBiomeId,
+                    westBiomeId != currentBiomeId,
+                    upBiomeId != currentBiomeId,
+                    downBiomeId != currentBiomeId
+            );
+        }
+
+        public BoundingBoxBiomeBorder[] getBlocks() {
+            return boxes;
+        }
+    }
+
+    {
+        EventBus.subscribe(ClientWorldUpdateTracker.ChunkLoadEvent.class, event -> {
+            queuedUpdateChunks.add(new ChunkPos(event.x(), event.z()));
+        });
+        EventBus.subscribe(ClientWorldUpdateTracker.ChunkUnloadEvent.class, event -> {
+            queuedUpdateChunks.remove(new ChunkPos(event.x(), event.z()));
+            final ClientWorld world = MinecraftClient.getInstance().world;
+            for (int y = world.getBottomSectionCoord(); y < world.getTopSectionCoord(); y ++) {
+                chunks.remove(ChunkSectionPos.asLong(event.x(), y, event.z()));
+            }
+        });
+        EventBus.subscribe(ClientWorldUpdateTracker.WorldResetEvent.class, event -> {
+            chunks.clear();
+            queuedUpdateChunks.clear();
+        });
+    }
 
     @Override
     public boolean canProvide(DimensionId dimensionId) {
@@ -28,78 +122,37 @@ public class BiomeBorderProvider implements IBoundingBoxProvider<BoundingBoxBiom
 
     @Override
     public Iterable<BoundingBoxBiomeBorder> get(DimensionId dimensionId) {
-        Coords playerCoords = Player.getCoords();
-        Integer renderDistance = ConfigManager.biomeBordersRenderDistance.get();
-        Boolean renderAllTransitions = !ConfigManager.renderOnlyCurrentBiome.get();
-        Integer maxY = (int) Player.getMaxY(ConfigManager.biomeBordersMaxY.get());
-        if (!playerCoords.equals(lastPlayerCoords) ||
-                !renderDistance.equals(lastRenderDistance) ||
-                renderAllTransitions != lastRenderAllTransitions ||
-                !maxY.equals(lastMaxY)) {
-            lastPlayerCoords = playerCoords;
-            lastRenderDistance = renderDistance;
-            lastRenderAllTransitions = renderAllTransitions;
-            lastMaxY = maxY;
-            lastBorders = getBiomeBorders();
-        }
-        return lastBorders.values();
-    }
+        int renderDistanceChunks = ConfigManager.biomeBordersRenderDistance.get();
+        int playerChunkX = ChunkSectionPos.getSectionCoord(Player.getX());
+        int playerChunkY = ChunkSectionPos.getSectionCoord(Player.getY());
+        int playerChunkZ = ChunkSectionPos.getSectionCoord(Player.getZ());
 
-    public void clearCache() {
-        lastBorders = new HashMap<>();
-        lastPlayerCoords = null;
-    }
+        ArrayList<BoundingBoxBiomeBorder> boxes = new ArrayList<>();
 
-    private Map<Coords, BoundingBoxBiomeBorder> getBiomeBorders() {
-        int renderDistance = lastRenderDistance;
-        Coords playerCoords = lastPlayerCoords;
-        boolean renderAllTransitions = lastRenderAllTransitions;
-        int maxY = lastMaxY;
-
-        int width = MathHelper.floor(Math.pow(2, 3 + renderDistance));
-
-        int blockX = playerCoords.getX();
-        int minX = blockX - width;
-        int maxX = blockX + width;
-
-        int blockZ = playerCoords.getZ();
-        int minZ = blockZ - width;
-        int maxZ = blockZ + width;
-
-        int size = (width * 2) + 1;
-        int[][] biomeIds = new int[size][size];
-        for (int x = minX; x <= maxX; x++) {
-            int matchX = (x - minX);
-            for (int z = minZ; z <= maxZ; z++) {
-                int matchZ = (z - minZ);
-                biomeIds[matchX][matchZ] = BiomeBorderHelper.getBiomeId(x, maxY, z);
-            }
-        }
-
-        int playerBiomeId = BiomeBorderHelper.getBiomeId(playerCoords);
-
-        Map<Coords, BoundingBoxBiomeBorder> borders = new HashMap<>();
-        for (int matchX = 1; matchX < size - 2; matchX++) {
-            for (int matchZ = 1; matchZ < size - 2; matchZ++) {
-                int x = matchX + minX;
-                int z = matchZ + minZ;
-                int biomeId = biomeIds[matchX][matchZ];
-                if (renderAllTransitions || biomeId == playerBiomeId) {
-                    Coords coords = new Coords(x, maxY, z);
-                    if (lastBorders.containsKey(coords)) {
-                        borders.put(coords, lastBorders.get(coords));
-                    } else {
-                        boolean north = biomeIds[matchX][matchZ - 1] != biomeId;
-                        boolean east = biomeIds[matchX + 1][matchZ] != biomeId;
-                        boolean south = biomeIds[matchX][matchZ + 1] != biomeId;
-                        boolean west = biomeIds[matchX - 1][matchZ] != biomeId;
-                        if (north || east || south || west) {
-                            borders.put(coords, new BoundingBoxBiomeBorder(coords, north, east, south, west));
+        for (int chunkX = playerChunkX - renderDistanceChunks; chunkX <= playerChunkX + renderDistanceChunks; chunkX++) {
+            for (int chunkY = playerChunkY - renderDistanceChunks; chunkY <= playerChunkY + renderDistanceChunks; chunkY++) {
+                for (int chunkZ = playerChunkZ - renderDistanceChunks; chunkZ <= playerChunkZ + renderDistanceChunks; chunkZ++) {
+                    long key = ChunkSectionPos.asLong(chunkX, chunkY, chunkZ);
+                    BiomeBorderChunkSection chunk = chunks.get(key);
+                    if (chunk == null) continue;
+                    for (BoundingBoxBiomeBorder box : chunk.getBlocks()) {
+                        if (box != null) {
+                            boxes.add(box);
                         }
                     }
                 }
             }
         }
-        return borders;
+        return boxes;
     }
+
+    public static int pendingUpdates() {
+        return queuedUpdateChunks.size();
+    }
+
+    public void clearCache() {
+        chunks.clear();
+        queuedUpdateChunks.clear();
+    }
+
 }
