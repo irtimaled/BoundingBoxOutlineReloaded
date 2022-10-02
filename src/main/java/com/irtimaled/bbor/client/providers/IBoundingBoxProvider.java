@@ -12,4 +12,7 @@ public interface IBoundingBoxProvider<T extends AbstractBoundingBox> {
 
     default void cleanup() {
     }
+
+    default void tick() {
+    }
 }

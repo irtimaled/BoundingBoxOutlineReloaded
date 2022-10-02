@@ -16,7 +16,8 @@
     "network.play.client.MixinCCustomPayloadPacket",
     "server.MixinMinecraftServer",
     "server.management.MixinPlayerList",
-    "world.chunk.MixinChunk"
+    "world.chunk.MixinChunk",
+    "world.chunk.MixinPalettedContainer"
   ],
   "client": [
     "access.IKeyBinding",

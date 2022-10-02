@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class AsyncRenderer {
@@ -46,6 +47,7 @@ public class AsyncRenderer {
     private static AtomicLong lastDurationNanos = new AtomicLong(0L);
     private static DimensionId lastDimID = null;
     private static RenderingContext lastCtx;
+    private static final AtomicInteger runningBuilds = new AtomicInteger();
 
     static void render(MatrixStack matrixStack, DimensionId dimensionId) {
         runCleanup();
@@ -54,7 +56,7 @@ public class AsyncRenderer {
             if (lastActive) {
                 lastActive = false;
                 // invalidate async things
-                if (currentAsyncContext != -1) {
+                if (buildingFuture != null || currentAsyncContext != -1) {
                     currentAsyncContext = -1;
                     toDiscardBuild = true;
                 }
@@ -64,6 +66,8 @@ public class AsyncRenderer {
                         context.hardReset();
                     }
                 }
+            }
+            if (runningBuilds.get() == 0) {
                 ClientRenderer.doCleanup();
             }
             return;
@@ -153,6 +157,7 @@ public class AsyncRenderer {
     private static void build0(DimensionId dimensionId, RenderingContext ctx) {
         ctx.reset();
         ctx.beginBatch();
+        runningBuilds.incrementAndGet();
 
         try {
             final List<AbstractBoundingBox> boundingBoxes = ClientRenderer.getBoundingBoxes(dimensionId);
@@ -162,6 +167,7 @@ public class AsyncRenderer {
                 if (renderer != null) renderer.render(ctx, key);
             }
         } finally {
+            runningBuilds.decrementAndGet();
             ctx.endBatch();
         }
     }

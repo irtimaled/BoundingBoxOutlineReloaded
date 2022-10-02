@@ -141,4 +141,10 @@ public class ClientRenderer {
         }
     }
 
+    public static void tickProviders() {
+        for (IBoundingBoxProvider<?> provider : providers) {
+            provider.tick();
+        }
+    }
+
 }

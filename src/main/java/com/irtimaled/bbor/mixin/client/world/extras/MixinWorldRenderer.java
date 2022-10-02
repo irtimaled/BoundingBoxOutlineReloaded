@@ -1,6 +1,5 @@
 package com.irtimaled.bbor.mixin.client.world.extras;
 
-import com.irtimaled.bbor.client.providers.BiomeBorderProvider;
 import com.irtimaled.bbor.client.providers.SpawnableBlocksProvider;
 import net.minecraft.client.render.WorldRenderer;
 import org.spongepowered.asm.mixin.Mixin;
@@ -14,7 +13,7 @@ public class MixinWorldRenderer {
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/chunk/light/LightingProvider;doLightUpdates(IZZ)I", shift = At.Shift.AFTER))
     private void afterLightingUpdate(CallbackInfo ci) {
         SpawnableBlocksProvider.runQueuedTasks();
-        BiomeBorderProvider.runQueuedTasks();
+//        BiomeBorderProvider.runQueuedTasks();
     }
 
 }

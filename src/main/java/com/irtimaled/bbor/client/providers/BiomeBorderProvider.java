@@ -15,6 +15,7 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMaps;
 import it.unimi.dsi.fastutil.longs.LongArrayFIFOQueue;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
 import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
 import net.minecraft.client.MinecraftClient;
@@ -24,15 +25,23 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.util.math.Direction;
 
+import java.util.Comparator;
+
 public class BiomeBorderProvider implements IBoundingBoxProvider<BoundingBoxBiomeBorder>, ICachingProvider {
 
-    private static final ObjectLinkedOpenHashSet<ChunkPos> queuedUpdateChunks = new ObjectLinkedOpenHashSet<>();
+    private static final ObjectLinkedOpenHashSet<ChunkSectionPos> queuedUpdateChunks = new ObjectLinkedOpenHashSet<>();
 
-    public static void runQueuedTasks() {
-        if (queuedUpdateChunks.isEmpty()) return;
-        ChunkPos pos;
-        while ((pos = queuedUpdateChunks.removeFirst()) != null) {
+    public static boolean runQueuedTasks() {
+        if (queuedUpdateChunks.isEmpty()) return false;
+        while (true) {
+            final ChunkSectionPos sectionPos;
+            synchronized (queuedUpdateChunks) {
+                sectionPos = queuedUpdateChunks.removeFirst();
+            }
+            if (sectionPos == null) break;
+
             final ClientWorld world = MinecraftClient.getInstance().world;
+            ChunkPos pos = sectionPos.toChunkPos();
 
             if (!world.isChunkLoaded(pos.x, pos.z) ||
                     !world.isChunkLoaded(pos.x - 1, pos.z) ||
@@ -42,17 +51,24 @@ public class BiomeBorderProvider implements IBoundingBoxProvider<BoundingBoxBiom
                 continue;
             }
 
-            for (int y = world.getBottomSectionCoord(); y < world.getTopSectionCoord(); y++) {
-                final long key = ChunkSectionPos.asLong(pos.x, y, pos.z);
-                final BiomeBorderChunkSection chunk = chunks.get(key);
-                if (chunk != null) {
-                    chunk.findBoxesFromBlockState(pos.getStartX(), y, pos.getStartZ());
-                } else {
-                    chunks.put(key, new BiomeBorderChunkSection(pos.x, y, pos.z));
+            final long key = sectionPos.asLong();
+            final BiomeBorderChunkSection chunk = chunks.get(key);
+            if (chunk == null) {
+                try {
+                    chunks.put(key, new BiomeBorderChunkSection(sectionPos.getSectionX(), sectionPos.getSectionY(), sectionPos.getSectionZ()));
+                } catch (IllegalStateException e) {
+                    if (e.getMessage().equals("Chunk not loaded")) continue;
+                    else throw new RuntimeException(e);
                 }
+                hasUpdate = true;
             }
+            // we don't expect updates
+//            else {
+//                chunk.findBoxesFromBlockState(sectionPos.getMinX(), sectionPos.getMinY(), sectionPos.getMinZ());
+//            }
             break;
         }
+        return true;
     }
 
     private static final Long2ObjectMap<BiomeBorderChunkSection> chunks = Long2ObjectMaps.synchronize(new Long2ObjectLinkedOpenHashMap<>());
@@ -115,23 +131,27 @@ public class BiomeBorderProvider implements IBoundingBoxProvider<BoundingBoxBiom
     }
 
     {
-        EventBus.subscribe(ClientWorldUpdateTracker.ChunkLoadEvent.class, event -> {
-            queuedUpdateChunks.add(new ChunkPos(event.x(), event.z()));
-            queuedUpdateChunks.add(new ChunkPos(event.x() + 1, event.z()));
-            queuedUpdateChunks.add(new ChunkPos(event.x() - 1, event.z()));
-            queuedUpdateChunks.add(new ChunkPos(event.x(), event.z() + 1));
-            queuedUpdateChunks.add(new ChunkPos(event.x(), event.z() - 1));
-        });
+//        EventBus.subscribe(ClientWorldUpdateTracker.ChunkLoadEvent.class, event -> {
+//            queuedUpdateChunks.add(new ChunkPos(event.x(), event.z()));
+//            queuedUpdateChunks.add(new ChunkPos(event.x() + 1, event.z()));
+//            queuedUpdateChunks.add(new ChunkPos(event.x() - 1, event.z()));
+//            queuedUpdateChunks.add(new ChunkPos(event.x(), event.z() + 1));
+//            queuedUpdateChunks.add(new ChunkPos(event.x(), event.z() - 1));
+//        });
         EventBus.subscribe(ClientWorldUpdateTracker.ChunkUnloadEvent.class, event -> {
-            queuedUpdateChunks.remove(new ChunkPos(event.x(), event.z()));
             final ClientWorld world = MinecraftClient.getInstance().world;
-            for (int y = world.getBottomSectionCoord(); y < world.getTopSectionCoord(); y++) {
-                chunks.remove(ChunkSectionPos.asLong(event.x(), y, event.z()));
+            synchronized (queuedUpdateChunks) {
+                for (int y = world.getBottomSectionCoord(); y < world.getTopSectionCoord(); y++) {
+                    queuedUpdateChunks.remove(ChunkSectionPos.from(event.x(), y, event.z()));
+                    chunks.remove(ChunkSectionPos.asLong(event.x(), y, event.z()));
+                }
             }
         });
         EventBus.subscribe(ClientWorldUpdateTracker.WorldResetEvent.class, event -> {
             chunks.clear();
-            queuedUpdateChunks.clear();
+            synchronized (queuedUpdateChunks) {
+                queuedUpdateChunks.clear();
+            }
         });
     }
 
@@ -145,6 +165,8 @@ public class BiomeBorderProvider implements IBoundingBoxProvider<BoundingBoxBiom
     }
 
     public void cleanup() {
+        queuedUpdateChunks.clear();
+        if (!used) return;
         doCleanup = true;
         try {
             boxes.clear();
@@ -159,6 +181,7 @@ public class BiomeBorderProvider implements IBoundingBoxProvider<BoundingBoxBiom
         }
     }
 
+    private boolean used = false;
     private final ReferenceArrayList<BoundingBoxBiomeBorder> boxes = new ReferenceArrayList<>();
     private boolean doCleanup = false;
     private final LongArrayFIFOQueue bfsQueue = new LongArrayFIFOQueue();
@@ -170,6 +193,8 @@ public class BiomeBorderProvider implements IBoundingBoxProvider<BoundingBoxBiom
             }
         }
     };
+
+    private static boolean hasUpdate = false;
     private long lastSectionPos = Long.MAX_VALUE;
     private boolean lastRenderOnlyCurrentBiome = false;
     private int lastRenderDistanceChunks = 0;
@@ -186,9 +211,40 @@ public class BiomeBorderProvider implements IBoundingBoxProvider<BoundingBoxBiom
         int playerChunkZ = ChunkSectionPos.getSectionCoord(z);
         long currentSectionPos = ChunkSectionPos.asLong(playerChunkX, playerChunkY, playerChunkZ);
 
+        used = true;
+
+        ObjectArrayList<ChunkSectionPos> pendingPoses = new ObjectArrayList<>();
+        for (int chunkX = playerChunkX - renderDistanceChunks; chunkX <= playerChunkX + renderDistanceChunks; chunkX++) {
+            for (int chunkY = playerChunkY - renderDistanceChunks; chunkY <= playerChunkY + renderDistanceChunks; chunkY++) {
+                for (int chunkZ = playerChunkZ - renderDistanceChunks; chunkZ <= playerChunkZ + renderDistanceChunks; chunkZ++) {
+                    long key = ChunkSectionPos.asLong(chunkX, chunkY, chunkZ);
+                    BiomeBorderChunkSection chunk = chunks.get(key);
+                    if (chunk == null) {
+                        final ChunkSectionPos pos = ChunkSectionPos.from(chunkX, chunkY, chunkZ);
+                        boolean alreadyQueued;
+                        synchronized (queuedUpdateChunks) {
+                            alreadyQueued = queuedUpdateChunks.contains(pos);
+                        }
+                        if (!alreadyQueued) pendingPoses.add(pos);
+                    }
+                }
+            }
+        }
+        if (!pendingPoses.isEmpty()) {
+            ChunkSectionPos currentSectionPosObj = ChunkSectionPos.from(playerChunkX, playerChunkY, playerChunkZ);
+            pendingPoses.unstableSort(Comparator.comparingInt(value -> value.getManhattanDistance(currentSectionPosObj)));
+            synchronized (queuedUpdateChunks) {
+                queuedUpdateChunks.addAll(pendingPoses);
+            }
+        }
+
         if (lastRenderOnlyCurrentBiome != renderOnlyCurrentBiome ||
-                lastRenderDistanceChunks != renderDistanceChunks) {
-            cleanup();
+                lastRenderDistanceChunks != renderDistanceChunks ||
+                hasUpdate) {
+            hasUpdate = false;
+            bfsQueue.clear();
+            bfsSearchedPos.clear();
+            boxes.clear();
         }
         lastRenderDistanceChunks = renderDistanceChunks;
         lastRenderOnlyCurrentBiome = renderOnlyCurrentBiome;
@@ -276,7 +332,13 @@ public class BiomeBorderProvider implements IBoundingBoxProvider<BoundingBoxBiom
 
     public void clearCache() {
         chunks.clear();
-        queuedUpdateChunks.clear();
+        synchronized (queuedUpdateChunks) {
+            queuedUpdateChunks.clear();
+        }
+    }
+
+    public void tick() {
+
     }
 
 }

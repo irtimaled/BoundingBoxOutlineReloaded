@@ -13,6 +13,10 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryEntry;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.EmptyChunk;
 
 public class BiomeBorderHelper {
 
@@ -42,12 +46,16 @@ public class BiomeBorderHelper {
         BlockPos pos = new BlockPos(x, y, z);
         final Long2IntMap biomeArray = biomeCache.computeIfAbsent(ChunkPos.toLong(pos), key -> createNewMap());
         final ClientWorld world = MinecraftClient.getInstance().world;
+        final Chunk chunk = world.getChunk(pos);
+        if (chunk instanceof EmptyChunk) {
+            throw new IllegalStateException("Chunk not loaded");
+        }
 //        if (true) {
 //            return world.getRegistryManager().get(Registry.BIOME_KEY).getRawId(world.getBiome(pos).value());
 //        }
         return biomeArray.computeIfAbsent(pos.asLong(), key -> {
-            assert world != null;
-            return world.getRegistryManager().get(Registry.BIOME_KEY).getRawId(world.getBiome(pos).value());
+            final RegistryEntry<Biome> biome = world.getBiomeAccess().withSource(chunk).getBiome(pos);
+            return world.getRegistryManager().get(Registry.BIOME_KEY).getRawId(biome.value());
         });
     }
 
