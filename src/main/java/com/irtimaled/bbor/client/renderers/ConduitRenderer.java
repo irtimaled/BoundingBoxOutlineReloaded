@@ -5,26 +5,25 @@ import com.irtimaled.bbor.client.config.ColorHelper;
 import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.models.BoundingBoxConduit;
 import com.irtimaled.bbor.client.models.Point;
-import net.minecraft.client.util.math.MatrixStack;
 
 import java.awt.*;
 
 public class ConduitRenderer extends AbstractRenderer<BoundingBoxConduit> {
     @Override
-    public void render(MatrixStack matrixStack, BoundingBoxConduit boundingBox) {
+    public void render(RenderingContext ctx, BoundingBoxConduit boundingBox) {
         int level = boundingBox.getLevel();
         Point point = boundingBox.getPoint();
         Color color = BoundingBoxTypeHelper.getColor(boundingBox.getType());
 
         if (level != 0) {
-            renderSphere(matrixStack, point, boundingBox.getRadius() + 0.5, color);
+            renderSphere(ctx, point, boundingBox.getRadius() + 0.5, color);
         }
 
         OffsetPoint center = new OffsetPoint(point);
         OffsetBox centerBox = new OffsetBox(center, center).grow(0.5, 0.5, 0.5);
-        renderCuboid(matrixStack, centerBox, color, false, 30);
+        renderCuboid(ctx, centerBox, color, false, 30);
         if (level == 6 && ConfigManager.renderConduitMobHarmArea.get()) {
-            renderCuboid(matrixStack, centerBox.grow(8, 8, 8),
+            renderCuboid(ctx, centerBox.grow(8, 8, 8),
                     ColorHelper.getColor(ConfigManager.colorConduitMobHarmArea), false, 30);
         }
     }

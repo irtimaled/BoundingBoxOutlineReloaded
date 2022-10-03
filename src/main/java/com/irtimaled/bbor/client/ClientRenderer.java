@@ -2,7 +2,6 @@ package com.irtimaled.bbor.client;
 
 import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.interop.ClientInterop;
-import com.irtimaled.bbor.client.interop.TileEntitiesHelper;
 import com.irtimaled.bbor.client.models.Point;
 import com.irtimaled.bbor.client.providers.BeaconProvider;
 import com.irtimaled.bbor.client.providers.BedrockCeilingProvider;
@@ -21,8 +20,6 @@ import com.irtimaled.bbor.client.providers.SpawnableBlocksProvider;
 import com.irtimaled.bbor.client.providers.SpawningSphereProvider;
 import com.irtimaled.bbor.client.providers.WorldSpawnProvider;
 import com.irtimaled.bbor.client.renderers.AbstractRenderer;
-import com.irtimaled.bbor.client.renderers.RenderHelper;
-import com.irtimaled.bbor.client.renderers.RenderQueue;
 import com.irtimaled.bbor.common.MathHelper;
 import com.irtimaled.bbor.common.TypeHelper;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
@@ -39,7 +36,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
 
 public class ClientRenderer {
@@ -48,8 +44,6 @@ public class ClientRenderer {
 
     private static boolean active;
     private static final Set<IBoundingBoxProvider> providers = new HashSet<>();
-
-    private static AtomicLong lastDurationNanos = new AtomicLong(0L);
 
     public static boolean getActive() {
         return active;
@@ -109,33 +103,14 @@ public class ClientRenderer {
     }
 
     public static void render(MatrixStack matrixStack, DimensionId dimensionId) {
-        if (!active) return;
-
-        long startTime = System.nanoTime();
-        matrixStack.push();
-        RenderHelper.beforeRender();
-        TileEntitiesHelper.clearCache();
-
-        final List<AbstractBoundingBox> boundingBoxes = getBoundingBoxes(dimensionId);
-        RenderCulling.flushPreRendering();
-        for (AbstractBoundingBox key : boundingBoxes) {
-            AbstractRenderer renderer = key.getRenderer();
-            if (renderer != null) renderer.render(matrixStack, key);
-        }
-
-        RenderQueue.renderDeferred();
-
-        RenderHelper.afterRender();
-        RenderCulling.flushRendering();
-        matrixStack.pop();
-        lastDurationNanos.set(System.nanoTime() - startTime);
+        AsyncRenderer.render(matrixStack, dimensionId);
     }
 
     private static final ObjectArrayList<AbstractBoundingBox> listForRendering = new ObjectArrayList<>();
 
     public static List<AbstractBoundingBox> getBoundingBoxes(DimensionId dimensionId) {
         listForRendering.clear();
-        final boolean doPreCulling = ConfigManager.fastRender.get() >= 2;
+        final boolean doPreCulling = !ConfigManager.asyncBuilding.get() && ConfigManager.fastRender.get() >= 2;
         for (IBoundingBoxProvider<?> provider : providers) {
             if (provider.canProvide(dimensionId)) {
                 for (AbstractBoundingBox boundingBox : provider.get(dimensionId)) {
@@ -148,20 +123,28 @@ public class ClientRenderer {
         }
 
         Point point = Player.getPoint();
-        listForRendering.sort(Comparator.comparingDouble((AbstractBoundingBox boundingBox) -> boundingBox.getDistance(point.getX(), point.getY(), point.getZ())).reversed());
+        final Comparator<AbstractBoundingBox> comp = Comparator.comparingDouble((AbstractBoundingBox boundingBox) -> -boundingBox.getDistance(point.getX(), point.getY(), point.getZ()));
+//        listForRendering.unstableSort(comp);
 
         return listForRendering;
     }
 
     public static void clear() {
-        for(IBoundingBoxProvider<?> provider : providers) {
+        for (IBoundingBoxProvider<?> provider : providers) {
             TypeHelper.doIfType(provider, ICachingProvider.class, ICachingProvider::clearCache);
         }
     }
 
-    public static long getLastDurationNanos() {
-        return lastDurationNanos.get();
+    public static void doCleanup() {
+        for (IBoundingBoxProvider<?> provider : providers) {
+            provider.cleanup();
+        }
     }
 
+    public static void tickProviders() {
+        for (IBoundingBoxProvider<?> provider : providers) {
+            provider.tick();
+        }
+    }
 
 }

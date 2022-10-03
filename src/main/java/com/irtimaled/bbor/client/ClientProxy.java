@@ -49,6 +49,7 @@ public class ClientProxy extends CommonProxy {
 
         ClientRenderer.registerProvider(new CacheProvider(this::getCache));
 
+        TaskThread.init();
         KeyListener.init();
     }
 

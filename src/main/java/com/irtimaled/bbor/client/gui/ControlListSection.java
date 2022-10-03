@@ -53,7 +53,8 @@ public class ControlListSection extends ControlListEntry implements IControlSet 
         int y = this.getY();
         int top = y;
         if (this.title != null) {
-            this.minecraft.textRenderer.draw(matrixStack, this.title, x + 4, y + ((TITLE_HEIGHT - this.minecraft.textRenderer.fontHeight) / 1.5f), 16777215);
+            if (matrixStack != null)
+                this.minecraft.textRenderer.draw(matrixStack, this.title, x + 4, y + ((TITLE_HEIGHT - this.minecraft.textRenderer.fontHeight) / 1.5f), 16777215);
             top += titleHeight;
         }
 
@@ -64,7 +65,8 @@ public class ControlListSection extends ControlListEntry implements IControlSet 
 
             control.setX(left + x);
             control.setY(top);
-            control.render(matrixStack, mouseX, mouseY);
+            if (matrixStack != null)
+                control.render(matrixStack, mouseX, mouseY);
             if (left == 0) {
                 height = control.getControlHeight();
             }
@@ -74,6 +76,12 @@ public class ControlListSection extends ControlListEntry implements IControlSet 
                 top += height;
             }
         }
+    }
+
+    @Override
+    public void update() {
+        super.update();
+        this.render(null, 0, 0);
     }
 
     @Override

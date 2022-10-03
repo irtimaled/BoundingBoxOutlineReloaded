@@ -43,6 +43,7 @@ public class RenderCulling {
 
     public static List<String> debugStrings() {
         if (!ClientRenderer.getActive()) return List.of("[BBOR] Rendering not enabled");
+        if (ConfigManager.asyncBuilding.get()) return List.of("[BBOR] Async building enabled");
         final ArrayList<String> list = new ArrayList<>(2);
         if (ConfigManager.fastRender.get() >= 2) {
             final int preCulledCountLast;
