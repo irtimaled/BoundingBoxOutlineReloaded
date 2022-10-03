@@ -48,6 +48,9 @@ public class ClientProxy extends CommonProxy {
         EventBus.subscribe(SaveLoaded.class, e -> clear());
 
         ClientRenderer.registerProvider(new CacheProvider(this::getCache));
+
+        TaskThread.init();
+//        KeyListener.init();
     }
 
     private void disconnectedFromServer() {

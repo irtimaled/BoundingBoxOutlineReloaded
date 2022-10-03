@@ -46,16 +46,16 @@ public class ConfigManager {
     public static Setting<Boolean> drawBeacons;
     public static Setting<Boolean> drawBiomeBorders;
     public static Setting<Boolean> renderOnlyCurrentBiome;
+    public static Setting<Boolean> drawBiomeBorderOutline;
     public static Setting<Integer> biomeBordersRenderDistance;
-    public static Setting<Integer> biomeBordersMaxY;
+//    public static Setting<Integer> biomeBordersMaxY;
     //    public static Setting<Boolean> drawNetherFossils;
 //    public static Setting<Boolean> drawBastionRemnants;
 //    public static Setting<Boolean> drawRuinedPortals;
     public static Setting<Boolean> drawConduits;
     public static Setting<Boolean> renderConduitMobHarmArea;
     public static Setting<Boolean> drawSpawnableBlocks;
-    public static Setting<Integer> spawnableBlocksRenderWidth;
-    public static Setting<Integer> spawnableBlocksRenderHeight;
+    public static Setting<Integer> spawnableBlocksRenderDistance;
     public static Setting<Integer> spawnableBlocksSafeLight;
     public static Setting<Boolean> invertBoxColorPlayerInside;
     public static Setting<Boolean> renderSphereAsDots;
@@ -112,6 +112,7 @@ public class ConfigManager {
     public static Setting<HexColor> buttonOnOverlay;
 
     public static Setting<Integer> fastRender;
+    public static Setting<Boolean> asyncBuilding;
 
     public static Map<String, Setting<Boolean>> structureRenderSettings = Object2ObjectMaps.synchronize(new Object2ObjectOpenHashMap<>());
     public static Map<String, Setting<HexColor>> structureColorSettings = Object2ObjectMaps.synchronize(new Object2ObjectOpenHashMap<>());
@@ -164,6 +165,7 @@ public class ConfigManager {
         renderSphereAsDots = setup(config, "general", "renderSphereAsDots", false, "If set to true spheres will be rendered as dots.");
         buttonOnOverlay = setup(config, "general", "buttonEnabledOverlay", HexColor.from("#3000ff00"), "The color and alpha of the button overlay when a button is on.");
         fastRender = setup(config, "general", "fastRender", 2, "Fast render settings. Higher value for faster rendering. ");
+        asyncBuilding = setup(config, "general", "asyncBuilding", true, "Whether to use async building for non-gpu-bottlenecked cases ");
 
         drawBeacons = setup(config, "beacons", "drawBeacons", true, "If set to true beacon bounding boxes will be drawn.");
 
@@ -172,8 +174,9 @@ public class ConfigManager {
 
         drawBiomeBorders = setup(config, "biomeBorders", "drawBiomeBorders", true, "If set to true biome borders will be drawn.");
         renderOnlyCurrentBiome = setup(config, "biomeBorders", "renderOnlyCurrentBiome", true, "If set to true only the biome border for the current biome will be drawn.");
+        drawBiomeBorderOutline = setup(config, "biomeBorders", "drawBiomeBorderOutline", false, "If set to true biome borders will be drawn with outline.");
         biomeBordersRenderDistance = setup(config, "biomeBorders", "biomeBordersRenderDistance", 3, "The distance from the player where biome borders will be drawn.");
-        biomeBordersMaxY = setup(config, "biomeBorders", "biomeBordersMaxY", -1, "The maximum top of the biome borders. If set to -1 it will use the value when activated, if set to 0 it will always track the players feet.");
+//        biomeBordersMaxY = setup(config, "biomeBorders", "biomeBordersMaxY", -1, "The maximum top of the biome borders. If set to -1 it will use the value when activated, if set to 0 it will always track the players feet.");
 
         drawFlowerForests = setup(config, "flowerForests", "drawFlowerForests", true, "If set to true flower forest flower overlays will be drawn.");
         flowerForestsRenderDistance = setup(config, "flowerForests", "flowerForestsRenderDistance", 3, "The distance from the player where flower forests will be drawn.");
@@ -215,8 +218,7 @@ public class ConfigManager {
         afkSpawnableBlocksRenderDistance = setup(config, "afkSpot", "afkSpawnableBlocksRenderDistance", 3, "The distance from the player where spawnable blocks within the AFK sphere will be drawn.");
 
         drawSpawnableBlocks = setup(config, "spawnableBlocks", "drawSpawnableBlocks", false, "If set to true boxes to show spawnable blocks will be drawn.");
-        spawnableBlocksRenderWidth = setup(config, "spawnableBlocks", "spawnableBlocksRenderWidth", 2, "The distance from the player where spawnable blocks will be drawn in X and Z axis.");
-        spawnableBlocksRenderHeight = setup(config, "spawnableBlocks", "spawnableBlocksRenderHeight", 1, "The distance from the player where spawnable blocks will be drawn in Y axis.");
+        spawnableBlocksRenderDistance = setup(config, "spawnableBlocks", "spawnableBlocksRenderDistance", 2, "The distance from the player where spawnable blocks will be drawn in X and Z axis.");
         spawnableBlocksSafeLight = setup(config, "spawnableBlocks", "spawnableBlocksSafeLight", 0, "The light level to check which block is safe.");
 
         colorWorldSpawn = setup(config, "colors", "colorWorldSpawn", HexColor.from("#ff0000"), "Color of world spawn and spawn chunks bounding boxes.");

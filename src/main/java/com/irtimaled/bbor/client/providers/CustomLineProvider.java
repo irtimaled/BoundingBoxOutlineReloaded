@@ -6,12 +6,11 @@ import com.irtimaled.bbor.client.models.Point;
 import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.models.DimensionId;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CustomLineProvider implements IBoundingBoxProvider<BoundingBoxLine>, ICachingProvider {
-    private static final Map<DimensionId, Map<Integer, BoundingBoxLine>> dimensionCache = new HashMap<>();
+    private static final Map<DimensionId, Map<Integer, BoundingBoxLine>> dimensionCache = new ConcurrentHashMap<>();
 
     private static int getHashKey(Point minPoint, Point maxPoint) {
         return (31 + minPoint.hashCode()) * 31 + maxPoint.hashCode();
@@ -21,10 +20,10 @@ public class CustomLineProvider implements IBoundingBoxProvider<BoundingBoxLine>
         return dimensionCache.computeIfAbsent(dimensionId, i -> new ConcurrentHashMap<>());
     }
 
-    public static void add(Point minPoint, Point maxPoint, Double width) {
+    public static void add(Point minPoint, Point maxPoint) {
         DimensionId dimensionId = Player.getDimensionId();
         int cacheKey = getHashKey(minPoint, maxPoint);
-        BoundingBoxLine line = BoundingBoxLine.from(minPoint, maxPoint, width, BoundingBoxType.Custom);
+        BoundingBoxLine line = BoundingBoxLine.from(minPoint, maxPoint, BoundingBoxType.Custom);
         getCache(dimensionId).put(cacheKey, line);
     }
 

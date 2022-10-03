@@ -17,8 +17,9 @@ class LineCommandBuilder {
                         .then(CommandManager.argument(ArgumentNames.FROM, Arguments.point())
                                 .then(CommandManager.argument(ArgumentNames.TO, Arguments.point())
                                         .executes(LineCommandBuilder::addLine)
-                                        .then(CommandManager.argument(WIDTH, Arguments.doubleArg())
-                                                .executes(LineCommandBuilder::addLine)))))
+                                )
+                        )
+                )
                 .then(CommandManager.literal(ArgumentNames.CLEAR)
                         .executes(context -> {
                             CustomLineProvider.clear();
@@ -38,14 +39,16 @@ class LineCommandBuilder {
                                                     from.getX(), from.getY(), from.getZ(),
                                                     to.getX(), to.getY(), to.getZ());
                                             return 0;
-                                        }))));
+                                        })
+                                )
+                        )
+                );
     }
 
     private static int addLine(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         Point from = Arguments.getPoint(context, ArgumentNames.FROM).snapXZ(0.5d);
         Point to = Arguments.getPoint(context, ArgumentNames.TO).snapXZ(0.5d);
-        Double width = Arguments.getDouble(context, WIDTH);
-        CustomLineProvider.add(from, to, width);
+        CustomLineProvider.add(from, to);
 
         CommandHelper.feedback(context, "bbor.commands.line.added",
                 from.getX(), from.getY(), from.getZ(),

@@ -12,6 +12,8 @@
   "bbor.options.fastRender.1": "Medium",
   "bbor.options.fastRender.2": "High",
 
+  "bbor.options.asyncBuilding": "Use Async Renderer",
+
   "bbor.options.maxY": "Max Y: %s",
   "bbor.options.maxY.activated": "Activated",
   "bbor.options.maxY.player": "Player",
@@ -42,6 +44,8 @@
   "bbor.features.spawnableBlocks": "Spawnable Blocks",
 
   "bbor.features.biomeBorders": "Biome Borders",
+  "bbor.features.renderOnlyCurrentBiome": "Only Current Biome",
+  "bbor.features.drawBiomeBorderOutline": "Draw Outline",
 
   "bbor.features.flowerForests": "Flower Forests",
 

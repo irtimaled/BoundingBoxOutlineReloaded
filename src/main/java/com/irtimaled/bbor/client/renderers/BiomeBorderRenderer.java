@@ -4,53 +4,38 @@ import com.irtimaled.bbor.client.config.BoundingBoxTypeHelper;
 import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.models.BoundingBoxBiomeBorder;
 import com.irtimaled.bbor.common.models.Coords;
-import net.minecraft.client.util.math.MatrixStack;
 
 import java.awt.*;
 
 public class BiomeBorderRenderer extends AbstractRenderer<BoundingBoxBiomeBorder> {
     @Override
-    public void render(MatrixStack matrixStack, BoundingBoxBiomeBorder boundingBox) {
+    public void render(RenderingContext ctx, BoundingBoxBiomeBorder boundingBox) {
         Coords coords = boundingBox.getCoords();
-        OffsetPoint northWest = new OffsetPoint(coords).offset(0, 0.001F, 0);
-        OffsetPoint northEast = northWest.offset(1, 0, 0);
-        OffsetPoint southWest = northWest.offset(0, 0, 1);
+        final OffsetPoint offsetPoint = new OffsetPoint(coords);
 
         Color color = BoundingBoxTypeHelper.getColor(boundingBox.getType());
-        if (boundingBox.renderNorth()) {
-            render(matrixStack, northWest, northEast, color);
+        boolean fillOnly = !ConfigManager.drawBiomeBorderOutline.get();
+
+        if (boundingBox.renderNorth()) { // z - 1
+            renderCuboid(ctx, new OffsetBox(offsetPoint.offset(0, 0, 0), offsetPoint.offset(1, -1, 0)), color, fillOnly, 30);
         }
-        if (boundingBox.renderWest()) {
-            render(matrixStack, northWest, southWest, color);
+        if (boundingBox.renderWest()) { // x - 1
+            renderCuboid(ctx, new OffsetBox(offsetPoint.offset(0, 0, 0), offsetPoint.offset(0, -1, 1)), color, fillOnly, 30);
+        }
+        if (boundingBox.renderDown()) { // y - 1
+            renderCuboid(ctx, new OffsetBox(offsetPoint.offset(0, -1, 0), offsetPoint.offset(1, -1, 1)), color, fillOnly, 30);
         }
         if (ConfigManager.renderOnlyCurrentBiome.get()) {
-            OffsetPoint southEast = southWest.offset(1, 0, 0);
             if (boundingBox.renderSouth()) {
-                render(matrixStack, southWest, southEast, color);
+                renderCuboid(ctx, new OffsetBox(offsetPoint.offset(0, 0, 1), offsetPoint.offset(1, -1, 1)), color, fillOnly, 30);
             }
             if (boundingBox.renderEast()) {
-                render(matrixStack, northEast, southEast, color);
+                renderCuboid(ctx, new OffsetBox(offsetPoint.offset(1, 0, 0), offsetPoint.offset(1, -1, 1)), color, fillOnly, 30);
+            }
+            if (boundingBox.renderUp()) {
+                renderCuboid(ctx, new OffsetBox(offsetPoint.offset(0, 0, 0), offsetPoint.offset(1, 0, 1)), color, fillOnly, 30);
             }
         }
-    }
-
-    private void render(MatrixStack matrixStack, OffsetPoint topCorner1, OffsetPoint topCorner2, Color color) {
-        double xOffset = 0d;
-        double zOffset = 0d;
-        if (topCorner1.getX() == topCorner2.getX()) {
-            xOffset = getOffset(topCorner1.getX());
-        } else {
-            zOffset = getOffset(topCorner1.getZ());
-        }
-
-        topCorner1 = topCorner1.offset(xOffset, 0, zOffset);
-        topCorner2 = topCorner2.offset(xOffset, 0, zOffset);
-
-        renderLine(matrixStack, topCorner1, topCorner2, color, false);
-        OffsetPoint bottomCorner2 = topCorner2.offset(0, 1, 0);
-        renderCuboid(matrixStack, new OffsetBox(topCorner1, bottomCorner2), color, true, 30);
-        OffsetPoint bottomCorner1 = topCorner1.offset(0, 1, 0);
-        renderLine(matrixStack, bottomCorner1, bottomCorner2, color, false);
     }
 
     private double getOffset(double value) {

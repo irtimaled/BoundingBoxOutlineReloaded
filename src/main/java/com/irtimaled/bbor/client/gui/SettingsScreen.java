@@ -58,7 +58,8 @@ public class SettingsScreen extends ListScreen {
                         width -> new IntSettingSlider(width, 0, 2, "bbor.options.fastRender", ConfigManager.fastRender)
                                 .addDisplayValue(0, I18n.translate("bbor.options.fastRender.0"))
                                 .addDisplayValue(1, I18n.translate("bbor.options.fastRender.1"))
-                                .addDisplayValue(2, I18n.translate("bbor.options.fastRender.2")))
+                                .addDisplayValue(2, I18n.translate("bbor.options.fastRender.2")),
+                        width -> new BoolSettingButton(width, I18n.translate("bbor.options.asyncBuilding"), ConfigManager.asyncBuilding))
                 .section(I18n.translate("bbor.features.spawnChunks"),
                         width -> new BoundingBoxTypeButton(width, I18n.translate("bbor.features.spawnChunks"), BoundingBoxType.WorldSpawn),
                         width -> new BoundingBoxTypeButton(width, I18n.translate("bbor.features.lazyChunks"), BoundingBoxType.LazySpawnChunks),
@@ -68,23 +69,12 @@ public class SettingsScreen extends ListScreen {
                         width -> new MaxYSettingSlider(width, 39, ConfigManager.slimeChunkMaxY))
                 .section(I18n.translate("bbor.features.biomeBorders"),
                         width -> new BoundingBoxTypeButton(width, I18n.translate("bbor.features.biomeBorders"), BoundingBoxType.BiomeBorder),
-                        width -> new MaxYSettingSlider(width, 1, ConfigManager.biomeBordersMaxY),
-                        width -> new IntSettingSlider(width, 1, 6, "bbor.options.distance", ConfigManager.biomeBordersRenderDistance)
-                                .addDisplayValue(1, I18n.translate("bbor.options.distance.nearest"))
-                                .addDisplayValue(2, I18n.translate("bbor.options.distance.nearer"))
-                                .addDisplayValue(3, I18n.translate("bbor.options.distance.normal"))
-                                .addDisplayValue(4, I18n.translate("bbor.options.distance.farther"))
-                                .addDisplayValue(5, I18n.translate("bbor.options.distance.far"))
-                                .addDisplayValue(6, I18n.translate("bbor.options.distance.veryFar")))
+                        width -> new BoolSettingButton(width, I18n.translate("bbor.features.renderOnlyCurrentBiome"), ConfigManager.renderOnlyCurrentBiome),
+                        width -> new BoolSettingButton(width, I18n.translate("bbor.features.drawBiomeBorderOutline"), ConfigManager.drawBiomeBorderOutline),
+                        width -> new IntSettingSlider(width, 1, ClientInterop.getRenderDistanceChunks(), "bbor.options.distance", ConfigManager.biomeBordersRenderDistance))
                 .section(I18n.translate("bbor.features.flowerForests"),
                         width -> new BoundingBoxTypeButton(width, I18n.translate("bbor.features.flowerForests"), BoundingBoxType.FlowerForest),
-                        width -> new IntSettingSlider(width, 1, 6, "bbor.options.distance", ConfigManager.flowerForestsRenderDistance)
-                                .addDisplayValue(1, I18n.translate("bbor.options.distance.nearest"))
-                                .addDisplayValue(2, I18n.translate("bbor.options.distance.nearer"))
-                                .addDisplayValue(3, I18n.translate("bbor.options.distance.normal"))
-                                .addDisplayValue(4, I18n.translate("bbor.options.distance.farther"))
-                                .addDisplayValue(5, I18n.translate("bbor.options.distance.far"))
-                                .addDisplayValue(6, I18n.translate("bbor.options.distance.veryFar")))
+                        width -> new IntSettingSlider(width, 1, ClientInterop.getRenderDistanceChunks(), "bbor.options.distance", ConfigManager.flowerForestsRenderDistance))
                 .section(I18n.translate("bbor.features.bedrockCeilingBlocks"),
                         width -> new BoundingBoxTypeButton(width, I18n.translate("bbor.features.bedrockCeilingBlocks"), BoundingBoxType.BedrockCeiling))
                 .section(I18n.translate("bbor.features.mobSpawners"),
@@ -97,14 +87,7 @@ public class SettingsScreen extends ListScreen {
                         width -> new BoolSettingButton(width, I18n.translate("bbor.features.conduits.mobHarmArea"), ConfigManager.renderConduitMobHarmArea))
                 .section(I18n.translate("bbor.features.spawnableBlocks"),
                         width -> new BoundingBoxTypeButton(width, I18n.translate("bbor.features.spawnableBlocks"), BoundingBoxType.SpawnableBlocks),
-                        width -> new IntSettingSlider(width, 1, 3, "bbor.options.distance.y", ConfigManager.spawnableBlocksRenderHeight)
-                                .addDisplayValue(1, "2")
-                                .addDisplayValue(2, "4")
-                                .addDisplayValue(3, "8"),
-                        width -> new IntSettingSlider(width, 1, 3, "bbor.options.distance.xz", ConfigManager.spawnableBlocksRenderWidth)
-                                .addDisplayValue(1, "8")
-                                .addDisplayValue(2, "16")
-                                .addDisplayValue(3, "32"),
+                        width -> new IntSettingSlider(width, 1, ClientInterop.getRenderDistanceChunks(), "bbor.options.distance.xz", ConfigManager.spawnableBlocksRenderDistance),
                         width -> new SafeLightSettingsSlider(width, ConfigManager.spawnableBlocksSafeLight))
                 .section(I18n.translate("bbor.features.spawningSpheres"),
                         width -> new BoundingBoxTypeButton(width, I18n.translate("bbor.features.spawningSpheres"), BoundingBoxType.AFKSphere),
