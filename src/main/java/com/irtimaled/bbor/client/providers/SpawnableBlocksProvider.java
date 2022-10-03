@@ -1,6 +1,5 @@
 package com.irtimaled.bbor.client.providers;
 
-import com.irtimaled.bbor.client.Camera;
 import com.irtimaled.bbor.client.Player;
 import com.irtimaled.bbor.client.config.BoundingBoxTypeHelper;
 import com.irtimaled.bbor.client.config.ConfigManager;
@@ -14,7 +13,10 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMaps;
 import it.unimi.dsi.fastutil.longs.LongIterator;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ObjectSet;
+import it.unimi.dsi.fastutil.objects.ObjectSets;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
@@ -25,14 +27,20 @@ import net.minecraft.world.Heightmap;
 import net.minecraft.world.chunk.WorldChunk;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class SpawnableBlocksProvider implements IBoundingBoxProvider<BoundingBoxSpawnableBlocks>, ICachingProvider {
 
     private static final ObjectLinkedOpenHashSet<ChunkPos> queuedUpdateChunks = new ObjectLinkedOpenHashSet<>();
+    private static final ObjectSet<ChunkPos> dirtyPoses = ObjectSets.synchronize(new ObjectLinkedOpenHashSet<>());
 
     public static void runQueuedTasks() {
-        if (queuedUpdateChunks.isEmpty()) return;
-        ChunkPos pos = queuedUpdateChunks.removeFirst();
+        if (!BoundingBoxTypeHelper.shouldRender(BoundingBoxType.SpawnableBlocks)) return;
+        ChunkPos pos;
+        synchronized (queuedUpdateChunks) {
+            if (queuedUpdateChunks.isEmpty()) return;
+            pos = queuedUpdateChunks.removeFirst();
+        }
         final SpawnableBlocksChunk chunk = chunks.get(pos.toLong());
         if (chunk != null) {
             chunk.findBoxesFromBlockState(pos.getStartX(), pos.getStartZ());
@@ -99,36 +107,33 @@ public class SpawnableBlocksProvider implements IBoundingBoxProvider<BoundingBox
     {
         EventBus.subscribe(ClientWorldUpdateTracker.ChunkLoadEvent.class, event -> {
             final ChunkPos pos = new ChunkPos(event.x(), event.z());
-            enqueueUpdate(pos);
+            dirtyPoses.add(pos);
         });
         EventBus.subscribe(ClientWorldUpdateTracker.LightingUpdateEvent.class, event -> {
             final ChunkPos pos = new ChunkPos(event.x(), event.z());
-            enqueueUpdate(pos);
+            dirtyPoses.add(pos);
         });
         EventBus.subscribe(ClientWorldUpdateTracker.ChunkUnloadEvent.class, event -> {
-            queuedUpdateChunks.remove(new ChunkPos(event.x(), event.z()));
+            synchronized (queuedUpdateChunks) {
+                queuedUpdateChunks.remove(new ChunkPos(event.x(), event.z()));
+            }
+            dirtyPoses.remove(new ChunkPos(event.x(), event.z()));
             chunks.remove(ChunkPos.toLong(event.x(), event.z()));
         });
         EventBus.subscribe(ClientWorldUpdateTracker.BlockChangeEvent.class, event -> {
             for (int x = -1; x <= 1; x ++) {
                 for (int z = -1; z <= 1; z++) {
-                    enqueueUpdate(new ChunkPos(ChunkSectionPos.getSectionCoord(event.x()) + x, ChunkSectionPos.getSectionCoord(event.z()) + z));
+                    dirtyPoses.add(new ChunkPos(ChunkSectionPos.getSectionCoord(event.x()) + x, ChunkSectionPos.getSectionCoord(event.z()) + z));
                 }
             }
         });
         EventBus.subscribe(ClientWorldUpdateTracker.WorldResetEvent.class, event -> {
-            queuedUpdateChunks.clear();
+            synchronized (queuedUpdateChunks) {
+                queuedUpdateChunks.clear();
+            }
+            dirtyPoses.clear();
             chunks.clear();
         });
-    }
-
-    private static void enqueueUpdate(ChunkPos pos) {
-        final ChunkPos cameraPos = new ChunkPos(new BlockPos(Camera.getX(), Camera.getY(), Camera.getZ()));
-        if (cameraPos.getChebyshevDistance(pos) <= 1) {
-            queuedUpdateChunks.addAndMoveToFirst(pos);
-        } else {
-            queuedUpdateChunks.add(pos);
-        }
     }
 
     public static void scheduleRecalculation() {
@@ -137,7 +142,7 @@ public class SpawnableBlocksProvider implements IBoundingBoxProvider<BoundingBox
             while (iterator.hasNext()) {
                 final long key = iterator.nextLong();
                 final ChunkPos pos = new ChunkPos(key);
-                enqueueUpdate(pos);
+                dirtyPoses.add(pos);
             }
         }
     }
@@ -148,7 +153,9 @@ public class SpawnableBlocksProvider implements IBoundingBoxProvider<BoundingBox
 
     public void clearCache() {
         chunks.clear();
-        queuedUpdateChunks.clear();
+        synchronized (queuedUpdateChunks) {
+            queuedUpdateChunks.clear();
+        }
     }
 
     @Override
@@ -164,16 +171,32 @@ public class SpawnableBlocksProvider implements IBoundingBoxProvider<BoundingBox
 
         ArrayList<BoundingBoxSpawnableBlocks> boxes = new ArrayList<>();
 
+        ObjectArrayList<ChunkPos> pendingPoses = new ObjectArrayList<>();
         for (int chunkX = playerChunkX - renderDistanceChunks; chunkX <= playerChunkX + renderDistanceChunks; chunkX++) {
             for (int chunkZ = playerChunkZ - renderDistanceChunks; chunkZ <= playerChunkZ + renderDistanceChunks; chunkZ++) {
                 long key = ChunkPos.toLong(chunkX, chunkZ);
                 SpawnableBlocksChunk chunk = chunks.get(key);
-                if (chunk == null) continue;
+                final ChunkPos pos = new ChunkPos(chunkX, chunkZ);
+                if (chunk == null || dirtyPoses.remove(pos)) {
+                    boolean alreadyQueued;
+                    synchronized (queuedUpdateChunks) {
+                        alreadyQueued = queuedUpdateChunks.contains(pos);
+                    }
+                    if (!alreadyQueued) pendingPoses.add(pos);
+                    if (chunk == null) continue;
+                }
                 for (BoundingBoxSpawnableBlocks box : chunk.getBlocks()) {
                     if (box != null) {
                         boxes.add(box);
                     }
                 }
+            }
+        }
+        if (!pendingPoses.isEmpty()) {
+            ChunkPos currentSectionPosObj = new ChunkPos(playerChunkX, playerChunkZ);
+            pendingPoses.unstableSort(Comparator.comparingInt(value -> value.getChebyshevDistance(currentSectionPosObj)));
+            synchronized (queuedUpdateChunks) {
+                queuedUpdateChunks.addAll(pendingPoses);
             }
         }
         return boxes;

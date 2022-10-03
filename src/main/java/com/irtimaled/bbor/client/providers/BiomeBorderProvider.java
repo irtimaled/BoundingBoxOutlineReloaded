@@ -241,7 +241,6 @@ public class BiomeBorderProvider implements IBoundingBoxProvider<BoundingBoxBiom
         if (lastRenderOnlyCurrentBiome != renderOnlyCurrentBiome ||
                 lastRenderDistanceChunks != renderDistanceChunks ||
                 hasUpdate) {
-            hasUpdate = false;
             bfsQueue.clear();
             bfsSearchedPos.clear();
             boxes.clear();
@@ -250,7 +249,7 @@ public class BiomeBorderProvider implements IBoundingBoxProvider<BoundingBoxBiom
         lastRenderOnlyCurrentBiome = renderOnlyCurrentBiome;
 
         if (renderOnlyCurrentBiome) {
-            if (lastSectionPos != currentSectionPos || !bfsSearchedPos.contains(BlockPos.asLong(x, y, z))) {
+            if (hasUpdate || lastSectionPos != currentSectionPos || !bfsSearchedPos.contains(BlockPos.asLong(x, y, z))) {
                 ReferenceArrayList<Direction> allowedDirections = new ReferenceArrayList<>();
                 boxes.clear();
                 bfsQueue.clear();
@@ -303,7 +302,7 @@ public class BiomeBorderProvider implements IBoundingBoxProvider<BoundingBoxBiom
                 }
             }
         } else {
-            if (lastSectionPos != currentSectionPos) {
+            if (hasUpdate || lastSectionPos != currentSectionPos) {
                 boxes.clear();
                 for (int chunkX = playerChunkX - renderDistanceChunks; chunkX <= playerChunkX + renderDistanceChunks; chunkX++) {
                     for (int chunkY = playerChunkY - renderDistanceChunks; chunkY <= playerChunkY + renderDistanceChunks; chunkY++) {
@@ -323,6 +322,7 @@ public class BiomeBorderProvider implements IBoundingBoxProvider<BoundingBoxBiom
         }
 
         lastSectionPos = currentSectionPos;
+        hasUpdate = false;
         return boxes;
     }
 
