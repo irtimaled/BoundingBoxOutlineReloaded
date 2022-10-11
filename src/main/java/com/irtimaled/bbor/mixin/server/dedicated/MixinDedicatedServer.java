@@ -1,16 +1,14 @@
 package com.irtimaled.bbor.mixin.server.dedicated;
 
-import com.irtimaled.bbor.common.CommonProxy;
 import net.minecraft.server.dedicated.MinecraftDedicatedServer;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(MinecraftDedicatedServer.class)
 public class MixinDedicatedServer {
-    @Inject(method = "setupServer", at = @At(value = "NEW", target = "net/minecraft/server/dedicated/DedicatedPlayerManager"))
-    private void init(CallbackInfoReturnable<Boolean> cir) {
+    /* Cannot inject when class is load?
+    @Inject(method = "setupServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/dedicated/MinecraftDedicatedServer;setPlayerManager(Lnet/minecraft/server/PlayerManager;)V"))
+    private void init() {
         new CommonProxy().init();
     }
+     */
 }
