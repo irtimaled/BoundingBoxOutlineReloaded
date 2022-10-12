@@ -30,11 +30,14 @@ public class CommonProxy {
     private Integer spawnX = null;
     private Integer spawnZ = null;
 
+    public static boolean isServer = false;
+
     public CommonProxy(){
         ConfigManager.loadConfig();
     }
 
     public void init() {
+        System.out.println("CommonProxy init");
         BoundingBoxType.registerTypes();
         EventBus.subscribe(WorldLoaded.class, this::worldLoaded);
         EventBus.subscribe(StructuresLoaded.class, this::structuresLoaded);
