@@ -36,8 +36,5 @@
     "network.play.server.MixinSCommandListPacket",
     "network.play.server.MixinSCustomPayloadPlayPacket",
     "network.play.server.MixinSSpawnPositionPacket"
-  ],
-  "server": [
-    "server.dedicated.MixinDedicatedServer"
   ]
 }
