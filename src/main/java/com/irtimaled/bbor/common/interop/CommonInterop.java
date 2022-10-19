@@ -27,7 +27,7 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.WorldChunk;
-import net.minecraft.world.gen.structure.Structure;
+import net.minecraft.world.gen.feature.ConfiguredStructureFeature;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 
@@ -42,9 +42,9 @@ public class CommonInterop {
     public static void chunkLoaded(WorldChunk chunk) {
         DimensionId dimensionId = DimensionId.from(chunk.getWorld().getRegistryKey());
         Map<String, StructureStart> structures = new HashMap<>();
-        final Registry<Structure> structureFeatureRegistry = chunk.getWorld().getRegistryManager().get(Registry.STRUCTURE_KEY);
+        final Registry<ConfiguredStructureFeature<?, ?>> structureFeatureRegistry = chunk.getWorld().getRegistryManager().get(Registry.CONFIGURED_STRUCTURE_FEATURE_KEY);
         for (var es : chunk.getStructureStarts().entrySet()) {
-            final Optional<RegistryKey<Structure>> optional = structureFeatureRegistry.getKey(es.getKey());
+            final Optional<RegistryKey<ConfiguredStructureFeature<?, ?>>> optional = structureFeatureRegistry.getKey(es.getKey());
             optional.ifPresent(key -> structures.put(key.getValue().toString(), es.getValue()));
         }
         if (structures.size() > 0) EventBus.publish(new StructuresLoaded(structures, dimensionId));
@@ -59,14 +59,14 @@ public class CommonInterop {
 
     public static void loadWorldStructures(World world) {
         try {
-            final Registry<Structure> structureFeatureRegistry = world.getRegistryManager().get(Registry.STRUCTURE_KEY);
+            final Registry<ConfiguredStructureFeature<?, ?>> structureFeatureRegistry = world.getRegistryManager().get(Registry.CONFIGURED_STRUCTURE_FEATURE_KEY);
             loadStructuresFromRegistry(structureFeatureRegistry);
         } catch (Throwable t) {
             t.printStackTrace();
         }
     }
 
-    public static void loadStructuresFromRegistry(Registry<Structure> structureFeatureRegistry) {
+    public static void loadStructuresFromRegistry(Registry<ConfiguredStructureFeature<?, ?>> structureFeatureRegistry) {
         System.out.println("Registring structures: " + Arrays.toString(structureFeatureRegistry.getEntrySet().stream().map(entry -> entry.getKey().getValue().toString()).distinct().toArray(String[]::new)));
         for (var entry : structureFeatureRegistry.getEntrySet()) {
             final Identifier value = entry.getKey().getValue();

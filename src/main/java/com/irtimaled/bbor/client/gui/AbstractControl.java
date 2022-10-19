@@ -3,7 +3,7 @@ package com.irtimaled.bbor.client.gui;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.Text;
+import net.minecraft.text.LiteralText;
 
 import java.awt.*;
 
@@ -12,7 +12,7 @@ abstract class AbstractControl extends ClickableWidget implements IControl {
     protected final MinecraftClient minecraft;
 
     AbstractControl(int x, int y, int width, String name) {
-        super(x, y, width, 20, Text.literal(name));
+        super(x, y, width, 20, new LiteralText(name));
         this.minecraft = MinecraftClient.getInstance();
     }
 
