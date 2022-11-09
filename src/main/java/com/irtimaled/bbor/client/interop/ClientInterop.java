@@ -23,10 +23,11 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.command.CommandSource;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.ClickEvent;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.text.Texts;
-import net.minecraft.text.TranslatableTextContent;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 
@@ -53,7 +54,7 @@ public class ClientInterop {
                     commandSource.sendError(Texts.toText(exception.getRawMessage()));
                     if (exception.getInput() != null && exception.getCursor() >= 0) {
 
-                        MutableText suggestion = Text.literal("")
+                        MutableText suggestion = new LiteralText("")
                                 .formatted(Formatting.GRAY)
                                 .styled(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, message)));
                         int textLength = Math.min(exception.getInput().length(), exception.getCursor());
@@ -63,11 +64,11 @@ public class ClientInterop {
 
                         suggestion.append(exception.getInput().substring(Math.max(0, textLength - 10), textLength));
                         if (textLength < exception.getInput().length()) {
-                            suggestion.append(Text.literal(exception.getInput().substring(textLength))
+                            suggestion.append(new LiteralText(exception.getInput().substring(textLength))
                                     .formatted(Formatting.RED, Formatting.UNDERLINE));
                         }
 
-                        suggestion.append(Text.translatable("command.context.here")
+                        suggestion.append(new TranslatableText("command.context.here")
                                 .formatted(Formatting.RED, Formatting.ITALIC));
                         commandSource.sendError(suggestion);
                     }
@@ -83,11 +84,11 @@ public class ClientInterop {
     }
 
     public static int getRenderDistanceChunks() {
-        return MinecraftClient.getInstance().options.getViewDistance().getValue();
+        return MinecraftClient.getInstance().options.getViewDistance();
     }
 
     public static void handleSeedMessage(Text chatComponent) {
-        TypeHelper.doIfType(chatComponent, TranslatableTextContent.class, message -> {
+        TypeHelper.doIfType(chatComponent, TranslatableText.class, message -> {
             if (!message.getKey().equals("commands.seed.success")) return;
 
             try {

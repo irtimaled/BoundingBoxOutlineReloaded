@@ -47,7 +47,7 @@ public class WorldSaveRow extends ControlListEntry implements Comparable<WorldSa
         this.setSelectedEntry = setSelectedEntry;
         this.client = MinecraftClient.getInstance();
         this.iconLocation = new Identifier("worlds/" + Hashing.sha1().hashUnencodedChars(worldSummary.getName()) + "/icon");
-        this.iconFile = worldSummary.getIconPath().toFile();
+        this.iconFile = worldSummary.getFile();
         if (!this.iconFile.isFile()) {
             this.iconFile = null;
         }

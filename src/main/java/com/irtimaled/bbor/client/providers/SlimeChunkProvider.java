@@ -10,7 +10,7 @@ import com.irtimaled.bbor.common.models.Coords;
 import com.irtimaled.bbor.common.models.DimensionId;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.util.math.random.ChunkRandom;
+import net.minecraft.world.gen.random.ChunkRandom;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -44,7 +44,7 @@ public class SlimeChunkProvider implements IBoundingBoxProvider<BoundingBoxSlime
         final ClientWorld world = MinecraftClient.getInstance().world;
         final int minimumY;
         if (world != null) {
-            minimumY = world.getDimension().minY();
+            minimumY = world.getDimension().getMinimumY();
         } else {
             minimumY = 0;
         }

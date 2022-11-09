@@ -35,7 +35,7 @@ public class ClientProxy extends CommonProxy {
 
     public ClientProxy() {
         ConfigManager.loadConfig();
-        CommonInterop.loadStructuresFromRegistry(BuiltinRegistries.STRUCTURE);
+        CommonInterop.loadStructuresFromRegistry(BuiltinRegistries.CONFIGURED_STRUCTURE_FEATURE);
     }
 
     @Override
