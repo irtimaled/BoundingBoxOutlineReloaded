@@ -13,6 +13,7 @@ public class ConfigManager {
     private static final Set<Setting<?>> settings = new HashSet<>();
     private static File configDir;
 
+    public static Setting<Boolean> showSettingsButton;
     public static Setting<Boolean> fill;
     //    public static Setting<Boolean> drawVillages;
 //    public static Setting<Boolean> drawDesertTemples;
@@ -157,6 +158,7 @@ public class ConfigManager {
         configDir.mkdirs();
         config = loadConfiguration();
 
+        showSettingsButton = setup(config, "general", "showSettingsButton", true, "If set to true the settings button is shown in options screen.");
         fill = setup(config, "general", "fill", true, "If set to true the bounding boxes are filled.");
         outerBoxesOnly = setup(config, "general", "outerBoxesOnly", false, "If set to true only the outer bounding boxes are rendered.");
         alwaysVisible = setup(config, "general", "alwaysVisible", false, "If set to true boxes will be visible even through other blocks.");

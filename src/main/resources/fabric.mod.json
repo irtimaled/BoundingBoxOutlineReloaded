@@ -8,6 +8,9 @@
     "Irtimaled"
   ],
   "version": "$version",
+  "entrypoints": {
+    "modmenu": ["com.irtimaled.bbor.client.ModMenuIntegration"]
+  },
   "mixins": [
     "bbor.mixins.json"
   ],
