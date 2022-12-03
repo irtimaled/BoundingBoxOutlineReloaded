@@ -1,19 +1,19 @@
 buildscript {
     repositories {
         mavenCentral()
+        gradlePluginPortal()
         maven {
             name = 'Fabric'
             url = 'https://maven.fabricmc.net/'
         }
-        maven {
-            name = 'Cotton'
-            url = 'https://server.bbkr.space/artifactory/libs-release/'
-        }
     }
     dependencies {
         classpath "net.fabricmc:fabric-loom:0.11-SNAPSHOT"
-        classpath "io.github.juuxel:loom-quiltflower:1.6.0"
     }
+}
+
+plugins {
+    id 'io.github.juuxel.loom-quiltflower' version '1.8.0' apply false
 }
 
 apply plugin: 'fabric-loom'
@@ -38,12 +38,21 @@ tasks.withType(JavaCompile).configureEach {
     it.options.release = 17
 }
 
+repositories {
+    maven {
+        name = 'TerraformersMC'
+        url = 'https://maven.terraformersmc.com/'
+    }
+}
+
 dependencies {
     minecraft 'com.mojang:minecraft:' + project.mcVersion
     mappings 'net.fabricmc:yarn:' + project.mcVersion + '+build.1:v2'
     modImplementation 'net.fabricmc:fabric-loader:0.14.8'
 
     include modImplementation(fabricApi.module("fabric-resource-loader-v0", "0.58.0+1.18.2"))
+
+    modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 }
 
 loom {

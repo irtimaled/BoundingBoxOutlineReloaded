@@ -6,6 +6,7 @@
   "bbor.options.active": "Active",
   "bbor.options.outerBoxOnly": "Outer Box Only",
   "bbor.options.fill": "Fill",
+  "bbor.options.showSettingsButton": "Show Settings Button",
 
   "bbor.options.fastRender": "Fast Render: %s",
   "bbor.options.fastRender.0": "Off",
