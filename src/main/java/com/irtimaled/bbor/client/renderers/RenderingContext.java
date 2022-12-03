@@ -13,6 +13,7 @@ import net.minecraft.util.math.Box;
 
 import java.awt.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 /**
  * Intended to be reused. This class is not thread-safe.
@@ -25,8 +26,11 @@ public class RenderingContext {
 
     private boolean isFreshBuffers = true;
     private VertexBuffer quadBufferNonMaskedUploaded = new VertexBuffer();
+    private boolean quadBufferNonMaskedUploadedEmpty = true;
     private VertexBuffer quadBufferMaskedUploaded = new VertexBuffer();
+    private boolean quadBufferMaskedUploadedEmpty = true;
     private VertexBuffer lineBufferUploaded = new VertexBuffer();
+    private boolean lineBufferUploadedEmpty = true;
 
     private long quadNonMaskedCount;
     private long quadMaskedCount;
@@ -200,25 +204,44 @@ public class RenderingContext {
         CompletableFuture<?>[] futures = new CompletableFuture[3];
 
         final BufferBuilder.BuiltBuffer quadBufferMasked = this.quadBufferBuilderMasked.end();
+        quadBufferMaskedUploadedEmpty = quadBufferMasked.isEmpty();
+        final Executor executor = command -> {
+            if (RenderSystem.isOnRenderThread()) command.run();
+            else RenderSystem.recordRenderCall(command::run);
+        };
         futures[0] = CompletableFuture.runAsync(() -> {
-            quadBufferMaskedUploaded.bind();
-            quadBufferMaskedUploaded.upload(quadBufferMasked);
-            VertexBuffer.unbind();
-        }, command -> RenderSystem.recordRenderCall(command::run));
+            if (!quadBufferMaskedUploadedEmpty) {
+                quadBufferMaskedUploaded.bind();
+                quadBufferMaskedUploaded.upload(quadBufferMasked);
+                VertexBuffer.unbind();
+            } else {
+                quadBufferMasked.release();
+            }
+        }, executor);
 
         final BufferBuilder.BuiltBuffer quadBufferNonMasked = this.quadBufferBuilderNonMasked.end();
+        quadBufferNonMaskedUploadedEmpty = quadBufferNonMasked.isEmpty();
         futures[1] = CompletableFuture.runAsync(() -> {
-            quadBufferNonMaskedUploaded.bind();
-            quadBufferNonMaskedUploaded.upload(quadBufferNonMasked);
-            VertexBuffer.unbind();
-        }, command -> RenderSystem.recordRenderCall(command::run));
+            if (!quadBufferNonMaskedUploadedEmpty) {
+                quadBufferNonMaskedUploaded.bind();
+                quadBufferNonMaskedUploaded.upload(quadBufferNonMasked);
+                VertexBuffer.unbind();
+            } else {
+                quadBufferNonMasked.release();
+            }
+        }, executor);
 
         final BufferBuilder.BuiltBuffer lineBuffer = this.lineBufferBuilder.end();
+        lineBufferUploadedEmpty = lineBuffer.isEmpty();
         futures[2] = CompletableFuture.runAsync(() -> {
-            lineBufferUploaded.bind();
-            lineBufferUploaded.upload(lineBuffer);
-            VertexBuffer.unbind();
-        }, command -> RenderSystem.recordRenderCall(command::run));
+            if (!lineBufferUploadedEmpty) {
+                lineBufferUploaded.bind();
+                lineBufferUploaded.upload(lineBuffer);
+                VertexBuffer.unbind();
+            } else {
+                lineBuffer.release();
+            }
+        }, executor);
 
         CompletableFuture.allOf(futures).join();
         lastBuildDurationNanos = System.nanoTime() - lastBuildStartTime;
@@ -230,14 +253,20 @@ public class RenderingContext {
         final MatrixStack.Entry top = stack.peek();
 
         RenderSystem.depthMask(true);
-        lineBufferUploaded.bind();
-        lineBufferUploaded.draw(top.getPositionMatrix(), RenderSystem.getProjectionMatrix(), GameRenderer.getPositionColorShader());
-        quadBufferMaskedUploaded.bind();
-        quadBufferMaskedUploaded.draw(top.getPositionMatrix(), RenderSystem.getProjectionMatrix(), GameRenderer.getPositionColorShader());
+        if (!lineBufferUploadedEmpty) {
+            lineBufferUploaded.bind();
+            lineBufferUploaded.draw(top.getPositionMatrix(), RenderSystem.getProjectionMatrix(), GameRenderer.getPositionColorShader());
+        }
+        if (!quadBufferMaskedUploadedEmpty) {
+            quadBufferMaskedUploaded.bind();
+            quadBufferMaskedUploaded.draw(top.getPositionMatrix(), RenderSystem.getProjectionMatrix(), GameRenderer.getPositionColorShader());
+        }
 
         RenderSystem.depthMask(false);
-        quadBufferNonMaskedUploaded.bind();
-        quadBufferNonMaskedUploaded.draw(top.getPositionMatrix(), RenderSystem.getProjectionMatrix(), GameRenderer.getPositionColorShader());
+        if (!quadBufferNonMaskedUploadedEmpty) {
+            quadBufferNonMaskedUploaded.bind();
+            quadBufferNonMaskedUploaded.draw(top.getPositionMatrix(), RenderSystem.getProjectionMatrix(), GameRenderer.getPositionColorShader());
+        }
 
         VertexBuffer.unbind();
         RenderSystem.depthMask(true);
@@ -246,7 +275,7 @@ public class RenderingContext {
     }
 
     public String debugString() {
-        return String.format("[BBOR] Statistics: Filled faces: %d+%d Lines: %d @ (%.2fms Build, %.2fms Draw)",
+        return String.format("Statistics: Filled faces: %d+%d Lines: %d @ (%.2fms Build, %.2fms Draw)",
                 quadMaskedCount, quadNonMaskedCount, lineCount,
                 lastBuildDurationNanos / 1_000_000.0, lastRenderDurationNanos / 1_000_000.0);
     }

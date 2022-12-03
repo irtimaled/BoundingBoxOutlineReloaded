@@ -17,13 +17,17 @@ public class MobSpawnerRenderer extends AbstractRenderer<BoundingBoxMobSpawner> 
 
         renderCuboid(ctx, new OffsetBox(coords, coords), color, false, 30);
 
-        if (ConfigManager.renderMobSpawnerActivationLines.get()) {
-            renderActivationLine(ctx, new OffsetPoint(coords).offset(0.5, 0.5, 0.5));
-        }
-
         if (ConfigManager.renderMobSpawnerSpawnArea.get()) {
             OffsetBox bb = new OffsetBox(boundingBox.getMinCoords(), boundingBox.getMaxCoords());
             renderCuboid(ctx, bb, color, false, 30);
+        }
+    }
+
+    @Override
+    public void renderSync(RenderingContext ctx, BoundingBoxMobSpawner boundingBox) {
+        super.renderSync(ctx, boundingBox);
+        if (ConfigManager.renderMobSpawnerActivationLines.get()) {
+            renderActivationLine(ctx, new OffsetPoint(boundingBox.getCoords()).offset(0.5, 0.5, 0.5));
         }
     }
 

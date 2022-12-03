@@ -106,9 +106,11 @@ public class ClientRenderer {
         AsyncRenderer.render(matrixStack, dimensionId);
     }
 
-    private static final ObjectArrayList<AbstractBoundingBox> listForRendering = new ObjectArrayList<>();
+    private static final ThreadLocal<ObjectArrayList<AbstractBoundingBox>> listForRendering =
+            ThreadLocal.withInitial(ObjectArrayList::new);
 
     public static List<AbstractBoundingBox> getBoundingBoxes(DimensionId dimensionId) {
+        final ObjectArrayList<AbstractBoundingBox> listForRendering = ClientRenderer.listForRendering.get();
         listForRendering.clear();
         final boolean doPreCulling = !ConfigManager.asyncBuilding.get() && ConfigManager.fastRender.get() >= 2;
         for (IBoundingBoxProvider<?> provider : providers) {

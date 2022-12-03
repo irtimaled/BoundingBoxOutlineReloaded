@@ -21,6 +21,9 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
 
     public abstract void render(RenderingContext ctx, T boundingBox);
 
+    public void renderSync(RenderingContext ctx, T boundingBox) {
+    }
+
     void renderCuboid(RenderingContext ctx, OffsetBox bb, Color color, boolean fillOnly, int fillAlpha) {
         renderCuboid0(ctx, bb.nudge(), color, fillOnly, fillAlpha, false);
     }

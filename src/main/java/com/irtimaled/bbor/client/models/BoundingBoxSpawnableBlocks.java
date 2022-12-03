@@ -14,7 +14,7 @@ public class BoundingBoxSpawnableBlocks extends AbstractBoundingBox {
 
     private final int baseX;
     private final int baseZ;
-    private final IntSet blocks = IntSets.synchronize(new IntOpenHashSet());
+    private final IntSet blocks = IntSets.synchronize(new IntOpenHashSet(), this);
 
     public BoundingBoxSpawnableBlocks(int baseX, int baseZ) {
         super(BoundingBoxType.SpawnableBlocks);

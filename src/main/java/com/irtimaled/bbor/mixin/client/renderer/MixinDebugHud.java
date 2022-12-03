@@ -26,7 +26,7 @@ public class MixinDebugHud {
         }
 
         cir.getReturnValue().addAll(RenderCulling.debugStrings());
-        cir.getReturnValue().add(AsyncRenderer.renderingDebugString());
+        cir.getReturnValue().addAll(AsyncRenderer.renderingDebugStrings());
         cir.getReturnValue().add(String.format("[BBOR] Rendering took %.2fms", AsyncRenderer.getLastDurationNanos() / 1_000_000.0));
     }
 

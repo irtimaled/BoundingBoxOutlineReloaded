@@ -10,13 +10,15 @@ public class SpawnableBlocksRenderer extends AbstractRenderer<BoundingBoxSpawnab
     @Override
     public void render(RenderingContext ctx, BoundingBoxSpawnableBlocks boundingBox) {
         Color color = BoundingBoxTypeHelper.getColor(boundingBox.getType());
-        final IntIterator iterator = boundingBox.getBlockYs().iterator();
-        while (iterator.hasNext()) {
-            int y = iterator.nextInt();
-            int x = boundingBox.getBaseX();
-            int z = boundingBox.getBaseZ();
-            OffsetBox offsetBox = new OffsetBox(x, y, z, x + 1, y, z + 1);
-            renderCuboid(ctx, offsetBox, color, false, 30);
+        synchronized (boundingBox) {
+            final IntIterator iterator = boundingBox.getBlockYs().iterator();
+            while (iterator.hasNext()) {
+                int y = iterator.nextInt();
+                int x = boundingBox.getBaseX();
+                int z = boundingBox.getBaseZ();
+                OffsetBox offsetBox = new OffsetBox(x, y, z, x + 1, y, z + 1);
+                renderCuboid(ctx, offsetBox, color, false, 30);
+            }
         }
     }
 }
