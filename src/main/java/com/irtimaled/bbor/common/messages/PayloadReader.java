@@ -45,4 +45,8 @@ public class PayloadReader {
     DimensionId readDimensionId() {
         return DimensionId.from(buffer.readIdentifier());
     }
+
+    String readString() {
+        return buffer.readString();
+    }
 }

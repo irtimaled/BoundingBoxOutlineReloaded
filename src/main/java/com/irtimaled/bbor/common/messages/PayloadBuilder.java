@@ -77,4 +77,10 @@ public class PayloadBuilder {
         packet = null;
         return this;
     }
+
+    PayloadBuilder writeString(String value) {
+        buffer.writeString(value);
+        packet = null;
+        return this;
+    }
 }

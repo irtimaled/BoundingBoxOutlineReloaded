@@ -7,6 +7,7 @@ import com.irtimaled.bbor.client.renderers.AbstractRenderer;
 import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.EventBus;
 import com.irtimaled.bbor.common.StructureProcessor;
+import com.irtimaled.bbor.common.events.DataPackReloaded;
 import com.irtimaled.bbor.common.events.PlayerLoggedIn;
 import com.irtimaled.bbor.common.events.PlayerLoggedOut;
 import com.irtimaled.bbor.common.events.PlayerSubscribed;
@@ -19,6 +20,7 @@ import com.irtimaled.bbor.common.models.ServerPlayer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.network.ClientConnection;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -26,7 +28,6 @@ import net.minecraft.structure.StructureStart;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.World;
 import net.minecraft.world.chunk.WorldChunk;
 import net.minecraft.world.gen.feature.ConfiguredStructureFeature;
 
@@ -52,13 +53,12 @@ public class CommonInterop {
     public static void loadWorlds(Collection<ServerWorld> worlds) {
         for (ServerWorld world : worlds) {
             loadWorld(world);
-            loadWorldStructures(world);
         }
     }
 
-    public static void loadWorldStructures(World world) {
+    public static void loadServerStructures(MinecraftServer server) {
         try {
-            final Registry<ConfiguredStructureFeature<?, ?>> structureFeatureRegistry = world.getRegistryManager().get(Registry.CONFIGURED_STRUCTURE_FEATURE_KEY);
+            final Registry<ConfiguredStructureFeature<?, ?>> structureFeatureRegistry = server.getRegistryManager().get(Registry.CONFIGURED_STRUCTURE_FEATURE_KEY);
             loadStructuresFromRegistry(structureFeatureRegistry);
         } catch (Throwable t) {
             t.printStackTrace();
@@ -71,7 +71,6 @@ public class CommonInterop {
             final Identifier value = entry.getKey().getValue();
             final BoundingBoxType boundingBoxType = BoundingBoxType.register("structure:" + value);
             StructureProcessor.registerSupportedStructure(boundingBoxType);
-            StructureProcessor.supportedStructureIds.add(value.toString());
             BoundingBoxTypeHelper.registerType(boundingBoxType, ConfigManager.structureShouldRender(value.toString()), ConfigManager.structureColor(value.toString()));
         }
     }
@@ -100,6 +99,10 @@ public class CommonInterop {
 
     public static void playerSubscribed(ServerPlayerEntity player) {
         EventBus.publish(new PlayerSubscribed(player.getId(), new ServerPlayer(player)));
+    }
+
+    public static void dataPackReloaded() {
+        EventBus.publish(new DataPackReloaded());
     }
 
     public static <T extends AbstractBoundingBox> AbstractRenderer<T> registerRenderer(Class<? extends T> type, Supplier<AbstractRenderer<T>> renderer) {

@@ -1,5 +1,7 @@
 package com.irtimaled.bbor.client.config;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 public class HexColor {
     private final String value;
     private final boolean hasAlpha;
@@ -20,7 +22,7 @@ public class HexColor {
     }
 
     public static HexColor random() {
-        return from(String.format("#%06x", (int) (Math.random() * 0x1000000)));
+        return from(String.format("#%06x", ThreadLocalRandom.current().nextInt(0x1000000)));
     }
 
     public String getValue() {

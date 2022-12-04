@@ -2,15 +2,17 @@ package com.irtimaled.bbor.client.config;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectMaps;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ObjectSet;
+import it.unimi.dsi.fastutil.objects.ObjectSets;
 
 import java.io.File;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
 public class ConfigManager {
-    private static final Set<Setting<?>> settings = new HashSet<>();
+    private static final ObjectSet<Setting<?>> settings = ObjectSets.synchronize(new ObjectOpenHashSet<>(), ConfigManager.class);
     private static File configDir;
 
     public static Setting<Boolean> showSettingsButton;
@@ -278,11 +280,13 @@ public class ConfigManager {
     }
 
     public static void saveConfig() {
-        Configuration config = new Configuration(new File(configDir, "BBOutlineReloaded.cfg"));
-        for (Setting<?> setting : settings) {
-            config.put(setting);
+        synchronized (ConfigManager.class) {
+            Configuration config = new Configuration(new File(configDir, "BBOutlineReloaded.cfg"));
+            for (Setting<?> setting : settings) {
+                config.put(setting);
+            }
+            config.save();
         }
-        config.save();
     }
 
     public static Setting<Boolean> structureShouldRender(String key) {
