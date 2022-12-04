@@ -2,6 +2,7 @@ package com.irtimaled.bbor.common;
 
 import com.irtimaled.bbor.Logger;
 import com.irtimaled.bbor.client.config.ConfigManager;
+import com.irtimaled.bbor.common.events.DataPackReloaded;
 import com.irtimaled.bbor.common.events.PlayerLoggedIn;
 import com.irtimaled.bbor.common.events.PlayerLoggedOut;
 import com.irtimaled.bbor.common.events.PlayerSubscribed;
@@ -11,6 +12,7 @@ import com.irtimaled.bbor.common.events.WorldLoaded;
 import com.irtimaled.bbor.common.messages.AddBoundingBox;
 import com.irtimaled.bbor.common.messages.InitializeClient;
 import com.irtimaled.bbor.common.messages.PayloadBuilder;
+import com.irtimaled.bbor.common.messages.StructureListSync;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.common.models.DimensionId;
 import com.irtimaled.bbor.common.models.ServerPlayer;
@@ -42,6 +44,7 @@ public class CommonProxy {
         EventBus.subscribe(PlayerLoggedOut.class, this::playerLoggedOut);
         EventBus.subscribe(PlayerSubscribed.class, this::onPlayerSubscribed);
         EventBus.subscribe(ServerTick.class, e -> serverTick());
+        EventBus.subscribe(DataPackReloaded.class, e -> dataPackReloaded());
     }
 
     protected void setSeed(long seed) {
@@ -96,6 +99,7 @@ public class CommonProxy {
         int playerId = event.getPlayerId();
         ServerPlayer player = event.getPlayer();
         players.put(playerId, player);
+        player.sendPacket(StructureListSync.getPayload());
         sendToPlayer(playerId, player);
     }
 
@@ -120,6 +124,12 @@ public class CommonProxy {
 
                 playerBoundingBoxes.add(key);
             }
+        }
+    }
+
+    private void dataPackReloaded() {
+        for (Map.Entry<Integer, ServerPlayer> playerEntry : players.entrySet()) {
+            playerEntry.getValue().sendPacket(StructureListSync.getPayload());
         }
     }
 

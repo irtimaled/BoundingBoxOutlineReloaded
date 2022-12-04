@@ -30,7 +30,7 @@ public class BoundingBoxType {
     }
 
     public static void registerTypes() {
-        structureTypeMap.values().forEach(StructureProcessor::registerSupportedStructure);
+//        structureTypeMap.values().forEach(StructureProcessor::registerSupportedStructure);
     }
 
     public static BoundingBoxType getByNameHash(Integer nameHash) {

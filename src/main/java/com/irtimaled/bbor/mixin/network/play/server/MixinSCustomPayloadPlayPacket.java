@@ -4,6 +4,7 @@ import com.irtimaled.bbor.common.EventBus;
 import com.irtimaled.bbor.common.messages.AddBoundingBox;
 import com.irtimaled.bbor.common.messages.InitializeClient;
 import com.irtimaled.bbor.common.messages.PayloadReader;
+import com.irtimaled.bbor.common.messages.StructureListSync;
 import com.irtimaled.bbor.common.messages.SubscribeToServer;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.PacketByteBuf;
@@ -29,14 +30,15 @@ public abstract class MixinSCustomPayloadPlayPacket {
                 data = packet.getData();
                 PayloadReader reader = new PayloadReader(data);
                 switch (channelName) {
-                    case InitializeClient.NAME: {
+                    case InitializeClient.NAME -> {
                         EventBus.publish(InitializeClient.getEvent(reader));
                         ((ClientPlayNetworkHandler) netHandlerPlayClient).sendPacket(SubscribeToServer.getPayload().build());
-                        break;
                     }
-                    case AddBoundingBox.NAME: {
+                    case AddBoundingBox.NAME -> {
                         EventBus.publish(AddBoundingBox.getEvent(reader));
-                        break;
+                    }
+                    case StructureListSync.NAME -> {
+                        StructureListSync.handleEvent(reader);
                     }
                 }
             } finally {
