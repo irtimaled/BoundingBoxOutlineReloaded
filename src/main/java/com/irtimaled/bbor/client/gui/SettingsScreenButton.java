@@ -18,8 +18,7 @@ public class SettingsScreenButton extends AbstractButton {
     }
 
     @Override
-    public void appendNarrations(NarrationMessageBuilder narrationMessageBuilder) {
-        // TODO
-        this.appendDefaultNarrations(narrationMessageBuilder);
+    protected void appendClickableNarrations(NarrationMessageBuilder builder) {
+        this.appendDefaultNarrations(builder);
     }
 }

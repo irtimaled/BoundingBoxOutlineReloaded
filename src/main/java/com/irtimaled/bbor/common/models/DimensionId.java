@@ -1,8 +1,8 @@
 package com.irtimaled.bbor.common.models;
 
 import com.irtimaled.bbor.common.ReflectionHelper;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 

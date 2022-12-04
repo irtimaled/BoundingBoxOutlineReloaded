@@ -39,8 +39,8 @@ public class SettingsScreen extends ListScreen {
                 .section(null,
                         width -> new BoolButton(width, I18n.translate("bbor.options.active"), this.client.world != null) {
                             @Override
-                            public void appendNarrations(NarrationMessageBuilder narrationMessageBuilder) {
-                                this.appendDefaultNarrations(narrationMessageBuilder);
+                            protected void appendClickableNarrations(NarrationMessageBuilder builder) {
+                                this.appendDefaultNarrations(builder);
                             }
 
                             @Override

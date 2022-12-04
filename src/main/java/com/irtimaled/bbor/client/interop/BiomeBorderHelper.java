@@ -10,10 +10,10 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectMaps;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.EmptyChunk;
@@ -55,7 +55,7 @@ public class BiomeBorderHelper {
 //        }
         return biomeArray.computeIfAbsent(pos.asLong(), key -> {
             final RegistryEntry<Biome> biome = world.getBiomeAccess().withSource(chunk).getBiome(pos);
-            return world.getRegistryManager().get(Registry.BIOME_KEY).getRawId(biome.value());
+            return world.getRegistryManager().get(RegistryKeys.BIOME).getRawId(biome.value());
         });
     }
 

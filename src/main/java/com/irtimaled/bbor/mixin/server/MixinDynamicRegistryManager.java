@@ -1,6 +1,6 @@
 package com.irtimaled.bbor.mixin.server;
 
-import net.minecraft.util.registry.DynamicRegistryManager;
+import net.minecraft.registry.DynamicRegistryManager;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(DynamicRegistryManager.class)

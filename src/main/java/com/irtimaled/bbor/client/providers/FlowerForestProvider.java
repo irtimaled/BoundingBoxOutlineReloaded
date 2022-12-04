@@ -3,7 +3,6 @@ package com.irtimaled.bbor.client.providers;
 import com.irtimaled.bbor.client.Player;
 import com.irtimaled.bbor.client.config.BoundingBoxTypeHelper;
 import com.irtimaled.bbor.client.config.ConfigManager;
-import com.irtimaled.bbor.client.interop.BiomeBorderHelper;
 import com.irtimaled.bbor.client.interop.ClientWorldUpdateTracker;
 import com.irtimaled.bbor.client.interop.FlowerForestHelper;
 import com.irtimaled.bbor.client.models.BoundingBoxFlowerForest;
@@ -15,15 +14,15 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMaps;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.ChunkSectionPos;
-import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.world.Heightmap;
+import net.minecraft.world.biome.BiomeKeys;
 
 import java.util.ArrayList;
 
 public class FlowerForestProvider implements IBoundingBoxProvider<BoundingBoxFlowerForest>, ICachingProvider {
-    public static final int FLOWER_FOREST_BIOME_ID = BuiltinRegistries.BIOME.getRawId(FlowerForestHelper.BIOME);
 
     private final Long2ObjectMap<FlowerForestChunk> chunks = Long2ObjectMaps.synchronize(new Long2ObjectLinkedOpenHashMap<>());
 
@@ -55,8 +54,7 @@ public class FlowerForestProvider implements IBoundingBoxProvider<BoundingBoxFlo
         }
 
         private BoundingBoxFlowerForest getBox(int x, int z) {
-            int biomeId = BiomeBorderHelper.getBiomeId(x, 255, z);
-            if (biomeId == FLOWER_FOREST_BIOME_ID) {
+            if (MinecraftClient.getInstance().world.getBiome(new BlockPos(x, 255, z)).matchesKey(BiomeKeys.FLOWER_FOREST)) {
                 int y = getMaxYForPos(x, 128, z);
                 final Coords coords = new Coords(x, y + 1, z);
                 return new BoundingBoxFlowerForest(coords, FlowerForestHelper.getFlowerColorAtPos(coords));

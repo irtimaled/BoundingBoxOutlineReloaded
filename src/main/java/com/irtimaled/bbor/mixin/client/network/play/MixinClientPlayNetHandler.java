@@ -9,6 +9,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ClientPlayNetworkHandler.class)
 public class MixinClientPlayNetHandler {
@@ -28,4 +29,11 @@ public class MixinClientPlayNetHandler {
 //    private void onSynchronizeTags(SynchronizeTagsS2CPacket packet, CallbackInfo ci) {
 //        CommonInterop.loadWorldStructures(this.world);
 //    }
+
+    @Inject(method = "sendCommand", at = @At("HEAD"), cancellable = true)
+    private void interceptSendCommand(String command, CallbackInfoReturnable<Boolean> cir) {
+        if (ClientInterop.interceptCommandUsage(command)) {
+            cir.setReturnValue(true);
+        }
+    }
 }

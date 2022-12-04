@@ -18,8 +18,8 @@ public class BoundingBoxTypeButton extends BoolSettingButton {
     protected void renderBackground(MatrixStack matrixStack, int mouseX, int mouseY) {
         super.renderBackground(matrixStack, mouseX, mouseY);
 
-        int left = x + 1;
-        int top = y + 1;
+        int left = getX() + 1;
+        int top = getY() + 1;
         int right = left + width - 2;
         int bottom = top + height - 2;
 

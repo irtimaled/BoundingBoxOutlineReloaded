@@ -36,7 +36,11 @@ public abstract class ListScreen extends Screen {
     protected void init() {
         this.controlList = this.buildList(48, this.height - 28);
         this.searchField = new SearchField(this.textRenderer, this.width / 2 - 100, 22, 200, 20, this.controlList);
-        this.doneButton = new ButtonWidget(this.width / 2 - 100, this.height - 24, 200, 20, Text.translatable("gui.done"), buttonWidget -> onDoneClicked());
+//        this.doneButton = new ButtonWidget(this.width / 2 - 100, this.height - 24, 200, 20, Text.translatable("gui.done"), buttonWidget -> onDoneClicked(), Supplier::get);
+        this.doneButton = ButtonWidget
+                .builder(Text.translatable("gui.done"), button -> onDoneClicked())
+                .dimensions(this.width / 2 - 100, this.height - 24, 200, 20)
+                .build();
 
         this.addDrawableChild(this.searchField);
         ((List<Element>) this.children()).add(this.controlList);

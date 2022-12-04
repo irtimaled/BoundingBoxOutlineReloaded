@@ -18,7 +18,6 @@ import com.irtimaled.bbor.common.CommonProxy;
 import com.irtimaled.bbor.common.EventBus;
 import com.irtimaled.bbor.common.interop.CommonInterop;
 import com.irtimaled.bbor.mixin.access.IKeyBinding;
-import net.minecraft.util.registry.BuiltinRegistries;
 
 public class ClientProxy extends CommonProxy {
     public static void registerKeyBindings() {
@@ -35,7 +34,7 @@ public class ClientProxy extends CommonProxy {
 
     public ClientProxy() {
         ConfigManager.loadConfig();
-        CommonInterop.loadStructuresFromRegistry(BuiltinRegistries.STRUCTURE);
+        CommonInterop.loadStructuresInitial();
     }
 
     @Override

@@ -27,7 +27,6 @@
     "client.MixinMinecraft",
     "client.access.IClientChunkManager",
     "client.access.IClientChunkManagerClientChunkMap",
-    "client.entity.player.MixinClientPlayerEntity",
     "client.gui.screen.MixinChatScreen",
     "client.gui.screen.MixinOptionsScreen",
     "client.network.login.MixinClientLoginNetHandler",

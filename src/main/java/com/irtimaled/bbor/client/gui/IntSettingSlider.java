@@ -52,7 +52,7 @@ class IntSettingSlider extends AbstractSlider {
     }
 
     @Override
-    public void appendNarrations(NarrationMessageBuilder narrationMessageBuilder) {
-        this.appendDefaultNarrations(narrationMessageBuilder);
+    protected void appendClickableNarrations(NarrationMessageBuilder builder) {
+        this.appendDefaultNarrations(builder);
     }
 }

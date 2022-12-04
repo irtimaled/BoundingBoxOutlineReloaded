@@ -22,11 +22,11 @@ abstract class AbstractControl extends ClickableWidget implements IControl {
     }
 
     public void setX(int x) {
-        super.x = x;
+        super.setX(x);
     }
 
     public void setY(int y) {
-        super.y = y;
+        super.setY(y);
     }
 
     public int getControlHeight() {

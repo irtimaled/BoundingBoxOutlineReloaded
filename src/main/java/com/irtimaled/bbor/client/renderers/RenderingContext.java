@@ -255,17 +255,17 @@ public class RenderingContext {
         RenderSystem.depthMask(true);
         if (!lineBufferUploadedEmpty) {
             lineBufferUploaded.bind();
-            lineBufferUploaded.draw(top.getPositionMatrix(), RenderSystem.getProjectionMatrix(), GameRenderer.getPositionColorShader());
+            lineBufferUploaded.draw(top.getPositionMatrix(), RenderSystem.getProjectionMatrix(), GameRenderer.getPositionColorProgram());
         }
         if (!quadBufferMaskedUploadedEmpty) {
             quadBufferMaskedUploaded.bind();
-            quadBufferMaskedUploaded.draw(top.getPositionMatrix(), RenderSystem.getProjectionMatrix(), GameRenderer.getPositionColorShader());
+            quadBufferMaskedUploaded.draw(top.getPositionMatrix(), RenderSystem.getProjectionMatrix(), GameRenderer.getPositionColorProgram());
         }
 
         RenderSystem.depthMask(false);
         if (!quadBufferNonMaskedUploadedEmpty) {
             quadBufferNonMaskedUploaded.bind();
-            quadBufferNonMaskedUploaded.draw(top.getPositionMatrix(), RenderSystem.getProjectionMatrix(), GameRenderer.getPositionColorShader());
+            quadBufferNonMaskedUploaded.draw(top.getPositionMatrix(), RenderSystem.getProjectionMatrix(), GameRenderer.getPositionColorProgram());
         }
 
         VertexBuffer.unbind();
