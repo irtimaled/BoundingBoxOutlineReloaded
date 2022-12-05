@@ -88,7 +88,7 @@ public class CommonInterop {
         if (connection == null) return;
 
         ClientConnection networkManager = connection.connection;
-        if (networkManager.isLocal()) return;
+//        if (networkManager.isLocal()) return;
 
         EventBus.publish(new PlayerLoggedIn(new ServerPlayer(player)));
     }

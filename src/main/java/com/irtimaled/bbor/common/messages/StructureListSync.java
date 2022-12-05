@@ -1,8 +1,5 @@
 package com.irtimaled.bbor.common.messages;
 
-import com.irtimaled.bbor.client.config.BoundingBoxTypeHelper;
-import com.irtimaled.bbor.client.config.ConfigManager;
-import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.StructureProcessor;
 
 import java.util.Set;
@@ -25,10 +22,7 @@ public class StructureListSync {
         final int size = reader.readVarInt();
         for (int i = 0; i < size; i++) {
             final String structureId = reader.readString();
-            System.out.println("Registering structure: %s".formatted(structureId));
-            final BoundingBoxType boundingBoxType = BoundingBoxType.register("structure:" + structureId);
-            StructureProcessor.registerSupportedStructure(boundingBoxType);
-            BoundingBoxTypeHelper.registerType(boundingBoxType, ConfigManager.structureShouldRender(structureId), ConfigManager.structureColor(structureId));
+            StructureUtil.registerStructureIfNeeded(structureId);
         }
     }
 

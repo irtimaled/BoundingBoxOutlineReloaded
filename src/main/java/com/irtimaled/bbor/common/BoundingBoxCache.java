@@ -13,7 +13,7 @@ public class BoundingBoxCache {
         return cache;
     }
 
-    void clear() {
+    public void clear() {
         cache.clear();
     }
 
@@ -23,5 +23,11 @@ public class BoundingBoxCache {
 
     public void addBoundingBoxes(AbstractBoundingBox key, Set<AbstractBoundingBox> boundingBoxes) {
         cache.put(key, boundingBoxes);
+    }
+
+    public enum Type {
+        LOCAL,
+        REMOTE_BBOR,
+        REMOTE_SERVUX
     }
 }

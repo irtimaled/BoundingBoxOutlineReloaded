@@ -1,6 +1,8 @@
 package com.irtimaled.bbor.mixin.client.network.play;
 
+import com.irtimaled.bbor.client.events.GameJoin;
 import com.irtimaled.bbor.client.interop.ClientInterop;
+import com.irtimaled.bbor.common.EventBus;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.network.packet.s2c.play.UnloadChunkS2CPacket;
@@ -28,4 +30,10 @@ public class MixinClientPlayNetHandler {
 //    private void onSynchronizeTags(SynchronizeTagsS2CPacket packet, CallbackInfo ci) {
 //        CommonInterop.loadWorldStructures(this.world);
 //    }
+
+    @Inject(method = "onGameJoin", at = @At("RETURN"))
+    private void onGameJoin(CallbackInfo ci) {
+        EventBus.publish(new GameJoin());
+    }
+
 }
