@@ -18,7 +18,7 @@ repositories {
 dependencies {
     compileOnly fileTree(dir: 'lib', includes: ['*.jar'])
     compileOnly 'org.jetbrains:annotations:23.0.0'
-    compileOnly 'org.spigotmc:spigot-api:${project.bukkitApiVersion}-R0.1-SNAPSHOT' // spigot?
+    compileOnly "org.spigotmc:spigot-api:${project.bukkitApiVersion}-R0.1-SNAPSHOT" // spigot?
 	compileOnly 'io.netty:netty-buffer:4.1.82.Final'
     compileOnly 'it.unimi.dsi:fastutil:8.5.6'
 }
