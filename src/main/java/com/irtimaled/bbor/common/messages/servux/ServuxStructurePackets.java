@@ -27,17 +27,22 @@ import java.util.Set;
 
 public class ServuxStructurePackets {
 
-    private static final Identifier CHANNEL = new Identifier("servux:structures");
+    public static final Identifier CHANNEL = new Identifier("servux:structures");
 
     public static final int PROTOCOL_VERSION = 1;
     public static final int PACKET_S2C_METADATA = 1;
     public static final int PACKET_S2C_STRUCTURE_DATA = 2;
 
     private static boolean registered = false;
+    private static int timeout = Integer.MAX_VALUE;
 
     public static PayloadBuilder subscribe() {
         return PayloadBuilder.serverBound("minecraft:register")
                 .writeBytes(CHANNEL.toString().getBytes(Charsets.UTF_8));
+    }
+
+    public static void markUnregistered() {
+        registered = false;
     }
 
     public static void handleEvent(PayloadReader reader) {
@@ -47,6 +52,7 @@ public class ServuxStructurePackets {
                 final NbtCompound nbt = reader.handle().readNbt();
                 registered = nbt != null && nbt.getInt("version") == PROTOCOL_VERSION &&
                         nbt.getString("id").equals(CHANNEL.toString());
+                if (registered) timeout = nbt.getInt("timeout");
             }
             case PACKET_S2C_STRUCTURE_DATA -> {
                 if (!registered) {
@@ -94,7 +100,7 @@ public class ServuxStructurePackets {
         }
 
         final BoundingBoxType boundingBoxType = StructureUtil.registerStructureIfNeeded(structureId);
-        System.out.println("Received %s from servux".formatted(structureId));
+//        System.out.println("Received %s from servux".formatted(structureId));
 
         Set<AbstractBoundingBox> boundingBoxes = new HashSet<>();
         BlockBox outerBox = null;
