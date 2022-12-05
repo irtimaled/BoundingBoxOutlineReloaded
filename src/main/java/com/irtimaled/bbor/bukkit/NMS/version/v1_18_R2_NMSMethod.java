@@ -36,6 +36,7 @@ public class v1_18_R2_NMSMethod extends BaseNMSMethod {
         addMethodCache("packetDataSerializerWriteVarInt", NMSMethodDescribe.of(NMSClassName.PacketDataSerializer, "d", int.class));
         addMethodCache("packetDataSerializerWriteChar", NMSMethodDescribe.of(NMSClassName.PacketDataSerializer, "writeChar", int.class));
         addMethodCache("packetDataSerializerWriteMinecraftKey", NMSMethodDescribe.of(NMSClassName.PacketDataSerializer, "a", NMSHelper.getNMSClass(NMSClassName.MinecraftKey)));
+        addMethodCache("packetDataSerializerWriteString", NMSMethodDescribe.of(NMSClassName.PacketDataSerializer, "a", String.class));
         addMethodCache("structureStartGetBox", NMSMethodDescribe.of(NMSClassName.StructureStart, "a"));
         addMethodCache("structureStartGetPiece", NMSMethodDescribe.of(NMSClassName.StructureStart, "i"));
         addMethodCache("structurePieceGetBox", NMSMethodDescribe.of(NMSClassName.StructurePiece, "f"));
@@ -45,6 +46,9 @@ public class v1_18_R2_NMSMethod extends BaseNMSMethod {
         addMethodCache("structureBoundingBoxGetMaxX", NMSMethodDescribe.of(NMSClassName.StructureBoundingBox, "j"));
         addMethodCache("structureBoundingBoxGetMaxY", NMSMethodDescribe.of(NMSClassName.StructureBoundingBox, "k"));
         addMethodCache("structureBoundingBoxGetMaxZ", NMSMethodDescribe.of(NMSClassName.StructureBoundingBox, "l"));
+        addMethodCache("serverGetStructureFeatureRegistry1", NMSMethodDescribe.of(NMSClassName.MinecraftServer, "aU"));
+        addMethodCache("serverGetStructureFeatureRegistry2", NMSMethodDescribe.of(NMSClassName.IRegistryCustom, "b", NMSHelper.getNMSClass(NMSClassName.ResourceKey)));
+        addFieldCache("serverGetStructureFeatureRegistry3", NMSFieldDescribe.of(NMSClassName.IRegistry, "aL"));
     }
 
     @Override

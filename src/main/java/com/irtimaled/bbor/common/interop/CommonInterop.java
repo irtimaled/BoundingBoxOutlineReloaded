@@ -28,6 +28,7 @@ public class CommonInterop {
         }
     }
 
+    @Deprecated
     public static void loadWorlds(@NotNull Collection<Object> worlds) {
         for (Object world : worlds) {
             loadWorld(world);
@@ -35,9 +36,19 @@ public class CommonInterop {
         }
     }
 
+    @Deprecated(forRemoval = true)
     public static void loadWorldStructures(Object world) {
         try {
             final Object structureFeatureRegistry = NMSHelper.worldGetStructureFeatureRegistry(world);
+            loadStructuresFromRegistry(structureFeatureRegistry);
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+
+    public static void loadServerStructures(Object server) {
+        try {
+            final Object structureFeatureRegistry = NMSHelper.serverGetStructureFeatureRegistry(server);
             loadStructuresFromRegistry(structureFeatureRegistry);
         } catch (Throwable t) {
             t.printStackTrace();
@@ -68,6 +79,10 @@ public class CommonInterop {
 
     public static void playerLoggedOut(@NotNull Object player) {
         EventBus.publish(new PlayerLoggedOut(NMSHelper.playerGetEntityID(player)));
+    }
+
+    public static void dataPackReloaded() {
+        EventBus.publish(new DataPackReloaded());
     }
 
     public static void playerSubscribed(@NotNull Object player) {

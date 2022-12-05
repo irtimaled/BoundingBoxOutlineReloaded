@@ -5,6 +5,7 @@ import com.irtimaled.bbor.common.events.*;
 import com.irtimaled.bbor.common.messages.AddBoundingBox;
 import com.irtimaled.bbor.common.messages.InitializeClient;
 import com.irtimaled.bbor.common.messages.PayloadBuilder;
+import com.irtimaled.bbor.common.messages.StructureListSync;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.common.models.DimensionId;
 import com.irtimaled.bbor.common.models.ServerPlayer;
@@ -26,13 +27,14 @@ public class CommonProxy {
     private Integer spawnZ = null;
 
     public void init() {
-        BoundingBoxType.registerTypes();
+        // BoundingBoxType.registerTypes();
         EventBus.subscribe(WorldLoaded.class, this::worldLoaded);
         EventBus.subscribe(StructuresLoaded.class, this::structuresLoaded);
         EventBus.subscribe(PlayerLoggedIn.class, this::playerLoggedIn);
         EventBus.subscribe(PlayerLoggedOut.class, this::playerLoggedOut);
         EventBus.subscribe(PlayerSubscribed.class, this::onPlayerSubscribed);
         EventBus.subscribe(ServerTick.class, e -> serverTick());
+        EventBus.subscribe(DataPackReloaded.class, e -> dataPackReloaded());
     }
 
     protected void setSeed(long seed) {
@@ -87,6 +89,7 @@ public class CommonProxy {
         int playerId = event.getPlayerId();
         ServerPlayer player = event.getPlayer();
         players.put(playerId, player);
+        player.sendPacket(StructureListSync.getPayload());
         sendToPlayer(playerId, player);
     }
 
@@ -122,7 +125,13 @@ public class CommonProxy {
         }
     }
 
-    protected BoundingBoxCache getOrCreateCache(DimensionId dimensionId) {
+    private void dataPackReloaded() {
+        for (Map.Entry<Integer, ServerPlayer> playerEntry : players.entrySet()) {
+            playerEntry.getValue().sendPacket(StructureListSync.getPayload());
+        }
+    }
+
+    private BoundingBoxCache getOrCreateCache(DimensionId dimensionId) {
         return dimensionCache.computeIfAbsent(dimensionId, dt -> new BoundingBoxCache());
     }
 

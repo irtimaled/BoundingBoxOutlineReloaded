@@ -1,11 +1,13 @@
 package com.irtimaled.bbor.common;
 
-import java.util.HashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMaps;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+
 import java.util.Map;
 
 public class BoundingBoxType {
 
-    private static final Map<Integer, BoundingBoxType> structureTypeMap = new HashMap<>();
+    private static final Map<Integer, BoundingBoxType> structureTypeMap = Object2ObjectMaps.synchronize(new Object2ObjectOpenHashMap<>());
 
     public static final BoundingBoxType WorldSpawn = register("World_Spawn");
     public static final BoundingBoxType SpawnChunks = register("Spawn_Chunks");
@@ -25,6 +27,7 @@ public class BoundingBoxType {
         return structureTypeMap.computeIfAbsent(name.hashCode(), k -> new BoundingBoxType(name));
     }
 
+    @Deprecated
     public static void registerTypes() {
         structureTypeMap.values().forEach(StructureProcessor::registerSupportedStructure);
     }

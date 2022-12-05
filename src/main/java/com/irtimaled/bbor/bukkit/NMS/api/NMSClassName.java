@@ -6,6 +6,7 @@ public enum NMSClassName {
     IRegistry,
     IRegistryCustom,
     MinecraftKey,
+    MinecraftServer,
     Packet,
     PacketDataSerializer,
     PacketPlayOutCustomPayload,
