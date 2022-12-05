@@ -13,11 +13,14 @@ import com.irtimaled.bbor.common.models.BoundingBoxCuboid;
 import com.irtimaled.bbor.common.models.Coords;
 import com.irtimaled.bbor.common.models.DimensionId;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockBox;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.world.gen.structure.Structure;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -79,6 +82,17 @@ public class ServuxStructurePackets {
 
     private static AddBoundingBoxReceived parseBoundingBox(NbtCompound nbt) {
         final String structureId = nbt.getString("id");
+
+        final ClientWorld world = MinecraftClient.getInstance().world;
+        assert world != null;
+        Structure structure = null;
+        try {
+            structure = world.getRegistryManager().get(Registry.STRUCTURE_KEY).get(Identifier.tryParse(structureId));
+        } catch (Throwable t) {
+            System.err.println("Failed to resolve structure %s, outer box may be inaccurate".formatted(structureId));
+            t.printStackTrace(System.err);
+        }
+
         final BoundingBoxType boundingBoxType = StructureUtil.registerStructureIfNeeded(structureId);
         System.out.println("Received %s from servux".formatted(structureId));
 
@@ -101,13 +115,14 @@ public class ServuxStructurePackets {
             }
         }
 
+        if (structure != null) outerBox = structure.expandBoxIfShouldAdaptNoise(outerBox);
+
         if (boundingBoxes.size() == 0) {
             return null;
         } else {
-            assert MinecraftClient.getInstance().world != null;
             return new AddBoundingBoxReceived(
                     BoundingBoxCache.Type.REMOTE_SERVUX,
-                    DimensionId.from(MinecraftClient.getInstance().world.getRegistryKey()),
+                    DimensionId.from(world.getRegistryKey()),
                     BoundingBoxCuboid.from(
                             new Coords(outerBox.getMinX(), outerBox.getMinY(), outerBox.getMinZ()),
                             new Coords(outerBox.getMaxX(), outerBox.getMaxY(), outerBox.getMaxZ()),
