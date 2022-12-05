@@ -16,11 +16,11 @@ import java.util.function.BiFunction;
 public class PayloadBuilder {
     private static final Map<String, Identifier> packetNames = new HashMap<>();
 
-    static PayloadBuilder clientBound(String name) {
+    public static PayloadBuilder clientBound(String name) {
         return new PayloadBuilder(packetNames.computeIfAbsent(name, Identifier::new), CustomPayloadS2CPacket::new);
     }
 
-    static PayloadBuilder serverBound(String name) {
+    public static PayloadBuilder serverBound(String name) {
         return new PayloadBuilder(packetNames.computeIfAbsent(name, Identifier::new), CustomPayloadC2SPacket::new);
     }
 
@@ -78,8 +78,14 @@ public class PayloadBuilder {
         return this;
     }
 
-    PayloadBuilder writeString(String value) {
+    public PayloadBuilder writeString(String value) {
         buffer.writeString(value);
+        packet = null;
+        return this;
+    }
+
+    public PayloadBuilder writeBytes(byte[] bytes) {
+        buffer.writeBytes(bytes);
         packet = null;
         return this;
     }
