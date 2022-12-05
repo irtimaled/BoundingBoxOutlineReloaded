@@ -62,6 +62,10 @@ public class ClientProxy extends CommonProxy {
                 System.err.println("network handler is null");
                 return;
             }
+
+            if (!ConfigManager.keepCacheBetweenSessions.get()) {
+                clear();
+            }
             networkHandler.sendPacket(ServuxStructurePackets.subscribe().build());
         });
 
@@ -85,6 +89,7 @@ public class ClientProxy extends CommonProxy {
                 cacheEntry.getValue().clear();
             }
         }
+        ServuxStructurePackets.markUnregistered();
     }
 
     private BoundingBoxCache getOrCreateClientCache(BoundingBoxCache.Type type, DimensionId dimensionId) {

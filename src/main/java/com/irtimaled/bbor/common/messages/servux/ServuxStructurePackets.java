@@ -20,24 +20,29 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.world.gen.structure.Structure;
+import net.minecraft.world.gen.feature.ConfiguredStructureFeature;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public class ServuxStructurePackets {
 
-    private static final Identifier CHANNEL = new Identifier("servux:structures");
+    public static final Identifier CHANNEL = new Identifier("servux:structures");
 
     public static final int PROTOCOL_VERSION = 1;
     public static final int PACKET_S2C_METADATA = 1;
     public static final int PACKET_S2C_STRUCTURE_DATA = 2;
 
     private static boolean registered = false;
+    private static int timeout = Integer.MAX_VALUE;
 
     public static PayloadBuilder subscribe() {
         return PayloadBuilder.serverBound("minecraft:register")
                 .writeBytes(CHANNEL.toString().getBytes(Charsets.UTF_8));
+    }
+
+    public static void markUnregistered() {
+        registered = false;
     }
 
     public static void handleEvent(PayloadReader reader) {
@@ -47,6 +52,7 @@ public class ServuxStructurePackets {
                 final NbtCompound nbt = reader.handle().readNbt();
                 registered = nbt != null && nbt.getInt("version") == PROTOCOL_VERSION &&
                         nbt.getString("id").equals(CHANNEL.toString());
+                if (registered) timeout = nbt.getInt("timeout");
             }
             case PACKET_S2C_STRUCTURE_DATA -> {
                 if (!registered) {
@@ -85,16 +91,16 @@ public class ServuxStructurePackets {
 
         final ClientWorld world = MinecraftClient.getInstance().world;
         assert world != null;
-        Structure structure = null;
+        ConfiguredStructureFeature<?, ?> structure = null;
         try {
-            structure = world.getRegistryManager().get(Registry.STRUCTURE_KEY).get(Identifier.tryParse(structureId));
+            structure = world.getRegistryManager().get(Registry.CONFIGURED_STRUCTURE_FEATURE_KEY).get(Identifier.tryParse(structureId));
         } catch (Throwable t) {
             System.err.println("Failed to resolve structure %s, outer box may be inaccurate".formatted(structureId));
             t.printStackTrace(System.err);
         }
 
         final BoundingBoxType boundingBoxType = StructureUtil.registerStructureIfNeeded(structureId);
-        System.out.println("Received %s from servux".formatted(structureId));
+//        System.out.println("Received %s from servux".formatted(structureId));
 
         Set<AbstractBoundingBox> boundingBoxes = new HashSet<>();
         BlockBox outerBox = null;
@@ -115,7 +121,7 @@ public class ServuxStructurePackets {
             }
         }
 
-        if (structure != null) outerBox = structure.expandBoxIfShouldAdaptNoise(outerBox);
+        if (structure != null) outerBox = structure.method_41129(outerBox);
 
         if (boundingBoxes.size() == 0) {
             return null;

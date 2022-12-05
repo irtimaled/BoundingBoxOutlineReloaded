@@ -1,7 +1,6 @@
 package com.irtimaled.bbor.mixin.client;
 
 import com.irtimaled.bbor.client.ClientProxy;
-import com.irtimaled.bbor.common.interop.CommonInterop;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.RunArgs;
 import net.minecraft.client.world.ClientWorld;
@@ -19,7 +18,7 @@ public abstract class MixinMinecraft {
 
     @Inject(method = "joinWorld", at = @At("RETURN"))
     private void onJoinWorld(ClientWorld world, CallbackInfo ci) {
-        CommonInterop.loadWorldStructures(world);
+//        CommonInterop.loadWorldStructures(world);
     }
 
 }
