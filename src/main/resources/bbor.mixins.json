@@ -16,8 +16,8 @@
     "network.play.client.MixinCCustomPayloadPacket",
     "server.MixinDynamicRegistryManager",
     "server.MixinMinecraftServer",
+    "server.MixinThreadedAnvilChunkStorage",
     "server.management.MixinPlayerList",
-    "world.chunk.MixinChunk",
     "world.chunk.MixinPalettedContainer"
   ],
   "client": [
