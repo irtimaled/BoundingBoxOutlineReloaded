@@ -22,9 +22,6 @@ public final class BukkitMod extends JavaPlugin {
     public void onEnable() {
         Logger.init(this);
 
-        Logger.info("This plugin is in dev, and is not official");
-        Logger.info("please issues to https://github.com/s-yh-china/BoundingBoxOutlineReloaded");
-
         int version = NMSHelper.getVersion();
         if (version < NMSHelper.lowestSupportVersion || version >= NMSHelper.lowestUnSupportVersion) {
             Logger.error("MC version " + NMSHelper.getPackVersion() + " is not support");

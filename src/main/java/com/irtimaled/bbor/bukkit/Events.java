@@ -69,13 +69,13 @@ public class Events implements Listener, PluginMessageListener {
     // It may not run at only reload datapack
     // but bukkit only support this
     @EventHandler
-    public void onReload(@NotNull ServerLoadEvent event) {
+    public void onServerLoad(@NotNull ServerLoadEvent event) {
         if (event.getType() == ServerLoadEvent.LoadType.RELOAD) {
             CommonInterop.dataPackReloaded();
         } else {
             Object server = NMSHelper.getNMSServer(Bukkit.getServer());
             if (server != null) {
-                CommonInterop.loadServerStructures(server); // at serer load?
+                CommonInterop.loadServerStructures(server);
             }
         }
     }

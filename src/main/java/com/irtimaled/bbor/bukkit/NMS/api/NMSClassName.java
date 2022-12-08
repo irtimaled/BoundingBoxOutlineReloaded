@@ -12,6 +12,7 @@ public enum NMSClassName {
     PacketPlayOutCustomPayload,
     PlayerConnection,
     ResourceKey,
+    Registries,
     Structure,
     StructureBoundingBox,
     StructurePiece,

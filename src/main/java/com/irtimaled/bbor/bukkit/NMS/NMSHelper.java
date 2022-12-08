@@ -36,7 +36,7 @@ public class NMSHelper {
                 addCraftGetCache(Chunk.class, "CraftChunk", packVersion);
                 addCraftGetCache(World.class, "CraftWorld", packVersion);
                 addCraftGetCache(Player.class, "entity.CraftPlayer", packVersion);
-                addCraftClass(Server.class, "CraftSever", packVersion);
+                addCraftClass(Server.class, "CraftServer", packVersion);
                 addCraftMethod(Server.class, "getServer");
             } catch (ReflectiveOperationException e) {
                 e.printStackTrace();
@@ -108,6 +108,8 @@ public class NMSHelper {
         return Integer.parseInt(version[0]) * 10000 + Integer.parseInt(version[1]) * 100 + ((version.length > 2) ? Integer.parseInt(version[2]) : 0);
     }
 
+    private final static Map<String, String> packVersionMap = Map.of("v1_19_R2", "v1_19_R1", "v1_19_R3", "v1_19_R2");
+
     @NotNull
     public static String getPackVersion(int version) {
         int mainVersion = version / 10000;
@@ -115,7 +117,7 @@ public class NMSHelper {
         int revisionVersion = (version - mainVersion * 10000 - minorVersion * 100);
 
         String packVersion = "v" + mainVersion + "_" + minorVersion + "_R" + ((revisionVersion == 0) ? "1" : revisionVersion);
-        return packVersion.equals("v1_19_R2") ? "v1_19_R1" : packVersion;
+        return packVersionMap.getOrDefault(packVersion, packVersion);
     }
 
     @NotNull
