@@ -41,7 +41,6 @@ public class StructureProcessor {
         Object bb = NMSHelper.structureStartGetBox(structureStart);
         if (bb == null) return;
 
-
         AbstractBoundingBox boundingBox = buildStructure(bb, type);
         if (boundingBoxCache.isCached(boundingBox)) return;
 

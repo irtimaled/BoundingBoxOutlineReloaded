@@ -21,7 +21,7 @@ public class CommonInterop {
         final Object structureFeatureRegistry = NMSHelper.worldGetStructureFeatureRegistry(world);
         for (var es : NMSHelper.chunkGetStructureMap(chunk).entrySet()) {
             final Optional<?> optional = NMSHelper.registryGetOptionalResourceKey(structureFeatureRegistry, es.getKey());
-            optional.ifPresent(key -> structures.put("structure:" + NMSHelper.resourceKeyGetValue(key).toString(), es.getValue()));
+            optional.ifPresent(key -> structures.put(NMSHelper.resourceKeyGetValue(key).toString(), es.getValue()));
         }
         if (structures.size() > 0) {
             EventBus.publish(new StructuresLoaded(structures, dimensionId));

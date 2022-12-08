@@ -71,6 +71,7 @@ public class Events implements Listener, PluginMessageListener {
     @EventHandler
     public void onServerLoad(@NotNull ServerLoadEvent event) {
         if (event.getType() == ServerLoadEvent.LoadType.RELOAD) {
+            System.out.println("reload datapack");
             CommonInterop.dataPackReloaded();
         } else {
             Object server = NMSHelper.getNMSServer(Bukkit.getServer());
