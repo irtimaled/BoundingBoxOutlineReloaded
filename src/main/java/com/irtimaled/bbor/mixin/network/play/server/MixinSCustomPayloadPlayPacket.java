@@ -32,6 +32,7 @@ public abstract class MixinSCustomPayloadPlayPacket {
     private void processPacket(ClientPlayPacketListener netHandlerPlayClient, CustomPayloadS2CPacket packet) {
         String channelName = channel.toString();
         if (channelName.startsWith("bbor:")) {
+            NetworkThreadUtils.forceMainThread(packet, netHandlerPlayClient, MinecraftClient.getInstance());
             PacketByteBuf data = null;
             try {
                 data = packet.getData();
