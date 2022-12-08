@@ -32,6 +32,12 @@
 
   "bbor.options.safe_light": "安全亮度: %s",
 
+  "bbor.render.received_types": "结构边框获取方式",
+  "bbor.render.received_types.auto": "自动选择",
+  "bbor.render.received_types.local": "本地游戏",
+  "bbor.render.received_types.remote_bbor": "BBOR协议",
+  "bbor.render.received_types.remote_servux": "Servux协议",
+
   "bbor.features.spawnChunks": "出生点区块",
   "bbor.features.lazyChunks": "弱加载区块",
 
@@ -118,5 +124,5 @@
   "bbor.commands.spawningSphere.calculated": "已计算到 %s 个可刷怪方块 (%s 个只在夜晚可刷怪)",
 
   "bbor.renderer.spawningSphere.spawnable": "可刷怪范围:",
-  "bbor.renderer.spawningSphere.none": "无"
+  "bbor.renderer.spawningSphere.none": "未选择"
 }
