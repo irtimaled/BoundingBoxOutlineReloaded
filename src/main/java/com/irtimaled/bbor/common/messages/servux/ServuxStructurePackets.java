@@ -19,13 +19,17 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockBox;
+import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.gen.structure.Structure;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 public class ServuxStructurePackets {
+
+    private static final DynamicRegistryManager.Immutable REGISTRY_MANAGER = DynamicRegistryManager.createAndLoad().toImmutable();
 
     public static final Identifier CHANNEL = new Identifier("servux:structures");
 
@@ -93,10 +97,23 @@ public class ServuxStructurePackets {
         assert world != null;
         Structure structure = null;
         try {
-            structure = world.getRegistryManager().get(Registry.STRUCTURE_KEY).get(Identifier.tryParse(structureId));
+            final Optional<? extends Registry<Structure>> networkStructures = world.getRegistryManager().getOptional(Registry.STRUCTURE_KEY);
+            if (networkStructures.isPresent()) structure = networkStructures.get().getOrEmpty(Identifier.tryParse(structureId)).orElse(null);
+            if (structure == null) {
+                final Optional<? extends Registry<Structure>> dynamicStructures = REGISTRY_MANAGER.getOptional(Registry.STRUCTURE_KEY);
+                if (dynamicStructures.isPresent()) structure = dynamicStructures.get().getOrEmpty(Identifier.tryParse(structureId)).orElse(null);
+            }
         } catch (Throwable t) {
-            System.err.println("Failed to resolve structure %s, outer box may be inaccurate".formatted(structureId));
             t.printStackTrace(System.err);
+        }
+
+        if (structure == null) {
+//            final ToastManager toastManager = MinecraftClient.getInstance().getToastManager();
+//            if (toastManager != null) {
+//                toastManager.add(SystemToast.create(MinecraftClient.getInstance(), SystemToast.Type.WORLD_ACCESS_FAILURE,
+//                        Text.literal("BBOR Error"), Text.literal("Failed to resolve structure %s, outer box may be inaccurate")));
+//            }
+            System.err.println("Failed to resolve structure %s, outer box may be inaccurate".formatted(structureId));
         }
 
         final BoundingBoxType boundingBoxType = StructureUtil.registerStructureIfNeeded(structureId);
