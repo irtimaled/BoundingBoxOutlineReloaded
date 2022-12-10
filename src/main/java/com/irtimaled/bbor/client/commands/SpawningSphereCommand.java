@@ -1,6 +1,8 @@
 package com.irtimaled.bbor.client.commands;
 
 import com.irtimaled.bbor.client.Player;
+import com.irtimaled.bbor.client.config.ConfigManager;
+import com.irtimaled.bbor.client.models.BoundingBoxSpawningSphere;
 import com.irtimaled.bbor.client.providers.SpawningSphereProvider;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -40,10 +42,20 @@ public class SpawningSphereCommand {
 
                             Counts counts = new Counts();
                             World world = MinecraftClient.getInstance().world;
+                            final Integer safeLight = ConfigManager.spawnableBlocksSafeLight.get();
+                            final BoundingBoxSpawningSphere sphere = SpawningSphereProvider.getSpawningSphere();
+                            if (sphere != null) {
+                                sphere.getBlocksAllTime().clear();
+                                sphere.getBlocksNightOnly().clear();
+                            }
                             SpawningSphereProvider.calculateSpawnableSpacesCount(pos -> {
                                 counts.spawnable++;
-                                if (world.getLightLevel(LightType.SKY, pos) > 7)
+                                if (world.getLightLevel(LightType.SKY, pos) > safeLight) {
                                     counts.nightSpawnable++;
+                                    if (sphere != null) sphere.getBlocksNightOnly().add(pos);
+                                } else {
+                                    if (sphere != null) sphere.getBlocksAllTime().add(pos);
+                                }
                             });
                             SpawningSphereProvider.setSpawnableSpacesCount(counts.spawnable);
 
