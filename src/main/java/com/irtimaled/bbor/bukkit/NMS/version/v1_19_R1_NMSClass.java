@@ -10,6 +10,7 @@ public class v1_19_R1_NMSClass extends BaseNMSClass {
         addClassCache(NMSClassName.IRegistry, "net.minecraft.core.IRegistry");
         addClassCache(NMSClassName.IRegistryCustom, "net.minecraft.core.IRegistryCustom");
         addClassCache(NMSClassName.MinecraftKey, "net.minecraft.resources.MinecraftKey");
+        addClassCache(NMSClassName.MinecraftServer, "net.minecraft.server.MinecraftServer");
         addClassCache(NMSClassName.Packet, "net.minecraft.network.protocol.Packet");
         addClassCache(NMSClassName.PacketDataSerializer, "net.minecraft.network.PacketDataSerializer");
         addClassCache(NMSClassName.PacketPlayOutCustomPayload, "net.minecraft.network.protocol.game.PacketPlayOutCustomPayload");

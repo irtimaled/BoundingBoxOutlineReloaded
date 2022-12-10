@@ -4,6 +4,10 @@ import com.irtimaled.bbor.bukkit.NMS.NMSHelper;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBoxCuboid;
 import com.irtimaled.bbor.common.models.Coords;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMaps;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ObjectSets;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -12,10 +16,17 @@ import java.util.Set;
 
 public class StructureProcessor {
 
-    public static final Set<BoundingBoxType> supportedStructures = new HashSet<>();
+    public static final Object mutex = new Object();
 
-    public static void registerSupportedStructure(BoundingBoxType type) {
-        supportedStructures.add(type);
+    private static final Map<String, BoundingBoxType> supportedStructures = Object2ObjectMaps.synchronize(new Object2ObjectOpenHashMap<>(), mutex);
+    public static final Set<String> supportedStructureIds = ObjectSets.synchronize(new ObjectOpenHashSet<>(), mutex);
+
+    public static void registerSupportedStructure(@NotNull BoundingBoxType type) {
+        if (!type.getName().startsWith("structure:")) {
+            throw new IllegalArgumentException("type need start with \"structure:\"");
+        }
+        supportedStructures.put(type.getName(), type);
+        supportedStructureIds.add(type.getName().substring("structure:".length()));
     }
 
     StructureProcessor(BoundingBoxCache boundingBoxCache) {
@@ -24,13 +35,11 @@ public class StructureProcessor {
 
     private final BoundingBoxCache boundingBoxCache;
 
-    private void addStructures(BoundingBoxType type, Map<String, Object> structureMap) {
-        Object structureStart = structureMap.get(type.getName());
+    private void addStructures(BoundingBoxType type, Object structureStart) {
         if (structureStart == null) return;
 
         Object bb = NMSHelper.structureStartGetBox(structureStart);
         if (bb == null) return;
-
 
         AbstractBoundingBox boundingBox = buildStructure(bb, type);
         if (boundingBoxCache.isCached(boundingBox)) return;
@@ -50,8 +59,14 @@ public class StructureProcessor {
     }
 
     void process(@NotNull Map<String, Object> structures) {
-        if (structures.size() > 0) {
-            supportedStructures.forEach(type -> addStructures(type, structures));
+        if (structures.isEmpty()) {
+            return;
+        }
+        for (Map.Entry<String, Object> entry : structures.entrySet()) {
+            final BoundingBoxType type = supportedStructures.get("structure:" + entry.getKey());
+            if (type != null) {
+                addStructures(type, entry.getValue());
+            }
         }
     }
 }

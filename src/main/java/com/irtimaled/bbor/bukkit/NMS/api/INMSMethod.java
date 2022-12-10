@@ -55,6 +55,8 @@ public interface INMSMethod {
 
     void packetDataSerializerWriteMinecraftKey(Object packetDataSerializer, Object value);
 
+    void packetDataSerializerWriteString(Object packetDataSerializer, String value);
+
     Object structureStartGetBox(Object structureStart);
 
     List<?> structureStartGetPiece(Object structureStart);
@@ -72,4 +74,6 @@ public interface INMSMethod {
     int structureBoundingBoxGetMaxY(Object structureBoundingBox);
 
     int structureBoundingBoxGetMaxZ(Object structureBoundingBox);
+
+    Object serverGetStructureFeatureRegistry(Object server);
 }

@@ -3,12 +3,14 @@ package com.irtimaled.bbor.bukkit;
 import com.irtimaled.bbor.bukkit.NMS.NMSHelper;
 import com.irtimaled.bbor.common.interop.CommonInterop;
 import com.irtimaled.bbor.common.messages.SubscribeToServer;
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.server.ServerLoadEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.plugin.messaging.PluginMessageListener;
@@ -35,8 +37,6 @@ public class Events implements Listener, PluginMessageListener {
         Object world = NMSHelper.getNMSWorld(event.getWorld());
         if (world != null) {
             CommonInterop.loadWorld(world);
-            CommonInterop.loadWorldStructures(world);
-
             for (Chunk chunk : event.getWorld().getLoadedChunks()) {
                 Object nmsChunk = NMSHelper.getNMSChunk(chunk);
                 if (nmsChunk != null) {
@@ -63,6 +63,21 @@ public class Events implements Listener, PluginMessageListener {
         Object player = NMSHelper.getNMSPlayer(event.getPlayer());
         if (player != null) {
             CommonInterop.playerLoggedOut(player);
+        }
+    }
+
+    // It may not run at only reload datapack
+    // but bukkit only support this
+    @EventHandler
+    public void onServerLoad(@NotNull ServerLoadEvent event) {
+        if (event.getType() == ServerLoadEvent.LoadType.RELOAD) {
+            System.out.println("reload datapack");
+            CommonInterop.dataPackReloaded();
+        } else {
+            Object server = NMSHelper.getNMSServer(Bukkit.getServer());
+            if (server != null) {
+                CommonInterop.loadServerStructures(server);
+            }
         }
     }
 

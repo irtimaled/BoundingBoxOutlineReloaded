@@ -185,6 +185,11 @@ public abstract class BaseNMSMethod implements INMSMethod {
     }
 
     @Override
+    public void packetDataSerializerWriteString(Object packetDataSerializer, String value) {
+        invokeMethod("packetDataSerializerWriteString", packetDataSerializer, value);
+    }
+
+    @Override
     public Object structureStartGetBox(Object structureStart) {
         return invokeMethod("structureStartGetBox", structureStart);
     }
@@ -227,5 +232,10 @@ public abstract class BaseNMSMethod implements INMSMethod {
     @Override
     public int structureBoundingBoxGetMaxZ(Object structureBoundingBox) {
         return (int) invokeMethod("structureBoundingBoxGetMaxZ", structureBoundingBox);
+    }
+
+    @Override
+    public Object serverGetStructureFeatureRegistry(Object world) {
+        return invokeMethod("serverGetStructureFeatureRegistry2", invokeMethod("serverGetStructureFeatureRegistry1", world), getField("serverGetStructureFeatureRegistry3", null));
     }
 }

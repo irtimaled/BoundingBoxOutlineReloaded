@@ -11,7 +11,7 @@ public class EventBus {
     public static <evt> void publish(evt event) {
         if (event == null) return;
 
-        Class clazz = event.getClass();
+        Class<?> clazz = event.getClass();
         Consumer<?> handler = handlers.get(clazz);
         if (handler == null) return;
 

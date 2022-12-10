@@ -9,6 +9,7 @@ public class v1_18_R2_NMSClass extends BaseNMSClass {
         addClassCache(NMSClassName.EntityPlayer, "net.minecraft.server.level.EntityPlayer");
         addClassCache(NMSClassName.IRegistry, "net.minecraft.core.IRegistry");
         addClassCache(NMSClassName.IRegistryCustom, "net.minecraft.core.IRegistryCustom");
+        addClassCache(NMSClassName.MinecraftServer, "net.minecraft.server.MinecraftServer");
         addClassCache(NMSClassName.MinecraftKey, "net.minecraft.resources.MinecraftKey");
         addClassCache(NMSClassName.Packet, "net.minecraft.network.protocol.Packet");
         addClassCache(NMSClassName.PacketDataSerializer, "net.minecraft.network.PacketDataSerializer");

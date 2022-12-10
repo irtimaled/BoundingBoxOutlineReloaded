@@ -5,6 +5,7 @@ import com.irtimaled.bbor.bukkit.NMS.api.*;
 import io.netty.buffer.ByteBuf;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -35,6 +36,8 @@ public class NMSHelper {
                 addCraftGetCache(Chunk.class, "CraftChunk", packVersion);
                 addCraftGetCache(World.class, "CraftWorld", packVersion);
                 addCraftGetCache(Player.class, "entity.CraftPlayer", packVersion);
+                addCraftClass(Server.class, "CraftServer", packVersion);
+                addCraftMethod(Server.class, "getServer");
             } catch (ReflectiveOperationException e) {
                 e.printStackTrace();
                 return false;
@@ -105,6 +108,8 @@ public class NMSHelper {
         return Integer.parseInt(version[0]) * 10000 + Integer.parseInt(version[1]) * 100 + ((version.length > 2) ? Integer.parseInt(version[2]) : 0);
     }
 
+    private final static Map<String, String> packVersionMap = Map.of("v1_19_R2", "v1_19_R1", "v1_19_R3", "v1_19_R2");
+
     @NotNull
     public static String getPackVersion(int version) {
         int mainVersion = version / 10000;
@@ -112,7 +117,7 @@ public class NMSHelper {
         int revisionVersion = (version - mainVersion * 10000 - minorVersion * 100);
 
         String packVersion = "v" + mainVersion + "_" + minorVersion + "_R" + ((revisionVersion == 0) ? "1" : revisionVersion);
-        return packVersion.equals("v1_19_R2") ? "v1_19_R1" : packVersion;
+        return packVersionMap.getOrDefault(packVersion, packVersion);
     }
 
     @NotNull
@@ -133,6 +138,11 @@ public class NMSHelper {
     @Nullable
     public static Object getNMSPlayer(@NotNull Player player) {
         return getNMSObject(Player.class, NMSClassName.EntityPlayer, player);
+    }
+
+    @Nullable
+    public static Object getNMSServer(@NotNull Server server) {
+        return getNMSObject(Server.class, NMSClassName.MinecraftServer, server);
     }
 
     @Nullable
@@ -256,6 +266,10 @@ public class NMSHelper {
         nmsMethodCache.packetDataSerializerWriteMinecraftKey(packetDataSerializer, value);
     }
 
+    public static void packetDataSerializerWriteString(Object packetDataSerializer, String value) {
+        nmsMethodCache.packetDataSerializerWriteString(packetDataSerializer, value);
+    }
+
     public static Object structureStartGetBox(Object structureStart) {
         return nmsMethodCache.structureStartGetBox(structureStart);
     }
@@ -290,5 +304,9 @@ public class NMSHelper {
 
     public static int structureBoundingBoxGetMaxZ(Object structureBoundingBox) {
         return nmsMethodCache.structureBoundingBoxGetMaxZ(structureBoundingBox);
+    }
+
+    public static Object serverGetStructureFeatureRegistry(Object server) {
+        return nmsMethodCache.serverGetStructureFeatureRegistry(server);
     }
 }

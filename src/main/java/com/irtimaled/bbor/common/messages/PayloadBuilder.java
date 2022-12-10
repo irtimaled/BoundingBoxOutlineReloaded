@@ -75,4 +75,10 @@ public class PayloadBuilder {
         packet = null;
         return this;
     }
+
+    PayloadBuilder writeString(String value) {
+        NMSHelper.packetDataSerializerWriteString(buffer, value);
+        packet = null;
+        return this;
+    }
 }
