@@ -13,6 +13,7 @@ import com.irtimaled.bbor.common.messages.AddBoundingBox;
 import com.irtimaled.bbor.common.messages.InitializeClient;
 import com.irtimaled.bbor.common.messages.PayloadBuilder;
 import com.irtimaled.bbor.common.messages.StructureListSync;
+import com.irtimaled.bbor.common.messages.servux.RegistryUtil;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.common.models.DimensionId;
 import com.irtimaled.bbor.common.models.ServerPlayer;
@@ -21,6 +22,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CommonProxy {
@@ -45,6 +47,7 @@ public class CommonProxy {
         EventBus.subscribe(PlayerSubscribed.class, this::onPlayerSubscribed);
         EventBus.subscribe(ServerTick.class, e -> serverTick());
         EventBus.subscribe(DataPackReloaded.class, e -> dataPackReloaded());
+        CompletableFuture.runAsync(RegistryUtil::init).thenRun(() -> System.out.println("BBOR Dynamic Registry loaded"));
     }
 
     protected void setSeed(long seed) {
