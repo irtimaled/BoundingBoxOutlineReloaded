@@ -4,9 +4,9 @@ import com.irtimaled.bbor.client.renderers.AbstractRenderer;
 import com.irtimaled.bbor.client.renderers.SpawningSphereRenderer;
 import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.interop.CommonInterop;
+import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
 import net.minecraft.util.math.BlockPos;
 
-import java.util.HashSet;
 import java.util.Set;
 
 public class BoundingBoxSpawningSphere extends BoundingBoxSphere {
@@ -15,15 +15,20 @@ public class BoundingBoxSpawningSphere extends BoundingBoxSphere {
     public static final int SAFE_RADIUS = 24;
     public static final int SPAWN_RADIUS = 128;
 
-    private final Set<BlockPos> blocks = new HashSet<>();
+    private final Set<BlockPos> blocksAllTime = new ObjectLinkedOpenHashSet<>();
+    private final Set<BlockPos> blocksNightOnly = new ObjectLinkedOpenHashSet<>();
     private Integer spawnableCount;
 
     public BoundingBoxSpawningSphere(Point point) {
         super(point, SPAWN_RADIUS, BoundingBoxType.AFKSphere);
     }
 
-    public Set<BlockPos> getBlocks() {
-        return blocks;
+    public Set<BlockPos> getBlocksAllTime() {
+        return blocksAllTime;
+    }
+
+    public Set<BlockPos> getBlocksNightOnly() {
+        return blocksNightOnly;
     }
 
     public boolean isWithinSphere(Point point) {
