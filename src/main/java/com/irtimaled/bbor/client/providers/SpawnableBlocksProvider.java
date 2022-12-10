@@ -84,7 +84,7 @@ public class SpawnableBlocksProvider implements IBoundingBoxProvider<BoundingBox
             final WorldChunk chunk = world.getChunk(ChunkSectionPos.getSectionCoord(x), ChunkSectionPos.getSectionCoord(z));
             if (chunk == null) return;
 
-            final int maxY = chunk.sampleHeightmap(Heightmap.Type.WORLD_SURFACE, x, z) + 1;
+            final int maxY = chunk.sampleHeightmap(Heightmap.Type.WORLD_SURFACE, x, z) + 2;
             box.getBlockYs().clear();
 
             // I have no idea how to properly use isSpawnable so i copied this

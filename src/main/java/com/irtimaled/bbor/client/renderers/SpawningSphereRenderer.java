@@ -46,7 +46,14 @@ public class SpawningSphereRenderer extends AbstractRenderer<BoundingBoxSpawning
 
     private void renderSpawnableSpaces(RenderingContext ctx, BoundingBoxSpawningSphere boundingBox) {
         Color color = BoundingBoxTypeHelper.getColor(BoundingBoxType.SpawnableBlocks);
-        for (BlockPos c : boundingBox.getBlocks()) {
+        for (BlockPos c : boundingBox.getBlocksAllTime()) {
+            int x = c.getX();
+            int y = c.getY();
+            int z = c.getZ();
+            OffsetBox offsetBox = new OffsetBox(x, y, z, x + 1, y, z + 1);
+            renderCuboid(ctx, offsetBox, color, false, 60);
+        }
+        for (BlockPos c : boundingBox.getBlocksNightOnly()) {
             int x = c.getX();
             int y = c.getY();
             int z = c.getZ();
