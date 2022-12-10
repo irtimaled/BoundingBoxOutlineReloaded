@@ -25,10 +25,7 @@ public class StructureListSync {
         final int size = reader.readVarInt();
         for (int i = 0; i < size; i++) {
             final String structureId = reader.readString();
-            System.out.println("Registering structure: %s".formatted(structureId));
-            final BoundingBoxType boundingBoxType = BoundingBoxType.register("structure:" + structureId);
-            StructureProcessor.registerSupportedStructure(boundingBoxType);
-            BoundingBoxTypeHelper.registerType(boundingBoxType, ConfigManager.structureShouldRender(structureId), ConfigManager.structureColor(structureId));
+            StructureUtil.registerStructureIfNeeded(structureId);
         }
     }
 

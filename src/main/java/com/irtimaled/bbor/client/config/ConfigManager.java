@@ -1,5 +1,6 @@
 package com.irtimaled.bbor.client.config;
 
+import com.irtimaled.bbor.common.BoundingBoxCache;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMaps;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -119,6 +120,8 @@ public class ConfigManager {
 
     public static Map<String, Setting<Boolean>> structureRenderSettings = Object2ObjectMaps.synchronize(new Object2ObjectOpenHashMap<>());
     public static Map<String, Setting<HexColor>> structureColorSettings = Object2ObjectMaps.synchronize(new Object2ObjectOpenHashMap<>());
+    public static Setting<Boolean> autoSelectReceivedType;
+    public static Map<BoundingBoxCache.Type, Setting<Boolean>> receivedTypeRenderSettings = Object2ObjectMaps.synchronize(new Object2ObjectOpenHashMap<>());
     private static final Map<String, HexColor> defaultStructureColors = new Object2ObjectOpenHashMap<>();
 
     static {
@@ -270,6 +273,9 @@ public class ConfigManager {
         colorFlowerForestCornflower = setup(config, "colors", "colorFlowerForestCornflower", HexColor.from("#0000ff"), "Color of Flower Forest Cornflower");
         colorFlowerForestLilyOfTheValley = setup(config, "colors", "colorFlowerForestLilyOfTheValley", HexColor.from("#ffffff"), "Color of Flower Forest Lily Of The Valley");
         colorBedrockCeilingBlocks = setup(config, "colors", "colorBedrockCeilingBlocks", HexColor.from("#00ff00"), "Color of Bedrock Ceiling Blocks");
+
+        autoSelectReceivedType = setup(config, "render", "auto_select", true, "Whether to automatically select received bounding boxes.");
+
         config.save();
     }
 
@@ -299,6 +305,13 @@ public class ConfigManager {
     public static Setting<HexColor> structureColor(String key) {
         final Setting<HexColor> setting = setup(config, "colors", "colorStructure_" + key.replace(':', '_'), defaultStructureColors.getOrDefault(key, HexColor.random()), "Color if structure %s bounding boxes.".formatted(key));
         structureColorSettings.put(key, setting);
+        saveConfig();
+        return setting;
+    }
+
+    public static Setting<Boolean> receivedTypeShouldRender(BoundingBoxCache.Type type) {
+        final Setting<Boolean> setting = setup(config, "render", "draw_" + type.name().toLowerCase(), true, "If set to true %s bounding boxes will be drawn.".formatted(type.name()));
+        receivedTypeRenderSettings.put(type, setting);
         saveConfig();
         return setting;
     }
