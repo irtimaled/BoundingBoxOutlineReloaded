@@ -13,7 +13,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ClientPlayNetworkHandler.class)
 public class MixinClientPlayNetHandler {
@@ -46,10 +45,10 @@ public class MixinClientPlayNetHandler {
     }
 
 
-    @Inject(method = "sendCommand", at = @At("HEAD"), cancellable = true)
-    private void interceptSendCommand(String command, CallbackInfoReturnable<Boolean> cir) {
+    @Inject(method = "sendChatCommand", at = @At("HEAD"), cancellable = true)
+    private void interceptSendCommand(String command, CallbackInfo ci) {
         if (ClientInterop.interceptCommandUsage(command)) {
-            cir.setReturnValue(true);
+            ci.cancel();
         }
     }
 }
