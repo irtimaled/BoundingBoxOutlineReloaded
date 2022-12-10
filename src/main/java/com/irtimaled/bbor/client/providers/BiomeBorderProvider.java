@@ -61,11 +61,9 @@ public class BiomeBorderProvider implements IBoundingBoxProvider<BoundingBoxBiom
                     else throw new RuntimeException(e);
                 }
                 hasUpdate = true;
+            } else {
+                chunk.findBoxesFromBlockState(sectionPos.getMinX(), sectionPos.getMinY(), sectionPos.getMinZ());
             }
-            // we don't expect updates
-//            else {
-//                chunk.findBoxesFromBlockState(sectionPos.getMinX(), sectionPos.getMinY(), sectionPos.getMinZ());
-//            }
             break;
         }
         return true;

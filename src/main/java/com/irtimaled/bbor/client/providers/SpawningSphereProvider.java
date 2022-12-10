@@ -55,6 +55,10 @@ public class SpawningSphereProvider implements IBoundingBoxProvider<BoundingBoxS
         return spawningSphere != null && SpawningSphereProvider.dimensionId == dimensionId;
     }
 
+    public static BoundingBoxSpawningSphere getSpawningSphere() {
+        return spawningSphere;
+    }
+
     public static void setSpawnableSpacesCount(int count) {
         if (spawningSphere != null) {
             spawningSphere.setSpawnableCount(count);
