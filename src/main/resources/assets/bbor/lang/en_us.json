@@ -38,6 +38,9 @@
   "bbor.render.received_types.remote_bbor": "BBOR Server",
   "bbor.render.received_types.remote_servux": "Servux Server",
 
+  "bbor.notice.error": "BBOR Error",
+  "bbor.notice.structure_resolve_failure_servux": "Failed to resolve structure %s from servux server, outer box may be inaccurate",
+
   "bbor.features.spawnChunks": "Spawn Chunks",
   "bbor.features.lazyChunks": "Lazy Chunks",
 
