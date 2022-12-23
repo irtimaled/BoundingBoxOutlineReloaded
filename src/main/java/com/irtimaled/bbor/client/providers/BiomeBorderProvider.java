@@ -32,9 +32,10 @@ public class BiomeBorderProvider implements IBoundingBoxProvider<BoundingBoxBiom
     private static final ObjectLinkedOpenHashSet<ChunkSectionPos> queuedUpdateChunks = new ObjectLinkedOpenHashSet<>();
 
     public static boolean runQueuedTasks() {
-        while (!queuedUpdateChunks.isEmpty()) {
+        while (true) {
             final ChunkSectionPos sectionPos;
             synchronized (queuedUpdateChunks) {
+                if (queuedUpdateChunks.isEmpty()) return false;
                 sectionPos = queuedUpdateChunks.removeFirst();
             }
             if (sectionPos == null) break;
@@ -71,6 +72,15 @@ public class BiomeBorderProvider implements IBoundingBoxProvider<BoundingBoxBiom
     }
 
     private static final Long2ObjectMap<BiomeBorderChunkSection> chunks = Long2ObjectMaps.synchronize(new Long2ObjectLinkedOpenHashMap<>());
+
+    public static void refreshIfNeeded(ChunkSectionPos pos) {
+        if (pos == null) return;
+        synchronized (queuedUpdateChunks) {
+            if (chunks.containsKey(pos.asLong())) {
+                queuedUpdateChunks.add(pos);
+            }
+        }
+    }
 
     private static class BiomeBorderChunkSection {
 
