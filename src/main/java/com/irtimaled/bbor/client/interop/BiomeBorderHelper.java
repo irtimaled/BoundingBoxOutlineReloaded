@@ -1,5 +1,6 @@
 package com.irtimaled.bbor.client.interop;
 
+import com.irtimaled.bbor.client.providers.BiomeBorderProvider;
 import com.irtimaled.bbor.common.EventBus;
 import com.irtimaled.bbor.common.models.Coords;
 import it.unimi.dsi.fastutil.longs.Long2IntMap;
@@ -11,12 +12,8 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryEntry;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.EmptyChunk;
 
 public class BiomeBorderHelper {
 
@@ -27,15 +24,17 @@ public class BiomeBorderHelper {
     private static final Long2ObjectMap<Long2IntMap> biomeCache = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<>());
 
     public static void onChunkLoaded(int chunkX, int chunkZ) {
-
+        final ClientWorld world = MinecraftClient.getInstance().world;
+        if (world == null) return;
+        for(int i = world.getBottomSectionCoord(); i < world.getTopSectionCoord(); ++i) {
+            BiomeBorderProvider.refreshIfNeeded(ChunkSectionPos.from(chunkX, i, chunkZ));
+        }
     }
 
     public static void onChunkUnload(int chunkX, int chunkZ) {
-        biomeCache.remove(ChunkPos.toLong(chunkX, chunkZ));
     }
 
     public static void onDisconnect() {
-        biomeCache.clear();
     }
 
     public static int getBiomeId(Coords coords) {
@@ -44,19 +43,18 @@ public class BiomeBorderHelper {
 
     public static int getBiomeId(int x, int y, int z) {
         BlockPos pos = new BlockPos(x, y, z);
-        final Long2IntMap biomeArray = biomeCache.computeIfAbsent(ChunkPos.toLong(pos), key -> createNewMap());
+//        final Long2IntMap biomeArray = biomeCache.computeIfAbsent(ChunkPos.toLong(pos), key -> createNewMap());
         final ClientWorld world = MinecraftClient.getInstance().world;
-        final Chunk chunk = world.getChunk(pos);
-        if (chunk instanceof EmptyChunk) {
-            throw new IllegalStateException("Chunk not loaded");
-        }
-//        if (true) {
-//            return world.getRegistryManager().get(Registry.BIOME_KEY).getRawId(world.getBiome(pos).value());
+//        final Chunk chunk = world.getChunk(pos);
+//        if (chunk instanceof EmptyChunk) {
+//            throw new IllegalStateException("Chunk not loaded");
 //        }
-        return biomeArray.computeIfAbsent(pos.asLong(), key -> {
-            final RegistryEntry<Biome> biome = world.getBiomeAccess().withSource(chunk).getBiome(pos);
-            return world.getRegistryManager().get(Registry.BIOME_KEY).getRawId(biome.value());
-        });
+////        if (true) {
+////            return world.getRegistryManager().get(Registry.BIOME_KEY).getRawId(world.getBiome(pos).value());
+////        }
+//        final RegistryEntry<Biome> biome = world.getBiomeAccess().withSource(chunk).getBiome(pos);
+//        return world.getRegistryManager().get(Registry.BIOME_KEY).getRawId(biome.value());
+        return world.getRegistryManager().get(Registry.BIOME_KEY).getRawId(world.getBiome(pos).value());
     }
 
     private static Long2IntMap createNewMap() {
