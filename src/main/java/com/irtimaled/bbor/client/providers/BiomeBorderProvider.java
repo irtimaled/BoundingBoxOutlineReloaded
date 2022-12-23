@@ -32,8 +32,7 @@ public class BiomeBorderProvider implements IBoundingBoxProvider<BoundingBoxBiom
     private static final ObjectLinkedOpenHashSet<ChunkSectionPos> queuedUpdateChunks = new ObjectLinkedOpenHashSet<>();
 
     public static boolean runQueuedTasks() {
-        if (queuedUpdateChunks.isEmpty()) return false;
-        while (true) {
+        while (!queuedUpdateChunks.isEmpty()) {
             final ChunkSectionPos sectionPos;
             synchronized (queuedUpdateChunks) {
                 sectionPos = queuedUpdateChunks.removeFirst();

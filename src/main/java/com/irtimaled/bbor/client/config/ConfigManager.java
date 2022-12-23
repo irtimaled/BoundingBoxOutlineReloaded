@@ -61,7 +61,6 @@ public class ConfigManager {
     public static Setting<Boolean> drawSpawnableBlocks;
     public static Setting<Integer> spawnableBlocksRenderDistance;
     public static Setting<Integer> spawnableBlocksSafeLight;
-    public static Setting<Integer> spawnableBlocksSafeLight;
     public static Setting<Boolean> invertBoxColorPlayerInside;
     public static Setting<Boolean> renderSphereAsDots;
     public static Setting<Boolean> drawFlowerForests;
