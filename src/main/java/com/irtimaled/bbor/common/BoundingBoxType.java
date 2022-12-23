@@ -29,8 +29,12 @@ public class BoundingBoxType {
         return structureTypeMap.computeIfAbsent(name.hashCode(), k -> new BoundingBoxType(name));
     }
 
+    public static boolean isRegistered(String name) {
+        return structureTypeMap.containsKey(name.hashCode());
+    }
+
     public static void registerTypes() {
-        structureTypeMap.values().forEach(StructureProcessor::registerSupportedStructure);
+//        structureTypeMap.values().forEach(StructureProcessor::registerSupportedStructure);
     }
 
     public static BoundingBoxType getByNameHash(Integer nameHash) {

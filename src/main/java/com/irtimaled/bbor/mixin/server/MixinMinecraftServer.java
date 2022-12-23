@@ -21,6 +21,7 @@ public class MixinMinecraftServer {
 
     @Inject(method = "prepareStartRegion", at = @At("HEAD"))
     private void initialWorldChunkLoad(CallbackInfo ci) {
+        CommonInterop.loadServerStructures((MinecraftServer) (Object) this);
         CommonInterop.loadWorlds(worlds.values());
     }
 

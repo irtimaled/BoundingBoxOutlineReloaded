@@ -11,38 +11,46 @@ public class PayloadReader {
         this.buffer = buffer;
     }
 
-    long readLong() {
+    public PacketByteBuf handle() {
+        return buffer;
+    }
+
+    public long readLong() {
         return buffer.readLong();
     }
 
-    int readInt() {
+    public int readInt() {
         return buffer.readInt();
     }
 
-    int readVarInt() {
+    public int readVarInt() {
         return buffer.readVarInt();
     }
 
-    boolean isReadable() {
+    public boolean isReadable() {
         return buffer.isReadable();
     }
 
-    boolean isReadable(int count) {
+    public boolean isReadable(int count) {
         return buffer.isReadable(count);
     }
 
-    char readChar() {
+    public char readChar() {
         return buffer.readChar();
     }
 
-    Coords readCoords() {
+    public Coords readCoords() {
         int x = readVarInt();
         int y = readVarInt();
         int z = readVarInt();
         return new Coords(x, y, z);
     }
 
-    DimensionId readDimensionId() {
+    public DimensionId readDimensionId() {
         return DimensionId.from(buffer.readIdentifier());
+    }
+
+    public String readString() {
+        return buffer.readString();
     }
 }

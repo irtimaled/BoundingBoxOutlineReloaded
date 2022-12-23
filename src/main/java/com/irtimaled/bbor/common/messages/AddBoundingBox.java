@@ -1,6 +1,7 @@
 package com.irtimaled.bbor.common.messages;
 
 import com.irtimaled.bbor.client.events.AddBoundingBoxReceived;
+import com.irtimaled.bbor.common.BoundingBoxCache;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.common.models.DimensionId;
 
@@ -36,6 +37,6 @@ public class AddBoundingBox {
         }
         if (boundingBoxes.size() == 0)
             boundingBoxes.add(key);
-        return new AddBoundingBoxReceived(dimensionId, key, boundingBoxes);
+        return new AddBoundingBoxReceived(BoundingBoxCache.Type.REMOTE_BBOR, dimensionId, key, boundingBoxes);
     }
 }

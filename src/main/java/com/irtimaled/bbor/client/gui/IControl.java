@@ -6,5 +6,8 @@ import net.minecraft.client.util.math.MatrixStack;
 interface IControl extends IFocusableControl, Element {
     void render(MatrixStack matrixStack, int mouseX, int mouseY);
 
+    default void update() {
+    }
+
     boolean isVisible();
 }

@@ -6,12 +6,11 @@ import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.models.Coords;
 import com.irtimaled.bbor.common.models.DimensionId;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CustomBeaconProvider implements IBoundingBoxProvider<BoundingBoxBeacon>, ICachingProvider {
-    private static final Map<DimensionId, Map<Coords, BoundingBoxBeacon>> dimensionsCache = new HashMap<>();
+    private static final Map<DimensionId, Map<Coords, BoundingBoxBeacon>> dimensionsCache = new ConcurrentHashMap<>();
 
     private static Map<Coords, BoundingBoxBeacon> getCache(DimensionId dimensionId) {
         return dimensionsCache.computeIfAbsent(dimensionId, i -> new ConcurrentHashMap<>());

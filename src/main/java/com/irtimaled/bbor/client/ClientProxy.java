@@ -3,6 +3,7 @@ package com.irtimaled.bbor.client;
 import com.irtimaled.bbor.client.config.ConfigManager;
 import com.irtimaled.bbor.client.events.AddBoundingBoxReceived;
 import com.irtimaled.bbor.client.events.DisconnectedFromRemoteServer;
+import com.irtimaled.bbor.client.events.GameJoin;
 import com.irtimaled.bbor.client.events.InitializeClientReceived;
 import com.irtimaled.bbor.client.events.SaveLoaded;
 import com.irtimaled.bbor.client.events.UpdateWorldSpawnReceived;
@@ -17,8 +18,15 @@ import com.irtimaled.bbor.common.BoundingBoxCache;
 import com.irtimaled.bbor.common.CommonProxy;
 import com.irtimaled.bbor.common.EventBus;
 import com.irtimaled.bbor.common.interop.CommonInterop;
+import com.irtimaled.bbor.common.messages.servux.ServuxStructurePackets;
+import com.irtimaled.bbor.common.models.DimensionId;
 import com.irtimaled.bbor.mixin.access.IKeyBinding;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.util.registry.BuiltinRegistries;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ClientProxy extends CommonProxy {
     public static void registerKeyBindings() {
@@ -33,6 +41,8 @@ public class ClientProxy extends CommonProxy {
                 .onKeyPressHandler(LoadSavesScreen::show);
     }
 
+    private final Map<BoundingBoxCache.Type, Map<DimensionId, BoundingBoxCache>> cache = new ConcurrentHashMap<>();
+
     public ClientProxy() {
         ConfigManager.loadConfig();
         CommonInterop.loadStructuresFromRegistry(BuiltinRegistries.STRUCTURE);
@@ -46,8 +56,23 @@ public class ClientProxy extends CommonProxy {
         EventBus.subscribe(AddBoundingBoxReceived.class, this::addBoundingBox);
         EventBus.subscribe(UpdateWorldSpawnReceived.class, this::onUpdateWorldSpawnReceived);
         EventBus.subscribe(SaveLoaded.class, e -> clear());
+        EventBus.subscribe(GameJoin.class, e -> {
+            final ClientPlayNetworkHandler networkHandler = MinecraftClient.getInstance().getNetworkHandler();
+            if (networkHandler == null) {
+                System.err.println("network handler is null");
+                return;
+            }
 
-        ClientRenderer.registerProvider(new CacheProvider(this::getCache));
+            if (!ConfigManager.keepCacheBetweenSessions.get()) {
+                clear();
+            }
+            networkHandler.sendPacket(ServuxStructurePackets.subscribe().build());
+        });
+
+        ClientRenderer.registerProvider(new CacheProvider(this::getOrCreateClientCache));
+
+        TaskThread.init();
+//        KeyListener.init();
     }
 
     private void disconnectedFromServer() {
@@ -59,12 +84,30 @@ public class ClientProxy extends CommonProxy {
     private void clear() {
         ClientRenderer.clear();
         clearCaches();
+        for (Map.Entry<BoundingBoxCache.Type, Map<DimensionId, BoundingBoxCache>> entry : cache.entrySet()) {
+            for (Map.Entry<DimensionId, BoundingBoxCache> cacheEntry : entry.getValue().entrySet()) {
+                cacheEntry.getValue().clear();
+            }
+        }
+        ServuxStructurePackets.markUnregistered();
+    }
+
+    private BoundingBoxCache getOrCreateClientCache(BoundingBoxCache.Type type, DimensionId dimensionId) {
+        if (type == BoundingBoxCache.Type.LOCAL) {
+            return super.getOrCreateCache(dimensionId);
+        }
+        return this.cache
+                .computeIfAbsent(type, unused -> new ConcurrentHashMap<>())
+                .computeIfAbsent(dimensionId, unused -> new BoundingBoxCache());
     }
 
     private void addBoundingBox(AddBoundingBoxReceived event) {
-        BoundingBoxCache cache = getOrCreateCache(event.getDimensionId());
+        if (event.getType() == BoundingBoxCache.Type.LOCAL) {
+            new IllegalArgumentException("Received local bounding box from server").printStackTrace();
+            return;
+        }
+        BoundingBoxCache cache = getOrCreateClientCache(event.getType(), event.getDimensionId());
         if (cache == null) return;
-
         cache.addBoundingBoxes(event.getKey(), event.getBoundingBoxes());
     }
 
