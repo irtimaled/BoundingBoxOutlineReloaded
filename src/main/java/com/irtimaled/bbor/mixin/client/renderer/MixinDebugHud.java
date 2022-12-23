@@ -1,8 +1,10 @@
 package com.irtimaled.bbor.mixin.client.renderer;
 
+import com.irtimaled.bbor.client.AsyncRenderer;
 import com.irtimaled.bbor.client.ClientRenderer;
 import com.irtimaled.bbor.client.RenderCulling;
-import com.irtimaled.bbor.client.renderers.RenderBatch;
+import com.irtimaled.bbor.client.providers.BiomeBorderProvider;
+import com.irtimaled.bbor.client.providers.SpawnableBlocksProvider;
 import net.minecraft.client.gui.hud.DebugHud;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -16,14 +18,16 @@ public class MixinDebugHud {
 
     @Inject(method = "getLeftText", at = @At("RETURN"))
     private void afterLeftText(CallbackInfoReturnable<List<String>> cir) {
+        cir.getReturnValue().add("[BBOR] Queued: SB: %d, BB: %d".formatted(SpawnableBlocksProvider.pendingUpdates(), BiomeBorderProvider.pendingUpdates()));
+
         if (!ClientRenderer.getActive()) {
             cir.getReturnValue().add("[BBOR] Rendering not enabled");
             return;
         }
 
         cir.getReturnValue().addAll(RenderCulling.debugStrings());
-        cir.getReturnValue().add(RenderBatch.debugString());
-        cir.getReturnValue().add(String.format("[BBOR] Rendering took %.2fms", ClientRenderer.getLastDurationNanos() / 1_000_000.0));
+        cir.getReturnValue().add(AsyncRenderer.renderingDebugString());
+        cir.getReturnValue().add(String.format("[BBOR] Rendering took %.2fms", AsyncRenderer.getLastDurationNanos() / 1_000_000.0));
     }
 
 }

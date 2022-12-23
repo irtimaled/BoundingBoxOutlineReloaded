@@ -3,6 +3,7 @@ package com.irtimaled.bbor.mixin.client;
 import com.irtimaled.bbor.client.ClientProxy;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.RunArgs;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.thread.ReentrantThreadExecutor;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -20,9 +21,9 @@ public abstract class MixinMinecraft extends ReentrantThreadExecutor<Runnable> {
         new ClientProxy().init();
     }
 
-//    @Inject(method = "joinWorld", at = @At("RETURN"))
-//    private void onJoinWorld(ClientWorld world, CallbackInfo ci) {
-//        this.send(() -> CommonInterop.loadWorldStructures(world));
-//    }
+    @Inject(method = "joinWorld", at = @At("RETURN"))
+    private void onJoinWorld(ClientWorld world, CallbackInfo ci) {
+//        CommonInterop.loadWorldStructures(world);
+    }
 
 }

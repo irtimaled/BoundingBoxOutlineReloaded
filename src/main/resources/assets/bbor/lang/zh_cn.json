@@ -6,11 +6,14 @@
   "bbor.options.active": "激活",
   "bbor.options.outerBoxOnly": "显示边框",
   "bbor.options.fill": "填充面",
+  "bbor.options.showSettingsButton": "显示设置按钮",
 
   "bbor.options.fastRender": "快速渲染: %s",
   "bbor.options.fastRender.0": "关",
   "bbor.options.fastRender.1": "中",
   "bbor.options.fastRender.2": "高",
+
+  "bbor.options.asyncBuilding": "使用异步渲染",
 
   "bbor.options.maxY": "最大 Y: %s",
   "bbor.options.maxY.activated": "激活高度",
@@ -29,6 +32,12 @@
 
   "bbor.options.safe_light": "安全亮度: %s",
 
+  "bbor.render.received_types": "结构边框获取方式",
+  "bbor.render.received_types.auto": "自动选择",
+  "bbor.render.received_types.local": "本地游戏",
+  "bbor.render.received_types.remote_bbor": "BBOR协议",
+  "bbor.render.received_types.remote_servux": "Servux协议",
+
   "bbor.features.spawnChunks": "出生点区块",
   "bbor.features.lazyChunks": "弱加载区块",
 
@@ -41,7 +50,9 @@
   "bbor.features.spawningSpheres": "可刷怪范围",
   "bbor.features.spawnableBlocks": "可刷怪方块",
 
-  "bbor.features.biomeBorders": "生物群落边界",
+  "bbor.features.biomeBorders": "生物群系边界",
+  "bbor.features.renderOnlyCurrentBiome": "仅渲染当前生物群系",
+  "bbor.features.drawBiomeBorderOutline": "绘制外轮廓",
 
   "bbor.features.flowerForests": "繁花森林花类型",
 
@@ -113,5 +124,5 @@
   "bbor.commands.spawningSphere.calculated": "已计算到 %s 个可刷怪方块 (%s 个只在夜晚可刷怪)",
 
   "bbor.renderer.spawningSphere.spawnable": "可刷怪范围:",
-  "bbor.renderer.spawningSphere.none": "未设置"
+  "bbor.renderer.spawningSphere.none": "未选择"
 }

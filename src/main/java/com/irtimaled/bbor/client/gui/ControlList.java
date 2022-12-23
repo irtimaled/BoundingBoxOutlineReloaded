@@ -212,6 +212,8 @@ public class ControlList extends DrawableHelper implements IControlSet {
             int bottom = top + height;
             if(top <= this.bottom && bottom >= this.top) {
                 drawEntry(matrixStack, mouseX, mouseY, top, entry, height);
+            } else {
+                entry.update();
             }
             top = bottom;
         }

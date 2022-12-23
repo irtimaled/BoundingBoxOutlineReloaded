@@ -1,6 +1,7 @@
 package com.irtimaled.bbor.mixin.network.play.client;
 
 import com.irtimaled.bbor.common.interop.CommonInterop;
+import com.irtimaled.bbor.common.messages.PayloadReader;
 import com.irtimaled.bbor.common.messages.SubscribeToServer;
 import net.minecraft.network.listener.ServerPlayPacketListener;
 import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
@@ -18,8 +19,14 @@ public class MixinCCustomPayloadPacket {
 
     @Redirect(method = "apply", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/listener/ServerPlayPacketListener;onCustomPayload(Lnet/minecraft/network/packet/c2s/play/CustomPayloadC2SPacket;)V"))
     private void processPacket(ServerPlayPacketListener netHandlerPlayServer, CustomPayloadC2SPacket packet) {
-        if (this.channel.toString().equals(SubscribeToServer.NAME)) {
-            CommonInterop.playerSubscribed(((ServerPlayNetworkHandler) netHandlerPlayServer).player);
+        String channelName = channel.toString();
+        if (channelName.startsWith("bbor:")) {
+            PayloadReader reader = new PayloadReader(packet.getData());
+            switch (channelName) {
+                case SubscribeToServer.NAME -> {
+                    CommonInterop.playerSubscribed(((ServerPlayNetworkHandler) netHandlerPlayServer).player);
+                }
+            }
         } else {
             netHandlerPlayServer.onCustomPayload(packet);
         }

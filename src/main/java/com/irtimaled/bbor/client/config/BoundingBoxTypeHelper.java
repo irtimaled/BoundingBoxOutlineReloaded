@@ -71,6 +71,7 @@ public class BoundingBoxTypeHelper {
         private final Setting<HexColor> color;
 
         public BoundingBoxTypeSettings(Setting<Boolean> shouldRender, Setting<HexColor> color) {
+            Preconditions.checkNotNull(shouldRender);
             this.shouldRender = shouldRender;
             this.color = color;
         }

@@ -17,11 +17,15 @@ import java.util.Map;
 import java.util.Set;
 
 public class StructureProcessor {
-    private static final Map<String, BoundingBoxType> supportedStructures = Object2ObjectMaps.synchronize(new Object2ObjectOpenHashMap<>());
-    public static final Set<String> supportedStructureIds = ObjectSets.synchronize(new ObjectOpenHashSet<>());
+    public static final Object mutex = new Object();
+    private static final Map<String, BoundingBoxType> supportedStructures = Object2ObjectMaps.synchronize(new Object2ObjectOpenHashMap<>(), mutex);
+    public static final Set<String> supportedStructureIds = ObjectSets.synchronize(new ObjectOpenHashSet<>(), mutex);
 
     public static void registerSupportedStructure(BoundingBoxType type) {
+        if (!type.getName().startsWith("structure:"))
+            throw new IllegalArgumentException();
         supportedStructures.put(type.getName(), type);
+        supportedStructureIds.add(type.getName().substring("structure:".length()));
     }
 
     StructureProcessor(BoundingBoxCache boundingBoxCache) {

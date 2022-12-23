@@ -56,10 +56,6 @@ public class FlowerForestHelper {
         return flowerColorMap.get(blockState);
     }
 
-    public static void setSeed(long seed) {
-        random.setSeed(seed);
-    }
-
     public static boolean canGrowFlower(int x, int y, int z) {
         return MinecraftClient.getInstance().world.getBlockState(new BlockPos(x, y, z)).getBlock() == Blocks.GRASS_BLOCK;
     }

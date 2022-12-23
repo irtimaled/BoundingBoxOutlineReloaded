@@ -1,6 +1,7 @@
 buildscript {
     repositories {
         mavenCentral()
+        gradlePluginPortal()
         maven {
             name = 'Fabric'
             url = 'https://maven.fabricmc.net/'
@@ -19,6 +20,10 @@ buildscript {
         classpath "dev.architectury:architectury-loom:0.12.0-SNAPSHOT"
         classpath "io.github.juuxel:loom-quiltflower:1.+"
     }
+}
+
+plugins {
+    id 'io.github.juuxel.loom-quiltflower' version '1.8.0' apply false
 }
 
 apply plugin: 'dev.architectury.loom'
