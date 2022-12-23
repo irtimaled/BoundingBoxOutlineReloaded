@@ -12,11 +12,18 @@ import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.common.models.BoundingBoxCuboid;
 import com.irtimaled.bbor.common.models.Coords;
 import com.irtimaled.bbor.common.models.DimensionId;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ObjectSet;
+import it.unimi.dsi.fastutil.objects.ObjectSets;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.resource.language.I18n;
+import net.minecraft.client.toast.SystemToast;
+import net.minecraft.client.toast.ToastManager;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.registry.DynamicRegistryManager;
@@ -38,6 +45,7 @@ public class ServuxStructurePackets {
     public static final int PACKET_S2C_STRUCTURE_DATA = 2;
 
     private static boolean registered = false;
+    private static final ObjectSet<String> resolveFailures = ObjectSets.synchronize(new ObjectOpenHashSet<>());
     private static int timeout = Integer.MAX_VALUE;
 
     public static PayloadBuilder subscribe() {
@@ -47,6 +55,7 @@ public class ServuxStructurePackets {
 
     public static void markUnregistered() {
         registered = false;
+        resolveFailures.clear();
     }
 
     public static void handleEvent(PayloadReader reader) {
@@ -108,12 +117,14 @@ public class ServuxStructurePackets {
         }
 
         if (structure == null) {
-//            final ToastManager toastManager = MinecraftClient.getInstance().getToastManager();
-//            if (toastManager != null) {
-//                toastManager.add(SystemToast.create(MinecraftClient.getInstance(), SystemToast.Type.WORLD_ACCESS_FAILURE,
-//                        Text.literal("BBOR Error"), Text.literal("Failed to resolve structure %s, outer box may be inaccurate")));
-//            }
-            System.err.println("Failed to resolve structure %s, outer box may be inaccurate".formatted(structureId));
+            if (resolveFailures.add(structureId)) {
+                final ToastManager toastManager = MinecraftClient.getInstance().getToastManager();
+                if (toastManager != null) {
+                    toastManager.add(SystemToast.create(MinecraftClient.getInstance(), SystemToast.Type.WORLD_ACCESS_FAILURE,
+                            Text.literal(I18n.translate("bbor.notice.error")), Text.literal(I18n.translate("bbor.notice.structure_resolve_failure_servux", structureId))));
+                }
+            }
+            System.err.println("Failed to resolve structure %s from servux server, outer box may be inaccurate".formatted(structureId));
         }
 
         final BoundingBoxType boundingBoxType = StructureUtil.registerStructureIfNeeded(structureId);
