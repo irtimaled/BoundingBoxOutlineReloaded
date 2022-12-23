@@ -5,22 +5,33 @@ import com.irtimaled.bbor.client.renderers.SpawnableBlocksRenderer;
 import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.interop.CommonInterop;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
-import net.minecraft.util.math.BlockPos;
-
-import java.util.HashSet;
-import java.util.Set;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
+import it.unimi.dsi.fastutil.ints.IntSets;
 
 public class BoundingBoxSpawnableBlocks extends AbstractBoundingBox {
     private static final AbstractRenderer<BoundingBoxSpawnableBlocks> RENDERER = CommonInterop.registerRenderer(BoundingBoxSpawnableBlocks.class, () -> new SpawnableBlocksRenderer());
 
-    private final Set<BlockPos> blocks = new HashSet<>();
+    private final int baseX;
+    private final int baseZ;
+    private final IntSet blocks = IntSets.synchronize(new IntOpenHashSet(), this);
 
-    public BoundingBoxSpawnableBlocks() {
+    public BoundingBoxSpawnableBlocks(int baseX, int baseZ) {
         super(BoundingBoxType.SpawnableBlocks);
+        this.baseX = baseX;
+        this.baseZ = baseZ;
     }
 
-    public Set<BlockPos> getBlocks() {
+    public IntSet getBlockYs() {
         return blocks;
+    }
+
+    public int getBaseX() {
+        return baseX;
+    }
+
+    public int getBaseZ() {
+        return baseZ;
     }
 
     @Override

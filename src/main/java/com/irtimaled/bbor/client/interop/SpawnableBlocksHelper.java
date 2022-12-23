@@ -8,11 +8,11 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.mob.ZombifiedPiglinEntity;
-import net.minecraft.tag.BlockTags;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.LightType;
 import net.minecraft.world.World;
@@ -57,26 +57,30 @@ public class SpawnableBlocksHelper {
 
     private static final ConcurrentHashMap<Biome, Boolean> isNether = new ConcurrentHashMap<>();
 
-    static boolean isSpawnable(World world, BlockPos pos, BlockState spawnBlockState, BlockState upperBlockState) {
+    public static boolean isSpawnable(World world, BlockPos pos, BlockState spawnBlockState, BlockState upperBlockState) {
         VoxelShape collisionShape = upperBlockState.getCollisionShape(world, pos);
-        Biome biome = world.getBiome(pos).value();
-        final boolean isNether = SpawnableBlocksHelper.isNether.computeIfAbsent(biome, biome1 -> {
-            final SpawnSettings spawnSettings = biome.getSpawnSettings();
-            final List<SpawnSettings.SpawnEntry> entries = spawnSettings.getSpawnEntries(SpawnGroup.MONSTER).getEntries();
-            for (SpawnSettings.SpawnEntry entry : entries) {
-                if (entry.type.getBaseClass() == ZombifiedPiglinEntity.class) return true;
-            }
-            return false;
-        });
-        final Identifier id = BuiltinRegistries.BIOME.getId(biome);
-        return (id == null || !id.equals(new Identifier("minecraft", "mushroom_fields")) &&
-                !id.equals(new Identifier("minecraft", "deep_dark"))) &&
-                spawnBlockState.allowsSpawning(world, pos.down(), isNether ? EntityType.ZOMBIFIED_PIGLIN : EntityType.ZOMBIE) &&
-                !Block.isFaceFullSquare(collisionShape, Direction.UP) &&
-                !upperBlockState.emitsRedstonePower() &&
+        if (!upperBlockState.emitsRedstonePower() &&
                 !upperBlockState.isIn(BlockTags.RAILS) &&
                 collisionShape.getMax(Direction.Axis.Y) <= 0 &&
                 upperBlockState.getFluidState().isEmpty() &&
-                (world.getLightLevel(LightType.BLOCK, pos) <= ConfigManager.spawnableBlocksSafeLight.get());
+                (world.getLightLevel(LightType.BLOCK, pos) <= ConfigManager.spawnableBlocksSafeLight.get()) &&
+                !Block.isFaceFullSquare(collisionShape, Direction.UP)
+        ) {
+            final RegistryEntry<Biome> biomeRegistryEntry = world.getBiome(pos);
+            Biome biome = biomeRegistryEntry.value();
+            final boolean isNether = SpawnableBlocksHelper.isNether.computeIfAbsent(biome, biome1 -> {
+                final SpawnSettings spawnSettings = biome.getSpawnSettings();
+                final List<SpawnSettings.SpawnEntry> entries = spawnSettings.getSpawnEntries(SpawnGroup.MONSTER).getEntries();
+                for (SpawnSettings.SpawnEntry entry : entries) {
+                    if (entry.type.getBaseClass() == ZombifiedPiglinEntity.class) return true;
+                }
+                return false;
+            });
+            final Identifier id = biomeRegistryEntry.getKey().get().getValue();
+            return spawnBlockState.allowsSpawning(world, pos.down(), isNether ? EntityType.ZOMBIFIED_PIGLIN : EntityType.ZOMBIE) &&
+                    (id == null || !id.equals(new Identifier("minecraft", "mushroom_fields")) &&
+                            !id.equals(new Identifier("minecraft", "deep_dark")));
+        }
+        return false;
     }
 }

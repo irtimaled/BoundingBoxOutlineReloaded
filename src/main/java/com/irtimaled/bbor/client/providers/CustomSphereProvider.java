@@ -6,12 +6,11 @@ import com.irtimaled.bbor.client.models.Point;
 import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.models.DimensionId;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CustomSphereProvider implements IBoundingBoxProvider<BoundingBoxSphere>, ICachingProvider {
-    private static final Map<DimensionId, Map<Integer, BoundingBoxSphere>> dimensionCache = new HashMap<>();
+    private static final Map<DimensionId, Map<Integer, BoundingBoxSphere>> dimensionCache = new ConcurrentHashMap<>();
 
     private static Map<Integer, BoundingBoxSphere> getCache(DimensionId dimensionId) {
         return dimensionCache.computeIfAbsent(dimensionId, i -> new ConcurrentHashMap<>());

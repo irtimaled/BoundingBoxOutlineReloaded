@@ -20,8 +20,8 @@ abstract class AbstractSlider extends AbstractControl {
     protected void renderBackground(MatrixStack matrixStack, int mouseX, int mouseY) {
         this.minecraft.getTextureManager().bindTexture(WIDGETS_TEXTURE);
         int hoverState = super.getYImage(this.isHovered());
-        this.drawTexture(matrixStack, this.x + (int) getProgressPercentage(), this.y, 0, 46 + hoverState * 20, 4, this.height);
-        this.drawTexture(matrixStack, this.x + (int) getProgressPercentage() + 4, this.y, 196, 46 + hoverState * 20, 4, 20);
+        this.drawTexture(matrixStack, this.getX() + (int) getProgressPercentage(), this.getY(), 0, 46 + hoverState * 20, 4, this.height);
+        this.drawTexture(matrixStack, this.getX() + (int) getProgressPercentage() + 4, this.getY(), 196, 46 + hoverState * 20, 4, 20);
     }
 
     private double getProgressPercentage() {
@@ -29,7 +29,7 @@ abstract class AbstractSlider extends AbstractControl {
     }
 
     private void changeProgress(double mouseX) {
-        double progress = (mouseX - (double) (this.x + 4)) / (double) total;
+        double progress = (mouseX - (double) (this.getX() + 4)) / (double) total;
         setPosition((int) Math.round(progress * optionCount));
     }
 

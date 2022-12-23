@@ -1,18 +1,22 @@
 package com.irtimaled.bbor.client.config;
 
+import com.irtimaled.bbor.common.BoundingBoxCache;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMaps;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ObjectSet;
+import it.unimi.dsi.fastutil.objects.ObjectSets;
 
 import java.io.File;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
 public class ConfigManager {
-    private static final Set<Setting<?>> settings = new HashSet<>();
+    private static final ObjectSet<Setting<?>> settings = ObjectSets.synchronize(new ObjectOpenHashSet<>(), ConfigManager.class);
     private static File configDir;
 
+    public static Setting<Boolean> showSettingsButton;
     public static Setting<Boolean> fill;
     //    public static Setting<Boolean> drawVillages;
 //    public static Setting<Boolean> drawDesertTemples;
@@ -46,16 +50,17 @@ public class ConfigManager {
     public static Setting<Boolean> drawBeacons;
     public static Setting<Boolean> drawBiomeBorders;
     public static Setting<Boolean> renderOnlyCurrentBiome;
+    public static Setting<Boolean> drawBiomeBorderOutline;
     public static Setting<Integer> biomeBordersRenderDistance;
-    public static Setting<Integer> biomeBordersMaxY;
+//    public static Setting<Integer> biomeBordersMaxY;
     //    public static Setting<Boolean> drawNetherFossils;
 //    public static Setting<Boolean> drawBastionRemnants;
 //    public static Setting<Boolean> drawRuinedPortals;
     public static Setting<Boolean> drawConduits;
     public static Setting<Boolean> renderConduitMobHarmArea;
     public static Setting<Boolean> drawSpawnableBlocks;
-    public static Setting<Integer> spawnableBlocksRenderWidth;
-    public static Setting<Integer> spawnableBlocksRenderHeight;
+    public static Setting<Integer> spawnableBlocksRenderDistance;
+    public static Setting<Integer> spawnableBlocksSafeLight;
     public static Setting<Integer> spawnableBlocksSafeLight;
     public static Setting<Boolean> invertBoxColorPlayerInside;
     public static Setting<Boolean> renderSphereAsDots;
@@ -112,9 +117,12 @@ public class ConfigManager {
     public static Setting<HexColor> buttonOnOverlay;
 
     public static Setting<Integer> fastRender;
+    public static Setting<Boolean> asyncBuilding;
 
     public static Map<String, Setting<Boolean>> structureRenderSettings = Object2ObjectMaps.synchronize(new Object2ObjectOpenHashMap<>());
     public static Map<String, Setting<HexColor>> structureColorSettings = Object2ObjectMaps.synchronize(new Object2ObjectOpenHashMap<>());
+    public static Setting<Boolean> autoSelectReceivedType;
+    public static Map<BoundingBoxCache.Type, Setting<Boolean>> receivedTypeRenderSettings = Object2ObjectMaps.synchronize(new Object2ObjectOpenHashMap<>());
     private static final Map<String, HexColor> defaultStructureColors = new Object2ObjectOpenHashMap<>();
 
     static {
@@ -156,6 +164,7 @@ public class ConfigManager {
         configDir.mkdirs();
         config = loadConfiguration();
 
+        showSettingsButton = setup(config, "general", "showSettingsButton", true, "If set to true the settings button is shown in options screen.");
         fill = setup(config, "general", "fill", true, "If set to true the bounding boxes are filled.");
         outerBoxesOnly = setup(config, "general", "outerBoxesOnly", false, "If set to true only the outer bounding boxes are rendered.");
         alwaysVisible = setup(config, "general", "alwaysVisible", false, "If set to true boxes will be visible even through other blocks.");
@@ -164,6 +173,7 @@ public class ConfigManager {
         renderSphereAsDots = setup(config, "general", "renderSphereAsDots", false, "If set to true spheres will be rendered as dots.");
         buttonOnOverlay = setup(config, "general", "buttonEnabledOverlay", HexColor.from("#3000ff00"), "The color and alpha of the button overlay when a button is on.");
         fastRender = setup(config, "general", "fastRender", 2, "Fast render settings. Higher value for faster rendering. ");
+        asyncBuilding = setup(config, "general", "asyncBuilding", true, "Whether to use async building for non-gpu-bottlenecked cases ");
 
         drawBeacons = setup(config, "beacons", "drawBeacons", true, "If set to true beacon bounding boxes will be drawn.");
 
@@ -172,8 +182,9 @@ public class ConfigManager {
 
         drawBiomeBorders = setup(config, "biomeBorders", "drawBiomeBorders", true, "If set to true biome borders will be drawn.");
         renderOnlyCurrentBiome = setup(config, "biomeBorders", "renderOnlyCurrentBiome", true, "If set to true only the biome border for the current biome will be drawn.");
+        drawBiomeBorderOutline = setup(config, "biomeBorders", "drawBiomeBorderOutline", false, "If set to true biome borders will be drawn with outline.");
         biomeBordersRenderDistance = setup(config, "biomeBorders", "biomeBordersRenderDistance", 3, "The distance from the player where biome borders will be drawn.");
-        biomeBordersMaxY = setup(config, "biomeBorders", "biomeBordersMaxY", -1, "The maximum top of the biome borders. If set to -1 it will use the value when activated, if set to 0 it will always track the players feet.");
+//        biomeBordersMaxY = setup(config, "biomeBorders", "biomeBordersMaxY", -1, "The maximum top of the biome borders. If set to -1 it will use the value when activated, if set to 0 it will always track the players feet.");
 
         drawFlowerForests = setup(config, "flowerForests", "drawFlowerForests", true, "If set to true flower forest flower overlays will be drawn.");
         flowerForestsRenderDistance = setup(config, "flowerForests", "flowerForestsRenderDistance", 3, "The distance from the player where flower forests will be drawn.");
@@ -215,8 +226,8 @@ public class ConfigManager {
         afkSpawnableBlocksRenderDistance = setup(config, "afkSpot", "afkSpawnableBlocksRenderDistance", 3, "The distance from the player where spawnable blocks within the AFK sphere will be drawn.");
 
         drawSpawnableBlocks = setup(config, "spawnableBlocks", "drawSpawnableBlocks", false, "If set to true boxes to show spawnable blocks will be drawn.");
-        spawnableBlocksRenderWidth = setup(config, "spawnableBlocks", "spawnableBlocksRenderWidth", 2, "The distance from the player where spawnable blocks will be drawn in X and Z axis.");
-        spawnableBlocksRenderHeight = setup(config, "spawnableBlocks", "spawnableBlocksRenderHeight", 1, "The distance from the player where spawnable blocks will be drawn in Y axis.");
+        spawnableBlocksRenderDistance = setup(config, "spawnableBlocks", "spawnableBlocksRenderDistance", 2, "The distance from the player where spawnable blocks will be drawn in X and Z axis.");
+        spawnableBlocksSafeLight = setup(config, "spawnableBlocks", "spawnableBlocksSafeLight", 0, "The light level to check which block is safe.");
         spawnableBlocksSafeLight = setup(config, "spawnableBlocks", "spawnableBlocksSafeLight", 0, "The light level to check which block is safe.");
 
         colorWorldSpawn = setup(config, "colors", "colorWorldSpawn", HexColor.from("#ff0000"), "Color of world spawn and spawn chunks bounding boxes.");
@@ -264,6 +275,9 @@ public class ConfigManager {
         colorFlowerForestCornflower = setup(config, "colors", "colorFlowerForestCornflower", HexColor.from("#0000ff"), "Color of Flower Forest Cornflower");
         colorFlowerForestLilyOfTheValley = setup(config, "colors", "colorFlowerForestLilyOfTheValley", HexColor.from("#ffffff"), "Color of Flower Forest Lily Of The Valley");
         colorBedrockCeilingBlocks = setup(config, "colors", "colorBedrockCeilingBlocks", HexColor.from("#00ff00"), "Color of Bedrock Ceiling Blocks");
+
+        autoSelectReceivedType = setup(config, "render", "auto_select", true, "Whether to automatically select received bounding boxes.");
+
         config.save();
     }
 
@@ -274,11 +288,13 @@ public class ConfigManager {
     }
 
     public static void saveConfig() {
-        Configuration config = new Configuration(new File(configDir, "BBOutlineReloaded.cfg"));
-        for (Setting<?> setting : settings) {
-            config.put(setting);
+        synchronized (ConfigManager.class) {
+            Configuration config = new Configuration(new File(configDir, "BBOutlineReloaded.cfg"));
+            for (Setting<?> setting : settings) {
+                config.put(setting);
+            }
+            config.save();
         }
-        config.save();
     }
 
     public static Setting<Boolean> structureShouldRender(String key) {
@@ -289,8 +305,15 @@ public class ConfigManager {
     }
 
     public static Setting<HexColor> structureColor(String key) {
-        final Setting<HexColor> setting = setup(config, "colors", "colorStructure_" + key.replace(':', '_'), defaultStructureColors.getOrDefault(key, HexColor.from("#ffffff")), "Color if structure %s bounding boxes.".formatted(key));
+        final Setting<HexColor> setting = setup(config, "colors", "colorStructure_" + key.replace(':', '_'), defaultStructureColors.getOrDefault(key, HexColor.random()), "Color if structure %s bounding boxes.".formatted(key));
         structureColorSettings.put(key, setting);
+        saveConfig();
+        return setting;
+    }
+
+    public static Setting<Boolean> receivedTypeShouldRender(BoundingBoxCache.Type type) {
+        final Setting<Boolean> setting = setup(config, "render", "draw_" + type.name().toLowerCase(), true, "If set to true %s bounding boxes will be drawn.".formatted(type.name()));
+        receivedTypeRenderSettings.put(type, setting);
         saveConfig();
         return setting;
     }

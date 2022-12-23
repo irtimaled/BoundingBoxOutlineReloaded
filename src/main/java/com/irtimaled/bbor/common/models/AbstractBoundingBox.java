@@ -39,4 +39,8 @@ public abstract class AbstractBoundingBox {
         RenderCulling.incrementCulling();
         return true;
     }
+
+    public boolean needSyncRendering() {
+        return false;
+    }
 }

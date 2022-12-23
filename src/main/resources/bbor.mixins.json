@@ -8,11 +8,17 @@
     "access.IBeaconBlockEntity",
     "access.IBiome",
     "access.IStructureStart",
+    "client.access.IConduitBlockEntity",
+    "client.world.MixinClientPlayNetworkHandler",
+    "client.world.MixinWorldChunk",
+    "client.world.extras.MixinBeaconBlockEntity",
+    "client.world.extras.MixinConduitBlockEntity",
     "network.play.client.MixinCCustomPayloadPacket",
     "server.MixinDynamicRegistryManager",
     "server.MixinMinecraftServer",
+    "server.MixinThreadedAnvilChunkStorage",
     "server.management.MixinPlayerList",
-    "world.chunk.MixinChunk"
+    "world.chunk.MixinPalettedContainer"
   ],
   "client": [
     "access.IKeyBinding",
@@ -21,7 +27,6 @@
     "client.MixinMinecraft",
     "client.access.IClientChunkManager",
     "client.access.IClientChunkManagerClientChunkMap",
-    "client.entity.player.MixinClientPlayerEntity",
     "client.gui.screen.MixinChatScreen",
     "client.gui.screen.MixinOptionsScreen",
     "client.network.login.MixinClientLoginNetHandler",
@@ -31,10 +36,15 @@
     "client.renderer.MixinWorldRenderer",
     "client.settings.MixinKeyBinding",
     "client.world.MixinClientWorld",
+    "client.world.MixinMinecraftClient",
+    "client.world.extras.MixinWorldRenderer",
     "network.play.server.MixinSChatPacket",
     "network.play.server.MixinSChunkDataPacket",
     "network.play.server.MixinSCommandListPacket",
     "network.play.server.MixinSCustomPayloadPlayPacket",
     "network.play.server.MixinSSpawnPositionPacket"
+  ],
+  "server": [
+    "server.dedicated.MixinDedicatedServer"
   ]
 }

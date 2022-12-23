@@ -14,44 +14,15 @@ public class BoundingBoxLine extends AbstractBoundingBox {
 
     private final Point minPoint;
     private final Point maxPoint;
-    private final Double width;
-    private final Point[] corners;
 
-    protected BoundingBoxLine(Point minPoint, Point maxPoint, double width, BoundingBoxType type, Point... corners) {
+    protected BoundingBoxLine(Point minPoint, Point maxPoint, BoundingBoxType type) {
         super(type);
         this.minPoint = minPoint;
         this.maxPoint = maxPoint;
-        this.width = width;
-        this.corners = corners;
     }
 
-    public static BoundingBoxLine from(Point minPoint, Point maxPoint, Double width, BoundingBoxType type) {
-        if (width == 0) return new BoundingBoxLine(minPoint, maxPoint, width, type);
-
-        double halfWidth = width / 2.0d;
-
-        double dx = maxPoint.getX() - minPoint.getX();
-        double dz = maxPoint.getZ() - minPoint.getZ();
-
-        double dxm = dx == 0 ? 0 : dx / Math.abs(dx);
-        double dzm = dz == 0 ? 0 : dz / Math.abs(dz);
-
-        double xc, zc;
-        if (dxm == 0 || dzm == 0) {
-            xc = Math.abs(dzm) * halfWidth;
-            zc = Math.abs(dxm) * halfWidth;
-        } else {
-            double h = Math.sqrt(dx * dx + dz * dz);
-            double theta = Math.acos((dz * dz + h * h - dx * dx) / (2 * dz * h));
-            zc = halfWidth * Math.sin(theta);
-            xc = Math.sqrt(halfWidth * halfWidth - zc * zc) * dxm * dzm;
-        }
-
-        return new BoundingBoxLine(minPoint, maxPoint, width, type,
-                new Point(minPoint.getX() + xc, minPoint.getY(), minPoint.getZ() - zc),
-                new Point(minPoint.getX() - xc, minPoint.getY(), minPoint.getZ() + zc),
-                new Point(maxPoint.getX() - xc, maxPoint.getY(), maxPoint.getZ() + zc),
-                new Point(maxPoint.getX() + xc, maxPoint.getY(), maxPoint.getZ() - zc));
+    public static BoundingBoxLine from(Point minPoint, Point maxPoint, BoundingBoxType type) {
+        return new BoundingBoxLine(minPoint, maxPoint, type);
     }
 
     @Override
@@ -73,14 +44,6 @@ public class BoundingBoxLine extends AbstractBoundingBox {
 
     public Point getMaxPoint() {
         return maxPoint;
-    }
-
-    public double getWidth() {
-        return width;
-    }
-
-    public Point[] getCorners() {
-        return corners;
     }
 
     @Override

@@ -8,25 +8,25 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.noise.DoublePerlinNoiseSampler;
 import net.minecraft.util.math.random.LocalRandom;
-import net.minecraft.util.registry.BuiltinRegistries;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeKeys;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
+import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.PlacedFeature;
+import net.minecraft.world.gen.feature.PlacedFeatures;
+import net.minecraft.world.gen.feature.RandomPatchFeatureConfig;
 import net.minecraft.world.gen.feature.SimpleBlockFeature;
 import net.minecraft.world.gen.feature.SimpleBlockFeatureConfig;
-import net.minecraft.world.gen.feature.VegetationConfiguredFeatures;
 import net.minecraft.world.gen.stateprovider.BlockStateProvider;
+import net.minecraft.world.gen.stateprovider.NoiseBlockStateProvider;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class FlowerForestHelper {
 
     private static final Map<BlockState, Setting<HexColor>> flowerColorMap = new HashMap<>();
-
-    public static final Biome BIOME = BuiltinRegistries.BIOME.get(BiomeKeys.FLOWER_FOREST);
 
     private static BlockStateProvider blockStateProvider;
 
@@ -44,7 +44,36 @@ public class FlowerForestHelper {
         flowerColorMap.put(Blocks.OXEYE_DAISY.getDefaultState(), ConfigManager.colorFlowerForestOxeyeDaisy);
         flowerColorMap.put(Blocks.CORNFLOWER.getDefaultState(), ConfigManager.colorFlowerForestCornflower);
         flowerColorMap.put(Blocks.LILY_OF_THE_VALLEY.getDefaultState(), ConfigManager.colorFlowerForestLilyOfTheValley);
-        final PlacedFeature placedFeature = VegetationConfiguredFeatures.FLOWER_FLOWER_FOREST.value().config().feature().value();
+
+        // TODO [VanillaCopy] net.minecraft.world.gen.feature.VegetationConfiguredFeatures.FLOWER_FLOWER_FOREST
+        final PlacedFeature placedFeature = new RandomPatchFeatureConfig(
+                96,
+                6,
+                2,
+                PlacedFeatures.createEntry(
+                        Feature.SIMPLE_BLOCK,
+                        new SimpleBlockFeatureConfig(
+                                new NoiseBlockStateProvider(
+                                        2345L,
+                                        new DoublePerlinNoiseSampler.NoiseParameters(0, 1.0),
+                                        0.020833334F,
+                                        List.of(
+                                                Blocks.DANDELION.getDefaultState(),
+                                                Blocks.POPPY.getDefaultState(),
+                                                Blocks.ALLIUM.getDefaultState(),
+                                                Blocks.AZURE_BLUET.getDefaultState(),
+                                                Blocks.RED_TULIP.getDefaultState(),
+                                                Blocks.ORANGE_TULIP.getDefaultState(),
+                                                Blocks.WHITE_TULIP.getDefaultState(),
+                                                Blocks.PINK_TULIP.getDefaultState(),
+                                                Blocks.OXEYE_DAISY.getDefaultState(),
+                                                Blocks.CORNFLOWER.getDefaultState(),
+                                                Blocks.LILY_OF_THE_VALLEY.getDefaultState()
+                                        )
+                                )
+                        )
+                )
+        ).feature().value();
         final var configuredFeature = (ConfiguredFeature<SimpleBlockFeatureConfig, SimpleBlockFeature>) placedFeature.feature().value();
         blockStateProvider = configuredFeature.config().toPlace();
     }
@@ -52,12 +81,8 @@ public class FlowerForestHelper {
     public static Setting<HexColor> getFlowerColorAtPos(Coords coords) {
         int x = coords.getX();
         int z = coords.getZ();
-        BlockState blockState = blockStateProvider.getBlockState(new LocalRandom(seed), new BlockPos(x, coords.getY(), z));
+        BlockState blockState = blockStateProvider.get(new LocalRandom(seed), new BlockPos(x, coords.getY(), z));
         return flowerColorMap.get(blockState);
-    }
-
-    public static void setSeed(long seed) {
-        FlowerForestHelper.seed = seed;
     }
 
     public static boolean canGrowFlower(int x, int y, int z) {

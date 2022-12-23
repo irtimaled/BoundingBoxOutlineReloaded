@@ -35,4 +35,9 @@ public class BoundingBoxMobSpawner extends BoundingBoxCuboid {
     public AbstractRenderer<?> getRenderer() {
         return RENDERER;
     }
+
+    @Override
+    public boolean needSyncRendering() {
+        return true;
+    }
 }
