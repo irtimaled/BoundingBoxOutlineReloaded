@@ -102,7 +102,6 @@ public class SettingsScreen extends ListScreen {
                 .section(I18n.translate("bbor.features.spawnableBlocks"),
                         width -> new BoundingBoxTypeButton(width, I18n.translate("bbor.features.spawnableBlocks"), BoundingBoxType.SpawnableBlocks),
                         width -> new IntSettingSlider(width, 1, ClientInterop.getRenderDistanceChunks(), "bbor.options.distance.xz", ConfigManager.spawnableBlocksRenderDistance),
-                        width -> new SafeLightSettingsSlider(width, ConfigManager.spawnableBlocksSafeLight),
                         width -> new SafeLightSettingsSlider(width, ConfigManager.spawnableBlocksSafeLight))
                 .section(I18n.translate("bbor.features.spawningSpheres"),
                         width -> new BoundingBoxTypeButton(width, I18n.translate("bbor.features.spawningSpheres"), BoundingBoxType.AFKSphere),
