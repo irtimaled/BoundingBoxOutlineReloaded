@@ -1,11 +1,7 @@
-package com.irtimaled.bbor.mixin.network.play.server;
+package com.irtimaled.bbor.mixin.network.play.s2c;
 
 import com.irtimaled.bbor.common.EventBus;
-import com.irtimaled.bbor.common.messages.AddBoundingBox;
-import com.irtimaled.bbor.common.messages.InitializeClient;
-import com.irtimaled.bbor.common.messages.PayloadReader;
-import com.irtimaled.bbor.common.messages.StructureListSync;
-import com.irtimaled.bbor.common.messages.SubscribeToServer;
+import com.irtimaled.bbor.common.messages.*;
 import com.irtimaled.bbor.common.messages.protocols.PacketSplitter;
 import com.irtimaled.bbor.common.messages.servux.ServuxStructurePackets;
 import net.minecraft.client.MinecraftClient;
