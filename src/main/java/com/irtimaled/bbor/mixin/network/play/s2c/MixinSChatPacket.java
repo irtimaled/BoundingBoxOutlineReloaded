@@ -1,4 +1,4 @@
-package com.irtimaled.bbor.mixin.network.play.server;
+package com.irtimaled.bbor.mixin.network.play.s2c;
 
 import com.irtimaled.bbor.client.interop.ClientInterop;
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
