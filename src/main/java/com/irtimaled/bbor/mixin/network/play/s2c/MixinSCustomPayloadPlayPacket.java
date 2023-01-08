@@ -1,4 +1,4 @@
-package com.irtimaled.bbor.mixin.network.play.server;
+package com.irtimaled.bbor.mixin.network.play.s2c;
 
 import com.irtimaled.bbor.common.EventBus;
 import com.irtimaled.bbor.common.messages.AddBoundingBox;
