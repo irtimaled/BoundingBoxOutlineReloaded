@@ -1,4 +1,4 @@
-package com.irtimaled.bbor.mixin.network.play.client;
+package com.irtimaled.bbor.mixin.network.play.c2s;
 
 import com.irtimaled.bbor.common.interop.CommonInterop;
 import com.irtimaled.bbor.common.messages.PayloadReader;
