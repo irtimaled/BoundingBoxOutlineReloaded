@@ -9,12 +9,12 @@ import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
 import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.util.Identifier;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 
 public class PayloadBuilder {
-    private static final Map<String, Identifier> packetNames = new HashMap<>();
+    private static final Map<String, Identifier> packetNames = new ConcurrentHashMap<>();
 
     public static PayloadBuilder clientBound(String name) {
         return new PayloadBuilder(packetNames.computeIfAbsent(name, Identifier::new), CustomPayloadS2CPacket::new);
