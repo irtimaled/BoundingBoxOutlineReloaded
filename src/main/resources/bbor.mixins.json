@@ -17,6 +17,7 @@
   ],
   "client": [
     "access.IKeyBinding",
+    "client.MixinClientModLoader",
     "client.MixinGameSettings",
     "client.MixinKeyboard",
     "client.MixinMinecraft",
