@@ -2,13 +2,8 @@ package com.irtimaled.bbor.common;
 
 import com.irtimaled.bbor.Logger;
 import com.irtimaled.bbor.client.config.ConfigManager;
-import com.irtimaled.bbor.common.events.DataPackReloaded;
-import com.irtimaled.bbor.common.events.PlayerLoggedIn;
-import com.irtimaled.bbor.common.events.PlayerLoggedOut;
-import com.irtimaled.bbor.common.events.PlayerSubscribed;
-import com.irtimaled.bbor.common.events.ServerTick;
-import com.irtimaled.bbor.common.events.StructuresLoaded;
-import com.irtimaled.bbor.common.events.WorldLoaded;
+import com.irtimaled.bbor.common.events.*;
+import com.irtimaled.bbor.common.interop.CommonInterop;
 import com.irtimaled.bbor.common.messages.AddBoundingBox;
 import com.irtimaled.bbor.common.messages.InitializeClient;
 import com.irtimaled.bbor.common.messages.PayloadBuilder;
@@ -16,6 +11,10 @@ import com.irtimaled.bbor.common.messages.StructureListSync;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.common.models.DimensionId;
 import com.irtimaled.bbor.common.models.ServerPlayer;
+import net.minecraft.world.chunk.WorldChunk;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.world.ChunkEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -48,6 +47,17 @@ public class CommonProxy {
         EventBus.subscribe(PlayerSubscribed.class, this::onPlayerSubscribed);
         EventBus.subscribe(ServerTick.class, e -> serverTick());
         EventBus.subscribe(DataPackReloaded.class, e -> dataPackReloaded());
+
+        MinecraftForge.EVENT_BUS.register(new Object() {
+
+            @SubscribeEvent
+            public void onChunkLoaded(ChunkEvent.Load event) {
+                if (event.getChunk() instanceof WorldChunk worldChunk && worldChunk.getWorld() != null && !worldChunk.getWorld().isClient) {
+                    CommonInterop.chunkLoaded(worldChunk);
+                }
+            }
+
+        });
     }
 
     protected void setSeed(long seed) {
