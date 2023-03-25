@@ -7,6 +7,7 @@
   "mixins": [
     "access.IBeaconBlockEntity",
     "access.IBiome",
+    "access.IServerPlayNetworkHandler",
     "access.IStructureStart",
     "network.play.c2s.MixinCCustomPayloadPacket",
     "server.MixinDynamicRegistryManager",

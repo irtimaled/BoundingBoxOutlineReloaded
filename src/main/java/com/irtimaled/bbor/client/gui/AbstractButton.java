@@ -15,7 +15,6 @@ abstract class AbstractButton extends AbstractControl {
     @Override
     public void onClick(double mouseX, double mouseY) {
         super.onClick(mouseX, mouseY);
-        onPressed();
     }
 
     @Override
@@ -34,5 +33,10 @@ abstract class AbstractButton extends AbstractControl {
     }
 
     protected abstract void onPressed();
+
+    @Override
+    public void onPress() {
+        this.onPressed();
+    }
 }
 

@@ -16,7 +16,7 @@ public abstract class BoolButton extends AbstractButton {
     protected abstract boolean getValue();
 
     @Override
-    protected void renderBackground(MatrixStack matrixStack, int mouseX, int mouseY) {
+    protected void renderBackground(MatrixStack matrixStack) {
         int left = this.getX() + 1;
         int top = this.getY() + 1;
         int right = left + this.width - 2;

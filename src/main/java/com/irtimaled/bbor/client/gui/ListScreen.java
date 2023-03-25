@@ -59,13 +59,13 @@ public abstract class ListScreen extends Screen {
         this.renderBackground(matrixStack);
         this.controlList.render(matrixStack, mouseX, mouseY);
 
-        this.drawCenteredText(matrixStack, this.textRenderer, this.title, this.width / 2, 8, 16777215);
+        this.drawCenteredTextWithShadow(matrixStack, this.textRenderer, this.title, this.width / 2, 8, 16777215);
         this.searchField.render(matrixStack, mouseX, mouseY);
         this.doneButton.render(matrixStack, mouseX, mouseY, 0f);
 
         int left = this.width - this.textRenderer.getWidth(version) - 2;
         int top = this.height - 10;
-        this.drawStringWithShadow(matrixStack, this.textRenderer, version, left, top, -10658467);
+        this.drawTextWithShadow(matrixStack, this.textRenderer, version, left, top, -10658467);
     }
 
     @Override

@@ -15,6 +15,7 @@ public class ControlListSection extends ControlListEntry implements IControlSet 
     private int height;
     private IControl focused;
     private boolean dragging;
+    private boolean isFocused;
 
     ControlListSection(String title, int columnCount, CreateControl... createControls) {
         this.title = title;
@@ -38,7 +39,7 @@ public class ControlListSection extends ControlListEntry implements IControlSet 
     }
 
     private int defaultColumnCount() {
-        switch (minecraft.getLanguageManager().getLanguage().getCode()) {
+        switch (minecraft.getLanguageManager().getLanguage()) {
             case "en_au":
             case "en_us":
             case "en_gb":
@@ -152,5 +153,15 @@ public class ControlListSection extends ControlListEntry implements IControlSet 
     @Override
     public void setDragging(boolean dragging) {
         this.dragging = dragging;
+    }
+
+    @Override
+    public void setFocused(boolean focused) {
+        this.isFocused = focused;
+    }
+
+    @Override
+    public boolean isFocused() {
+        return this.isFocused;
     }
 }

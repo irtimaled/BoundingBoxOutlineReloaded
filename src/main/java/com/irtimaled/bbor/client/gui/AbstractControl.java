@@ -1,13 +1,14 @@
 package com.irtimaled.bbor.client.gui;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.widget.PressableWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
 import java.awt.*;
 
-abstract class AbstractControl extends ClickableWidget implements IControl {
+abstract class AbstractControl extends PressableWidget implements IControl {
     private static final int PADDING = 4;
     protected final MinecraftClient minecraft;
 
@@ -21,14 +22,6 @@ abstract class AbstractControl extends ClickableWidget implements IControl {
         super.render(matrixStack, mouseX, mouseY, 0f);
     }
 
-    public void setX(int x) {
-        super.setX(x);
-    }
-
-    public void setY(int y) {
-        super.setY(y);
-    }
-
     public int getControlHeight() {
         return this.height + PADDING;
     }
@@ -37,12 +30,12 @@ abstract class AbstractControl extends ClickableWidget implements IControl {
         return this.width + PADDING;
     }
 
-    @Override
-    protected void renderBackground(MatrixStack matrixStack, MinecraftClient minecraft, int mouseX, int mouseY) {
-        if (active) renderBackground(matrixStack, mouseX, mouseY);
+    public void drawMessage(MatrixStack matrices, TextRenderer textRenderer, int color) {
+        if (active) renderBackground(matrices);
+        super.drawMessage(matrices, textRenderer, color);
     }
 
-    protected void renderBackground(MatrixStack matrixStack, int mouseX, int mouseY) {
+    protected void renderBackground(MatrixStack matrixStack) {
     }
 
     @Override
@@ -64,5 +57,9 @@ abstract class AbstractControl extends ClickableWidget implements IControl {
     @Override
     public void clearFocus() {
         this.setFocused(false);
+    }
+
+    @Override
+    public void onPress() {
     }
 }

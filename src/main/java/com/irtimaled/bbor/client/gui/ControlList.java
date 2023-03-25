@@ -37,6 +37,8 @@ public class ControlList extends DrawableHelper implements IControlSet {
     private IControl focused;
     private boolean isDragging;
 
+    private boolean isFocused;
+
     ControlList(int width, int height, int top, int bottom) {
         this.width = width;
         this.scrollBarLeft = width - 6;
@@ -89,14 +91,25 @@ public class ControlList extends DrawableHelper implements IControlSet {
     }
 
     @Override
-    public boolean changeFocus(boolean moveForward) {
-        boolean newControlFocused = IControlSet.super.changeFocus(moveForward);
-        if (newControlFocused) {
-            this.ensureVisible((ControlListEntry) this.getFocused());
-        }
-
-        return newControlFocused;
+    public void setFocused(boolean focused) {
+        this.isFocused = focused;
     }
+
+    @Override
+    public boolean isFocused() {
+        return this.isFocused;
+    }
+
+    // TODO
+//    @Override
+//    public boolean changeFocus(boolean moveForward) {
+//        boolean newControlFocused = IControlSet.super.changeFocus(moveForward);
+//        if (newControlFocused) {
+//            this.ensureVisible((ControlListEntry) this.getFocused());
+//        }
+//
+//        return newControlFocused;
+//    }
 
     private void ensureVisible(ControlListEntry control) {
         int controlTop = control.getControlTop();
@@ -262,7 +275,7 @@ public class ControlList extends DrawableHelper implements IControlSet {
 
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferBuilder = tessellator.getBuffer();
-        RenderSystem.disableTexture();
+        RenderHelper.disableTexture();
         RenderSystem.setShader(GameRenderer::getPositionColorProgram);
 
         bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
@@ -283,14 +296,14 @@ public class ControlList extends DrawableHelper implements IControlSet {
         bufferBuilder.vertex(this.scrollBarLeft, scrollBarTop, 0.0D).color(192, 192, 192, 255).next();
 
         tessellator.draw();
-        RenderSystem.enableTexture();
+        RenderHelper.enableTexture();
     }
 
     private void drawOverlayShadows() {
         RenderSystem.setShader(GameRenderer::getPositionTexColorProgram);
         RenderSystem.enableBlend();
         RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SrcFactor.ZERO, GlStateManager.DstFactor.ONE);
-        RenderSystem.disableTexture();
+        RenderHelper.disableTexture();
         RenderSystem.setShader(GameRenderer::getPositionColorProgram);
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferBuilder = tessellator.getBuffer();
@@ -308,7 +321,7 @@ public class ControlList extends DrawableHelper implements IControlSet {
         bufferBuilder.vertex(this.width, this.bottom, 0.0D).color(0, 0, 0, 255).next();
 
         tessellator.draw();
-        RenderSystem.enableTexture();
+        RenderHelper.enableTexture();
         RenderSystem.disableBlend();
     }
 

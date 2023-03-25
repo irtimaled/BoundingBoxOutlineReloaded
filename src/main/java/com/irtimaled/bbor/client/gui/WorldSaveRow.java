@@ -41,6 +41,8 @@ public class WorldSaveRow extends ControlListEntry implements Comparable<WorldSa
     private File iconFile;
     private long lastClickTime;
 
+    private boolean isFocused;
+
     WorldSaveRow(LevelSummary worldSummary, LevelStorage saveLoader, Consumer<ControlListEntry> setSelectedEntry) {
         this.worldSummary = worldSummary;
         this.saveLoader = saveLoader;
@@ -61,6 +63,16 @@ public class WorldSaveRow extends ControlListEntry implements Comparable<WorldSa
                 mouseX < this.getX() + ControlList.CONTROLS_WIDTH &&
                 mouseY > this.getY() &&
                 mouseY < this.getY() + this.getControlHeight();
+    }
+
+    @Override
+    public void setFocused(boolean focused) {
+        this.isFocused = focused;
+    }
+
+    @Override
+    public boolean isFocused() {
+        return this.isFocused;
     }
 
     @Override

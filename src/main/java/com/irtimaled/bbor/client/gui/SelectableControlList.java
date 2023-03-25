@@ -68,16 +68,17 @@ public class SelectableControlList extends ControlList {
         }
     }
 
-    @Override
-    public boolean changeFocus(boolean moveForward) {
-        if (contentHeight == PADDING) return false;
-
-        isFocused = !isFocused;
-        if (getSelectedEntry() == null && this.entries.size() > 0) {
-            setSelectedEntry(this.entries.get(0));
-        }
-        return isFocused;
-    }
+    // TODO
+//    @Override
+//    public boolean changeFocus(boolean moveForward) {
+//        if (contentHeight == PADDING) return false;
+//
+//        isFocused = !isFocused;
+//        if (getSelectedEntry() == null && this.entries.size() > 0) {
+//            setSelectedEntry(this.entries.get(0));
+//        }
+//        return isFocused;
+//    }
 
     @Override
     protected void drawEntry(MatrixStack matrixStack, int mouseX, int mouseY, int top, ControlListEntry entry, int height) {
