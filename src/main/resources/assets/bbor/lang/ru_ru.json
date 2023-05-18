@@ -1,0 +1,131 @@
+{
+  "bbor.key.toggleActive": "Переключение активирования",
+
+  "bbor.tabs.structures": "Структуры",
+
+  "bbor.options.active": "Активировать",
+  "bbor.options.outerBoxOnly": "Только внешняя рамка",
+  "bbor.options.fill": "Заполнить",
+  "bbor.options.showSettingsButton": "Показывать кнопку настроек",
+
+  "bbor.options.fastRender": "Быстрая отрисовка: %s",
+  "bbor.options.fastRender.0": "Выключена",
+  "bbor.options.fastRender.1": "Средняя",
+  "bbor.options.fastRender.2": "Высокая",
+
+  "bbor.options.asyncBuilding": "Использовать асинхронный отрисовщик",
+
+  "bbor.options.maxY": "Максимум по оси Y: %s",
+  "bbor.options.maxY.activated": "Активирована",
+  "bbor.options.maxY.player": "Игрок",
+  "bbor.options.maxY.seaLevel": "Высота уровня моря",
+
+  "bbor.options.distance": "Расстояние: %s",
+  "bbor.options.distance.nearest": "Ближайшее",
+  "bbor.options.distance.nearer": "Поближе",
+  "bbor.options.distance.normal": "Обычное",
+  "bbor.options.distance.farther": "Отдалённое",
+  "bbor.options.distance.far": "Дальнее",
+  "bbor.options.distance.veryFar": "Очень дальнее",
+  "bbor.options.distance.y": "Расстояние (Y): %s",
+  "bbor.options.distance.xz": "Расстояние (X/Z): %s",
+
+  "bbor.options.safe_light": "Неактивный свет: %s",
+
+  "bbor.render.received_types": "Настройки отрисовки полученных ограничивающих рамок",
+  "bbor.render.received_types.auto": "Автовыбор",
+  "bbor.render.received_types.local": "Локально",
+  "bbor.render.received_types.remote_bbor": "Сервер «BBOR»",
+  "bbor.render.received_types.remote_servux": "Сервер «Servux»",
+
+  "bbor.notice.error": "Ошибка BBOR",
+  "bbor.notice.structure_resolve_failure_servux": "Не удалось получить структуру %s с сервера «servux», внешняя рамка может быть неправильной.",
+
+  "bbor.features.spawnChunks": "Чанки для появления",
+  "bbor.features.lazyChunks": "Упрощённые чанки",
+
+  "bbor.features.slimeChunks": "Чанки слизней",
+
+  "bbor.features.mobSpawners": "Рассадники монстров",
+  "bbor.features.mobSpawners.spawnArea": "Область появления",
+  "bbor.features.mobSpawners.activationLines": "Границы активации",
+
+  "bbor.features.spawningSpheres": "Сферы появления",
+  "bbor.features.spawnableBlocks": "Появляемые блоки",
+
+  "bbor.features.biomeBorders": "Границы биома",
+  "bbor.features.renderOnlyCurrentBiome": "Только текущий биом",
+  "bbor.features.drawBiomeBorderOutline": "Отобразить границу",
+
+  "bbor.features.flowerForests": "Цветочный лес",
+
+  "bbor.features.bedrockCeilingBlocks": "Потолок из бедрока",
+
+  "bbor.sections.beaconsAndConduits": "Маяки и Морские источники",
+  "bbor.features.beacons": "Маяки",
+  "bbor.features.conduits": "Морские источники",
+  "bbor.features.conduits.mobHarmArea": "Область повреждения монстра",
+
+  "bbor.structures.minecraft.igloo": "Иглу",
+  "bbor.structures.minecraft.mansion": "Лесной особняк",
+  "bbor.structures.minecraft.village_taiga": "Таёжная деревня",
+  "bbor.structures.minecraft.shipwreck_beached": "Выброшенное на берег кораблекрушение",
+  "bbor.structures.minecraft.village_snowy": "Заснеженная деревня",
+  "bbor.structures.minecraft.stronghold": "Крепость",
+  "bbor.structures.minecraft.village_savanna": "Саванная деревня",
+  "bbor.structures.minecraft.village_desert": "Пустынная деревня",
+  "bbor.structures.minecraft.ruined_portal_jungle": "Разрушенный портал в джунглях",
+  "bbor.structures.minecraft.ruined_portal": "Разрушенный портал",
+  "bbor.structures.minecraft.pillager_outpost": "Аванпост разбойников",
+  "bbor.structures.minecraft.bastion_remnant": "Развалины бастиона",
+  "bbor.structures.minecraft.fortress": "Крепость Незера",
+  "bbor.structures.minecraft.shipwreck": "Кораблекрушение",
+  "bbor.structures.minecraft.mineshaft_mesa": "Заброшенная шахта в плоскогорье",
+  "bbor.structures.minecraft.ruined_portal_swamp": "Разрушенный портал в болоте",
+  "bbor.structures.minecraft.ruined_portal_nether": "Разрушенный портал в Незер",
+  "bbor.structures.minecraft.monument": "Океанский монумент",
+  "bbor.structures.minecraft.ruined_portal_mountain": "Разрушенный портал на горе",
+  "bbor.structures.minecraft.ruined_portal_desert": "Разрушенный портал в пустыне",
+  "bbor.structures.minecraft.village_plains": "Деревня в равнинах",
+  "bbor.structures.minecraft.end_city": "Город Энда",
+  "bbor.structures.minecraft.ancient_city": "Древний город",
+  "bbor.structures.minecraft.nether_fossil": "Ископаемые останки Незера",
+  "bbor.structures.minecraft.buried_treasure": "Клад",
+  "bbor.structures.minecraft.mineshaft": "Заброшенная шахта",
+  "bbor.structures.minecraft.jungle_pyramid": "Храм в джунглях",
+  "bbor.structures.minecraft.desert_pyramid": "Храм в пустыне",
+  "bbor.structures.minecraft.ruined_portal_ocean": "Разрушенный портал в океане",
+  "bbor.structures.minecraft.ocean_ruin_cold": "Руины в холодном океане",
+  "bbor.structures.minecraft.swamp_hut": "Хижина ведьмы",
+  "bbor.structures.minecraft.ocean_ruin_warm": "Руины в тёплом океане",
+
+  "bbor.commands.custom.cleared.all": "Все пользовательские рамки очищены.",
+
+  "bbor.commands.beacon.added": "Пользовательские маяки добавлены на [x=%d, y=%d, z=%d] на уровне %d",
+  "bbor.commands.beacon.cleared.all": "Все пользовательские маяки очищены",
+  "bbor.commands.beacon.cleared": "Пользовательские маяки очищены на [x=%d, y=%d, z=%d]",
+  "bbor.commands.beacon.notFound": "Пользовательский маяк на [x=%d, y=%d, z=%d] не найден.",
+
+  "bbor.commands.box.added": "Рамка добавлена в начале [x=%d, y=%d, z=%d] и в конце [x=%d, y=%d, z=%d]",
+  "bbor.commands.box.cleared.all": "Все рамки очищены",
+  "bbor.commands.box.cleared": "Рамка очищена в начале [x=%d, y=%d, z=%d] и в конце [x=%d, y=%d, z=%d]",
+  "bbor.commands.box.notFound": "Рамка в начале [x=%d, y=%d, z=%d] и в конце [x=%d, y=%d, z=%d] не найдена",
+
+  "bbor.commands.line.added": "Граница  добавлена в начале [x=%d, y=%d, z=%d] и в конце [x=%d, y=%d, z=%d]",
+  "bbor.commands.line.cleared.all":  "Все границы очищены",
+  "bbor.commands.line.cleared": "Граница очищена в начале [x=%d, y=%d, z=%d] и в конце [x=%d, y=%d, z=%d]",
+  "bbor.commands.line.notFound":  "Граница в начале [x=%d, y=%d, z=%d] и в конце [x=%d, y=%d, z=%d] не найдена",
+
+  "bbor.commands.sphere.added": "Сфера добавлена в центр [x=%d, y=%d, z=%d] и радиус %d",
+  "bbor.commands.sphere.cleared.all":  "Все сферы очищены",
+  "bbor.commands.sphere.cleared": "Сфера очищена в центре [x=%d, y=%d, z=%d]",
+  "bbor.commands.sphere.notFound":  "Сфера в центре [x=%d, y=%d, z=%d] не найдена",
+
+  "bbor.commands.spawningSphere.set": "Сфера появления установлена",
+  "bbor.commands.spawningSphere.notSet": "Сфера появления не установлена",
+  "bbor.commands.spawningSphere.cleared": "Сфера появления очищена",
+  "bbor.commands.spawningSphere.calculated": "Рассчитано место для появляемого %s (%s только ночью)",
+
+  "bbor.renderer.spawningSphere.spawnable": "Появляемая:",
+  "bbor.renderer.spawningSphere.none": "Ничего"
+}
