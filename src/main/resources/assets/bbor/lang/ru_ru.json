@@ -48,7 +48,7 @@
 
   "bbor.features.mobSpawners": "Рассадники монстров",
   "bbor.features.mobSpawners.spawnArea": "Область появления",
-  "bbor.features.mobSpawners.activationLines": "Линии активации",
+  "bbor.features.mobSpawners.activationLines": "Границы активации",
 
   "bbor.features.spawningSpheres": "Сферы появления",
   "bbor.features.spawnableBlocks": "Появляемые блоки",
@@ -111,10 +111,10 @@
   "bbor.commands.box.cleared": "Рамка очищена в начале [x=%d, y=%d, z=%d] и в конце [x=%d, y=%d, z=%d]",
   "bbor.commands.box.notFound": "Рамка в начале [x=%d, y=%d, z=%d] и в конце [x=%d, y=%d, z=%d] не найдена",
 
-  "bbor.commands.line.added": "Линия добавлена в начале [x=%d, y=%d, z=%d] и в конце [x=%d, y=%d, z=%d]",
-  "bbor.commands.line.cleared.all":  "Все линии очищены",
-  "bbor.commands.line.cleared": "Линия очищена в начале [x=%d, y=%d, z=%d] и в конце [x=%d, y=%d, z=%d]",
-  "bbor.commands.line.notFound":  "Линия в начале [x=%d, y=%d, z=%d] и в конце [x=%d, y=%d, z=%d] не найдена",
+  "bbor.commands.line.added": "Граница  добавлена в начале [x=%d, y=%d, z=%d] и в конце [x=%d, y=%d, z=%d]",
+  "bbor.commands.line.cleared.all":  "Все границы очищены",
+  "bbor.commands.line.cleared": "Граница очищена в начале [x=%d, y=%d, z=%d] и в конце [x=%d, y=%d, z=%d]",
+  "bbor.commands.line.notFound":  "Граница в начале [x=%d, y=%d, z=%d] и в конце [x=%d, y=%d, z=%d] не найдена",
 
   "bbor.commands.sphere.added": "Сфера добавлена в центр [x=%d, y=%d, z=%d] и радиус %d",
   "bbor.commands.sphere.cleared.all":  "Все сферы очищены",
