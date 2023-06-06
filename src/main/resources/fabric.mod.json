@@ -15,6 +15,6 @@
     "bbor.mixins.json"
   ],
   "depends": {
-    "minecraft": ">=1.19.3-rc.1"
+    "minecraft": ">=1.20-rc.1"
   }
 }

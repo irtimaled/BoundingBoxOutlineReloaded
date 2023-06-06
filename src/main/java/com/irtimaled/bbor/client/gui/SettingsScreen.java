@@ -7,10 +7,10 @@ import com.irtimaled.bbor.common.BoundingBoxCache;
 import com.irtimaled.bbor.common.BoundingBoxType;
 import com.irtimaled.bbor.common.StructureProcessor;
 import net.minecraft.SharedConstants;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.resource.language.I18n;
-import net.minecraft.client.util.math.MatrixStack;
 
 import java.util.Arrays;
 import java.util.stream.Stream;
@@ -63,9 +63,9 @@ public class SettingsScreen extends ListScreen {
                         width -> new BoolSettingButton(width, I18n.translate("bbor.options.asyncBuilding"), ConfigManager.asyncBuilding),
                         width -> (new IntSettingSlider(width, 0, 2, "bbor.options.fastRender", ConfigManager.fastRender) {
                             @Override
-                            public void render(MatrixStack matrixStack, int mouseX, int mouseY) {
+                            public void render(DrawContext ctx, int mouseX, int mouseY) {
                                 this.active = !ConfigManager.asyncBuilding.get();
-                                super.render(matrixStack, mouseX, mouseY);
+                                super.render(ctx, mouseX, mouseY);
                             }
                         })
                                 .addDisplayValue(0, I18n.translate("bbor.options.fastRender.0"))
@@ -125,9 +125,9 @@ public class SettingsScreen extends ListScreen {
                         Arrays.stream(BoundingBoxCache.Type.values())
                                 .map(type -> (CreateControl) (width -> new BoolSettingButton(width, I18n.translate("bbor.render.received_types.%s".formatted(type.name().toLowerCase())), ConfigManager.receivedTypeShouldRender(type)) {
                                     @Override
-                                    public void render(MatrixStack matrixStack, int mouseX, int mouseY) {
+                                    public void render(DrawContext ctx, int mouseX, int mouseY) {
                                         this.active = !ConfigManager.autoSelectReceivedType.get();
-                                        super.render(matrixStack, mouseX, mouseY);
+                                        super.render(ctx, mouseX, mouseY);
                                     }
                                 }))
                 )

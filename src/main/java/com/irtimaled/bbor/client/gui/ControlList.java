@@ -6,7 +6,8 @@ import com.irtimaled.bbor.common.MathHelper;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.Tessellator;
@@ -17,7 +18,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ControlList extends DrawableHelper implements IControlSet {
+public class ControlList implements IControlSet {
     public static final int CONTROLS_WIDTH = 310;
     protected static final int PADDING = 8;
 
@@ -171,12 +172,12 @@ public class ControlList extends DrawableHelper implements IControlSet {
         return true;
     }
 
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY) {
+    public void render(DrawContext ctx, int mouseX, int mouseY) {
         this.amountScrolled = MathHelper.clamp(this.amountScrolled, 0.0D, this.getMaxScroll());
 
         int listTop = this.top + PADDING - (int) this.amountScrolled;
 
-        drawEntries(matrixStack, mouseX, mouseY, listTop);
+        drawEntries(ctx, mouseX, mouseY, listTop);
 
         RenderHelper.enableDepthTest();
         RenderHelper.depthFuncAlways();
@@ -202,7 +203,7 @@ public class ControlList extends DrawableHelper implements IControlSet {
     }
 
     private void drawListBackground(MatrixStack matrixStack) {
-        MinecraftClient.getInstance().getTextureManager().bindTexture(DrawableHelper.OPTIONS_BACKGROUND_TEXTURE);
+        MinecraftClient.getInstance().getTextureManager().bindTexture(Screen.OPTIONS_BACKGROUND_TEXTURE);
         Renderer.startTextured()
                 .setMatrixStack(matrixStack)
                 .setColor(32, 32, 32)
@@ -214,7 +215,7 @@ public class ControlList extends DrawableHelper implements IControlSet {
                 .render();
     }
 
-    private void drawEntries(MatrixStack matrixStack, int mouseX, int mouseY, int top) {
+    private void drawEntries(DrawContext ctx, int mouseX, int mouseY, int top) {
         for (ControlListEntry entry : this.entries) {
             if (!entry.isVisible()) continue;
 
@@ -224,7 +225,7 @@ public class ControlList extends DrawableHelper implements IControlSet {
             int height = entry.getControlHeight();
             int bottom = top + height;
             if(top <= this.bottom && bottom >= this.top) {
-                drawEntry(matrixStack, mouseX, mouseY, top, entry, height);
+                drawEntry(ctx, mouseX, mouseY, top, entry, height);
             } else {
                 entry.update();
             }
@@ -232,15 +233,15 @@ public class ControlList extends DrawableHelper implements IControlSet {
         }
     }
 
-    protected void drawEntry(MatrixStack matrixStack, int mouseX, int mouseY, int top, ControlListEntry entry, int height) {
-        entry.render(matrixStack, mouseX, mouseY);
+    protected void drawEntry(DrawContext ctx, int mouseX, int mouseY, int top, ControlListEntry entry, int height) {
+        entry.render(ctx, mouseX, mouseY);
     }
 
     private void overlayBackground(int top, int bottom) {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferBuilder = tessellator.getBuffer();
         RenderSystem.setShader(GameRenderer::getPositionTexColorProgram);
-        RenderSystem.setShaderTexture(0, DrawableHelper.OPTIONS_BACKGROUND_TEXTURE);
+        RenderSystem.setShaderTexture(0, Screen.OPTIONS_BACKGROUND_TEXTURE);
 
         bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE_COLOR);
         bufferBuilder

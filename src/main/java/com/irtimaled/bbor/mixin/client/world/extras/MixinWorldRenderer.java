@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(WorldRenderer.class)
 public class MixinWorldRenderer {
 
-    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/chunk/light/LightingProvider;doLightUpdates(IZZ)I", shift = At.Shift.AFTER))
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/chunk/light/LightingProvider;doLightUpdates()I", shift = At.Shift.AFTER))
     private void afterLightingUpdate(CallbackInfo ci) {
         SpawnableBlocksProvider.runQueuedTasks();
 //        BiomeBorderProvider.runQueuedTasks();

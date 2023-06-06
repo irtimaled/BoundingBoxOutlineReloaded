@@ -25,11 +25,11 @@ public class RenderingContext {
     private final BufferBuilder lineBufferBuilder = new BufferBuilder(2097152);
 
     private boolean isFreshBuffers = true;
-    private VertexBuffer quadBufferNonMaskedUploaded = new VertexBuffer();
+    private VertexBuffer quadBufferNonMaskedUploaded = new VertexBuffer(VertexBuffer.Usage.DYNAMIC);
     private boolean quadBufferNonMaskedUploadedEmpty = true;
-    private VertexBuffer quadBufferMaskedUploaded = new VertexBuffer();
+    private VertexBuffer quadBufferMaskedUploaded = new VertexBuffer(VertexBuffer.Usage.DYNAMIC);
     private boolean quadBufferMaskedUploadedEmpty = true;
-    private VertexBuffer lineBufferUploaded = new VertexBuffer();
+    private VertexBuffer lineBufferUploaded = new VertexBuffer(VertexBuffer.Usage.DYNAMIC);
     private boolean lineBufferUploadedEmpty = true;
 
     private long quadNonMaskedCount;
@@ -64,9 +64,9 @@ public class RenderingContext {
             this.lineBufferUploaded.close();
             this.quadBufferMaskedUploaded.close();
             this.quadBufferNonMaskedUploaded.close();
-            this.lineBufferUploaded = new VertexBuffer();
-            this.quadBufferMaskedUploaded = new VertexBuffer();
-            this.quadBufferNonMaskedUploaded = new VertexBuffer();
+            this.lineBufferUploaded = new VertexBuffer(VertexBuffer.Usage.DYNAMIC);
+            this.quadBufferMaskedUploaded = new VertexBuffer(VertexBuffer.Usage.DYNAMIC);
+            this.quadBufferNonMaskedUploaded = new VertexBuffer(VertexBuffer.Usage.DYNAMIC);
         }
     }
 

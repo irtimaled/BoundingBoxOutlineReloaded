@@ -2,8 +2,8 @@ package com.irtimaled.bbor.client.gui;
 
 import com.irtimaled.bbor.client.interop.ClientInterop;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.world.level.storage.LevelStorage;
 import net.minecraft.world.level.storage.LevelStorageException;
 import net.minecraft.world.level.storage.LevelSummary;
@@ -42,10 +42,10 @@ public class LoadSavesScreen extends ListScreen {
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float unknown) {
+    public void render(DrawContext ctx, int mouseX, int mouseY, float unknown) {
         ControlListEntry selectedEntry = getSelectedEntry();
         this.setCanExit(selectedEntry != null && selectedEntry.isVisible());
-        super.render(matrixStack, mouseX, mouseY, unknown);
+        super.render(ctx, mouseX, mouseY, unknown);
     }
 
     private ControlListEntry getSelectedEntry() {

@@ -3,6 +3,7 @@ package com.irtimaled.bbor.client.interop;
 import com.irtimaled.bbor.client.Player;
 import com.irtimaled.bbor.common.models.DimensionId;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.util.path.SymlinkValidationException;
 import net.minecraft.world.level.storage.LevelStorage;
 
 import java.io.IOException;
@@ -20,7 +21,7 @@ public class SaveGameStructureLoader {
         LevelStorage saveLoader = minecraft.getLevelStorage();
         try {
             saveHandler = saveLoader.createSession(fileName);
-        } catch (IOException e) {
+        } catch (IOException | SymlinkValidationException e) {
             e.printStackTrace();
         }
         worldDirectory = saveLoader.getSavesDirectory().resolve(fileName);

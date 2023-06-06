@@ -1,6 +1,5 @@
 package com.irtimaled.bbor.client.renderers;
 
-import com.irtimaled.bbor.client.Camera;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormat;
@@ -97,7 +96,7 @@ public class Renderer {
 
     public void render() {
         if (glMode == VertexFormat.DrawMode.QUADS) {
-            bufferBuilder.sortFrom((float) Camera.getX(), (float) Camera.getY(), (float) Camera.getZ());
+//            bufferBuilder.sortFrom((float) Camera.getX(), (float) Camera.getY(), (float) Camera.getZ()); // TODO
         }
         tessellator.draw();
         matrixStack.pop();

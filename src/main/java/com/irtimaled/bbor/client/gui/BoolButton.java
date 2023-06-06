@@ -2,7 +2,7 @@ package com.irtimaled.bbor.client.gui;
 
 import com.irtimaled.bbor.client.config.ColorHelper;
 import com.irtimaled.bbor.client.config.ConfigManager;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 
 public abstract class BoolButton extends AbstractButton {
     BoolButton(int width, String label, boolean enabled) {
@@ -16,13 +16,13 @@ public abstract class BoolButton extends AbstractButton {
     protected abstract boolean getValue();
 
     @Override
-    protected void renderBackground(MatrixStack matrixStack) {
+    protected void renderBackground(DrawContext ctx) {
         int left = this.getX() + 1;
         int top = this.getY() + 1;
         int right = left + this.width - 2;
         int bottom = top + this.height - 2;
         if (this.getValue()) {
-            drawRectangle(matrixStack, left, top, right, bottom, ColorHelper.getColor(ConfigManager.buttonOnOverlay));
+            drawRectangle(ctx, left, top, right, bottom, ColorHelper.getColor(ConfigManager.buttonOnOverlay));
         }
     }
 }
