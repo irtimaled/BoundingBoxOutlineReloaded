@@ -52,6 +52,7 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
     include modImplementation(fabricApi.module("fabric-resource-loader-v0", project.fabric_version))
+    include modImplementation(fabricApi.module("fabric-key-binding-api-v1", project.fabric_version))
 
     modCompileOnly ("com.terraformersmc:modmenu:${project.modmenu_version}") {
         transitive(false)

@@ -1,5 +1,6 @@
 package com.irtimaled.bbor.client.keyboard;
 
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
@@ -15,7 +16,7 @@ public class KeyListener {
 
     public static Key register(String description, String keyName) {
         InputUtil.Key input = InputUtil.fromTranslationKey(keyName);
-        CustomKeyBinding keyBinding = new CustomKeyBinding(description, input.getCode());
+        CustomKeyBinding keyBinding = (CustomKeyBinding) KeyBindingHelper.registerKeyBinding(new CustomKeyBinding(description, input.getCode()));
         keyBindings.add(keyBinding);
 
         Key key = keyBinding.getKey();

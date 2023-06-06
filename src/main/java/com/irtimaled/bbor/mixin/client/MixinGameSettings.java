@@ -1,10 +1,8 @@
 package com.irtimaled.bbor.mixin.client;
 
 import com.irtimaled.bbor.client.ClientProxy;
-import com.irtimaled.bbor.client.keyboard.KeyListener;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.KeyBinding;
-import org.apache.commons.lang3.ArrayUtils;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
@@ -25,7 +23,7 @@ public abstract class MixinGameSettings {
     @Inject(method = "<init>", at = @At("RETURN"))
     private void init(CallbackInfo ci) {
         ClientProxy.registerKeyBindings();
-        allKeys = ArrayUtils.addAll(allKeys, KeyListener.keyBindings());
+//        allKeys = ArrayUtils.addAll(allKeys, KeyListener.keyBindings());
         this.load();
     }
 }
