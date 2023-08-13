@@ -1,13 +1,14 @@
 package com.irtimaled.bbor.client.gui;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.widget.PressableWidget;
 import net.minecraft.text.Text;
 
 import java.awt.*;
 
-abstract class AbstractControl extends ClickableWidget implements IControl {
+abstract class AbstractControl extends PressableWidget implements IControl {
     private static final int PADDING = 4;
     protected final MinecraftClient minecraft;
 
@@ -17,16 +18,8 @@ abstract class AbstractControl extends ClickableWidget implements IControl {
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY) {
-        super.render(matrixStack, mouseX, mouseY, 0f);
-    }
-
-    public void setX(int x) {
-        super.setX(x);
-    }
-
-    public void setY(int y) {
-        super.setY(y);
+    public void render(DrawContext ctx, int mouseX, int mouseY) {
+        super.render(ctx, mouseX, mouseY, 0f);
     }
 
     public int getControlHeight() {
@@ -37,12 +30,12 @@ abstract class AbstractControl extends ClickableWidget implements IControl {
         return this.width + PADDING;
     }
 
-    @Override
-    protected void renderBackground(MatrixStack matrixStack, MinecraftClient minecraft, int mouseX, int mouseY) {
-        if (active) renderBackground(matrixStack, mouseX, mouseY);
+    public void drawMessage(DrawContext ctx, TextRenderer textRenderer, int color) {
+        if (active) renderBackground(ctx);
+        super.drawMessage(ctx, textRenderer, color);
     }
 
-    protected void renderBackground(MatrixStack matrixStack, int mouseX, int mouseY) {
+    protected void renderBackground(DrawContext ctx) {
     }
 
     @Override
@@ -57,12 +50,16 @@ abstract class AbstractControl extends ClickableWidget implements IControl {
                 lowerString.contains(" " + lowerValue);
     }
 
-    void drawRectangle(MatrixStack matrixStack, int left, int top, int right, int bottom, Color color) {
-        fill(matrixStack, left, top, right, bottom, color.getRGB());
+    void drawRectangle(DrawContext ctx, int left, int top, int right, int bottom, Color color) {
+        ctx.fill(left, top, right, bottom, color.getRGB());
     }
 
     @Override
     public void clearFocus() {
         this.setFocused(false);
+    }
+
+    @Override
+    public void onPress() {
     }
 }

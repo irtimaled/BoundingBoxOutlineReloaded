@@ -9,7 +9,7 @@ import net.minecraft.text.Text;
 
 class CommandHelper {
     static void feedback(CommandContext<ServerCommandSource> context, String format, Object... values) {
-        context.getSource().sendFeedback(Text.translatable(format, values), false);
+        context.getSource().sendFeedback(() -> Text.translatable(format, values), false);
     }
 
     static boolean lastNodeIsLiteral(CommandContext<ServerCommandSource> context, String literal) {

@@ -61,28 +61,29 @@ public interface IControlSet extends IFocusableControl, Element {
         return focused != null && focused.charTyped(character, modifiers);
     }
 
-    default boolean changeFocus(boolean moveForward) {
-        IControl focused = this.getFocused();
-        if (focused != null && focused.changeFocus(moveForward)) {
-            return true;
-        }
-
-        List<? extends IControl> controls = this.controls();
-        int controlIndex = controls.indexOf(focused);
-        int newIndex;
-        if (focused != null && controlIndex >= 0) {
-            newIndex = controlIndex + (moveForward ? 1 : 0);
-        } else if (moveForward) {
-            newIndex = 0;
-        } else {
-            newIndex = controls.size();
-        }
-
-        if (ListHelper.findNextMatch(controls, newIndex, moveForward,
-                c -> c.changeFocus(moveForward), this::setFocused)) return true;
-        this.setFocused(null);
-        return false;
-    }
+    // TODO: Fix this
+//    default boolean changeFocus(boolean moveForward) {
+//        IControl focused = this.getFocused();
+//        if (focused != null && focused.changeFocus(moveForward)) {
+//            return true;
+//        }
+//
+//        List<? extends IControl> controls = this.controls();
+//        int controlIndex = controls.indexOf(focused);
+//        int newIndex;
+//        if (focused != null && controlIndex >= 0) {
+//            newIndex = controlIndex + (moveForward ? 1 : 0);
+//        } else if (moveForward) {
+//            newIndex = 0;
+//        } else {
+//            newIndex = controls.size();
+//        }
+//
+//        if (ListHelper.findNextMatch(controls, newIndex, moveForward,
+//                c -> c.changeFocus(moveForward), this::setFocused)) return true;
+//        this.setFocused(null);
+//        return false;
+//    }
 
     default void clearFocus() {
         IControl focused = getFocused();

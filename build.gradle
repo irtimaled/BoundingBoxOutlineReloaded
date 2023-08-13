@@ -10,22 +10,22 @@ buildscript {
         maven { url "https://files.minecraftforge.net/maven/" }
     }
     dependencies {
-        classpath "dev.architectury:architectury-loom:0.12.0-SNAPSHOT"
+        classpath "dev.architectury:architectury-loom:1.2-SNAPSHOT"
     }
 }
 
 plugins {
-    id 'io.github.juuxel.loom-quiltflower' version '1.8.0' apply false
+    id 'io.github.juuxel.loom-vineflower' version '1.+' apply false
 }
 
 apply plugin: 'dev.architectury.loom'
-apply plugin: 'io.github.juuxel.loom-quiltflower'
+apply plugin: 'io.github.juuxel.loom-vineflower'
 apply plugin: 'java'
 apply plugin: 'idea'
 
 group 'com.irtimaled'
 version project.buildVersion + '-' + project.minecraft_version
-archivesBaseName = 'BBOutlineReloaded'
+archivesBaseName = 'BBOutlineReloaded' + '-forge'
 
 sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
@@ -68,16 +68,6 @@ loom {
             mod project.name
         }
     }
-
-    // This allows you to modify your launch configurations,
-    // for example to add custom arguments. In this case, we want
-    // the data generator to check our resources directory for
-    // existing files. (see Forge's ExistingFileHelper for more info)
-    launches {
-        data {
-            arg "--existing", file("src/main/resources").absolutePath
-        }
-    }
 }
 
 dependencies {
@@ -85,6 +75,8 @@ dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     forge "net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}"
+
+    annotationProcessor "net.fabricmc:sponge-mixin:0.12.5+mixin.0.8.5"
 }
 
 processResources {
@@ -121,7 +113,7 @@ jar {
 }
 
 afterEvaluate {
-    remapJar.classifier = 'forge'
+//    remapJar.classifier('forge')
 }
 
 afterEvaluate {

@@ -4,10 +4,9 @@ import com.google.common.hash.Hashing;
 import com.irtimaled.bbor.client.interop.ClientInterop;
 import com.irtimaled.bbor.client.renderers.RenderHelper;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
@@ -41,6 +40,8 @@ public class WorldSaveRow extends ControlListEntry implements Comparable<WorldSa
     private File iconFile;
     private long lastClickTime;
 
+    private boolean isFocused;
+
     WorldSaveRow(LevelSummary worldSummary, LevelStorage saveLoader, Consumer<ControlListEntry> setSelectedEntry) {
         this.worldSummary = worldSummary;
         this.saveLoader = saveLoader;
@@ -64,6 +65,16 @@ public class WorldSaveRow extends ControlListEntry implements Comparable<WorldSa
     }
 
     @Override
+    public void setFocused(boolean focused) {
+        this.isFocused = focused;
+    }
+
+    @Override
+    public boolean isFocused() {
+        return this.isFocused;
+    }
+
+    @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (!isMouseOver(mouseX, mouseY)) return false;
 
@@ -81,7 +92,7 @@ public class WorldSaveRow extends ControlListEntry implements Comparable<WorldSa
         String fileName = this.worldSummary.getName();
         LevelStorage.Session worldInfo = null;
         try {
-            worldInfo = saveLoader.createSession(fileName);
+            worldInfo = saveLoader.createSessionWithoutSymlinkCheck(fileName);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -113,17 +124,17 @@ public class WorldSaveRow extends ControlListEntry implements Comparable<WorldSa
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY) {
+    public void render(DrawContext ctx, int mouseX, int mouseY) {
         String displayName = this.worldSummary.getDisplayName();
         String details = this.worldSummary.getName() + " (" + DATE_FORMAT.format(new Date(this.worldSummary.getLastPlayed())) + ")";
 
         int x = this.getX();
         int y = this.getY();
-        this.client.textRenderer.draw(matrixStack, displayName, (float) (x + ICON_SIZE + 3), (float) (y + 1), 16777215);
-        this.client.textRenderer.draw(matrixStack, details, (float) (x + ICON_SIZE + 3), (float) (y + 1 + this.client.textRenderer.fontHeight + 1), 8421504);
-        this.client.getTextureManager().bindTexture(this.icon != null ? this.iconLocation : ICON_MISSING);
+        ctx.drawText(this.client.textRenderer, displayName, (int) (x + ICON_SIZE + 3), (int) (y + 1), 16777215, false);
+        ctx.drawText(this.client.textRenderer, details, (int) (x + ICON_SIZE + 3), (int) (y + 1 + this.client.textRenderer.fontHeight + 1), 8421504, false);
+//        this.client.getTextureManager().bindTexture(this.icon != null ? this.iconLocation : ICON_MISSING);
         RenderHelper.enableBlend();
-        DrawableHelper.drawTexture(matrixStack, x, y, 0.0F, 0.0F, ICON_SIZE, ICON_SIZE, 32, 32);
+        ctx.drawTexture(this.icon != null ? this.iconLocation : ICON_MISSING, x, y, 0.0F, 0.0F, ICON_SIZE, ICON_SIZE, 32, 32);
         RenderHelper.disableBlend();
     }
 

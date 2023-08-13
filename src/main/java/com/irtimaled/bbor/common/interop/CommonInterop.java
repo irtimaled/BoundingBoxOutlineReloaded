@@ -18,6 +18,7 @@ import com.irtimaled.bbor.common.events.WorldLoaded;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.common.models.DimensionId;
 import com.irtimaled.bbor.common.models.ServerPlayer;
+import com.irtimaled.bbor.mixin.access.IServerPlayNetworkHandler;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.registry.BuiltinRegistries;
 import net.minecraft.registry.Registry;
@@ -105,8 +106,8 @@ public class CommonInterop {
         ServerPlayNetworkHandler connection = player.networkHandler;
         if (connection == null) return;
 
-        ClientConnection networkManager = connection.connection;
-//        if (networkManager.isLocal()) return;
+        ClientConnection networkManager = ((IServerPlayNetworkHandler) connection).getConnection();
+        if (networkManager.isLocal()) return;
 
         EventBus.publish(new PlayerLoggedIn(new ServerPlayer(player)));
     }

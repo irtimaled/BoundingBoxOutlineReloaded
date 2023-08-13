@@ -46,11 +46,11 @@ public class RenderHelper {
     }
 
     public static void disableTexture() {
-        RenderSystem.disableTexture();
+//        RenderSystem.disableTexture();
     }
 
     public static void enableTexture() {
-        RenderSystem.enableTexture();
+//        RenderSystem.enableTexture();
     }
 
     public static void blendFuncGui() {

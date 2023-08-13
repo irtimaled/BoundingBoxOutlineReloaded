@@ -2,7 +2,7 @@ package com.irtimaled.bbor.client.gui;
 
 import com.irtimaled.bbor.client.renderers.RenderHelper;
 import com.irtimaled.bbor.client.renderers.Renderer;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 
 public class SelectableControlList extends ControlList {
     private final int listRight;
@@ -68,24 +68,25 @@ public class SelectableControlList extends ControlList {
         }
     }
 
-    @Override
-    public boolean changeFocus(boolean moveForward) {
-        if (contentHeight == PADDING) return false;
+    // TODO
+//    @Override
+//    public boolean changeFocus(boolean moveForward) {
+//        if (contentHeight == PADDING) return false;
+//
+//        isFocused = !isFocused;
+//        if (getSelectedEntry() == null && this.entries.size() > 0) {
+//            setSelectedEntry(this.entries.get(0));
+//        }
+//        return isFocused;
+//    }
 
-        isFocused = !isFocused;
-        if (getSelectedEntry() == null && this.entries.size() > 0) {
-            setSelectedEntry(this.entries.get(0));
-        }
-        return isFocused;
-    }
-
     @Override
-    protected void drawEntry(MatrixStack matrixStack, int mouseX, int mouseY, int top, ControlListEntry entry, int height) {
+    protected void drawEntry(DrawContext ctx, int mouseX, int mouseY, int top, ControlListEntry entry, int height) {
         if (this.selectedElement == entry.index) {
             RenderHelper.disableTexture();
             int color = this.isFocused ? 255 : 128;
             Renderer.startQuads()
-                    .setMatrixStack(matrixStack)
+                    .setMatrixStack(ctx.getMatrices())
                     .setAlpha(255)
                     .setColor(color, color, color)
                     .addPoint((double) this.listLeft - 2, (double) (top + height) - 2, 0.0D)
@@ -100,7 +101,7 @@ public class SelectableControlList extends ControlList {
                     .render();
             RenderHelper.enableTexture();
         }
-        super.drawEntry(matrixStack, mouseX, mouseY, top, entry, height);
+        super.drawEntry(ctx, mouseX, mouseY, top, entry, height);
     }
 
     @Override

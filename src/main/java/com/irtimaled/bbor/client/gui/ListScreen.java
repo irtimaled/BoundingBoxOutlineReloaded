@@ -3,10 +3,10 @@ package com.irtimaled.bbor.client.gui;
 import com.irtimaled.bbor.Versions;
 import com.irtimaled.bbor.client.interop.ClientInterop;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
 import java.util.List;
@@ -50,22 +50,24 @@ public abstract class ListScreen extends Screen {
     protected abstract ControlList buildList(int top, int bottom);
 
     @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float unknown) {
-        render(matrixStack, mouseX, mouseY);
+    public void render(DrawContext ctx, int mouseX, int mouseY, float unknown) {
+        render(ctx, mouseX, mouseY);
     }
 
-    protected void render(MatrixStack matrixStack, int mouseX, int mouseY) {
-        RenderSystem.assertOnRenderThread();
-        this.renderBackground(matrixStack);
-        this.controlList.render(matrixStack, mouseX, mouseY);
 
-        this.drawCenteredText(matrixStack, this.textRenderer, this.title, this.width / 2, 8, 16777215);
-        this.searchField.render(matrixStack, mouseX, mouseY);
-        this.doneButton.render(matrixStack, mouseX, mouseY, 0f);
+
+    protected void render(DrawContext ctx, int mouseX, int mouseY) {
+        RenderSystem.assertOnRenderThread();
+        this.renderBackground(ctx);
+        this.controlList.render(ctx, mouseX, mouseY);
+
+        ctx.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 8, 16777215);
+        this.searchField.render(ctx, mouseX, mouseY);
+        this.doneButton.render(ctx, mouseX, mouseY, 0f);
 
         int left = this.width - this.textRenderer.getWidth(version) - 2;
         int top = this.height - 10;
-        this.drawStringWithShadow(matrixStack, this.textRenderer, version, left, top, -10658467);
+        ctx.drawTextWithShadow(this.textRenderer, version, left, top, -10658467);
     }
 
     @Override

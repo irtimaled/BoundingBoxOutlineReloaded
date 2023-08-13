@@ -2,12 +2,13 @@ package com.irtimaled.bbor.client.gui;
 
 import com.irtimaled.bbor.client.interop.ClientInterop;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.world.level.storage.LevelStorage;
 import net.minecraft.world.level.storage.LevelStorageException;
 import net.minecraft.world.level.storage.LevelSummary;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class LoadSavesScreen extends ListScreen {
@@ -26,7 +27,7 @@ public class LoadSavesScreen extends ListScreen {
         controlList = new SelectableControlList(this.width, this.height, top, bottom);
         try {
             final LevelStorage saveLoader = this.client.getLevelStorage();
-            final List<LevelSummary> saveList = saveLoader.loadSummaries(saveLoader.getLevelList()).join();
+            final List<LevelSummary> saveList = new ArrayList<>(saveLoader.loadSummaries(saveLoader.getLevelList()).join());
             saveList.stream()
                     .sorted()
                     .forEach(world -> controlList.add(new WorldSaveRow(world, saveLoader, controlList::setSelectedEntry)));
@@ -42,10 +43,10 @@ public class LoadSavesScreen extends ListScreen {
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float unknown) {
+    public void render(DrawContext ctx, int mouseX, int mouseY, float unknown) {
         ControlListEntry selectedEntry = getSelectedEntry();
         this.setCanExit(selectedEntry != null && selectedEntry.isVisible());
-        super.render(matrixStack, mouseX, mouseY, unknown);
+        super.render(ctx, mouseX, mouseY, unknown);
     }
 
     private ControlListEntry getSelectedEntry() {

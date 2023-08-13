@@ -103,7 +103,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
     }
 
     private void renderFilledSphere(RenderingContext ctx, Point center, double radius, Color color) {
-        if (!ConfigManager.asyncBuilding.get() && ((ConfigManager.fastRender.get() >= 1) && !RenderCulling.isVisibleCulling(new Box(new BlockPos(center.getX(), center.getY(), center.getZ())).expand(radius))))
+        if (!ConfigManager.asyncBuilding.get() && ((ConfigManager.fastRender.get() >= 1) && !RenderCulling.isVisibleCulling(new Box(BlockPos.ofFloored(center.getX(), center.getY(), center.getZ())).expand(radius))))
             return;
 
 //        double offset = ((radius - (int) radius) == 0) ? center.getY() - (int) center.getY() : 0;
@@ -170,7 +170,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
     }
 
     private void renderLineSphere(RenderingContext ctx, Point center, double radius, Color color) {
-        if (!ConfigManager.asyncBuilding.get() && ((ConfigManager.fastRender.get() >= 1) && !RenderCulling.isVisibleCulling(new Box(new BlockPos(center.getX(), center.getY(), center.getZ())).expand(radius))))
+        if (!ConfigManager.asyncBuilding.get() && ((ConfigManager.fastRender.get() >= 1) && !RenderCulling.isVisibleCulling(new Box(BlockPos.ofFloored(center.getX(), center.getY(), center.getZ())).expand(radius))))
             return;
 
         double offset = ((radius - (int) radius) == 0) ? center.getY() - (int) center.getY() : 0;
@@ -211,7 +211,7 @@ public abstract class AbstractRenderer<T extends AbstractBoundingBox> {
     }
 
     private void renderDotSphere(RenderingContext ctx, Point center, double radius, Color color) {
-        if (!ConfigManager.asyncBuilding.get() && ((ConfigManager.fastRender.get() >= 1) && !RenderCulling.isVisibleCulling(new Box(new BlockPos(center.getX(), center.getY(), center.getZ())).expand(radius))))
+        if (!ConfigManager.asyncBuilding.get() && ((ConfigManager.fastRender.get() >= 1) && !RenderCulling.isVisibleCulling(new Box(BlockPos.ofFloored(center.getX(), center.getY(), center.getZ())).expand(radius))))
             return;
 
         for (double phi = 0.0D; phi < TAU; phi += PHI_SEGMENT) {

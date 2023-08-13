@@ -24,6 +24,10 @@ import com.irtimaled.bbor.common.models.DimensionId;
 import com.irtimaled.bbor.mixin.access.IKeyBinding;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.option.KeyBinding;
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -73,6 +77,18 @@ public class ClientProxy extends CommonProxy {
 
         TaskThread.init();
 //        KeyListener.init();
+        registerKeyBindings();
+        MinecraftForge.EVENT_BUS.register(new Object(){
+
+            @SubscribeEvent
+            public void registerBindings(RegisterKeyMappingsEvent event) {
+                registerKeyBindings();
+                for (KeyBinding keyBinding : KeyListener.keyBindings()) {
+                    event.register(keyBinding);
+                }
+            }
+
+        });
 
         System.out.println("BBOR Dynamic Registry loading");
         RegistryUtil.init();
