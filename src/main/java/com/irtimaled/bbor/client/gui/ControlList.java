@@ -167,7 +167,7 @@ public class ControlList implements IControlSet {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollAmount) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollAmount, double verticalAmount) {
         this.amountScrolled -= scrollAmount * 10;
         return true;
     }

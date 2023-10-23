@@ -21,9 +21,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class RegistryUtil {
-    static final DynamicRegistryManager.Immutable REGISTRY_MANAGER;
+    static final DynamicRegistryManager.Immutable REGISTRY_MANAGER = null; // TODO fix
 
     static {
+        /* TODO fix
         final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
         try {
@@ -53,6 +54,7 @@ public class RegistryUtil {
         } finally {
             executorService.shutdown();
         }
+         */
     }
 
     record WorldCreationSettings(WorldGenSettings worldGenSettings, DataConfiguration dataConfiguration) {

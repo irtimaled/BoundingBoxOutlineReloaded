@@ -17,7 +17,7 @@ import com.irtimaled.bbor.common.events.WorldLoaded;
 import com.irtimaled.bbor.common.models.AbstractBoundingBox;
 import com.irtimaled.bbor.common.models.DimensionId;
 import com.irtimaled.bbor.common.models.ServerPlayer;
-import com.irtimaled.bbor.mixin.access.IServerPlayNetworkHandler;
+import com.irtimaled.bbor.mixin.access.IServerCommonNetworkHandler;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.network.ClientConnection;
@@ -103,7 +103,7 @@ public class CommonInterop {
         ServerPlayNetworkHandler connection = player.networkHandler;
         if (connection == null) return;
 
-        ClientConnection networkManager = ((IServerPlayNetworkHandler) connection).getConnection();
+        ClientConnection networkManager = ((IServerCommonNetworkHandler) connection).getConnection();
         if (networkManager.isLocal()) return;
 
         EventBus.publish(new PlayerLoggedIn(new ServerPlayer(player)));

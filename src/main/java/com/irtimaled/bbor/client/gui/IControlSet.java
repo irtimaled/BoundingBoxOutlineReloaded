@@ -41,9 +41,9 @@ public interface IControlSet extends IFocusableControl, Element {
         return focused != null && this.isDragging() && button == 0 && focused.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
     }
 
-    default boolean mouseScrolled(double mouseX, double mouseY, double scrollAmount) {
+    default boolean mouseScrolled(double mouseX, double mouseY, double scrollAmount, double verticalAmount) {
         IControl focused = this.getFocused();
-        return focused != null && focused.mouseScrolled(mouseX, mouseY, scrollAmount);
+        return focused != null && focused.mouseScrolled(mouseX, mouseY, scrollAmount, verticalAmount);
     }
 
     default boolean keyPressed(int key, int scanCode, int modifiers) {

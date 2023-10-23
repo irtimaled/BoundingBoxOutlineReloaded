@@ -2,10 +2,15 @@ package com.irtimaled.bbor.common.messages;
 
 import com.irtimaled.bbor.common.models.Coords;
 import com.irtimaled.bbor.common.models.DimensionId;
+import com.irtimaled.bbor.common.BBORCustomPayload;
 import net.minecraft.network.PacketByteBuf;
 
 public class PayloadReader {
     private final PacketByteBuf buffer;
+
+    public PayloadReader(BBORCustomPayload payload) {
+        this.buffer = payload.byteBuf();
+    }
 
     public PayloadReader(PacketByteBuf buffer) {
         this.buffer = buffer;

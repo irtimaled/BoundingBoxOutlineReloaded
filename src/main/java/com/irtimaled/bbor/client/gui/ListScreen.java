@@ -55,10 +55,9 @@ public abstract class ListScreen extends Screen {
     }
 
 
-
     protected void render(DrawContext ctx, int mouseX, int mouseY) {
         RenderSystem.assertOnRenderThread();
-        this.renderBackground(ctx);
+        this.renderBackground(ctx, mouseX, mouseY, 0);
         this.controlList.render(ctx, mouseX, mouseY);
 
         ctx.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 8, 16777215);
@@ -72,7 +71,7 @@ public abstract class ListScreen extends Screen {
 
     @Override
     public void tick() {
-        this.searchField.tick();
+        // this.searchField.tick(); TODO fix
     }
 
     @Override
@@ -86,8 +85,8 @@ public abstract class ListScreen extends Screen {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollAmount) {
-        return this.controlList.mouseScrolled(mouseX, mouseY, scrollAmount);
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollAmount, double verticalAmount) {
+        return this.controlList.mouseScrolled(mouseX, mouseY, scrollAmount, verticalAmount);
     }
 
     @Override
