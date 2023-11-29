@@ -20,8 +20,8 @@ abstract class AbstractSlider extends AbstractControl {
     protected void renderBackground(DrawContext ctx) {
 //        this.minecraft.getTextureManager().bindTexture(WIDGETS_TEXTURE);
         int hoverState = this.isSelected() ? 1 : 0;
-        ctx.drawTexture(WIDGETS_TEXTURE, this.getX() + (int) getProgressPercentage(), this.getY(), 0, 46 + hoverState * 20, 4, this.height);
-        ctx.drawTexture(WIDGETS_TEXTURE, this.getX() + (int) getProgressPercentage() + 4, this.getY(), 196, 46 + hoverState * 20, 4, 20);
+        // ctx.drawTexture(WIDGETS_TEXTURE, this.getX() + (int) getProgressPercentage(), this.getY(), 0, 46 + hoverState * 20, 4, this.height); FIX
+        // ctx.drawTexture(WIDGETS_TEXTURE, this.getX() + (int) getProgressPercentage() + 4, this.getY(), 196, 46 + hoverState * 20, 4, 20);
     }
 
     private double getProgressPercentage() {

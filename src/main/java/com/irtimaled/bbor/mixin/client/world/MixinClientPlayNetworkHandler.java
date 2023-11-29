@@ -16,7 +16,7 @@ public class MixinClientPlayNetworkHandler {
 
     @Inject(method = "onChunkData", at = @At("RETURN"))
     private void onChunkLoad(ChunkDataS2CPacket packet, CallbackInfo ci) {
-        ClientWorldUpdateTracker.onChunkLoad(packet.getX(), packet.getZ());
+        ClientWorldUpdateTracker.onChunkLoad(packet.getChunkX(), packet.getChunkZ());
     }
 
     @Inject(method = "readLightData", at = @At("RETURN"))

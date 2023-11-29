@@ -2,11 +2,12 @@ package com.irtimaled.bbor.common.messages;
 
 import com.irtimaled.bbor.common.models.Coords;
 import com.irtimaled.bbor.common.models.DimensionId;
+import com.irtimaled.bbor.common.BBORCustomPayload;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
-import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
+import net.minecraft.network.packet.c2s.common.CustomPayloadC2SPacket;
+import net.minecraft.network.packet.s2c.common.CustomPayloadS2CPacket;
 import net.minecraft.util.Identifier;
 
 import java.util.Map;
@@ -17,11 +18,11 @@ public class PayloadBuilder {
     private static final Map<String, Identifier> packetNames = new ConcurrentHashMap<>();
 
     public static PayloadBuilder clientBound(String name) {
-        return new PayloadBuilder(packetNames.computeIfAbsent(name, Identifier::new), CustomPayloadS2CPacket::new);
+        return new PayloadBuilder(packetNames.computeIfAbsent(name, Identifier::new), ((identifier, byteBuf) -> new CustomPayloadS2CPacket(new BBORCustomPayload(identifier, byteBuf))));
     }
 
     public static PayloadBuilder serverBound(String name) {
-        return new PayloadBuilder(packetNames.computeIfAbsent(name, Identifier::new), CustomPayloadC2SPacket::new);
+        return new PayloadBuilder(packetNames.computeIfAbsent(name, Identifier::new), ((identifier, byteBuf) -> new CustomPayloadC2SPacket(new BBORCustomPayload(identifier, byteBuf))));
     }
 
     private final Identifier name;
