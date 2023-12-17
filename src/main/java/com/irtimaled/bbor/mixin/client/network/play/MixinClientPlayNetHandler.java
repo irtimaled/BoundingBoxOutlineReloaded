@@ -41,7 +41,7 @@ public class MixinClientPlayNetHandler {
         EventBus.publish(new GameJoin());
     }
 
-    @Inject(method = "method_52801", at = @At(value = "CONSTANT", args = "stringValue=Unknown custom packet payload: {}"), cancellable = true)
+    @Inject(method = "warnOnUnknownPayload", at = @At(value = "CONSTANT", args = "stringValue=Unknown custom packet payload: {}"), cancellable = true)
     private void suppressWarning(CustomPayload payload, CallbackInfo ci) {
         if (payload.id().equals(ServuxStructurePackets.CHANNEL)) ci.cancel();
     }

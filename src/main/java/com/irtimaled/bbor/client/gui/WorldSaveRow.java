@@ -8,6 +8,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.nbt.NbtIo;
+import net.minecraft.nbt.NbtSizeTracker;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.util.WorldSavePath;
@@ -97,7 +98,7 @@ public class WorldSaveRow extends ControlListEntry implements Comparable<WorldSa
             e.printStackTrace();
         }
         try {
-            long seed = NbtIo.readCompressed(new FileInputStream(worldInfo.getDirectory(WorldSavePath.LEVEL_DAT).toFile()))
+            long seed = NbtIo.readCompressed(worldInfo.getDirectory(WorldSavePath.LEVEL_DAT), NbtSizeTracker.ofUnlimitedBytes())
                     .getCompound("Data")
                     .getCompound("WorldGenSettings").getLong("seed");
             worldInfo.close();
