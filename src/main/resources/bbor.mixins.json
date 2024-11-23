@@ -14,7 +14,7 @@
         "server.MixinMinecraftServer",
         "server.MixinServerChunkLoadingManager",
         "server.management.MixinPlayerList",
-        "server.network.MixinServerCommonNetworkHandler",
+        "server.network.MixinServerPlayNetworkHandler",
         "world.chunk.MixinPalettedContainer"
     ],
     "client": [
